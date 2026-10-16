@@ -104,6 +104,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:10px}
 .card{position:relative;background:var(--hanji);color:var(--sumi);border:0;text-align:left;padding:14px;display:flex;gap:12px;align-items:flex-start;box-shadow:4px 4px 0 #00000055;min-width:0}
 .card:hover{background:#fff6e2}
+.arming .screen button{pointer-events:none}
+.arming .screen .card,.arming .screen .row{opacity:.6;transition:opacity .45s steps(3)}
 .banmode .card{outline:2px dashed var(--red);outline-offset:-6px}
 .ic{width:40px;height:40px;flex:none;background:#2a2228;padding:4px;display:grid;place-items:center}
 .ic img{width:32px;height:32px;image-rendering:pixelated}
@@ -294,7 +296,7 @@ button.adv:hover{background:#fff6e2}
     <div class="cards" id="luCards"></div>
     <div class="tools">
       <button id="rrBtn">산통 흔들기 <span id="rrN"></span> <kbd>R</kbd></button>
-      <button id="skBtn">물리기 <span id="skN"></span> <kbd>S</kbd></button>
+      <button id="skBtn">물리기 <span id="skN"></span> <kbd>X</kbd></button>
       <button id="bnBtn" aria-pressed="false">봉인 <span id="bnN"></span> <kbd>B</kbd></button>
     </div>
     <p class="hint" id="luHint">산통 흔들기는 선택지를 새로 뽑고, 물리기는 엽전 5닢을 받고 넘깁니다. 봉인을 켜고 카드를 누르면 그 항목이 이번 출정에서 다시 나오지 않습니다.</p>
@@ -1856,7 +1858,11 @@ function applyOpt(o){
  refreshSlots();}
 
 /* ======================= screens ======================= */
-function show(id){for(const s of document.querySelectorAll('.screen'))s.hidden=s.id!==id;$('#overlay').hidden=!id;modal=id;}
+const PICK_SCREENS=new Set(['levelup','adv','bless','petpick','pick','chest']);let armUntil=0;
+function show(id){for(const s of document.querySelectorAll('.screen'))s.hidden=s.id!==id;$('#overlay').hidden=!id;modal=id;
+ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+ const ov=$('#overlay');if(PICK_SCREENS.has(id)){armUntil=performance.now()+500;ov.classList.add('arming');clearTimeout(show._t);show._t=setTimeout(()=>ov.classList.remove('arming'),500);}else ov.classList.remove('arming');}
+const armed=()=>performance.now()>=armUntil;
 let curOpts=[],banMode=false;
 function openLevel(regen=true){if(regen)curOpts=genOptions();banMode=false;renderLevel();show('levelup');if(regen){snd(660,0.15,'triangle',0.05);setTimeout(()=>snd(990,0.2,'triangle',0.05),90);}}
 function renderLevel(){const box=$('#luCards');box.innerHTML='';box.classList.toggle('banmode',banMode);
@@ -2025,7 +2031,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
  for(const [k,n] of HELP_TABS){const bt=document.createElement('button');bt.setAttribute('role','tab');bt.setAttribute('aria-selected',helpTab===k);bt.textContent=n;bt.onclick=()=>{helpTab=k;renderHelp();};tb.appendChild(bt);}
  const ul=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;let h='';
  if(helpTab==='basic'){
-  h+=hcard('장판과 경고 표식 읽기',ul(['내 장판은 점무늬로 채운 도트 원에 <b>점선 테두리가 돌고</b>, 위쪽 테두리에 <b>그 장판을 만든 무기·기술 아이콘</b>이 붙는다. 아이콘은 왼쪽 위 슬롯 아이콘과 같다.','펫이 깐 장판에는 펫 표식(虎·熊·鷹)이 붙는다.','<b>붉은 점선 원과 가운데 ! 표식</b>은 보스나 요괴의 공격 예고다. 안쪽 점무늬가 바깥 테두리까지 차오르면 터지고, 직전에는 테두리가 깜빡인다.','띠 모양 경고는 돌진·광선 경로다. 화살표(>)가 가리키는 방향으로 온다.']))+hcard('조작',ul(['이동: <b>WASD</b> 또는 방향키. 휴대폰은 화면 아무 곳이나 누른 채 끌면 그쪽으로 걷는다.','공격은 모두 자동이다. 움직이며 피하는 데만 집중하면 된다.','일시정지: <b>ESC</b> 또는 <b>P</b>, 휴대폰은 오른쪽 아래 II 버튼.','레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>S</b> 물리기, <b>B</b> 봉인.']));
+  h+=hcard('장판과 경고 표식 읽기',ul(['내 장판은 점무늬로 채운 도트 원에 <b>점선 테두리가 돌고</b>, 위쪽 테두리에 <b>그 장판을 만든 무기·기술 아이콘</b>이 붙는다. 아이콘은 왼쪽 위 슬롯 아이콘과 같다.','펫이 깐 장판에는 펫 표식(虎·熊·鷹)이 붙는다.','<b>붉은 점선 원과 가운데 ! 표식</b>은 보스나 요괴의 공격 예고다. 안쪽 점무늬가 바깥 테두리까지 차오르면 터지고, 직전에는 테두리가 깜빡인다.','띠 모양 경고는 돌진·광선 경로다. 화살표(>)가 가리키는 방향으로 온다.']))+hcard('조작',ul(['이동: <b>WASD</b> 또는 방향키. 휴대폰은 화면 아무 곳이나 누른 채 끌면 그쪽으로 걷는다.','공격은 모두 자동이다. 움직이며 피하는 데만 집중하면 된다.','일시정지: <b>ESC</b> 또는 <b>P</b>, 휴대폰은 오른쪽 아래 II 버튼.','레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>X</b> 물리기, <b>B</b> 봉인.']));
   h+=hcard('한 판의 흐름',ul([`막은 모두 10개. 막마다 ${STAGE_T/60}분을 버틴다.`,`${MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.`,'막 보스를 쓰러뜨리면 보물상자를 열고 <b>주막</b>에 들른 뒤 다음 막으로 간다.','요괴가 떨군 구슬로 레벨이 오른다. 레벨이 오를 때마다 무기나 보패 하나를 고른다.','레벨 10·20·30·40·50에 <b>전직</b>한다.']));
   h+=hcard('막 안에서 만나는 것',ul(['<b>엘리트</b>: 금빛 체력 막대가 달린 큰 요괴. 쓰러뜨리면 보물상자를 떨군다.','<b>보물상자</b>: 진화 조건을 갖춘 무기가 있으면 진화시키고, 없으면 가진 것 하나를 강화한다.','<b>성황당</b>: 막마다 두 번 나타난다. 화면 가장자리의 금빛 화살표를 따라가 그 안에 3.5초 머물면 신령의 축복을 받는다.','<b>옹기</b>: 아무 공격에나 깨진다. 떡, 엽전, 복주머니, 큰 구슬이 나온다.','<b>떡</b>은 체력 회복, <b>복주머니</b>는 화면의 구슬을 모두 끌어온다.','레벨 10 전직 직후 <b>펫</b>(범·반달곰·해동청)을 고른다. 자세한 것은 「펫」 탭.','막마다 장애물(장독, 대숲, 바위, 석등, 장승, 비석 등)이 길을 막는다. 날아다니는 요괴와 보스는 넘어온다.']));
   h+=hcard('도사 전우치',ul([`체력이 <b>50%</b> 아래로 떨어지면 전우치가 구름을 타고 나타나 5초 동안 부적과 벼락으로 요괴를 친다. 보통 난이도 기준 ${45}초에 한 번.`,`체력이 <b>20%</b> 아래로 떨어지면 「금강불괴」 도술로 체력을 40% 채워 주고 10초 동안 방어 +5, 받는 피해 −30%를 걸어 준 뒤 5초 동안 함께 싸운다. 보통 난이도 기준 90초에 한 번.`,'쉬움은 더 자주, 어려움은 더 드물게 온다. 화면 오른쪽 위에 다음 출현까지 남은 시간이 보인다.']));
@@ -2098,9 +2104,10 @@ $('#rrBtn').onclick=reroll;$('#skBtn').onclick=skipLevel;$('#bnBtn').onclick=()=
 bindSettings();
 
 addEventListener('keydown',e=>{keys[e.code]=true;
+ if(modal&&PICK_SCREENS.has(modal)&&(e.repeat||!armed())){if(e.code.startsWith('Arrow')||e.code==='Space'||e.code==='Enter')e.preventDefault();return;}
  if(e.code==='Escape'||e.code==='KeyP'){if(modal==='pause')show(null);else if(!modal)openPause();}
  const n=parseInt(e.key,10);
- if(modal==='levelup'){if(n>=1&&n<=curOpts.length)pickOpt(n-1);else if(e.code==='KeyR')reroll();else if(e.code==='KeyS')skipLevel();else if(e.code==='KeyB')$('#bnBtn').click();}
+ if(modal==='levelup'){if(n>=1&&n<=curOpts.length)pickOpt(n-1);else if(e.code==='KeyR')reroll();else if(e.code==='KeyX')skipLevel();else if(e.code==='KeyB')$('#bnBtn').click();}
  else if(modal==='adv'&&n>=1&&n<=advPick.length)advPick[n-1]();
  else if(modal==='bless'&&n>=1&&n<=blessPick.length)blessPick[n-1]();
  else if(modal==='petpick'&&n>=1&&n<=petPick.length)petPick[n-1]();
