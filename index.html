@@ -130,7 +130,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .ic{width:40px;height:40px;flex:none;background:#2a2228;padding:4px;display:grid;place-items:center}
 .ic img{width:32px;height:32px;image-rendering:pixelated}
 .ic .seal{width:32px;height:32px;font-size:22px}
-.card .cm{min-width:0;display:flex;flex-direction:column;gap:4px}
+.card .cm{min-width:0;display:flex;flex-direction:column;gap:4px;padding-right:18px;word-break:keep-all;overflow-wrap:anywhere}
 .card b{font:21px var(--f-disp);font-weight:400}
 .card p{margin:0;font-size:13px;line-height:1.45;color:#4a3f38}
 .card small{font-size:11px;color:#6b5f52;display:block}
@@ -357,7 +357,7 @@ button.adv:hover{background:#fff6e2}
       <button class="btn ghost" id="setBtn">설정</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v16</p>
+    <p class="ver" id="verTag">v16.1</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -1731,7 +1731,7 @@ for(const f of FUSE){
 function findFusion(){for(const f of FUSE){const a=G.weapons.find(w=>w.id===f.a&&w.evo),b=G.weapons.find(w=>w.id===f.b&&w.evo);if(a&&b)return f;}return null;}
 function doFusion(f){const a=G.weapons.find(w=>w.id===f.a),b=G.weapons.find(w=>w.id===f.b);
  G.weapons=G.weapons.filter(w=>w!==a&&w!==b);
- G.weapons.push({id:f.id,lv:5,evo:true,t:1.5,on:false,pos:[],kids:[a,b],tm:a.tm||b.tm||null,lb:Math.max(a.lb||0,b.lb||0),seals:[...(a.seals||[]),...(b.seals||[])].slice(0,3)});
+ G.weapons.push({id:f.id,lv:5,evo:true,t:1.5,on:false,pos:[],kids:[a,b],tm:a.tm||b.tm||null,lb:Math.max(a.lb||0,b.lb||0),seals:[...(a.seals||[]),...(b.seals||[])].slice(0,4)});
  tmRebuild();G.rs.fuse=(G.rs.fuse||0)+1;toast(`합공 · ${f.n}`,'big');flash('255,220,160',0.35);particle(G.P.x,G.P.y-6,'#e0b048',30,80,0.8);}
 function wAll(){const o=[];for(const w of G.weapons){o.push(w);if(w.kids)for(const k of w.kids)o.push(k);}return o;}
 
@@ -1741,15 +1741,18 @@ const SEALS={
  gwang:{g:'廣',n:'넓힘',d:'이 무기 범위 +20%',f:P=>{P.area*=1.2;}},
  sok:{g:'速',n:'재촉',d:'이 무기 재사용 대기 −15%',f:P=>{P.cd*=0.85;}},
  yeon:{g:'連',n:'이음',d:'이 무기 투사체 +1',f:P=>{P.amount+=1;}},
- gu:{g:'久',n:'오래',d:'이 무기 지속시간 +25%',f:P=>{P.dur*=1.25;}},
+ nal:{g:'銳',n:'날카로움',d:'이 무기 피해 +12%, 범위 +8%',f:P=>{P.might*=1.12;P.area*=1.08;}},
  jil:{g:'疾',n:'빠름',d:'이 무기 투사체 속도 +25%',f:P=>{P.pspd*=1.25;}}};
-function sealSlots(w){const d=WD[w.id];if(d.type!=='w')return 0;return d.fuse?3:(w.evo?2:1);}
+function sealSlots(w){const d=WD[w.id];if(d.type!=='w')return 0;return d.fuse?4:(w.evo?2:1);}
+const SEAL_OFF={"meok":"jil","meok*":"jil","seochal":"gwang","seochal*":"gwang","chim":"gwang","chim*":"gwang","buhang":"gwang","buhang*":"gwang","hwanyak":"gwang","bujeok":"jil","bujeok*":"sok jil","singal":"gwang","singal*":"gwang","bara":"yeon jil","bara*":"yeon jil","myeongdu":"sok yeon jil","myeongdu*":"sok yeon jil","hwando":"yeon jil","hwando*":"yeon jil","pyeongon":"yeon jil","pyeongon*":"yeon jil","deungpae":"sok yeon jil","deungpae*":"sok yeon jil","jincheon":"jil","jincheon*":"jil","gayageum":"gwang","gayageum*":"gwang","geommu":"jil","geommu*":"jil","buchaechum":"yeon jil","buchaechum*":"yeon jil","janggu":"yeon jil","janggu*":"yeon jil","jupan":"gwang","jupan*":"gwang","yeopjeon":"gwang","yeopjeon*":"gwang","doe":"yeon jil","doe*":"yeon jil","jige":"yeon jil","jige*":"yeon jil","tuho":"jil","tuho*":"jil","yut":"gwang","yeon":"gwang sok jil","yeon*":"gwang sok jil","jegi":"gwang","jegi*":"gwang","bangul":"yeon jil","bangul*":"yeon jil","hwasal":"gwang","hwasal*":"gwang","singijeon":"jil","singijeon*":"jil","yaktang":"jil","yaktang*":"jil","f_ilwolbara":"yeon jil","f_ssangryong":"yeon jil","f_cheolbyeok":"jil","f_hwagwanmu":"jil","f_yakbang":"jil","f_cheonnyang":"gwang","f_hanjim":"yeon jil"};
+function sealOk(w,k){const o=SEAL_OFF[WD[w.id].fuse?w.id:w.id+(w.evo?'*':'')];return !o||!o.split(' ').includes(k);}
 function openSeal(){const done=()=>{if(G.afterSeal){const a=G.afterSeal;G.afterSeal=null;a();}else show(null);};
  const ws=G.weapons.filter(w=>(w.seals||[]).length<sealSlots(w));
  if(!ws.length){G.coins+=20;toast('새길 칸이 없어 엽전 20닢을 받았다');done();return;}
- const keys=Object.keys(SEALS).sort(()=>Math.random()-0.5).slice(0,3),pool=ws.slice().sort(()=>Math.random()-0.5);
- openPick('ENGRAVING','인장 새기기','무기에 인장을 새겨 그 무기만 강하게 합니다. 칸은 무기 1개, 진화 2개, 합공 3개입니다.',keys.map((k,i)=>{const S=SEALS[k],w=pool[i%pool.length],d=WD[w.id],used=(w.seals||[]).length;
-  return {ic:`<span class="seal" style="background:#7a2018">${S.g}</span>`,badge:`인장 · ${w.evo?d.evoName:d.name}`,bc:'awk',name:`${S.n}의 인장 → ${w.evo?d.evoName:d.name}`,desc:`${S.d}. (칸 ${used+1}/${sealSlots(w)})`,
+ const sh=a=>a.sort(()=>Math.random()-0.5),pool=sh(ws.slice()),cards=[],shown=new Set();
+ for(let i=0;i<3;i++){const w=pool[i%pool.length],ks=sh(Object.keys(SEALS).filter(k=>sealOk(w,k)&&!cards.some(c=>c[0]===k&&c[1]===w)));if(!ks.length)continue;const k=ks.find(z=>!shown.has(z))||ks[0];shown.add(k);cards.push([k,w]);}
+ openPick('ENGRAVING','인장 새기기','무기에 인장을 새겨 그 무기만 강하게 합니다. 그 무기에 효과가 있는 인장만 나옵니다. 칸은 무기 1개, 진화 2개, 합공 4개입니다.',cards.map(([k,w])=>{const S=SEALS[k],d=WD[w.id],used=(w.seals||[]).length;
+  return {ic:`<span class="seal" style="background:#7a2018">${S.g}</span>`,badge:`인장 · ${w.evo?d.evoName:d.name}`,bc:'awk',name:`${S.n}의 인장 → ${w.evo?d.evoName:d.name}`,desc:`${S.d}. (인장 ${used}/${sealSlots(w)} → ${used+1}/${sealSlots(w)})`,
    f:()=>{(w.seals=w.seals||[]).push(k);G.rs.seals=(G.rs.seals||0)+1;refreshSlots();toast(`${S.g} 인장 · ${w.evo?d.evoName:d.name}`);done();}};}));}
 
 /* ---- 스치기 ---- */
@@ -2897,7 +2900,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
   h+=hcard('공용 무기',Object.keys(WD).filter(k=>WD[k].type==='w'&&!WD[k].job&&!WD[k].fuse).map(row).join(''));
   for(const id in CHARS)h+=hcard(`${CHARS[id].name} 전용 무기`,Object.keys(WD).filter(k=>WD[k].type==='w'&&WD[k].job===id&&!WD[k].fuse).map(row).join(''));
   h+=hcard('합공 (무기 합체)',`<p>짝이 맞는 두 무기를 <b>모두 진화</b>시킨 채 보물 상자를 열면 두 무기가 하나로 합쳐진다. 무기 칸이 하나 비고, 두 무기의 공격은 피해 +20%로 그대로 나가며, 합공 무기만의 기술이 더해진다. 인장 칸은 3개.</p>`+FUSE.map(f=>`<div class="hrow"><span class="ic"><img src="${ICON[f.id]}" alt=""></span><div><p><b>${f.n}</b> · ${WD[f.a].evoName} + ${WD[f.b].evoName}${f.job?` <small>(${CHARS[f.job].name})</small>`:' <small>(공용)</small>'}</p><p>${f.d}</p></div></div>`).join(''));
-  h+=hcard('인장 각인',`<p>보물 상자를 열면 40% 확률로, 또는 주막의 「인장 장인」에게서 인장을 얻는다. 인장 셋 가운데 하나를 골라 무기에 새기면 그 무기만 강해진다. 칸은 일반 무기 1개, 진화 무기 2개, 합공 무기 3개. 같은 인장을 겹쳐 새길 수 있다. 새긴 인장은 슬롯 왼쪽 위 점으로 보인다.</p>`+Object.keys(SEALS).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#7a2018">${SEALS[k].g}</span></span><div><p><b>${SEALS[k].n}의 인장</b> · ${SEALS[k].d}</p></div></div>`).join('')); }
+  h+=hcard('인장 각인',`<p>보물 상자를 열면 40% 확률로, 또는 주막의 「인장 장인」에게서 인장을 얻는다. 인장 셋 가운데 하나를 골라 무기에 새기면 그 무기만 강해진다. 칸은 일반 무기 1개, 진화 무기 2개, 합공 무기 4개(합칠 때 두 무기의 인장을 모두 옮긴다). 그 무기가 쓰지 않는 능력을 올리는 인장(예: 칼날 무기에 투사체 속도)은 나오지 않는다. 같은 인장을 겹쳐 새길 수 있다. 새긴 인장은 슬롯 왼쪽 위 점으로 보인다.</p>`+Object.keys(SEALS).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#7a2018">${SEALS[k].g}</span></span><div><p><b>${SEALS[k].n}의 인장</b> · ${SEALS[k].d}</p></div></div>`).join('')); }
  if(helpTab==='item'){
   const prow=id=>{const d=PD[id],ev=Object.keys(WD).filter(k=>WD[k].evo===id).map(k=>`${WD[k].name} → ${WD[k].evoName}`).join(', ');return `<div class="hrow"><span class="ic"><img src="${ICON[id]}" alt=""></span><div><p><b>${d.name}</b> · ${d.desc} <small>(최대 ${d.max}레벨)</small></p>${ev?`<p><small>진화 짝: ${ev}</small></p>`:''}</div></div>`;};
   h+=hcard('공용 보패',Object.keys(PD).filter(k=>!PD[k].job).map(prow).join(''));
