@@ -883,11 +883,11 @@ CHARS.sangin={name:'상인',seal:'商',start:'jupan',trait:'엽전 +30% · 줍�
    base:B=>{B.maxHp=95;B.magnet+=0.2;},look:lk('tang','#7a6a4a',{T:'#e0b048',L:'#4a3a30',item:'abacus'}),
    branches:[
     {name:'시전의 길',tiers:[
-     {name:'행수',skill:'heungjeong',bonus:'치명타 +6%',apply:B=>{B.crit+=0.06},look:lk('tang','#5a4a3a',{T:'#e0b048',item:'abacus'})},
-     {name:'대행수',skill:'geumnan',bonus:'범위 +10%',apply:B=>{B.area+=0.1},look:lk('gat','#3a5f9e',{T:'#e0b048',item:'abacus'})},
-     {name:'도방',skill:'gaekju',bonus:'최대 체력 +40',apply:B=>{B.maxHp+=40},look:lk('gat','#2f6b5a',{T:'#e0b048',C:'#efe6d2',item:'pouch'})},
-     {name:'대방',skill:'eoeum',bonus:'공격력 +15%',apply:B=>{B.might+=0.15},look:lk('gat','#7a2018',{T:'#e0b048',L:'#e0b048',item:'pouch'})},
-     {name:'거상',skill:'mangeum',bonus:'공격력 +20% · 최대 체력 +50',apply:B=>{B.might+=0.2;B.maxHp+=50},look:lk('gat','#1a2b4a',{h:'#e0b048',T:'#e0b048',L:'#e0b048',C:'#e0b048',item:'abacus',aura:'#ffe080'})}]},
+     {name:'상인',skill:'heungjeong',bonus:'치명타 +6%',apply:B=>{B.crit+=0.06},look:lk('tang','#5a4a3a',{T:'#e0b048',item:'abacus'})},
+     {name:'행수',skill:'geumnan',bonus:'범위 +10%',apply:B=>{B.area+=0.1},look:lk('gat','#3a5f9e',{T:'#e0b048',item:'abacus'})},
+     {name:'대행수',skill:'gaekju',bonus:'최대 체력 +40',apply:B=>{B.maxHp+=40},look:lk('gat','#2f6b5a',{T:'#e0b048',C:'#efe6d2',item:'pouch'})},
+     {name:'도방',skill:'eoeum',bonus:'공격력 +15%',apply:B=>{B.might+=0.15},look:lk('gat','#7a2018',{T:'#e0b048',L:'#e0b048',item:'pouch'})},
+     {name:'대방',skill:'mangeum',bonus:'공격력 +20% · 최대 체력 +50',apply:B=>{B.might+=0.2;B.maxHp+=50},look:lk('gat','#1a2b4a',{h:'#e0b048',T:'#e0b048',L:'#e0b048',C:'#e0b048',item:'abacus',aura:'#ffe080'})}]},
     {name:'보부상의 길',tiers:[
      {name:'보상',skill:'bottari',bonus:'이동 속도 +10%',apply:B=>{B.spd+=0.1},look:lk('paraengi','#9a8a6a',{h:'#efe6d2',T:'#4a3a30',item:'jige'})},
      {name:'접장',skill:'mulmi',bonus:'방어 +1',apply:B=>{B.armor+=1},look:lk('paraengi','#7a6a4a',{h:'#efe6d2',T:'#c23b2a',item:'mulmi'})},
@@ -1005,7 +1005,7 @@ const TASKS=[
  T('t5_mudang','무조가 되다','무당으로 5차 전직','tier_mudang',5,{unlock:'card:munchang'},'점괘 패 · 문창성'),
  T('t_gisaeng','기생 1차 전직','기생으로 1차 전직','tier_gisaeng',1,{unlock:'w:janggu'},'장구 해금'),
  T('t_sangin','상인 1차 전직','상인으로 1차 전직','tier_sangin',1,{unlock:'w:jige'},'등짐 지게 해금'),
- T('t5_sangin','거상·도반수가 되다','상인으로 5차 전직','tier_sangin',5,{coins:150},'엽전 150'),
+ T('t5_sangin','대방·도반수가 되다','상인으로 5차 전직','tier_sangin',5,{coins:150},'엽전 150'),
  T('t5_gisaeng','국창·검선이 되다','기생으로 5차 전직','tier_gisaeng',5,{coins:150},'엽전 150'),
  T('pet10','짐승과 한 몸','펫 레벨 10 달성','petLv',10,{coins:120},'엽전 120'),
  T('t5_jangsu','대원수가 되다','장수로 5차 전직','tier_jangsu',5,{coins:150},'엽전 150'),
