@@ -49,8 +49,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 #bossbar.mid .bb i{background:#d88a3a}
 #bossbar .bb s{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--gold)}
 .hudbtns{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;gap:6px;pointer-events:auto}
-.hudbtns button{width:36px;height:36px;background:rgba(20,16,24,.8);border:1px solid var(--line);font:12px var(--f-pix)}
-#callBtn{--p:0;width:48px;height:48px;align-self:flex-end;position:relative;font:20px var(--f-disp);color:var(--hanji);background:linear-gradient(to top,rgba(224,176,72,.55) calc(var(--p)*1%),rgba(20,16,24,.85) calc(var(--p)*1%));border:2px solid #6a5a4a}
+.hudbtns button{min-width:44px;height:38px;padding:0 6px;background:rgba(20,16,24,.8);border:1px solid var(--line);font:600 13px/1 var(--f-body,system-ui),sans-serif;letter-spacing:-.02em;color:var(--hanji)}
+#callBtn{--p:0;min-width:56px;height:48px;align-self:flex-end;position:relative;font:600 14px/1 var(--f-body,system-ui),sans-serif;color:var(--hanji);background:linear-gradient(to top,rgba(224,176,72,.55) calc(var(--p)*1%),rgba(20,16,24,.85) calc(var(--p)*1%));border:2px solid #6a5a4a}
 #callBtn.ready{border-color:var(--gold);animation:callGlow .7s steps(2) infinite;color:#fff6d0}
 @keyframes callGlow{50%{box-shadow:0 0 0 3px #e0b04888}}
 .slot.awk{outline:2px solid var(--gold);outline-offset:-1px}
@@ -80,8 +80,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .screen h2{font-size:clamp(26px,5vw,38px)}
 .eyebrow{font:11px var(--f-pix);letter-spacing:.2em;color:var(--gold);text-align:center;text-transform:uppercase}
 .lede{color:var(--dim);text-align:center;margin:0;font-size:15px;line-height:1.5}
-.chars{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-@media (max-width:980px){.chars{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.chars{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+@media (max-width:1100px){.chars{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:620px){.chars{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .ch{position:relative;text-align:left;background:var(--hanji);color:var(--sumi);border:0;padding:14px 12px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:4px 4px 0 #00000055;transition:transform .12s;min-width:0}
 .ch:hover{transform:translateY(-2px)}
@@ -313,10 +313,10 @@ button.adv:hover{background:#fff6e2}
   <div id="bossbar" hidden><span id="bossname"></span><div class="bb" id="bossbb"><i id="bossfill"></i></div></div>
 </div>
 <div class="hudbtns" id="hudbtns" hidden>
-  <button id="callBtn" aria-label="신내림 (Space)" title="신내림 (Space)"><span id="callG">退</span></button>
-  <button id="muteBtn" aria-label="소리 켜기/끄기">SND</button>
-  <button id="statBtn" aria-label="상태창 (C)" title="상태창 (C)">狀</button>
-  <button id="pauseBtn" aria-label="일시정지">II</button>
+  <button id="callBtn" aria-label="신내림 (Space)" title="신내림 (Space)"><span id="callG">신내림</span></button>
+  <button id="muteBtn" aria-label="소리 켜기/끄기">소리</button>
+  <button id="statBtn" aria-label="상태창 (C)" title="상태창 (C)">상태</button>
+  <button id="pauseBtn" aria-label="일시정지">정지</button>
 </div>
 <div id="toast"></div>
 <div id="task"></div>
@@ -339,7 +339,7 @@ button.adv:hover{background:#fff6e2}
       <button class="btn ghost" id="setBtn">설정</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v13</p>
+    <p class="ver" id="verTag">v14</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -571,7 +571,8 @@ const HATS={
  flower:['..hHHHHh..','.HHHHHHHH.','..........'], gokkal:['....H.....','...HHH....','..HHHHH...'],
  jeonrip:['....hh....','..HHHHHH..','HHHHHHHHHH'], helm:['....hh....','...HHHH...','..HHHHHH..'],
  crown:['.h.h.h.h..','.HHHHHHHH.','..........'], hood:['..HHHHHH..','.HHHHHHHH.','.HH....HH.'],
- gache:['.HHHHHHHH.','HHhHHHHhHH','.HH....HH.'], hwagwan:['.hrhrhrh..','.HHHHHHHH.','..H....H..'], jokduri:['...hhh....','..hHhHh...','.HHHHHHHH.']};
+ gache:['.HHHHHHHH.','HHhHHHHhHH','.HH....HH.'], hwagwan:['.hrhrhrh..','.HHHHHHHH.','..H....H..'], jokduri:['...hhh....','..hHhHh...','.HHHHHHHH.'],
+ paraengi:['...HHHH...','h.HHHHHH.h','HHHHHHHHHH']};
 const FACE=['...ssss...','...sksk...','...ssss...'];
 const BODY=['..AAAAAA..','.AAATTAAA.','.sAAAAAAs.','..ALLLLA..','..AAAAAA..','..AA..AA..','..kk..kk..'];
 const col=(x,y0,y1,c)=>{const a=[];for(let y=y0;y<=y1;y++)a.push([x,y,c]);return a;};
@@ -583,7 +584,11 @@ const ITEMS={
  bow:[[10,3,'o'],...col(11,4,9,'o'),[10,10,'o'],...col(10,4,9,'w')],
  spear:[[11,0,'x'],[11,1,'x'],[11,2,'r'],...col(11,3,12,'n')], mapae:[[10,8,'y'],[11,8,'y'],[10,9,'y'],[11,9,'o']],
  staff:[[11,0,'y'],...col(11,1,12,'o')], gourd:[[10,7,'n'],[10,8,'p'],[10,9,'p'],[11,9,'p'],[10,10,'p'],[11,10,'p']],
- cloth:[...col(11,3,12,'w'),...col(10,4,8,'w')], gayageum:[[10,7,'o'],[11,7,'o'],[10,8,'o'],[11,8,'w'],[10,9,'o'],[11,9,'w'],[10,10,'n']], flag:[...col(10,0,12,'n'),[11,0,'r'],[11,1,'r'],[11,2,'y'],[11,3,'r']]};
+ cloth:[...col(11,3,12,'w'),...col(10,4,8,'w')], gayageum:[[10,7,'o'],[11,7,'o'],[10,8,'o'],[11,8,'w'],[10,9,'o'],[11,9,'w'],[10,10,'n']], flag:[...col(10,0,12,'n'),[11,0,'r'],[11,1,'r'],[11,2,'y'],[11,3,'r']],
+ abacus:[[10,7,'o'],[11,7,'o'],[10,8,'y'],[11,8,'k'],[10,9,'k'],[11,9,'y'],[10,10,'o'],[11,10,'o']],
+ pouch:[[10,8,'n'],[10,9,'y'],[11,9,'y'],[10,10,'o'],[11,10,'y']],
+ jige:[...col(11,2,11,'o'),[10,4,'o'],[10,8,'o'],[11,12,'o']],
+ mulmi:[...col(11,0,11,'n'),[11,12,'x']]};
 const charCache={};
 function charSpr(L){const key=JSON.stringify(L);if(charCache[key])return charCache[key];
  const pal={...PAL,H:L.H||'#1a1418',h:L.h||'#e0b048',A:L.A,T:L.T||L.A,L:L.L||'#1a1418',C:L.C||L.A};
@@ -674,6 +679,13 @@ const IR={
  janggu:['rrr..rrr','rwr..rwr','rwrrrrwr','rwr..rwr','rrr..rrr','.n....n.','........','........'],
  norigae:['...yy...','..yrry..','...yy...','...rr...','..rrrr..','..rrrr..','..r.r.r.','.r..r..r'],
  binyeo:['......yy','.....yry','....yy..','...yy...','..yy....','.yy.....','yy......','........'],
+ jupan:['oooooooo','o.y.k.yo','oooooooo','oy.k.y.o','oooooooo','o.k.y.ko','oooooooo','........'],
+ yeopjeon:['..yyyy..','.yykkyy.','.yk..ky.','.yykkyy.','..yyyy..','...rr...','..r..r..','........'],
+ jige:['o......o','o......o','oooooooo','o..nn..o','o.nnnn.o','oooooooo','o......o','o......o'],
+ doe:['........','.oooooo.','.owwwwo.','.owwwwo.','.oooooo.','..oooo..','........','........'],
+ jangbu:['bbbbbbb.','bwwwwwb.','bwkkkwb.','bwwwwwb.','bwkwkwb.','bwwwwwb.','bbbbbbb.','.y.y.y..'],
+ jeondae:['........','.rrrrrr.','rryyyyrr','ryykkyyr','rryyyyrr','.rrrrrr.','..r..r..','........'],
+ jeoul:['...n....','.xxnxx..','.x.n.x..','xx.n.xx.','...n....','...n....','.nnnnn..','........'],
  hwagwan:['.r.p.r..','rprprpr.','yyyyyyy.','y.....y.','........','........','........','........'],
  tteok:['........','..wwww..','.wwwwww.','wwgwwgww','wwwwwwww','.wwwwww.','........','........'],
  coin:['..yyyy..','.yyyyyy.','yyykkyyy','yyk..kyy','yyk..kyy','yyykkyyy','.yyyyyy.','..yyyy..'],
@@ -867,6 +879,21 @@ CHARS.gisaeng={name:'기생',seal:'妓',start:'gayageum',trait:'이동 속도 +1
      {name:'의기',skill:'kalbaram',bonus:'공격력 +15%',apply:B=>{B.might+=0.15},look:lk('jeonrip','#c23b2a',{h:'#e0b048',T:'#e0b048',L:'#1a1418',item:'sword'})},
      {name:'검무 대가',skill:'geomgi',bonus:'치명 피해 +30%',apply:B=>{B.critDmg+=0.3},look:lk('jeonrip','#1a2b4a',{h:'#e0b048',T:'#e0b048',C:'#c23b2a',item:'sword'})},
      {name:'검선',skill:'geomseon',bonus:'공격력 +20% · 치명타 +8%',apply:B=>{B.might+=0.2;B.crit+=0.08},look:lk('hwagwan','#efe6d2',{H:'#efe6d2',h:'#d86a8a',T:'#d86a8a',L:'#e0b048',item:'sword',aura:'#ffb0d0'})}]}]};
+CHARS.sangin={name:'상인',seal:'商',start:'jupan',trait:'엽전 +30% · 줍는 범위 +20%',desc:'저잣거리에서 잔뼈가 굵은 장사꾼. 주판알을 튕겨 요괴를 맞히고, 셈이 빠른 만큼 엽전도 잘 모은다.',
+   base:B=>{B.maxHp=95;B.magnet+=0.2;},look:lk('tang','#7a6a4a',{T:'#e0b048',L:'#4a3a30',item:'abacus'}),
+   branches:[
+    {name:'시전의 길',tiers:[
+     {name:'행수',skill:'heungjeong',bonus:'치명타 +6%',apply:B=>{B.crit+=0.06},look:lk('tang','#5a4a3a',{T:'#e0b048',item:'abacus'})},
+     {name:'대행수',skill:'geumnan',bonus:'범위 +10%',apply:B=>{B.area+=0.1},look:lk('gat','#3a5f9e',{T:'#e0b048',item:'abacus'})},
+     {name:'도방',skill:'gaekju',bonus:'최대 체력 +40',apply:B=>{B.maxHp+=40},look:lk('gat','#2f6b5a',{T:'#e0b048',C:'#efe6d2',item:'pouch'})},
+     {name:'대방',skill:'eoeum',bonus:'공격력 +15%',apply:B=>{B.might+=0.15},look:lk('gat','#7a2018',{T:'#e0b048',L:'#e0b048',item:'pouch'})},
+     {name:'거상',skill:'mangeum',bonus:'공격력 +20% · 최대 체력 +50',apply:B=>{B.might+=0.2;B.maxHp+=50},look:lk('gat','#1a2b4a',{h:'#e0b048',T:'#e0b048',L:'#e0b048',C:'#e0b048',item:'abacus',aura:'#ffe080'})}]},
+    {name:'보부상의 길',tiers:[
+     {name:'보상',skill:'bottari',bonus:'이동 속도 +10%',apply:B=>{B.spd+=0.1},look:lk('paraengi','#9a8a6a',{h:'#efe6d2',T:'#4a3a30',item:'jige'})},
+     {name:'접장',skill:'mulmi',bonus:'방어 +1',apply:B=>{B.armor+=1},look:lk('paraengi','#7a6a4a',{h:'#efe6d2',T:'#c23b2a',item:'mulmi'})},
+     {name:'공원',skill:'tongmun',bonus:'공격력 +10%',apply:B=>{B.might+=0.1},look:lk('paraengi','#5a4a3a',{h:'#efe6d2',T:'#e0b048',item:'mulmi'})},
+     {name:'반수',skill:'jangdol',bonus:'재사용 대기 −8%',apply:B=>{B.cd*=0.92},look:lk('paraengi','#3a5f9e',{h:'#efe6d2',T:'#e0b048',item:'jige'})},
+     {name:'도반수',skill:'paldo',bonus:'공격력 +20% · 최대 체력 +50',apply:B=>{B.might+=0.2;B.maxHp+=50},look:lk('paraengi','#2a2228',{h:'#efe6d2',T:'#e0b048',L:'#e0b048',item:'mulmi',aura:'#ffe080'})}]}]};
 const TIER_BONUS=[
  {n:'공격력 +10%',f:B=>{B.might+=0.1}},{n:'최대 체력 +40',f:B=>{B.maxHp+=40}},{n:'재사용 대기 −6%',f:B=>{B.cd*=0.94}},
  {n:'이동 속도 +10%',f:B=>{B.spd+=0.1}},{n:'범위 +10%',f:B=>{B.area+=0.1}},{n:'치명타 +6%',f:B=>{B.crit+=0.06}},
@@ -898,6 +925,9 @@ const PD={
  norigae:{name:'노리개',max:5,job:'gisaeng',desc:'치명타 +4% · 이동 속도 +4%'},
  binyeo:{name:'비녀',max:5,job:'gisaeng',desc:'투사체 속도 +8% · 재사용 대기 −4%'},
  hwagwan:{name:'화관',max:5,job:'gisaeng',desc:'범위 +8% · 경험치 +5%'},
+ jangbu:{name:'치부책',max:5,job:'sangin',desc:'경험치 +6% · 치명타 +3%'},
+ jeondae:{name:'전대',max:5,job:'sangin',desc:'줍는 범위 +20% · 엽전 +20%'},
+ jeoul:{name:'저울',max:5,job:'sangin',desc:'치명 피해 +12% · 공격력 +4%'},
 };
 
 /* ======================= shrine gods (도감 「신」 갈래 + 민간 신앙) ======================= */
@@ -946,6 +976,7 @@ const TASKS=[
  T('s2','첫 고개를 넘다','제2막 도달','maxStage',2,{unlock:'card:yeokma'},'점괘 패 · 역마살'),
  T('c_jangsu','장수의 부름','중간 보스 3마리 퇴치','mids',3,{unlock:'char:jangsu'},'장수 해금'),
  T('c_gisaeng','풍류의 밤','성황당에서 3번 기도','shrines',3,{unlock:'char:gisaeng'},'기생 해금'),
+ T('c_sangin','셈이 빠른 퇴마사','주막에서 엽전 200닢 쓰기','tavern',200,{unlock:'char:sangin'},'상인 해금'),
  T('s3','길이 열리다','제3막 도달','maxStage',3,{unlock:'char:mudang'},'무당 해금'),
  T('s5','절반의 밤','제5막 도달','maxStage',5,{unlock:'card:baekhosal'},'점괘 패 · 백호살'),
  T('s8','먼 바닷가','제8막 도달','maxStage',8,{coins:200},'엽전 200'),
@@ -973,6 +1004,8 @@ const TASKS=[
  T('t5_uiwon','의성이 되다','의원으로 5차 전직','tier_uiwon',5,{coins:150},'엽전 150'),
  T('t5_mudang','무조가 되다','무당으로 5차 전직','tier_mudang',5,{unlock:'card:munchang'},'점괘 패 · 문창성'),
  T('t_gisaeng','기생 1차 전직','기생으로 1차 전직','tier_gisaeng',1,{unlock:'w:janggu'},'장구 해금'),
+ T('t_sangin','상인 1차 전직','상인으로 1차 전직','tier_sangin',1,{unlock:'w:jige'},'등짐 지게 해금'),
+ T('t5_sangin','거상·도반수가 되다','상인으로 5차 전직','tier_sangin',5,{coins:150},'엽전 150'),
  T('t5_gisaeng','국창·검선이 되다','기생으로 5차 전직','tier_gisaeng',5,{coins:150},'엽전 150'),
  T('pet10','짐승과 한 몸','펫 레벨 10 달성','petLv',10,{coins:120},'엽전 120'),
  T('t5_jangsu','대원수가 되다','장수로 5차 전직','tier_jangsu',5,{coins:150},'엽전 150'),
@@ -1000,7 +1033,7 @@ const TASKS=[
  T('ks3','정 많은 퇴마사','정표 3개 받기','ksN',3,{coins:150},'엽전 150'),
  T('curse10','액막이의 끝','액운 10에서 제10막 완주','curseClear',10,{coins:1000},'엽전 1000'),
 ];
-const MAXKEYS=new Set(['maxStage','maxLevel','tier_seonbi','tier_uiwon','tier_mudang','tier_jangsu','tier_gisaeng','curseClear','petLv','ult','bestLoop','comboMax']);
+const MAXKEYS=new Set(['maxStage','maxLevel','tier_seonbi','tier_uiwon','tier_mudang','tier_jangsu','tier_gisaeng','tier_sangin','curseClear','petLv','ult','bestLoop','comboMax']);
 
 /* ======================= weapon / skill archetypes ======================= */
 function rainGlyph(n,dmg,r,chars,spread){const P=G.P;for(let i=0;i<n;i++){const tg=spread?null:randomEnemy();const x=tg?tg.x:P.x+rnd(-W/2,W/2),y=tg?tg.y:P.y+rnd(-H/2,H/2);G.fx.push({t:'glyph',life:9,x,y,h:80+i*(spread?5:14),ch:chars[Math.random()*chars.length|0],dmg,r,big:spread});}}
@@ -1026,7 +1059,7 @@ let CUR_SRC=null,HSRC=null;
 /* ---- 오의 각성 · 한계 돌파 · 궁극 오의 ---- */
 const AWK_LV=[54,58,62,66,70],ULT_LV=74;
 const AWK={echo:{n:'연환',d:'시전하고 0.4초 뒤 한 번 더 시전한다 (두 번째는 위력 60%).'},geuk:{n:'극의',d:'피해 +50% · 범위 +25%.'},sin:{n:'신속',d:'재사용 대기 −35%.'}};
-const AWK_STATIC=new Set(['pansori','ssanggeom','geomseon','mukhyang','gyeongguk','yeokjol','godok','gut','jakduchum','jinogwi','gil','ilwol','sugun']);
+const AWK_STATIC=new Set(['gaekju','tongmun','pansori','ssanggeom','geomseon','mukhyang','gyeongguk','yeokjol','godok','gut','jakduchum','jinogwi','gil','ilwol','sugun']);
 const AWK_NONE=new Set(['hoesaeng']);
 function awkTypes(id){return AWK_NONE.has(id)?[]:AWK_STATIC.has(id)?['geuk']:['echo','geuk','sin'];}
 function runW(w,dt,P){const d=WD[w.id],ak=w.awk,lb=w.lb||0,se=w.seals,gz=G.grazeT>0;
@@ -1040,13 +1073,15 @@ const ULT={
  uiwon:{n:'만병회춘',g:'春',d:'24초마다 체력 35%를 회복하고, 화면 안 요괴 모두에게 독을 퍼뜨려 느리게 한다.'},
  mudang:{n:'천신강림',g:'降',d:'24초마다 하늘 신이 내려와 벼락 열넷을 내리꽂는다.'},
  jangsu:{n:'만군돌격',g:'軍',d:'24초마다 거북선 세 척이 화면을 가로지르며 들이받는다.'},
- gisaeng:{n:'경국지색',g:'色',d:'24초마다 화면 안 요괴를 3초 동안 홀려 멈추고, 꽃바람이 휩쓴다.'}};
+ gisaeng:{n:'경국지색',g:'色',d:'24초마다 화면 안 요괴를 3초 동안 홀려 멈추고, 꽃바람이 휩쓴다.'},
+ sangin:{n:'천하 거상',g:'財',d:'24초마다 하늘에서 금덩이 비가 쏟아져 화면의 요괴를 크게 치고, 엽전이 흩어진다.'}};
 function castUlt(){const P=G.P,s=G.stage,D=(60+45*s)*P.might,u=ULT[G.cid];const pv=CUR_SRC;CUR_SRC='ult';
  toastUlt(className(),u.n);flash('255,230,160',0.25);snd(220,0.5,'sawtooth',0.05);
  if(G.cid==='seonbi'){for(let i=0;i<9;i++){const tg=randomEnemy();warn({x:tg?tg.x:P.x+rnd(-W/2,W/2),y:tg?tg.y:P.y+rnd(-H/2,H/2),r:26*P.area,t:0.5+i*0.08,dmg:D*2,friendly:1,col:'#e0b048'});}}
  else if(G.cid==='uiwon'){heal(P.maxHp*0.35/P.healM);for(const e of G.enemies)if(!e.dead&&!e.prop&&inView(e)){hurt(e,D*1.2,0,0,0,true);e.dotSrc=HSRC||CUR_SRC||e.dotSrc,e.dot=Math.max(e.dot||0,D*0.15);e.dotT=4;e.slow=3;}particle(P.x,P.y-6,'#9af0b0',30,90,0.8);}
  else if(G.cid==='mudang'){for(let i=0;i<14;i++)qpush({t:i*0.12,f:()=>{const e=randomEnemy();if(e)bolt(e.x,e.y,20*P.area,D*1.6);}});}
  else if(G.cid==='jangsu'){for(let i=0;i<3;i++){const dir=i%2?-1:1,y=P.y+(i-1)*40;G.movers.push({x:P.x-dir*(W/2+40),y,vx:dir*190,r:20,dmg:D*2.5,hit:new Set(),life:(W+80)/190+0.3,dir,kind:'ship'});}snd(60,0.6,'sawtooth',0.06);}
+ else if(G.cid==='sangin'){for(let i=0;i<16;i++){const tg=randomEnemy();warn({x:tg?tg.x:P.x+rnd(-W/2,W/2),y:tg?tg.y:P.y+rnd(-H/2,H/2),r:28*P.area,t:0.4+i*0.07,dmg:D*2.2,friendly:1,col:'#e0b048',fx:'gold'});}G.coins+=10+5*G.stage;}
  else if(G.cid==='gisaeng'){for(const e of G.enemies)if(!e.dead&&!e.prop&&inView(e)){if(e.boss)e.slow=3;else e.frz=Math.max(e.frz,3);}G.fx.push({t:'wave',x:P.x,y:P.y,r:4,maxR:160*P.area,dmg:D*1.5,hit:new Set(),life:9,col:'#ffb0d0',kb:80});}
  CUR_SRC=pv;}
 function awkOptions(){const c=[];for(const w of G.weapons){const d=WD[w.id];if(d.type!=='c'||w.awk)continue;for(const t of awkTypes(w.id))c.push({id:w.id,t});}
@@ -1296,6 +1331,59 @@ const WD={
   upd(w,dt,P){w.t-=dt;if(w.t>0)return;volley(L5(w,[8,10,10,10,14])+P.amount*2,L5(w,[24,24,30,30,40])*P.might,5,'knife',260);w.t=L5(w,[2.5,2.5,2.5,2,1.8])*P.cd;}},
  geomseon:{name:'검선 강림',type:'c',g:'仙',col:'#d86a8a',max:5,desc:['떠도는 신검들이 내려와 요괴를 쫓아다니며 벤다.','신검 +1','피해 +','신검 +1','신검 +2, 피해 +25%'],
   upd(w,dt,P){summon(w,L5(w,[3,4,4,5,7])+P.amount,L5(w,[30,30,38,38,48])*P.might,'sword',165);}},
+ /* ===== 상인 ===== */
+ jupan:{name:'주판',type:'w',job:'sangin',max:5,evo:'jangbu',evoName:'천금 주판',evoDesc:'천금을 셈하는 주판이 쉼 없이 튕겨 주판알 열둘을 사방으로 꿰뚫어 보낸다.',
+  desc:['주판알을 튕겨 가까운 요괴에게 부채꼴로 날린다.','알 +1','피해 +20%','관통 +1, 빨라짐','알 +1, 피해 +15%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;
+   if(w.evo){w.spin=(w.spin||0)+0.4;const n=12+P.amount;for(let i=0;i<n;i++)shoot(P.x,P.y-4,w.spin+i/n*TAU,230*P.pspd,'bead',16*P.might,3,0.8,2);w.t=0.85*P.cd;return;}
+   const n=L5(w,[3,4,4,4,5])+P.amount,dmg=L5(w,[9,9,11,11,13])*P.might,pr=L5(w,[1,1,1,2,2]);const tg=nearest(P.x,P.y,220);const a=tg?Math.atan2(tg.y-P.y,tg.x-P.x):Math.atan2(P.diry,P.dirx);
+   for(let i=0;i<n;i++)shoot(P.x,P.y-4,a+(i-(n-1)/2)*0.16,230*P.pspd,'bead',dmg,pr,0.8,2);w.t=L5(w,[1.1,1.1,1.05,0.95,0.9])*P.cd;}},
+ yeopjeon:{name:'엽전 꾸러미',type:'w',job:'sangin',max:5,evo:'jeondae',evoName:'상평통보 비',evoDesc:'상평통보 여섯 닢이 요괴와 요괴 사이를 여섯 번씩 튕겨 다닌다.',
+  desc:['엽전을 던진다. 엽전은 맞힌 요괴에게서 가까운 요괴로 튕겨 간다.','튕김 +1','엽전 +1','피해 +','튕김 +1, 엽전 +1'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=(w.evo?6:L5(w,[1,1,2,2,3]))+P.amount,dmg=(w.evo?20:L5(w,[12,12,12,15,17]))*P.might,bn=w.evo?6:L5(w,[2,3,3,3,4]);
+   for(let i=0;i<n;i++){const tg=randomEnemy(160);const a=tg?Math.atan2(tg.y-P.y,tg.x-P.x)+(i-(n-1)/2)*0.25:Math.random()*TAU;shoot(P.x,P.y-4,a,210*P.pspd,'coin',dmg,1,1.4,2.5,{bounces:bn});}
+   w.t=(w.evo?1.1:L5(w,[1.5,1.4,1.4,1.3,1.2]))*P.cd;}},
+ doe:{name:'됫박',type:'w',job:'sangin',max:5,evo:'myeongtae',evoName:'만석 곳간',evoDesc:'곳간을 열어 쌀을 쏟듯, 요괴 무리 셋 위로 쌀알 장판을 크게 펼쳐 붙잡아 둔다.',
+  desc:['됫박으로 쌀을 퍼서 요괴 무리 위에 뿌린다. 쌀알 장판 위의 요괴는 느려지고 깎인다.','장판 +1','범위 +','피해 +','장판 +1, 오래 남는다'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=w.evo?3:L5(w,[1,2,2,2,3]),R0=(w.evo?34:L5(w,[22,22,26,26,28]))*P.area,dmg=(w.evo?12:L5(w,[6,6,7,9,9]))*P.might;
+   for(let i=0;i<n;i++){const tg=randomEnemy(150);zone({x:tg?tg.x:P.x+rnd(-60,60),y:tg?tg.y:P.y+rnd(-40,40),r:R0,dmg,tick:0.35,life:(w.evo?4:L5(w,[2.5,2.5,2.5,2.5,3.5]))*P.dur,col:'#efe6d2',slow:1,hold:w.evo?1:0,kind:'rice'});}
+   w.t=(w.evo?2.2:L5(w,[2.8,2.6,2.6,2.4,2.4]))*P.cd;}},
+ jige:{name:'등짐 지게',type:'w',job:'sangin',lock:1,max:5,evo:'jeoul',evoName:'천근 지게',evoDesc:'천 근 등짐을 두 번 내리찍어 둘레를 크게 부수고 요괴를 멀리 날린다.',
+  desc:['등에 진 지게를 쿵 내려놓아 둘레의 요괴를 치고 밀어낸다.','범위 +','피해 +','빨라짐','범위 +, 피해 +25%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const R0=(w.evo?72:L5(w,[44,50,50,54,60]))*P.area,dmg=(w.evo?40:L5(w,[22,22,28,28,35]))*P.might,k=w.evo?2:1;
+   for(let i=0;i<k;i++)qpush({t:i*0.3,f:()=>{pulseRing(P.x,P.y,R0,dmg,'#c9a06a',150);G.shake=Math.max(G.shake,meta.set.shake?2:0);particle(P.x,P.y,'#c9a06a',10,60,0.35);snd(90,0.12,'square',0.05);}});
+   w.t=(w.evo?2.2:L5(w,[3,3,3,2.6,2.5]))*P.cd;}},
+ heungjeong:{name:'흥정',type:'c',g:'價',col:'#9a6a10',max:5,desc:['요괴에게 값을 매긴다. 화면 안 요괴 몇에 엽전 표식을 붙이고 친다. 표식이 붙은 요괴는 받는 피해 +50%.','표식 +2','피해 +','빨라짐','표식 +3, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=L5(w,[4,6,6,6,9])+P.amount,dmg=L5(w,[24,24,30,30,40])*P.might;const l=G.enemies.filter(e=>!e.dead&&!e.prop&&!e.inv&&inView(e)).sort((a,b)=>b.hp-a.hp).slice(0,n);
+   for(const e of l){e.mark=G.time+4;hurt(e,dmg,0);G.fx.push({t:'bolt',x:e.x,y:e.y,life:0.15,max:0.15,seed:Math.random()*99});particle(e.x,e.y-6,'#e0b048',4,30,0.4);}
+   w.t=L5(w,[4,4,4,3.4,3.2])*P.cd;}},
+ geumnan:{name:'금난전권',type:'c',g:'禁',col:'#7a2018',max:5,desc:['난전을 금한다. 둘레에 허가 없이 들어온 요괴를 크게 쳐서 멀리 몰아내고 늦춘다.','범위 +','피해 +','빨라짐','범위 +, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const R0=L5(w,[64,72,72,80,88])*P.area,dmg=L5(w,[26,26,34,34,44])*P.might;pulseRing(P.x,P.y,R0,dmg,'#c23b2a',220);for(const e of near(P.x,P.y,R0,TMP2))e.slow=Math.max(e.slow,1.2);
+   w.t=L5(w,[3.6,3.6,3.6,3,2.8])*P.cd;}},
+ gaekju:{name:'객주 짐꾼',type:'c',g:'客',col:'#2f6b5a',max:5,desc:['객주에 묵던 짐꾼들이 달려 나와 지겟작대기로 요괴를 친다.','짐꾼 +1','피해 +','짐꾼 +1','짐꾼 +2, 피해 +25%'],
+  upd(w,dt,P){summon(w,L5(w,[2,3,3,4,6])+P.amount,L5(w,[20,20,26,26,34])*P.might,'porter',125);}},
+ eoeum:{name:'어음',type:'c',g:'票',col:'#e0b048',max:5,desc:['도장 찍힌 어음이 날아가 요괴를 끝까지 쫓아 꿰뚫고, 닿은 자리에서 터진다.','어음 +1','피해 +','어음 +2','빨라짐, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=L5(w,[3,4,4,6,6])+P.amount,dmg=L5(w,[26,26,32,32,42])*P.might;for(let i=0;i<n;i++){const tg=randomEnemy();shoot(P.x,P.y-4,i/n*TAU,170*P.pspd,'letter',dmg,2,2.2,3,{tg,bill:1,boom:12});}
+   w.t=L5(w,[2.6,2.6,2.6,2.6,2.1])*P.cd;}},
+ mangeum:{name:'만금 거래',type:'c',g:'金',col:'#e0b048',max:5,desc:['만금이 오가는 큰 거래. 요괴 무리 위로 금덩이가 쏟아져 크게 터지고 엽전이 흩어진다.','금덩이 +2','피해 +','빨라짐','금덩이 +4, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;toast('만금 거래','big');const n=L5(w,[6,8,8,8,12]),dmg=L5(w,[70,70,90,90,120])*P.might;
+   for(let i=0;i<n;i++){const tg=randomEnemy();warn({x:tg?tg.x:P.x+rnd(-W/2,W/2),y:tg?tg.y:P.y+rnd(-H/2,H/2),r:24*P.area,t:0.5+i*0.06,dmg,friendly:1,col:'#e0b048',fx:'gold'});}
+   w.t=L5(w,[10,10,10,8.5,8])*P.cd;}},
+ bottari:{name:'봇짐 던지기',type:'c',g:'褓',col:'#8a5a2b',max:5,desc:['봇짐을 휘둘러 던진다. 봇짐은 멀리 갔다가 되돌아오며 길 위의 요괴를 친다.','봇짐 +1','피해 +','크기 +','봇짐 +2, 피해 +25%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=L5(w,[2,3,3,3,5])+P.amount,dmg=L5(w,[18,18,24,24,30])*P.might,a0=Math.random()*TAU;
+   for(let i=0;i<n;i++)shoot(P.x,P.y,a0+i/n*TAU,180*P.pspd,'boomer',dmg,99,3,L5(w,[5,5,5,6,6])*P.area,{v0:180*P.pspd,tt:0,bundle:1});w.t=L5(w,[2.4,2.4,2.4,2.4,2])*P.cd;}},
+ mulmi:{name:'물미장',type:'c',g:'杖',col:'#4a3a30',max:5,desc:['쇠고리 달린 물미작대기를 휘둘러 몸 둘레를 두 번 크게 후려친다.','피해 +','범위 +','빨라짐','세 번 후려친다, 피해 +'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const k=w.lv>=5?3:2,R0=L5(w,[46,46,54,54,58])*P.area,dmg=L5(w,[26,32,32,38,48])*P.might;for(let i=0;i<k;i++)qpush({t:i*0.2,f:()=>slash(P.x,P.y,i*Math.PI,R0,dmg,Math.PI,0,'#c9a06a')});w.t=L5(w,[3,3,3,2.5,2.4])*P.cd;}},
+ tongmun:{name:'통문',type:'c',g:'通',col:'#3a5f9e',max:5,desc:['통문을 돌려 팔도의 보부상 동무를 부른다. 동무들이 요괴를 쫓아다니며 친다.','동무 +1','피해 +','동무 +1','동무 +2, 피해 +25%'],
+  upd(w,dt,P){summon(w,L5(w,[2,3,3,4,6])+P.amount,L5(w,[24,24,30,30,40])*P.might,'peddler',140);}},
+ jangdol:{name:'장돌림',type:'c',g:'市',col:'#9a6a10',max:5,desc:['닷새장을 도는 장돌뱅이 수레가 화면을 가로질러 달리며 앞을 막는 요괴를 들이받는다.','수레 +1','피해 +','빨라짐','수레 +2, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=L5(w,[2,3,3,3,5]),dmg=L5(w,[40,40,52,52,68])*P.might;
+   for(let i=0;i<n;i++){const dir=i%2?-1:1,y=P.y+(i-(n-1)/2)*34;G.movers.push({x:P.x-dir*(W/2+30),y,vx:dir*200,r:16,dmg,hit:new Set(),life:(W+60)/200+0.3,dir,kind:'cart'});}
+   w.t=L5(w,[7,7,7,6,5.5])*P.cd;}},
+ paldo:{name:'팔도 행상',type:'c',g:'八',col:'#e0b048',max:5,desc:['팔도의 장터가 한꺼번에 열린다. 여덟 방위에서 짐이 터지고 주판알이 사방으로 흩어진다.','피해 +','범위 +','빨라짐','알 +8, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const R1=L5(w,[60,60,70,70,76])*P.area,dmg=L5(w,[50,60,60,72,90])*P.might;
+   for(let i=0;i<8;i++){const a=i/8*TAU;warn({x:P.x+Math.cos(a)*R1,y:P.y+Math.sin(a)*R1*0.8,r:22*P.area,t:0.45,dmg,friendly:1,col:'#e0b048'});}
+   volley(w.lv>=5?24:16,dmg*0.3,2,'bead',240);w.t=L5(w,[6,6,6,5,4.5])*P.cd;}},
  /* ===== 공용 ===== */
  bangul:{name:'방울',type:'w',max:5,evo:'jipsin',evoName:'대신방울',evoDesc:'방울 소리가 넓게 퍼지고, 소리 안의 요괴는 걸음이 느려진다.',
   desc:['방울 소리가 주위 요괴에게 계속 피해를 준다.','범위 +15%','피해 +1, 빨라짐','범위 +15%','피해 +2'],
@@ -1462,7 +1550,7 @@ meta.set=Object.assign({vol:70,shake:true,nums:true,flash:true,scale:'mid',joy:t
 let LOW=false,autoLow=false;const CAP={p:420,n:240,e:300};
 function applyPerf(){LOW=meta.set.perf==='low'||(meta.set.perf==='auto'&&autoLow);CAP.p=LOW?140:420;CAP.n=LOW?60:240;CAP.e=LOW?200:300;}
 applyPerf();
-if(!meta.unl){meta.unl=['char:seonbi','card:gilil','card:hyungnyeon'];if(meta.best)meta.unl.push('char:uiwon','char:mudang','char:jangsu','char:gisaeng');}
+if(!meta.unl){meta.unl=['char:seonbi','card:gilil','card:hyungnyeon'];if(meta.best)meta.unl.push('char:uiwon','char:mudang','char:jangsu','char:gisaeng','char:sangin');}
 meta.extra=meta.extra||{rr:0,sk:0,bn:0};meta.anom=meta.anom||{};
 meta.upB=meta.upB||{};
 function saveMeta(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(meta));}catch(e){}}
@@ -1493,7 +1581,7 @@ function newGame(cid,card,curse,diff='normal',mode='normal'){
    rr:1+(meta.extra.rr||0)+(meta.upB.rr?0:(m.rr||0)),sk:1+(meta.extra.sk||0)+(meta.upB.rr?(m.rr||0):0),bn:1+(meta.extra.bn||0),
    rs:{kills:0,elites:0,mids:0,pots:0,tteok:0,shrines:0,tavern:0,maxStage:1,maxLevel:1,seen:{},evo:new Set()},
    mods:{eHp:1,eSpd:1,eCnt:1,coin:1,noTteok:false,dmgIn:1,elite:1,choice:0,cls:1,eBul:1,bossHp:1,midUlt:false,extraUlt:false,tteokHeal:1,bossOrder:false,bossCd:1,borrow:0,eliteWithMid:false,jw50:45,jw20:90}};
- C.base(G.base);
+ C.base(G.base);if(cid==='sangin')G.mods.coin*=1.3;
  const B=G.base,M=G.mods;
  {const u=meta.upB;if(u.hp)B.regen+=(m.hp||0)*0.1;else B.maxHp+=(m.hp||0)*10;if(u.might)B.crit+=(m.might||0)*0.03;else B.might+=(m.might||0)*0.05;if(u.spd)B.magnet+=(m.spd||0)*0.12;else B.spd+=(m.spd||0)*0.04;if(u.xp)M.coinShop=1+(m.xp||0)*0.08;else B.xpGain+=(m.xp||0)*0.1;if(u.revive&&m.revive)M.dmgIn*=0.9;}
  switch(card){
@@ -1518,17 +1606,17 @@ function recompute(){const P=G.P,B=G.base,l=id=>G.passives[id]||0,g=id=>G.bless[
  P.maxHp=B.maxHp+l('insam')*20+l('nogyong')*12+l('tugu')*5+g('sansin')*25;
  P.spd=B.spd+l('jipsin')*0.08+l('jeonma')*0.07+l('norigae')*0.04;
  P.area=B.area+l('gat')*0.1+l('osaek')*0.06+g('seonghwang')*0.1+l('hwagwan')*0.08;
- P.magnet=28*(B.magnet+l('yundo')*0.3+l('jeonma')*0.1);
+ P.magnet=28*(B.magnet+l('yundo')*0.3+l('jeonma')*0.1+l('jeondae')*0.2);
  P.cd=B.cd*(1-l('seochaek')*0.08)*(1-l('gunryeong')*0.03)*(1-g('cheongryong')*0.07)*(1-l('binyeo')*0.04);
  P.armor=B.armor+l('gapot')+l('tugu')+g('seongju');
- P.might=B.might+l('hwayak')*0.1+l('gunryeong')*0.06+g('baekho')*0.12+G.stageMight;
+ P.might=B.might+l('hwayak')*0.1+l('gunryeong')*0.06+g('baekho')*0.12+l('jeoul')*0.04+G.stageMight;
  P.dur=B.dur+l('horibyeong')*0.12+l('yeonjeok')*0.06+l('osaek')*0.06+g('seonghwang')*0.1;
  P.regen=B.regen+l('horibyeong')*0.1+l('gamcho')*0.15+l('jeonghwasu')*0.25+g('sansin')*0.3;
- P.xpGain=B.xpGain+l('hongpae')*0.08+l('jeonghwasu')*0.04+g('samsin')*0.12+l('hwagwan')*0.05;
- P.crit=B.crit+l('nakgwan')*0.05+g('chilseong')*0.06+l('norigae')*0.04;P.critDmg=B.critDmg+l('sahyang')*0.15+g('chilseong')*0.15;
+ P.xpGain=B.xpGain+l('hongpae')*0.08+l('jeonghwasu')*0.04+g('samsin')*0.12+l('hwagwan')*0.05+l('jangbu')*0.06;
+ P.crit=B.crit+l('nakgwan')*0.05+g('chilseong')*0.06+l('norigae')*0.04+l('jangbu')*0.03;P.critDmg=B.critDmg+l('sahyang')*0.15+g('chilseong')*0.15+l('jeoul')*0.12;
  P.healM=B.healM+l('gamcho')*0.2;P.iframeB=l('nogyong')*0.06;P.pspd=Math.max(0.5,B.pspd+l('yeonjeok')*0.1+l('binyeo')*0.08);
  P.drop=1+l('myeongtae')*0.25+g('jowang')*0.3;P.amount=B.amount;P.luck=B.luck;
- P.frzCh=g('yong')*0.06;P.burnCh=g('jujak')*0.08;P.coinPlus=g('eopsin');P.tteokM=(1+g('samsin')*0.5)*G.mods.tteokHeal;
+ P.frzCh=g('yong')*0.06;P.burnCh=g('jujak')*0.08;P.coinPlus=g('eopsin')+l('jeondae')*0.2;P.tteokM=(1+g('samsin')*0.5)*G.mods.tteokHeal;
  P.dmgRed=g('seongju')*0.08;if(G.ks==='gukja')P.tteokM*=1.5;
  if(G.dkC){const c=G.dkC;if(c==='slow')P.spd*=0.85;if(c==='heavy')P.cd*=1.15;if(c==='dim')P.magnet*=0.5;if(c==='thirst')P.healM*=0.5;}P.shieldCd=g('hyeonmu')?15-3*g('hyeonmu'):0;
  if(G.callBuff>0)P.cd*=0.5;if(duoOn('suhwa')&&P.shieldCd)P.shieldCd=Math.max(4,P.shieldCd-3);
@@ -1562,7 +1650,11 @@ const FUSE=[
  {id:'f_singihwa',a:'hwasal',b:'singijeon',n:'신기 화살비',cd:5,d:'5초마다 불화살 여섯 발이 하늘에서 요괴 위로 떨어진다.',
   fx(P){const D=FDMG()*2;for(let i=0;i<6;i++){const tg=randomEnemy();warn({x:tg?tg.x:P.x+rnd(-W/2,W/2),y:tg?tg.y:P.y+rnd(-H/2,H/2),r:22*P.area,t:0.5+i*0.07,dmg:D,friendly:1,col:'#ff9a4a'});}}},
  {id:'f_yakbang',a:'bangul',b:'yaktang',n:'약방울',cd:6,d:'6초마다 약 기운 실린 방울 소리가 퍼져 요괴를 늦추고 체력 3%를 되찾는다.',
-  fx(P){G.fx.push({t:'wave',x:P.x,y:P.y,r:4,maxR:110*P.area,dmg:FDMG(),hit:new Set(),life:9,col:'#7fd07f',kb:40,slow:1});heal(P.maxHp*0.03);}}];
+  fx(P){G.fx.push({t:'wave',x:P.x,y:P.y,r:4,maxR:110*P.area,dmg:FDMG(),hit:new Set(),life:9,col:'#7fd07f',kb:40,slow:1});heal(P.maxHp*0.03);}},
+ {id:'f_cheonnyang',a:'jupan',b:'yeopjeon',job:'sangin',n:'천냥 셈판',cd:5,d:'5초마다 주판알 열여섯 알과 튕기는 엽전 여섯 닢이 한꺼번에 사방으로 쏟아진다.',
+  fx(P){const D=FDMG();for(let i=0;i<16;i++)shoot(P.x,P.y-4,i/16*TAU,240*P.pspd,'bead',D,3,0.9,2);for(let i=0;i<6;i++)shoot(P.x,P.y-4,i/6*TAU+0.3,210*P.pspd,'coin',D*1.2,1,1.6,2.5,{bounces:5});}},
+ {id:'f_hanjim',a:'doe',b:'jige',job:'sangin',n:'한 짐 장사',cd:6,d:'6초마다 쌀 한 짐을 쿵 내려놓아 둘레를 크게 부수고, 쌀알 장판 넷을 펼친다.',
+  fx(P){const D=FDMG();pulseRing(P.x,P.y,80*P.area,D*1.8,'#c9a06a',160);for(let i=0;i<4;i++){const a=i/4*TAU+0.4;zone({x:P.x+Math.cos(a)*50,y:P.y+Math.sin(a)*40,r:26*P.area,dmg:D*0.35,tick:0.35,life:3,col:'#efe6d2',slow:1,hold:1,kind:'rice'});}}}];
 for(const f of FUSE){
  WD[f.id]={name:f.n,type:'w',job:f.job,max:5,fuse:f,evoName:f.n,evoDesc:f.d,desc:[`${WD[f.a].evoName}과(와) ${WD[f.b].evoName}이(가) 하나로 합쳐졌다. 두 무기 피해 +20%. ${f.d}`,'','','',''],
   upd(w,dt,P){const m=P.might;P.might*=1.2;try{for(const k of (w.kids||[]))WD[k.id].upd(k,dt,P);}finally{P.might=m;}
@@ -1662,6 +1754,7 @@ const STORY={
  uiwon:['역병 도는 마을에서 살린 아이가 고맙다며 쥐여 준 것은 이름 모를 독초였다.','약과 독은 한 뿌리라는 스승의 말을, 그는 요괴 앞에서 처음 이해했다.','어떤 병은 사람에게서 오지 않았다. 침 끝이 떨리는 곳마다 괴이가 있었다.','모든 괴이를 적고 나서야 알았다. 그가 고친 것은 병이 아니라 세상의 금이었다.'],
  mudang:['신이 처음 내린 밤, 그녀는 울지도 웃지도 않고 방울만 흔들었다.','굿판의 넋들이 말했다. 저승 문이 비뚤어졌다고, 그래서 우리가 돌아온다고.','거꾸로 선 장승 앞에서 그녀는 할머니 무당의 목소리를 들었다.','마지막 넋을 보내고 나서, 무당은 처음으로 제 이름으로 기도했다.'],
  jangsu:['변방에서 돌아온 장수는 칼보다 무거운 것이 있다는 걸 알았다. 지키지 못한 이름들이었다.','적은 오랑캐가 아니었다. 밤마다 진영을 기웃거린 것은 사람 아닌 그림자였다.','거북선이 바다를 가를 때마다, 바다 밑에서 무언가 함께 움직였다.','괴이를 모두 베고 난 새벽, 그는 처음으로 투구를 벗고 잠들었다.'],
+ sangin:['장부 맨 끝 줄에 적힌 외상값 하나. 빚진 이는 사람이 아니었다. 그날부터 주판알이 요괴를 셈했다.','보부상 임방에 돈 통문이 돌았다. 장터마다 사람이 사라진다고. 사라진 자리에는 엽전 한 닢씩이 남아 있었다.','객주 창고 깊은 곳, 아무도 맡긴 적 없는 궤짝이 밤마다 덜컹거렸다. 괴이는 값을 치르지 않은 물건에 깃든다.','마지막 괴이를 장부에 적고 줄을 그었다. 셈이 맞았다. 상인은 처음으로 이문 없는 장사를 마쳤다.'],
  gisaeng:['연회에서 부른 노래 한 가락에 요괴가 눈물을 흘렸다. 그날 그녀는 소리의 힘을 알았다.','칼춤은 원래 칼을 숨기는 춤이었다. 그녀는 그 칼을 처음으로 꺼냈다.','괴이들은 모두 노래를 듣고 싶어 했다. 들어 줄 이가 없어서 비뚤어진 것이었다.','마지막 노래가 끝나자 객석의 그림자들이 하나씩 고개 숙여 인사하고 사라졌다.']};
 const STORY_AT=[2,5,8,12];
 function anomFound(){return Object.keys(meta.anom||{}).length;}
@@ -1993,7 +2086,8 @@ function updProjs(dt,P){
    if(p.dot){e.dotSrc=HSRC||CUR_SRC||e.dotSrc,e.dot=Math.max(e.dot||0,p.dot);e.dotT=p.dotT;e.dotSrc=p.src;if(p.drain)e.drain=p.drain;}
    if(p.bst){G._dg=1;aoe(p.x,p.y,14*G.P.area,p.dmg*0.5,10);G._dg=0;if(Math.random()<0.4)particle(p.x,p.y,'#ffb060',3,40,0.25);}
    if(p.heal){P.healAcc++;if(P.healAcc>=12){P.healAcc=0;heal(1);}}
-   if(p.kind==='pill'){if(p.boom)aoe(p.x,p.y,p.boom,p.dmg*0.6,20);
+   if(p.kind==='letter'&&p.boom){G._dg=1;aoe(p.x,p.y,p.boom*G.P.area,p.dmg*0.4,10);G._dg=0;}
+   if(p.kind==='pill'||p.kind==='coin'){if(p.boom)aoe(p.x,p.y,p.boom,p.dmg*0.6,20);
     let nx=null;if(p.bounces-->0){let bd=90*90;for(const o of G.enemies){if(o.dead||o.prop||p.hit.has(o))continue;const d=(o.x-p.x)**2+(o.y-p.y)**2;if(d<bd){bd=d;nx=o;}}}
     if(nx){const a=Math.atan2(nx.y-p.y,nx.x-p.x),s=Math.hypot(p.vx,p.vy);p.vx=Math.cos(a)*s;p.vy=Math.sin(a)*s;p.life=Math.max(p.life,0.6);}else p.dead=true;break;}
    if(--p.pierce<=0){if(p.bnc>0&&retarget(p)){p.bnc--;p.pierce=1;break;}p.dead=true;break;}}}
@@ -2659,7 +2753,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
  for(const [k,n] of HELP_TABS){const bt=document.createElement('button');bt.setAttribute('role','tab');bt.setAttribute('aria-selected',helpTab===k);bt.textContent=n;bt.onclick=()=>{helpTab=k;renderHelp();};tb.appendChild(bt);}
  const ul=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;let h='';
  if(helpTab==='basic'){
-  h+=hcard('장판과 경고 표식 읽기',ul(['내 장판은 점무늬로 채운 도트 원에 <b>점선 테두리가 돌고</b>, 위쪽 테두리에 <b>그 장판을 만든 무기·기술 아이콘</b>이 붙는다. 아이콘은 왼쪽 위 슬롯 아이콘과 같다.','펫이 깐 장판에는 펫 표식(虎·熊·鷹)이 붙는다.','<b>붉은 점선 원과 가운데 ! 표식</b>은 보스나 요괴의 공격 예고다. 안쪽 점무늬가 바깥 테두리까지 차오르면 터지고, 직전에는 테두리가 깜빡인다.','띠 모양 경고는 돌진·광선 경로다. 화살표(>)가 가리키는 방향으로 온다.']))+hcard('조작',ul(['이동: <b>WASD</b> 또는 방향키. 휴대폰은 화면 아무 곳이나 누른 채 끌면 그쪽으로 걷는다.','공격은 모두 자동이다. 움직이며 피하는 데만 집중하면 된다.','일시정지: <b>ESC</b> 또는 <b>P</b>, 휴대폰은 오른쪽 아래 II 버튼.','<b>캐릭터 상태창</b>: <b>C</b>(또는 Tab) 키나 오른쪽 아래 <b>狀</b> 버튼. 지금 쓰는 무기·직업 기술·보패·축복·정표와 능력치, 무기마다 이번 출정에서 준 피해와 비중을 본다. 열어 둔 동안 게임이 멈춘다. 일시정지 화면에서도 열 수 있다.','레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>X</b> 물리기, <b>B</b> 봉인.']));
+  h+=hcard('장판과 경고 표식 읽기',ul(['내 장판은 점무늬로 채운 도트 원에 <b>점선 테두리가 돌고</b>, 위쪽 테두리에 <b>그 장판을 만든 무기·기술 아이콘</b>이 붙는다. 아이콘은 왼쪽 위 슬롯 아이콘과 같다.','펫이 깐 장판에는 펫 표식(虎·熊·鷹)이 붙는다.','<b>붉은 점선 원과 가운데 ! 표식</b>은 보스나 요괴의 공격 예고다. 안쪽 점무늬가 바깥 테두리까지 차오르면 터지고, 직전에는 테두리가 깜빡인다.','띠 모양 경고는 돌진·광선 경로다. 화살표(>)가 가리키는 방향으로 온다.']))+hcard('조작',ul(['이동: <b>WASD</b> 또는 방향키. 휴대폰은 화면 아무 곳이나 누른 채 끌면 그쪽으로 걷는다.','공격은 모두 자동이다. 움직이며 피하는 데만 집중하면 된다.','일시정지: <b>ESC</b> 또는 <b>P</b>, 휴대폰은 오른쪽 아래 <b>정지</b> 버튼. 오른쪽 아래 버튼은 왼쪽부터 <b>신내림</b>·<b>소리</b>·<b>상태</b>·<b>정지</b>.','<b>캐릭터 상태창</b>: <b>C</b>(또는 Tab) 키나 오른쪽 아래 <b>상태</b> 버튼. 지금 쓰는 무기·직업 기술·보패·축복·정표와 능력치, 무기마다 이번 출정에서 준 피해와 비중을 본다. 열어 둔 동안 게임이 멈춘다. 일시정지 화면에서도 열 수 있다.','레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>X</b> 물리기, <b>B</b> 봉인.']));
   h+=hcard('한 판의 흐름',ul([`막은 모두 10개. 막마다 ${STAGE_T/60}분을 버틴다.`,`${MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.`,'막 보스를 쓰러뜨리면 보물상자를 열고 <b>주막</b>에 들른 뒤 다음 막으로 간다.','요괴가 떨군 구슬로 레벨이 오른다. 레벨이 오를 때마다 무기나 보패 하나를 고른다.','레벨 10·20·30·40·50에 <b>전직</b>한다.']));
   h+=hcard('막 안에서 만나는 것',ul(['<b>엘리트</b>: 금빛 체력 막대가 달린 큰 요괴. 쓰러뜨리면 보물상자를 떨군다.','<b>보물상자</b>: 진화 조건을 갖춘 무기가 있으면 진화시키고, 없으면 가진 것 하나를 강화한다.','<b>성황당</b>: 막마다 두 번 나타난다. 화면 가장자리의 금빛 화살표를 따라가 그 안에 3.5초 머물면 신령의 축복을 받는다.','<b>옹기</b>: 아무 공격에나 깨진다. 떡, 엽전, 복주머니, 큰 구슬이 나온다.','<b>떡</b>은 체력 회복, <b>복주머니</b>는 화면의 구슬을 모두 끌어온다.','레벨 10 전직 직후 <b>펫</b>(범·반달곰·해동청)을 고른다. 자세한 것은 「펫」 탭.','막마다 장애물(장독, 대숲, 바위, 석등, 장승, 비석 등)이 길을 막는다. 날아다니는 요괴와 보스는 넘어온다.']));
   h+=hcard('도사 전우치',ul([`체력이 <b>50%</b> 아래로 떨어지면 전우치가 구름을 타고 나타나 5초 동안 부적과 벼락으로 요괴를 친다. 보통 난이도 기준 ${45}초에 한 번.`,`체력이 <b>20%</b> 아래로 떨어지면 「금강불괴」 도술로 체력을 40% 채워 주고 10초 동안 방어 +5, 받는 피해 −30%를 걸어 준 뒤 5초 동안 함께 싸운다. 보통 난이도 기준 90초에 한 번.`,'쉬움은 더 자주, 어려움은 더 드물게 온다. 화면 오른쪽 위에 다음 출현까지 남은 시간이 보인다.']));
@@ -2691,7 +2785,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
   const prow=id=>{const d=PD[id],ev=Object.keys(WD).filter(k=>WD[k].evo===id).map(k=>`${WD[k].name} → ${WD[k].evoName}`).join(', ');return `<div class="hrow"><span class="ic"><img src="${ICON[id]}" alt=""></span><div><p><b>${d.name}</b> · ${d.desc} <small>(최대 ${d.max}레벨)</small></p>${ev?`<p><small>진화 짝: ${ev}</small></p>`:''}</div></div>`;};
   h+=hcard('공용 보패',Object.keys(PD).filter(k=>!PD[k].job).map(prow).join(''));
   for(const id in CHARS)h+=hcard(`${CHARS[id].name} 전용 보패`,Object.keys(PD).filter(k=>PD[k].job===id).map(prow).join(''));
-  h+=hcard('신내림',`<p>요괴를 잡으면 오른쪽 아래 <b>神 버튼</b>의 게이지가 찬다 (보통 요괴 0.25, 엘리트 6, 중간 보스 25, 막 보스 40, 맞을 때 2). 가득 차면 <b>Space</b> 또는 버튼을 눌러 신령의 힘을 빌린다. 축복을 가장 많이 받은 신령(같으면 먼저 받은 신령)의 기술이 나간다.</p>`+Object.keys(CALL).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:${k==='none'?'#4a3a30':BLESS[k].col}">${CALL[k].g}</span></span><div><p><b>${CALL[k].n}</b>${k==='none'?' (축복이 없을 때)':' · '+BLESS[k].n} — ${CALL[k].d}</p></div></div>`).join(''));
+  h+=hcard('신내림',`<p>요괴를 잡으면 오른쪽 아래 <b>신내림</b> 버튼의 게이지가 찬다 (보통 요괴 0.25, 엘리트 6, 중간 보스 25, 막 보스 40, 맞을 때 2). 가득 차면 <b>Space</b> 또는 버튼을 눌러 신령의 힘을 빌린다. 축복을 가장 많이 받은 신령(같으면 먼저 받은 신령)의 기술이 나간다.</p>`+Object.keys(CALL).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:${k==='none'?'#4a3a30':BLESS[k].col}">${CALL[k].g}</span></span><div><p><b>${CALL[k].n}</b>${k==='none'?' (축복이 없을 때)':' · '+BLESS[k].n} — ${CALL[k].d}</p></div></div>`).join(''));
   h+=hcard('쌍신 축복',`<p>짝이 맞는 두 신령의 축복을 모두 받으면, 다음 축복 고르기에 두 신령이 함께 내리는 쌍신 축복이 섞여 나온다.</p>`+Object.keys(DUO).map(id=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:12px;background:#3a1a4a">${duoG(id)}</span></span><div><p><b>${DUO[id].n}</b> · ${BLESS[DUO[id].a].n} + ${BLESS[DUO[id].b].n} — ${DUO[id].d}</p></div></div>`).join(''));
   h+=hcard('신령 축복',`<p>성황당에서 기도하거나 주막에서 정화수를 사면 신령 셋 가운데 하나의 축복을 고른다. 같은 신령은 3단계까지 깊어진다.</p>`+Object.keys(BLESS).map(id=>`<div class="hrow"><span class="ic">${iconHTML(id)}</span><div><p><b>${BLESS[id].n}</b> · ${BLESS[id].d} <small>(단계마다)</small></p></div></div>`).join('')); }
  if(helpTab==='rule'){
@@ -2746,7 +2840,7 @@ $('#archBack').onclick=()=>{if(archFrom==='hub')openHub();else{renderTitle();sho
 $('#tabRec').onclick=()=>{archTab='rec';renderArch();};$('#tabCls').onclick=()=>{archTab='cls';renderArch();};$('#tabLog').onclick=()=>{archTab='log';renderArch();};
 $('#pauseBtn').onclick=openPause;$('#statBtn').onclick=e=>{e.stopPropagation();openStatus();};$('#pauseStat').onclick=openStatus;$('#statClose').onclick=closeStatus;
 $('#tabStW').onclick=()=>{stTab='w';renderStatus();};$('#tabStP').onclick=()=>{stTab='p';renderStatus();};$('#tabStS').onclick=()=>{stTab='s';renderStatus();};$('#callBtn').onclick=e=>{e.stopPropagation();castCall();};
-$('#muteBtn').onclick=()=>{muted=!muted;$('#muteBtn').textContent=muted?'OFF':'SND';};
+$('#muteBtn').onclick=()=>{muted=!muted;$('#muteBtn').textContent=muted?'소리 끔':'소리';};
 $('#rrBtn').onclick=reroll;$('#skBtn').onclick=skipLevel;$('#bnBtn').onclick=()=>{if(G.bn>0){banMode=!banMode;renderLevel();}};
 bindSettings();
 $('#resetBtn').onclick=()=>{if(!confirm('엽전·과업·해금·본부·기록관을 모두 지우고 처음(선비만)부터 다시 시작합니다. 되돌릴 수 없습니다. 지울까요?'))return;try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.reload();};
@@ -2851,17 +2945,21 @@ function drawHeroBody(){const P=G.P,ps=charSpr(playerLook()),pb=P.moving&&Math.s
 function drawHpBar(){const P=G.P;
  const w=14,x=R(P.x-w/2),y=R(P.y+2);b.fillStyle='#000';b.fillRect(x-1,y-1,w+2,4);b.fillStyle='#5a1a14';b.fillRect(x,y,w,2);b.fillStyle='#d24a34';b.fillRect(x,y,R(w*clamp(P.hp/P.maxHp,0,1)),2);}
 function drawSpirit(s){const x=R(s.x),y=R(s.y+Math.sin(s.ph)*2);
+ if(s.look==='porter'||s.look==='peddler'){drawSpr(s.look==='porter'?SPR_PT:SPR_BS,x,y+4,s.fx<0,false);b.fillStyle='#4a3a30';b.fillRect(x+(s.fx>0?3:-5),y-8+(Math.sin(s.ph*3)>0?0:2),1,9);if(s.look==='peddler'){b.fillStyle='#8a8494';b.fillRect(x+(s.fx>0?3:-5),y+1,1,1);}return;}
  if(s.look==='yeokjol'||s.look==='navy'){drawSpr(s.look==='navy'?NAVY:SPR_YJ,x,y+4,s.fx<0,false);b.fillStyle=s.look==='navy'?'#8a8494':'#8a5a2b';if(s.look==='navy')b.fillRect(x+(s.fx>0?3:-4),y-10,1,12);else b.fillRect(x+(s.fx>0?3:-5),y-6+(Math.sin(s.ph*3)>0?0:2),2,6);return;}
  if(s.look==='sword'){b.save();b.translate(x,y-6);b.rotate(Math.sin(s.ph)*0.5+(s.fx>0?0.6:-0.6));b.fillStyle='#ffd0e0';b.globalAlpha=0.5;b.fillRect(-2,-7,4,12);b.globalAlpha=1;b.fillStyle='#dfe6f0';b.fillRect(-1,-7,2,9);b.fillStyle='#e0b048';b.fillRect(-2,2,4,1);b.fillStyle='#c23b2a';b.fillRect(-1,3,2,2);b.restore();return;}
  if(s.look==='bug'){b.fillStyle='#7a3aa0';b.fillRect(x-2,y-2,4,3);b.fillStyle='#c080ff';b.fillRect(x-3,y-3+(Math.sin(s.ph*6)>0?0:1),1,1);b.fillRect(x+2,y-3+(Math.sin(s.ph*6)>0?1:0),1,1);return;}
  const temp=s.life!==undefined;b.globalAlpha=temp?0.7:0.85;b.fillStyle=s.look==='soul'?'#e0e8ff':(temp?'#ffd0a0':'#8fd3ff');b.fillRect(x-3,y-6,6,5);b.fillRect(x-2,y-7,4,1);b.fillRect(x-3,y-1,1,2);b.fillRect(x,y-1,1,2);b.fillRect(x+2,y-1,1,2);b.fillStyle='#1a2b4a';b.fillRect(x-2,y-5,1,1);b.fillRect(x+1,y-5,1,1);if(s.look!=='soul'){b.fillStyle='#e0b048';b.fillRect(x-3,y-8,6,1);}b.globalAlpha=1;}
+const SPR_PT=variants(mk(['.o....o.','.oooooo.','.oSSSSo.','.oskkso.','..ssss..','.nnnnnn.','snwwwwns','.nnnnnn.','.nn..nn.','.kk..kk.'],{...PAL,S:'#c9a06a'}));
+const SPR_BS=variants(mk(['w.kkkk.w','.kkkkkk.','..ssss..','..skks..','..ssss..','.oooooo.','soyyyyos','.oooooo.','.oo..oo.','.kk..kk.']));
 const SPR_YJ=variants(mk(['..kkkk..','.kkkkkk.','..ssss..','..skks..','..ssss..','.kkkkkk.','skrrrrks','.kkkkkk.','.kk..kk.','.kk..kk.']));
 const NAVY=variants(mk(['...rr...','..xxxx..','..ssss..','..skks..','..ssss..','.BBBBBB.','sByyyyBs','.BBBBBB.','.BB..BB.','.kk..kk.']));
 function drawJW(){const h=G.helper;if(!h)return;const s=charSpr(JW_LOOK),fade=Math.min(1,h.t*2);
  b.globalAlpha=fade*0.9;b.fillStyle='#efe6d2';for(const [ox,oy,r] of [[-6,1,3],[0,0,4],[6,1,3],[3,2,3],[-3,2,3]]){b.beginPath();b.arc(R(h.x+ox),R(h.y+oy),r,0,TAU);b.fill();}
  b.globalAlpha=fade*0.35;for(let i=0;i<2;i++){const a=h.ph*3+i*Math.PI;drawSpr(s,h.x+Math.cos(a)*14,h.y-1+Math.sin(a)*5,i===0,false);}
  b.globalAlpha=fade;drawSpr(s,h.x,h.y-1,G.P.x<h.x,false);b.globalAlpha=1;}
-function drawShip(m){const x=R(m.x),y=R(m.y),d=m.dir;b.save();b.translate(x,y);b.scale(d,1);
+function drawCart(m){const x=R(m.x),y=R(m.y),d=m.dir;b.save();b.translate(x,y);b.scale(d,1);b.fillStyle='#6a4a2a';b.fillRect(-12,-8,22,6);b.fillStyle='#c9a06a';b.fillRect(-11,-14,8,6);b.fillRect(-2,-13,7,5);b.fillStyle='#efe6d2';b.fillRect(-10,-13,2,1);b.fillStyle='#4a3a30';b.fillRect(10,-6,8,1);const sp=Math.floor(G.time*12)%2;b.fillStyle='#2a1a10';b.fillRect(-9,-3,5,5);b.fillRect(3,-3,5,5);b.fillStyle='#8a6a4a';b.fillRect(-7+sp,-1,1,1);b.fillRect(5+sp,-1,1,1);drawSpr(SPR_BS,15,2,false,false);b.restore();}
+function drawShip(m){if(m.kind==='cart'){drawCart(m);return;}const x=R(m.x),y=R(m.y),d=m.dir;b.save();b.translate(x,y);b.scale(d,1);
  b.fillStyle='#4a2a18';b.fillRect(-18,-4,34,8);b.fillStyle='#6a3a20';b.fillRect(-16,-10,30,7);b.fillStyle='#2a1a10';for(let i=-14;i<12;i+=4)b.fillRect(i,-11,1,2);
  b.fillStyle='#c23b2a';b.fillRect(14,-12,6,5);b.fillStyle='#e0b048';b.fillRect(18,-11,1,1);b.fillStyle='#efe6d2';for(let i=-14;i<12;i+=6)b.fillRect(i,1,2,2);
  b.fillStyle='#8fd3ff';b.globalAlpha=0.5;b.fillRect(-20,4,38,2);b.globalAlpha=1;b.restore();}
@@ -2960,9 +3058,11 @@ function render(){
    case 'arrow':b.strokeStyle='#c9a06a';b.lineWidth=1;b.beginPath();b.moveTo(x-Math.cos(a)*6,y-Math.sin(a)*6);b.lineTo(x,y);b.stroke();b.fillStyle='#efe6d2';b.fillRect(x,y,1,1);break;
    case 'rocket':b.fillStyle='#ffb04a';b.fillRect(x-1,y-1,3,3);b.fillStyle='#fff3c0';b.fillRect(x,y,1,1);break;
    case 'ball':b.fillStyle='#1a1418';b.beginPath();b.arc(x,y,3,0,TAU);b.fill();b.fillStyle='#8a8494';b.fillRect(x-1,y-2,1,1);break;
-   case 'boomer':{b.save();b.translate(x,y);b.rotate(p.spin||0);const s=R(p.r);b.fillStyle='#2a2830';b.fillRect(-s,-s*0.6,s*2,s*1.2);b.fillStyle='#14121a';b.fillRect(-s+1,-s*0.6+1,s,s*1.2-2);b.restore();break;}
+   case 'boomer':{b.save();b.translate(x,y);b.rotate(p.spin||0);const s=R(p.r);if(p.bundle){b.fillStyle='#8a5a2b';b.fillRect(-s,-s*0.7,s*2,s*1.4);b.fillStyle='#c9a06a';b.fillRect(-1,-s*0.7,2,s*1.4);b.fillStyle='#4a3a30';b.fillRect(-2,-s*0.7-2,4,2);b.restore();break;}b.fillStyle='#2a2830';b.fillRect(-s,-s*0.6,s*2,s*1.2);b.fillStyle='#14121a';b.fillRect(-s+1,-s*0.6+1,s,s*1.2-2);b.restore();break;}
    case 'wind':b.globalAlpha=clamp(p.life*2,0,1);b.strokeStyle='#efe6d2';b.lineWidth=1;b.beginPath();b.arc(x-Math.cos(a)*p.r*0.5,y-Math.sin(a)*p.r*0.5,p.r,a-0.9,a+0.9);b.stroke();b.beginPath();b.arc(x-Math.cos(a)*p.r,y-Math.sin(a)*p.r,p.r,a-0.6,a+0.6);b.stroke();b.globalAlpha=1;break;
-   case 'letter':b.save();b.translate(x,y);b.rotate(a);b.fillStyle='#efe6d2';b.fillRect(-3,-2,6,4);b.fillStyle='#c23b2a';b.fillRect(0,-1,1,2);b.restore();break;
+   case 'letter':b.save();b.translate(x,y);b.rotate(a);b.fillStyle=p.bill?'#f6e7b0':'#efe6d2';b.fillRect(-3,-2,6,4);b.fillStyle='#c23b2a';if(p.bill){b.fillRect(-2,-1,2,2);b.fillStyle='#9a6a10';b.fillRect(1,-1,2,1);}else b.fillRect(0,-1,1,2);b.restore();break;
+   case 'bead':b.fillStyle='#4a2a18';b.fillRect(x-1,y-1,3,3);b.fillStyle='#c9a06a';b.fillRect(x,y-1,1,1);break;
+   case 'coin':b.fillStyle='#e0b048';b.fillRect(x-2,y-1,5,3);b.fillRect(x-1,y-2,3,5);b.fillStyle='#4a3a10';b.fillRect(x,y,1,1);break;
    case 'jtal':b.save();b.translate(x,y);b.rotate(a);b.fillStyle='#e0b048';b.fillRect(-3,-2,6,4);b.fillStyle='#c23b2a';b.fillRect(-1,-1,3,1);b.fillRect(0,0,1,1);b.restore();break;
    case 'note':b.fillStyle='#ffb0d0';b.fillRect(x-2,y,3,2);b.fillRect(x,y-4,1,4);b.fillRect(x+1,y-4,2,1);break;
    case 'cup':b.fillStyle='#8a8494';b.fillRect(x-2,y-2,4,4);b.fillStyle='#c23b2a';b.fillRect(x-1,y,2,1);break;
@@ -3005,7 +3105,7 @@ function blit(){if(!buf.width||!buf.height||!cvs.width||!cvs.height)return;ctx.i
 
 function hud(){const P=G.P;$('#xpfill').style.width=clamp(P.xp/P.next,0,1)*100+'%';$('#lvl').textContent='LV '+P.lvl;
  const rem=G.bossDone?0:Math.max(0,STAGE_T-G.st);$('#clock').textContent=G.boss?'BOSS':G.mode==='rush'?`원정 ${G.stage+1}/${STAGES.length}`:(G.st>=STAGE_T&&G.mid?'MID':fmtT(rem));
- {const cb=$('#callBtn'),k=callGod();cb.style.setProperty('--p',Math.floor(G.call));cb.classList.toggle('ready',G.call>=100);$('#callG').textContent=CALL[k].g;cb.title=`신내림 · ${CALL[k].n} (Space)`;}
+ {const cb=$('#callBtn'),k=callGod();cb.style.setProperty('--p',Math.floor(G.call));cb.classList.toggle('ready',G.call>=100);cb.title=`신내림 · ${CALL[k].n} (Space)`;}
  $('#stats').innerHTML=`처치 ${G.kills}<br><span class="c">엽전 ${G.coins}</span><br>전우치 ${G.helper?'출현':(G.jw.cd50>0?Math.ceil(G.jw.cd50)+'s':'대기')}${G.sky&&G.sky.t>0?`<br><span style="color:${SKY[G.sky.k].col}">${SKY[G.sky.k].n}·${G.sky.n} ${Math.ceil(G.sky.t)}s</span>`:''}${G.path?`<br><span style="color:${G.path.hard?'#ff8a6a':'#9af0b0'}">길 끝: ${PATHS[G.path.id].s}${G.path.hard?' ×2':''}</span>`:''}${G.q?`<br><span style="color:${G.q.done?'#9af0b0':'#efe6d2'}">의뢰 ${QUESTS[G.q.id].n} ${G.q.done?'완료':questProg()+'/'+G.q.need}</span>`:''}${G.cb.n>=10?`<br><span style="color:${['#efe6d2','#ffd080','#ffb060','#ff8a6a','#ff5a8a'][cbTier()]}">연격 ${G.cb.n}</span>`:''}${G.dkC?`<br><span style="color:#5af0d0">짐 ${DKC[G.dkC].n}</span>`:''}${G.guardT>0?`<br>철갑 ${Math.ceil(G.guardT)}s`:G.seongT>0?`<br>수호 ${Math.ceil(G.seongT)}s`:G.callBuff>0?`<br>청룡 ${Math.ceil(G.callBuff)}s`:''}`;
  const bt=G.boss||G.mid,bb=$('#bossbar');
  if(bt){bb.hidden=false;bb.classList.toggle('mid',!!bt.mid);const a=bt.act;$('#bossname').textContent=EN[bt.bossKind].n+(a?` · ${BSK[a].label}`:'');
