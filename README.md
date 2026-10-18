@@ -67,7 +67,7 @@
 | 60초 | **중간 보스** 등장. 어려움 난이도에서는 엘리트와 함께 나온다. |
 | 120초 이후 | 중간 보스를 쓰러뜨렸다면 **막 보스** 등장. 쓰러뜨리지 못했다면 막 보스는 나오지 않는다. |
 | 막 평정 | 도깨비 보물(샛길에 들었다면) → 갈림길 보상(대장간이면 **담금질**) → 보물 상자 → **주막**에서 엽전으로 정비 → **갈림길**에서 다음 길 선택 |
-| 제10막 평정 | 출정 성공. 여기서 마치거나 **끝없는 밤**으로 이어 간다. 남은 엽전은 상점 엽전이 된다. |
+| 제10막 평정 | 출정 성공. 여기서 마치거나 **끝없는 밤**으로 이어 간다. 남은 엽전은 수련 도장에서 쓰는 엽전이 된다. |
 | 출정이 끝나면 | 이기든 쓰러지든 **퇴마사 본부**로 돌아온다. 식구와 이야기하고 막걸리를 건네 **정표**를 받는다. 이번 출정은 날짜와 함께 **기록관**에 남는다. |
 
 - **레벨업:** 세 장(운이 좋으면 네 장) 가운데 하나를 고른다. **산통 흔들기**(새로 뽑기), **물리기**(건너뛰고 엽전 5닢), **봉인**(이번 출정에서 다시 안 나오게)을 쓸 수 있다.
@@ -818,9 +818,9 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 
 | 난이도 | 내용 |
 |---|---|
-| 쉬움 | 요괴 체력 −30%, 받는 피해 −30%. 보스는 정해진 순서대로 기술을 쓰고 기술 사이 쉬는 틈이 길다. 중간 보스가 있는 동안 엘리트가 나오지 않는다. 전우치가 더 자주 온다. 상점 엽전 −30%. |
+| 쉬움 | 요괴 체력 −30%, 받는 피해 −30%. 보스는 정해진 순서대로 기술을 쓰고 기술 사이 쉬는 틈이 길다. 중간 보스가 있는 동안 엘리트가 나오지 않는다. 전우치가 더 자주 온다. 출정 뒤 엽전 −30%. |
 | 보통 | 보스는 자기 기술 가운데 무작위로 골라 쓴다. 중간 보스가 있는 동안 엘리트가 나오지 않는다. |
-| 어려움 | 요괴 체력 +35%, 받는 피해 +25%. 보스마다 다른 보스의 기술 두 가지를 무작위로 빌려 와 섞어 쓰고, 기술 사이 틈이 짧다. 중간 보스도 필살기를 쓰며 엘리트를 거느리고 나온다. 전우치가 드물게 온다. 상점 엽전 +30%. |
+| 어려움 | 요괴 체력 +35%, 받는 피해 +25%. 보스마다 다른 보스의 기술 두 가지를 무작위로 빌려 와 섞어 쓰고, 기술 사이 틈이 짧다. 중간 보스도 필살기를 쓰며 엘리트를 거느리고 나온다. 전우치가 드물게 온다. 출정 뒤 엽전 +30%. |
 
 ### 점괘 패 (출정마다 한 장)
 
@@ -840,7 +840,7 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 
 ### 액운 단계
 
-제10막을 완주하면 다음 단계가 열립니다. 단계는 앞 단계의 효과를 모두 안고 가며, 단계마다 상점 엽전이 15% 더 붙습니다.
+제10막을 완주하면 다음 단계가 열립니다. 단계는 앞 단계의 효과를 모두 안고 가며, 단계마다 출정 뒤 받는 엽전이 15% 더 붙습니다.
 
 | 단계 | 추가 효과 |
 |---|---|
@@ -903,8 +903,152 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 
 ### 퇴마록
 
-- **과업 63개:** 요괴 처치 수, 막 도달, 전직, 진화, 각성 같은 목표를 이루면 엽전·캐릭터·무기·점괘 패·산통 같은 보상이 열립니다. 처음에는 선비만 고를 수 있고, 나머지 퇴마사는 과업으로 해금합니다.
+- **과업 103개:** 요괴 처치 수, 막 도달, 전직, 진화, 각성 같은 목표를 이루면 엽전·캐릭터·무기·점괘 패·산통 같은 보상이 열립니다. 처음에는 선비만 고를 수 있고, 나머지 퇴마사는 과업으로 해금합니다.
 - **요괴 도감:** 만난 요괴 58종의 이름·설명·퇴치 수가 기록됩니다.
+- **괴이록:** 조사한 괴이와 퇴마사별 이야기 조각이 기록됩니다.
+
+### 과업 목록과 휘장
+
+과업마다 도트 휘장이 있습니다. 이루지 못한 과업은 퇴마록에서 휘장이 어둡게 보이고, 이루는 순간 게임 화면 오른쪽 위에 휘장과 함께 「과업 달성」 알림이 5초 동안 떴다가 사라집니다. (Steam 도전 과제에서 착안)
+
+
+#### 공통 과업 (58)
+
+| 휘장 | 과업 | 조건 | 보상 |
+|:---:|---|---|---|
+| <img src="docs/img/task_k100.png" height="32" alt=""> | 첫 퇴마 | 요괴 100마리 퇴치 | 엽전 20 |
+| <img src="docs/img/task_k1000.png" height="32" alt=""> | 손에 익은 퇴마 | 요괴 1,000마리 퇴치 | 의원 해금 |
+| <img src="docs/img/task_k5000.png" height="32" alt=""> | 이름난 퇴마사 | 요괴 5,000마리 퇴치 | 산통 흔들기 +1 |
+| <img src="docs/img/task_k20000.png" height="32" alt=""> | 요괴의 천적 | 요괴 20,000마리 퇴치 | 점괘 패 · 천살 |
+| <img src="docs/img/task_s2.png" height="32" alt=""> | 첫 고개를 넘다 | 제2막 도달 | 점괘 패 · 역마살 |
+| <img src="docs/img/task_s3.png" height="32" alt=""> | 길이 열리다 | 제3막 도달 | 무당 해금 |
+| <img src="docs/img/task_s5.png" height="32" alt=""> | 절반의 밤 | 제5막 도달 | 점괘 패 · 백호살 |
+| <img src="docs/img/task_s8.png" height="32" alt=""> | 먼 바닷가 | 제8막 도달 | 엽전 200 |
+| <img src="docs/img/task_clear.png" height="32" alt=""> | 새벽을 맞다 | 제10막 그슨대 퇴치 | 점괘 패 · 천을귀인, 액운 1 |
+| <img src="docs/img/task_b_dok.png" height="32" alt=""> | 도깨비 방망이 | 대장 도깨비 퇴치 | 엽전 30 |
+| <img src="docs/img/task_b_fox.png" height="32" alt=""> | 여우 사냥 | 구미호 퇴치 | 점괘 패 · 도화살 |
+| <img src="docs/img/task_b_imugi.png" height="32" alt=""> | 승천을 막다 | 이무기 퇴치 | 물리기 +1 |
+| <img src="docs/img/task_b_saja.png" height="32" alt=""> | 명부를 찢다 | 저승사자 퇴치 | 봉인 +1 |
+| <img src="docs/img/task_b_bul.png" height="32" alt=""> | 쇠를 먹는 괴물 | 불가사리 퇴치 | 점괘 패 · 홍수 |
+| <img src="docs/img/task_elite10.png" height="32" alt=""> | 엘리트 사냥꾼 | 엘리트 10마리 퇴치 | 신기전 해금 |
+| <img src="docs/img/task_mid10.png" height="32" alt=""> | 중간 보스 사냥 | 중간 보스 10마리 퇴치 | 엽전 120 |
+| <img src="docs/img/task_tteok20.png" height="32" alt=""> | 떡 좋아하는 퇴마사 | 떡 20개 먹기 | 약탕 해금 |
+| <img src="docs/img/task_pot30.png" height="32" alt=""> | 옹기 깨기 | 옹기 30개 깨기 | 엽전 40 |
+| <img src="docs/img/task_shrine5.png" height="32" alt=""> | 기도하는 손 | 성황당에서 5번 기도 | 점괘 패 · 삼재 |
+| <img src="docs/img/task_shrine20.png" height="32" alt=""> | 신령의 벗 | 성황당에서 20번 기도 | 산통 흔들기 +1 |
+| <img src="docs/img/task_tav100.png" height="32" alt=""> | 주막 단골 | 주막에서 엽전 100닢 쓰기 | 점괘 패 · 장원급제 |
+| <img src="docs/img/task_evo1.png" height="32" alt=""> | 첫 진화 | 무기 하나를 진화 | 엽전 50 |
+| <img src="docs/img/task_evo6.png" height="32" alt=""> | 진화의 대가 | 서로 다른 무기 6종 진화 | 봉인 +1 |
+| <img src="docs/img/task_lv30.png" height="32" alt=""> | 깊어진 수련 | 한 출정에서 레벨 30 도달 | 물리기 +1 |
+| <img src="docs/img/task_pet10.png" height="32" alt=""> | 짐승과 한 몸 | 펫 레벨 10 달성 | 엽전 120 |
+| <img src="docs/img/task_dogam30.png" height="32" alt=""> | 요괴 도감 절반 | 요괴 30종 만나기 | 엽전 100 |
+| <img src="docs/img/task_dogam58.png" height="32" alt=""> | 요괴 도감 완성 | 요괴 58종 모두 만나기 | 엽전 300 |
+| <img src="docs/img/task_curse5.png" height="32" alt=""> | 액운을 이기다 | 액운 5에서 제10막 완주 | 엽전 500 |
+| <img src="docs/img/task_awk1.png" height="32" alt=""> | 첫 깨달음 | 오의 각성 1번 | 엽전 60 |
+| <img src="docs/img/task_ult1.png" height="32" alt=""> | 궁극에 이르다 | 궁극 오의 깨치기 | 엽전 150 |
+| <img src="docs/img/task_duo1.png" height="32" alt=""> | 두 신의 가호 | 쌍신 축복 받기 | 엽전 80 |
+| <img src="docs/img/task_call30.png" height="32" alt=""> | 신이 내리다 | 신내림 30번 쓰기 | 산통 흔들기 +1 |
+| <img src="docs/img/task_fuse1.png" height="32" alt=""> | 두 무기가 하나로 | 합공 1번 | 엽전 100 |
+| <img src="docs/img/task_seal10.png" height="32" alt=""> | 인장 장인 | 인장 10개 새기기 | 엽전 60 |
+| <img src="docs/img/task_graze100.png" height="32" alt=""> | 스치는 바람 | 요괴 탄 100번 스치기 | 물리기 +1 |
+| <img src="docs/img/task_loop1.png" height="32" alt=""> | 끝없는 밤 | 끝없는 밤으로 들어서기 | 엽전 200 |
+| <img src="docs/img/task_rush1.png" height="32" alt=""> | 원정길에 오르다 | 퇴마 원정 보스 3마리 쓰러뜨리기 | 엽전 80 |
+| <img src="docs/img/task_rush10.png" height="32" alt=""> | 열 번의 원정 | 퇴마 원정 완주 | 엽전 300 |
+| <img src="docs/img/task_var100.png" height="32" alt=""> | 변종 사냥꾼 | 변종 요괴 100마리 퇴치 | 산통 흔들기 +1 |
+| <img src="docs/img/task_anom6.png" height="32" alt=""> | 괴이 탐문 | 괴이 6종 조사 | 엽전 120 |
+| <img src="docs/img/task_anom12.png" height="32" alt=""> | 괴이록 완성 | 괴이 12종 모두 조사 | 봉인 +1 |
+| <img src="docs/img/task_temper1.png" height="32" alt=""> | 명장의 손 | 담금질 1번 | 엽전 60 |
+| <img src="docs/img/task_temper10.png" height="32" alt=""> | 버릇을 바꾸다 | 담금질 10번 | 봉인 +1 |
+| <img src="docs/img/task_dk1.png" height="32" alt=""> | 도깨비와 거래 | 도깨비 샛길에 들기 | 엽전 60 |
+| <img src="docs/img/task_quest10.png" height="32" alt=""> | 의뢰 해결사 | 막 의뢰 10번 완료 | 산통 흔들기 +1 |
+| <img src="docs/img/task_combo300.png" height="32" alt=""> | 끊이지 않는 칼 | 연격 300 잇기 | 물리기 +1 |
+| <img src="docs/img/task_ks3.png" height="32" alt=""> | 정 많은 퇴마사 | 정표 3개 받기 | 엽전 150 |
+| <img src="docs/img/task_k50000.png" height="32" alt=""> | 백귀야행을 끊다 | 요괴 50,000마리 퇴치 | 엽전 500 |
+| <img src="docs/img/task_allchar.png" height="32" alt=""> | 여섯 퇴마사 | 퇴마사 여섯 모두 해금 | 엽전 300 |
+| <img src="docs/img/task_runs30.png" height="32" alt=""> | 서른 번의 밤 | 출정 30번 | 산통 흔들기 +1 |
+| <img src="docs/img/task_combo1000.png" height="32" alt=""> | 천 번의 칼끝 | 연격 1,000 잇기 | 엽전 200 |
+| <img src="docs/img/task_loop3.png" height="32" alt=""> | 세 바퀴의 밤 | 끝없는 밤 3바퀴 들어서기 | 엽전 400 |
+| <img src="docs/img/task_quest30.png" height="32" alt=""> | 마을의 해결사 | 막 의뢰 30번 완료 | 엽전 250 |
+| <img src="docs/img/task_graze1000.png" height="32" alt=""> | 바람을 걷는 자 | 요괴 탄 1,000번 스치기 | 엽전 200 |
+| <img src="docs/img/task_evo12.png" height="32" alt=""> | 열두 가지 진화 | 서로 다른 무기 12종 진화 | 봉인 +1 |
+| <img src="docs/img/task_dk10.png" height="32" alt=""> | 도깨비의 단골 | 도깨비 샛길에 10번 들기 | 엽전 200 |
+| <img src="docs/img/task_lv100.png" height="32" alt=""> | 백 번의 깨달음 | 한 출정에서 레벨 100 도달 | 엽전 300 |
+| <img src="docs/img/task_curse10.png" height="32" alt=""> | 액막이의 끝 | 액운 10에서 제10막 완주 | 엽전 1000 |
+
+#### <img src="docs/img/charS_seonbi.png" width="24" alt=""> 선비 과업 (7)
+
+| 휘장 | 과업 | 조건 | 보상 |
+|:---:|---|---|---|
+| <img src="docs/img/task_t_seonbi.png" height="32" alt=""> | 선비 1차 전직 | 선비로 1차 전직 | 서찰 해금 |
+| <img src="docs/img/task_t5_seonbi.png" height="32" alt=""> | 성현이 되다 | 선비로 5차 전직 | 엽전 150 |
+| <img src="docs/img/task_j_k_seonbi.png" height="32" alt=""> | 문방사우의 힘 | 선비로 요괴 3,000마리 퇴치 | 엽전 120 |
+| <img src="docs/img/task_j_b0_seonbi.png" height="32" alt=""> | 성현의 반열 | 학문의 길에서 5차 전직(성현) | 엽전 200 |
+| <img src="docs/img/task_j_b1_seonbi.png" height="32" alt=""> | 도체찰사의 마패 | 감찰의 길에서 5차 전직(도체찰사) | 엽전 200 |
+| <img src="docs/img/task_j_e_seonbi.png" height="32" alt=""> | 먹이 마르기 전에 | 먹탄을 일필휘지로 진화 | 엽전 100 |
+| <img src="docs/img/task_j_c_seonbi.png" height="32" alt=""> | 선비의 새벽 | 선비로 제10막 평정 | 엽전 300 |
+
+#### <img src="docs/img/charS_uiwon.png" width="24" alt=""> 의원 과업 (7)
+
+| 휘장 | 과업 | 조건 | 보상 |
+|:---:|---|---|---|
+| <img src="docs/img/task_t_uiwon.png" height="32" alt=""> | 의원 1차 전직 | 의원으로 1차 전직 | 환약 해금 |
+| <img src="docs/img/task_t5_uiwon.png" height="32" alt=""> | 의성이 되다 | 의원으로 5차 전직 | 엽전 150 |
+| <img src="docs/img/task_j_k_uiwon.png" height="32" alt=""> | 백 사람을 살린 손 | 의원으로 요괴 3,000마리 퇴치 | 엽전 120 |
+| <img src="docs/img/task_j_b0_uiwon.png" height="32" alt=""> | 의성의 경지 | 내의원의 길에서 5차 전직(의성) | 엽전 200 |
+| <img src="docs/img/task_j_b1_uiwon.png" height="32" alt=""> | 독왕의 경지 | 독술의 길에서 5차 전직(독왕) | 엽전 200 |
+| <img src="docs/img/task_j_e_uiwon.png" height="32" alt=""> | 약과 독은 한 뿌리 | 은침을 회춘침으로 진화 | 엽전 100 |
+| <img src="docs/img/task_j_c_uiwon.png" height="32" alt=""> | 의원의 새벽 | 의원으로 제10막 평정 | 엽전 300 |
+
+#### <img src="docs/img/charS_mudang.png" width="24" alt=""> 무당 과업 (7)
+
+| 휘장 | 과업 | 조건 | 보상 |
+|:---:|---|---|---|
+| <img src="docs/img/task_t_mudang.png" height="32" alt=""> | 무당 1차 전직 | 무당으로 1차 전직 | 명두 해금 |
+| <img src="docs/img/task_t5_mudang.png" height="32" alt=""> | 무조가 되다 | 무당으로 5차 전직 | 점괘 패 · 문창성 |
+| <img src="docs/img/task_j_k_mudang.png" height="32" alt=""> | 넋을 달래는 방울 | 무당으로 요괴 3,000마리 퇴치 | 엽전 120 |
+| <img src="docs/img/task_j_b0_mudang.png" height="32" alt=""> | 무조의 경지 | 굿의 길에서 5차 전직(무조) | 엽전 200 |
+| <img src="docs/img/task_j_b1_mudang.png" height="32" alt=""> | 하늘 만신의 경지 | 신내림의 길에서 5차 전직(하늘 만신) | 엽전 200 |
+| <img src="docs/img/task_j_e_mudang.png" height="32" alt=""> | 굿판의 첫 신명 | 부적을 천지신명으로 진화 | 엽전 100 |
+| <img src="docs/img/task_j_c_mudang.png" height="32" alt=""> | 무당의 새벽 | 무당으로 제10막 평정 | 엽전 300 |
+
+#### <img src="docs/img/charS_jangsu.png" width="24" alt=""> 장수 과업 (8)
+
+| 휘장 | 과업 | 조건 | 보상 |
+|:---:|---|---|---|
+| <img src="docs/img/task_c_jangsu.png" height="32" alt=""> | 장수의 부름 | 중간 보스 3마리 퇴치 | 장수 해금 |
+| <img src="docs/img/task_t_jangsu.png" height="32" alt=""> | 장수 1차 전직 | 장수로 1차 전직 | 비격진천뢰 해금 |
+| <img src="docs/img/task_t5_jangsu.png" height="32" alt=""> | 대원수가 되다 | 장수로 5차 전직 | 엽전 150 |
+| <img src="docs/img/task_j_k_jangsu.png" height="32" alt=""> | 변방을 지킨 칼 | 장수로 요괴 3,000마리 퇴치 | 엽전 120 |
+| <img src="docs/img/task_j_b0_jangsu.png" height="32" alt=""> | 대원수의 군령 | 지휘의 길에서 5차 전직(대원수) | 엽전 200 |
+| <img src="docs/img/task_j_b1_jangsu.png" height="32" alt=""> | 궁성의 시위 | 궁술의 길에서 5차 전직(궁성) | 엽전 200 |
+| <img src="docs/img/task_j_e_jangsu.png" height="32" alt=""> | 첫 칼을 벼리다 | 환도를 사인검으로 진화 | 엽전 100 |
+| <img src="docs/img/task_j_c_jangsu.png" height="32" alt=""> | 장수의 새벽 | 장수로 제10막 평정 | 엽전 300 |
+
+#### <img src="docs/img/charS_gisaeng.png" width="24" alt=""> 기생 과업 (8)
+
+| 휘장 | 과업 | 조건 | 보상 |
+|:---:|---|---|---|
+| <img src="docs/img/task_c_gisaeng.png" height="32" alt=""> | 풍류의 밤 | 성황당에서 3번 기도 | 기생 해금 |
+| <img src="docs/img/task_t_gisaeng.png" height="32" alt=""> | 기생 1차 전직 | 기생으로 1차 전직 | 장구 해금 |
+| <img src="docs/img/task_t5_gisaeng.png" height="32" alt=""> | 국창·검선이 되다 | 기생으로 5차 전직 | 엽전 150 |
+| <img src="docs/img/task_j_k_gisaeng.png" height="32" alt=""> | 가락으로 벤 요괴 | 기생으로 요괴 3,000마리 퇴치 | 엽전 120 |
+| <img src="docs/img/task_j_b0_gisaeng.png" height="32" alt=""> | 국창의 소리 | 풍류의 길에서 5차 전직(국창) | 엽전 200 |
+| <img src="docs/img/task_j_b1_gisaeng.png" height="32" alt=""> | 검선의 칼춤 | 검무의 길에서 5차 전직(검선) | 엽전 200 |
+| <img src="docs/img/task_j_e_gisaeng.png" height="32" alt=""> | 흥에 겨운 가락 | 가야금을 취흥 산조로 진화 | 엽전 100 |
+| <img src="docs/img/task_j_c_gisaeng.png" height="32" alt=""> | 기생의 새벽 | 기생으로 제10막 평정 | 엽전 300 |
+
+#### <img src="docs/img/charS_sangin.png" width="24" alt=""> 상인 과업 (8)
+
+| 휘장 | 과업 | 조건 | 보상 |
+|:---:|---|---|---|
+| <img src="docs/img/task_c_sangin.png" height="32" alt=""> | 셈이 빠른 퇴마사 | 주막에서 엽전 200닢 쓰기 | 상인 해금 |
+| <img src="docs/img/task_t_sangin.png" height="32" alt=""> | 상인 1차 전직 | 상인으로 1차 전직 | 등짐 지게 해금 |
+| <img src="docs/img/task_t5_sangin.png" height="32" alt=""> | 대방·도반수가 되다 | 상인으로 5차 전직 | 엽전 150 |
+| <img src="docs/img/task_j_k_sangin.png" height="32" alt=""> | 셈이 맞는 장사 | 상인으로 요괴 3,000마리 퇴치 | 엽전 120 |
+| <img src="docs/img/task_j_b0_sangin.png" height="32" alt=""> | 대방의 장부 | 시전의 길에서 5차 전직(대방) | 엽전 200 |
+| <img src="docs/img/task_j_b1_sangin.png" height="32" alt=""> | 도반수의 통문 | 보부상의 길에서 5차 전직(도반수) | 엽전 200 |
+| <img src="docs/img/task_j_e_sangin.png" height="32" alt=""> | 천금의 셈 | 주판을 천금 주판으로 진화 | 엽전 100 |
+| <img src="docs/img/task_j_c_sangin.png" height="32" alt=""> | 상인의 새벽 | 상인으로 제10막 평정 | 엽전 300 |
 
 ---
 
@@ -932,12 +1076,14 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 | v12.1 | 예전 저장으로 들어오면 모든 퇴마사가 열려 있던 문제 수정. 저장을 한 번 옮겨 적으면서 과업으로 연 퇴마사만 남기고, 설정에 「처음부터 다시」, 시작 화면에 버전 표시와 안내 추가. |
 | v13 | **캐릭터 상태창**(무기·기술 / 보패·축복 / 능력치 3탭, 무기별 피해 비중). 5직업 × 2갈래 × 모든 무기·기술·보패·각성·담금질·신내림을 하나씩 돌리는 전수 디버깅으로 **천자문·훈민정음이 피해를 전혀 주지 못하던 오류** 등 수정. |
 | v14 | 오른쪽 아래 버튼을 한글(신내림·소리·상태·정지)로 통일. 새 퇴마사 **상인**(시전의 길: 상인→행수→대행수→도방→대방 / 보부상의 길: 보상→접장→공원→반수→도반수). 전용 무기 4·보패 3·직업 기술 10·합공 2·궁극 오의·괴이 이야기 4. 과업 3개 추가. |
+| v15 | README 배너를 여섯 퇴마사 기본 모습으로 교체, README 전체 재검수. 과업 40개 추가(퇴마사마다 5개 + 공통 10개, 모두 103개). 과업마다 도트 휘장을 그리고, 달성하면 화면 오른쪽 위에 휘장과 함께 5초 동안 알림. |
 
 ### 검증 방식
 
 - 매 버전마다 실제 크로미움 브라우저(헤드리스)로 PC(1600×900)와 휴대폰(412×900) 크기에서 41개 화면을 모두 눌러 보고, 콘솔 오류와 가로 넘침을 확인했습니다.
 - 여섯 퇴마사 × 두 갈래 전직을 자동으로 제10막까지 플레이하는 시뮬레이션으로 전직·펫·각성·신내림 등이 실제로 발동하는지 확인했습니다.
-- 요괴 280마리가 몰린 장면에서 한 프레임 처리 시간을 재어 최적화 전후를 비교했습니다(휴대폰 화면 기준 약 5~6ms).
+- 요괴 280마리가 몰린 장면에서 한 프레임 처리 시간을 재어 최적화 전후를 비교했습니다(휴대폰 화면 기준 약 7~10ms, 60fps 기준 16.7ms 안쪽).
+- 여섯 퇴마사 × 두 갈래를 5차 전직까지 올리고 모든 무기·기술·진화·각성·담금질·신내림·보패를 하나씩 돌려 실제로 피해와 능력치 변화가 나는지 확인하는 전수 디버깅을 합니다.
 
 ---
 

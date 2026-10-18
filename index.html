@@ -70,6 +70,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 #task{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 64px);transform:translateX(-50%);pointer-events:none;display:flex;flex-direction:column;gap:6px;align-items:center}
 #task div{background:var(--hanji);color:var(--sumi);padding:6px 12px;font-size:13px;box-shadow:3px 3px 0 #00000066;animation:tst 3s forwards;white-space:nowrap}
 #task div b{color:#7a2a1e;font-family:var(--f-disp);font-weight:400;font-size:15px}
+#ach{position:fixed;top:calc(env(safe-area-inset-top,0px) + 44px);right:calc(env(safe-area-inset-right,0px) + 10px);z-index:30;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:min(300px,calc(100vw - 20px))}
+.achv{display:flex;gap:10px;align-items:center;background:linear-gradient(#1e1820,#141016);border:1px solid #e0b048;box-shadow:0 0 0 1px #0a080c,3px 3px 0 #00000088;padding:8px 10px;color:var(--hanji);animation:achv 5s steps(20) forwards}
+.achv img{width:48px;height:48px;image-rendering:pixelated;flex:none}
+.achv div{min-width:0;display:flex;flex-direction:column;gap:1px}
+.achv small{font:10px var(--f-pix);color:var(--gold);letter-spacing:.08em}
+.achv b{font:17px var(--f-disp);font-weight:400;line-height:1.2}
+.achv span{font-size:11.5px;color:#cfc4ae;line-height:1.35}
+.achv em{font-style:normal;font-size:11.5px;color:#9af0b0}
+@keyframes achv{0%{opacity:0;transform:translateX(24px)}6%{opacity:1;transform:none}88%{opacity:1;transform:none}100%{opacity:0;transform:translateX(24px)}}
 @keyframes tst{0%{opacity:0;transform:translateY(8px) scale(1.06)}12%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
 
 #overlay{position:fixed;inset:0;background:rgba(10,8,14,.74);overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding-block:max(24px,env(safe-area-inset-top,0px));padding-inline:16px}
@@ -187,10 +196,10 @@ button.adv:hover{background:#fff6e2}
 .tabs button{padding:8px 18px;background:var(--panel);border:1px solid var(--line);font:16px var(--f-disp)}
 .tabs button[aria-selected="true"]{background:var(--hanji);color:var(--sumi)}
 .tasklist{display:flex;flex-direction:column;gap:6px}
-.tasklist div{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;background:var(--hanji);color:var(--sumi);padding:8px 12px}
+.tasklist div{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;background:var(--hanji);color:var(--sumi);padding:8px 12px}
 .tasklist div.done{background:#d8cfb8}
-.tasklist i{font-style:normal;width:22px;height:22px;display:grid;place-items:center;border:2px solid #7a2a1e;color:#7a2a1e;font-size:13px}
-.tasklist div.done i{background:#7a2a1e;color:var(--hanji)}
+.tasklist .bd{width:44px;height:44px;image-rendering:pixelated;filter:grayscale(1) brightness(.55) contrast(.9)}
+.tasklist div.done .bd{filter:none}
 .tasklist b{font:16px var(--f-disp);font-weight:400;display:block}
 .tasklist span{font-size:12px;color:#5a4f45}
 .tasklist em{font-style:normal;font-size:12px;color:#2f6b5a;text-align:right}
@@ -298,7 +307,7 @@ button.adv:hover{background:#fff6e2}
 .upg2{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 .upg2 button{min-width:0 !important;padding:4px 8px !important;font:11px var(--f-pix) !important;background:#d9ccb0 !important;color:var(--sumi) !important}
 .upg2 button[aria-pressed="true"]{background:var(--red) !important;color:var(--hanji) !important}
-@media (prefers-reduced-motion:reduce){#toast div,#task div{animation-duration:3s}.ch{transition:none}}
+@media (prefers-reduced-motion:reduce){.achv{animation:none}#toast div,#task div{animation-duration:3s}.ch{transition:none}}
 </style>
 
 <canvas id="game" aria-label="게임 화면"></canvas>
@@ -320,6 +329,7 @@ button.adv:hover{background:#fff6e2}
 </div>
 <div id="toast"></div>
 <div id="task"></div>
+<div id="ach" aria-live="polite"></div>
 
 <div id="overlay">
   <section class="screen" id="title">
@@ -339,7 +349,7 @@ button.adv:hover{background:#fff6e2}
       <button class="btn ghost" id="setBtn">설정</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v14</p>
+    <p class="ver" id="verTag">v15</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -961,9 +971,9 @@ const CARDS={
  cheonsal:{n:'천살',d:'요괴 체력 +30%. 경험치 +40%.'},
 };
 const DIFFS={
- easy:{n:'쉬움',coin:0.7,d:'요괴 체력 −30%, 받는 피해 −30%. 보스는 정해진 순서대로 기술을 쓰고 기술 사이 쉬는 틈이 길다. 중간 보스가 있는 동안 엘리트가 나오지 않는다. 전우치가 더 자주 온다. 상점 엽전 −30%.'},
+ easy:{n:'쉬움',coin:0.7,d:'요괴 체력 −30%, 받는 피해 −30%. 보스는 정해진 순서대로 기술을 쓰고 기술 사이 쉬는 틈이 길다. 중간 보스가 있는 동안 엘리트가 나오지 않는다. 전우치가 더 자주 온다. 출정 뒤 엽전 −30%.'},
  normal:{n:'보통',coin:1,d:'보스는 자기 기술 가운데 무작위로 골라 쓴다. 중간 보스가 있는 동안 엘리트가 나오지 않는다.'},
- hard:{n:'어려움',coin:1.3,d:'요괴 체력 +35%, 받는 피해 +25%. 보스마다 다른 보스의 기술 두 가지를 무작위로 빌려 와 섞어 쓰고, 기술 사이 틈이 짧다. 중간 보스도 필살기를 쓰며 엘리트를 거느리고 나온다. 전우치가 드물게 온다. 상점 엽전 +30%.'}};
+ hard:{n:'어려움',coin:1.3,d:'요괴 체력 +35%, 받는 피해 +25%. 보스마다 다른 보스의 기술 두 가지를 무작위로 빌려 와 섞어 쓰고, 기술 사이 틈이 짧다. 중간 보스도 필살기를 쓰며 엘리트를 거느리고 나온다. 전우치가 드물게 온다. 출정 뒤 엽전 +30%.'}};
 const CURSES=['','요괴 체력 +25%','요괴 이동 속도 +10%','엘리트가 두 배로 나온다','보스 체력 +35%','떡 회복량이 절반','요괴가 25% 더 많이 나온다','요괴 탄 속도·피해 +20%','중간 보스도 필살기를 쓴다','시작 최대 체력 −20%','막 보스가 필살기를 한 번 더 쓴다'];
 
 /* ======================= tasks (과업) ======================= */
@@ -1031,6 +1041,16 @@ const TASKS=[
  T('quest10','의뢰 해결사','막 의뢰 10번 완료','quests',10,{rr:1},'산통 흔들기 +1'),
  T('combo300','끊이지 않는 칼','연격 300 잇기','comboMax',300,{sk:1},'물리기 +1'),
  T('ks3','정 많은 퇴마사','정표 3개 받기','ksN',3,{coins:150},'엽전 150'),
+ T('k50000','백귀야행을 끊다','요괴 50,000마리 퇴치','kills',50000,{coins:500},'엽전 500'),
+ T('allchar','여섯 퇴마사','퇴마사 여섯 모두 해금','charN',6,{coins:300},'엽전 300'),
+ T('runs30','서른 번의 밤','출정 30번','runs',30,{rr:1},'산통 흔들기 +1'),
+ T('combo1000','천 번의 칼끝','연격 1,000 잇기','comboMax',1000,{coins:200},'엽전 200'),
+ T('loop3','세 바퀴의 밤','끝없는 밤 3바퀴 들어서기','bestLoop',3,{coins:400},'엽전 400'),
+ T('quest30','마을의 해결사','막 의뢰 30번 완료','quests',30,{coins:250},'엽전 250'),
+ T('graze1000','바람을 걷는 자','요괴 탄 1,000번 스치기','graze',1000,{coins:200},'엽전 200'),
+ T('evo12','열두 가지 진화','서로 다른 무기 12종 진화','evo',12,{bn:1},'봉인 +1'),
+ T('dk10','도깨비의 단골','도깨비 샛길에 10번 들기','dkIn',10,{coins:200},'엽전 200'),
+ T('lv100','백 번의 깨달음','한 출정에서 레벨 100 도달','maxLevel',100,{coins:300},'엽전 300'),
  T('curse10','액막이의 끝','액운 10에서 제10막 완주','curseClear',10,{coins:1000},'엽전 1000'),
 ];
 const MAXKEYS=new Set(['maxStage','maxLevel','tier_seonbi','tier_uiwon','tier_mudang','tier_jangsu','tier_gisaeng','tier_sangin','curseClear','petLv','ult','bestLoop','comboMax']);
@@ -1542,6 +1562,19 @@ const UPG=[
  {id:'rr',name:'산통 손질',desc:'출정마다 산통 흔들기 +1',b:{name:'물리기 손질',desc:'출정마다 물리기 +1'},max:2,cost:l=>80+l*80},
  {id:'revive',name:'혼백 부적',desc:'쓰러지면 한 번 되살아난다',b:{name:'금강 부적',desc:'받는 피해 −10%'},max:1,cost:()=>220},
 ];
+const JOBTASK={seonbi:['문방사우의 힘','성현의 반열','도체찰사의 마패','먹이 마르기 전에','선비의 새벽'],
+ uiwon:['백 사람을 살린 손','의성의 경지','독왕의 경지','약과 독은 한 뿌리','의원의 새벽'],
+ mudang:['넋을 달래는 방울','무조의 경지','하늘 만신의 경지','굿판의 첫 신명','무당의 새벽'],
+ jangsu:['변방을 지킨 칼','대원수의 군령','궁성의 시위','첫 칼을 벼리다','장수의 새벽'],
+ gisaeng:['가락으로 벤 요괴','국창의 소리','검선의 칼춤','흥에 겨운 가락','기생의 새벽'],
+ sangin:['셈이 맞는 장사','대방의 장부','도반수의 통문','천금의 셈','상인의 새벽']};
+const jong=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return c>=0&&c<11172?c%28:0;},euro=w=>w+(jong(w)===0||jong(w)===8?'로':'으로'),eul=w=>w+(jong(w)?'을':'를');
+for(const cid in JOBTASK){const C=CHARS[cid],N=JOBTASK[cid],sw=WD[C.start];
+ TASKS.push(T('j_k_'+cid,N[0],`${euro(C.name)} 요괴 3,000마리 퇴치`,'kills_'+cid,3000,{coins:120},'엽전 120'),
+  T('j_b0_'+cid,N[1],`${C.branches[0].name}에서 5차 전직(${C.branches[0].tiers[4].name})`,'br0_'+cid,5,{coins:200},'엽전 200'),
+  T('j_b1_'+cid,N[2],`${C.branches[1].name}에서 5차 전직(${C.branches[1].tiers[4].name})`,'br1_'+cid,5,{coins:200},'엽전 200'),
+  T('j_e_'+cid,N[3],`${eul(sw.name)} ${euro(sw.evoName)} 진화`,'evo:'+C.start,1,{coins:100},'엽전 100'),
+  T('j_c_'+cid,N[4],`${euro(C.name)} 제10막 평정`,'clear_'+cid,1,{coins:300},'엽전 300'));}
 const SAVE_KEY='joseon-toema-v1';
 let meta={coins:0,up:{},best:null};
 try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s)meta=Object.assign(meta,s);}catch(e){}
@@ -1690,7 +1723,7 @@ function graze(q){const P=G.P;G.rs.graze=(G.rs.graze||0)+1;G.grazeT=2;addCall(1.
  particle((q.x+P.x)/2,(q.y+P.y-3)/2,'#ffffff',3,30,0.25);if(G.fx.length<CAP.n)G.fx.push({t:'num',x:P.x+rnd(-4,4),y:P.y-20,v:'스침',life:0.4,max:0.4});snd(1700,0.03,'triangle',0.012);}
 
 /* ---- 끝없는 밤 ---- */
-function recordClear(){if(G.clearRec)return;G.clearRec=true;meta.stats.clears=(meta.stats.clears||0)+1;meta.stats.curseClear=Math.max(meta.stats.curseClear||0,G.curse);if(G.curse>=meta.curseMax&&meta.curseMax<10)meta.curseMax=G.curse+1;}
+function recordClear(){if(G.clearRec)return;G.clearRec=true;meta.stats['clear_'+G.cid]=(meta.stats['clear_'+G.cid]||0)+1;meta.stats.clears=(meta.stats.clears||0)+1;meta.stats.curseClear=Math.max(meta.stats.curseClear||0,G.curse);if(G.curse>=meta.curseMax&&meta.curseMax<10)meta.curseMax=G.curse+1;}
 function openEndless(){recordClear();const n=G.loop+1;
  openPick('ENDLESS NIGHT',G.loop?`${G.loop+1}바퀴째 밤이 끝났다`:'그슨대를 걷어 냈다','여기서 출정을 마치거나, 끝없는 밤으로 이어 갈 수 있습니다. 이어 가면 제1막부터 다시 돌며 요괴가 한층 강해지고 보상도 커집니다. 쓰러져도 이미 거둔 평정은 인정됩니다.',[
   {ic:'<span class="seal" style="background:#1a1418">夜</span>',badge:`${n+1}바퀴`,bc:'hard',name:'끝없는 밤으로',desc:`요괴 체력 ×${(1.9**n).toFixed(1)} · 받는 피해 ×${(1.3**n).toFixed(1)} · 엽전 +${n*25}%. 체력을 모두 채우고 제1막부터.`,
@@ -2507,7 +2540,11 @@ function renderStatus(){const P=G.P,C=CHARS[G.cid],t=curTier();
  body.innerHTML=h;}
 
 /* ======================= tasks & codex ======================= */
-function V(key){if(key==='anomKinds')return anomFound();if(key==='ksN')return ksOwned().length;if(key==='codex'){const s=new Set([...Object.keys(meta.seen),...(G?Object.keys(G.rs.seen):[])]);return s.size;}
+function V(key){if(key==='anomKinds')return anomFound();if(key==='charN')return Object.keys(CHARS).filter(id=>unlocked('char:'+id)).length;if(key==='runs')return meta.hub.runs||0;
+ if(key.startsWith('evo:')){const id=key.slice(4);return ((meta.stats.evoList||[]).includes(id)||(G&&G.rs.evo.has(id)))?1:0;}
+ if(key.startsWith('kills_')){const c=key.slice(6);return (meta.stats[key]||0)+(G&&G.cid===c?G.rs.kills:0);}
+ if(/^br[01]_/.test(key)){const b=+key[2],c=key.slice(4);return Math.max(meta.stats[key]||0,G&&G.cid===c&&G.P.branch===b?G.P.tier:0);}
+ if(key.startsWith('clear_'))return meta.stats[key]||0;if(key==='ksN')return ksOwned().length;if(key==='codex'){const s=new Set([...Object.keys(meta.seen),...(G?Object.keys(G.rs.seen):[])]);return s.size;}
  if(key==='evo'){const s=new Set([...(meta.stats.evoList||[]),...(G?[...G.rs.evo]:[])]);return s.size;}
  const m=meta.stats[key]||0;if(!G)return m;
  let r=G.rs[key]||0;if(key.startsWith('tier_'))r=key==='tier_'+G.cid?G.P.tier:0;if(key==='petLv')r=G.pet?G.pet.lv:0;if(key==='maxStage')r=G.stage+1;
@@ -2516,12 +2553,50 @@ function grantReward(rw){if(rw.coins)meta.coins+=rw.coins;if(rw.unlock&&!meta.un
  for(const k of ['rr','sk','bn'])if(rw[k]){meta.extra[k]=(meta.extra[k]||0)+rw[k];if(G)G[k]+=rw[k];}}
 function checkTasks(){let any=false;for(const t of TASKS){if(meta.done.includes(t.id))continue;if(V(t.key)>=t.need){meta.done.push(t.id);grantReward(t.rw);any=true;taskToast(t);}}
  if(any)saveMeta();}
-function taskToast(t){const d=document.createElement('div');d.innerHTML=`과업 달성 · <b>${t.n}</b> · ${t.rwText}`;$('#task').appendChild(d);setTimeout(()=>d.remove(),3100);}
+
+/* ---- 과업 휘장 (도트 로고) ---- */
+const TASK_IC={k100:['enemy','dokkaebi'],k1000:['char','uiwon'],k5000:['enemy','dokchief'],k20000:['enemy','gumiho'],k50000:['seal','百','#7a2018'],
+ s2:['seal','二','#2f6b5a'],s5:['seal','五','#2f6b5a'],s8:['seal','八','#2f6b5a'],clear:['seal','曉','#9a6a10'],curse5:['seal','厄','#7a2018'],curse10:['seal','厄','#1a1418'],
+ elite10:['icon','chest'],mid10:['seal','中','#7a2018'],tteok20:['icon','tteok'],pot30:['seal','甕','#8a5a2b'],shrine5:['seal','神','#2f6b5a'],shrine20:['seal','神','#9a6a10'],tav100:['icon','makgeolli'],
+ evo1:['icon','meok'],evo6:['seal','進','#3a5f9e'],evo12:['seal','進','#9a6a10'],lv30:['seal','卅','#3a5f9e'],lv100:['seal','百','#3a5f9e'],pet10:['pet','tiger'],dogam30:['seal','鑑','#4a3a30'],dogam58:['seal','鑑','#9a6a10'],
+ awk1:['seal','覺','#7a2018'],ult1:['seal','極','#7a2018'],duo1:['seal','雙','#3a1a4a'],call30:['seal','降','#9a6a10'],fuse1:['seal','合','#7a2018'],seal10:['seal','印','#7a2018'],graze100:['seal','掠','#3a5f9e'],graze1000:['seal','風','#3a5f9e'],
+ loop1:['seal','夜','#1a1418'],loop3:['seal','夜','#3a1a4a'],rush1:['seal','征','#7a2018'],rush10:['seal','征','#9a6a10'],var100:['seal','變','#2a2228'],anom6:['seal','怪','#3a1a4a'],anom12:['seal','怪','#9a6a10'],
+ temper1:['seal','鍛','#9a4a10'],temper10:['seal','鍛','#7a2018'],dk1:['seal','鬼','#2a6a6a'],dk10:['seal','鬼','#1a4a4a'],quest10:['seal','依','#2f6b5a'],quest30:['seal','依','#9a6a10'],combo300:['seal','連','#9a6a10'],combo1000:['seal','連','#7a2018'],
+ ks3:['seal','情','#7a2018'],allchar:['seal','六','#9a6a10'],runs30:['seal','卅','#4a3a30']};
+function taskSpec(t){if(TASK_IC[t.id])return TASK_IC[t.id];const k=t.key;
+ if(t.rw.unlock&&t.rw.unlock.startsWith('char:'))return ['char',t.rw.unlock.slice(5)];
+ if(t.rw.unlock&&t.rw.unlock.startsWith('w:'))return ['icon',t.rw.unlock.slice(2)];
+ if(k.startsWith('boss_'))return ['enemy',k.slice(5)];
+ if(k.startsWith('tier_'))return ['tier',k.slice(5),0,t.need-1];
+ if(/^br[01]_/.test(k))return ['tier',k.slice(4),+k[2],4];
+ if(k.startsWith('evo:'))return ['icon',k.slice(4)];
+ if(k.startsWith('kills_'))return ['char',k.slice(6)];
+ if(k.startsWith('clear_'))return ['char',k.slice(6),'dawn'];
+ if(k.startsWith('card:')||(t.rw.unlock||'').startsWith('card:'))return ['seal',CARDS[(t.rw.unlock||'').slice(5)]?CARDS[t.rw.unlock.slice(5)].n[0]:'卦','#2a2228'];
+ return ['seal','功','#4a3a30'];}
+const BADGE_BG={char:'#3a4a6a',tier:'#5a4a7a',enemy:'#6a2a22',icon:'#4a3a2a',pet:'#3a5a3a',seal:'#2a2228'};
+const badgeCache={};
+function taskBadge(t){if(badgeCache[t.id])return badgeCache[t.id];const sp=taskSpec(t),S=36,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
+ // 양피지 틀
+ x.fillStyle='#0a080c';x.fillRect(0,0,S,S);x.fillStyle='#c9b48a';x.fillRect(1,1,S-2,S-2);x.fillStyle='#a8925f';x.fillRect(1,S-3,S-2,2);x.fillRect(S-3,1,2,S-2);
+ x.fillStyle='#e8dcb8';x.fillRect(1,1,S-2,1);x.fillRect(1,1,1,S-2);
+ for(const [px,py] of [[3,3],[S-5,4],[4,S-6],[S-6,S-5]]){x.fillStyle='#8a7448';x.fillRect(px,py,1,1);}
+ const ix=4,iy=4,iw=S-8;x.fillStyle=sp[0]==='seal'?sp[2]:BADGE_BG[sp[0]];x.fillRect(ix,iy,iw,iw);x.fillStyle='rgba(0,0,0,0.25)';x.fillRect(ix,iy+iw-2,iw,2);
+ let spr=null;
+ if(sp[0]==='char'){spr=charSpr(CHARS[sp[1]].look).n;if(sp[2]==='dawn'){x.fillStyle='#e0b048';x.fillRect(ix+2,iy+2,6,6);x.fillStyle='#ffd880';x.fillRect(ix+3,iy+3,4,4);}}
+ else if(sp[0]==='tier'){const C=CHARS[sp[1]],tr=C.branches[sp[2]].tiers[Math.max(0,Math.min(4,sp[3]))];spr=charSpr(tr.look).n;}
+ else if(sp[0]==='enemy'){spr=ESPR[sp[1]]?ESPR[sp[1]].n:null;}
+ else if(sp[0]==='icon'){spr=ICS[sp[1]]||null;}
+ else if(sp[0]==='pet'){spr=PSPR[sp[1]]?PSPR[sp[1]].n:null;}
+ if(spr){const k=Math.max(1,Math.floor((iw-2)/Math.max(spr.width,spr.height)));const w=spr.width*k,h=spr.height*k;x.drawImage(spr,ix+Math.floor((iw-w)/2),iy+Math.floor((iw-h)/2),w,h);}
+ else{const g=sp[0]==='seal'?sp[1]:'?';x.font=`bold ${g.length>1?11:18}px "Song Myung","Noto Serif CJK KR",serif`;x.textAlign='center';x.textBaseline='middle';x.fillStyle='#0a080c';x.fillText(g,S/2+1,S/2+2);x.fillStyle='#fff3d0';x.fillText(g,S/2,S/2+1);}
+ return badgeCache[t.id]=big(c,2);}
+function taskToast(t){const box=$('#ach');if(!box)return;const d=document.createElement('div');d.className='achv';d.setAttribute('role','status');d.innerHTML=`<img src="${taskBadge(t)}" alt=""><div><small>과업 달성</small><b>${t.n}</b><span>${t.d}</span><em>${t.rwText}</em></div>`;box.appendChild(d);while(box.children&&box.children.length>4)box.firstChild.remove();setTimeout(()=>d.remove(),5000);snd(880,0.12,'triangle',0.04);setTimeout(()=>snd(1320,0.18,'triangle',0.035),110);}
 function mergeRun(){const rs=G.rs,st=meta.stats;
  for(const k of ['kills','elites','mids','pots','tteok','shrines','tavern','awkTot','duo','calls','fuse','seals','graze','rushRounds','rushClear','variants','temper','dkIn','quests'])st[k]=(st[k]||0)+(rs[k]||0);st.comboMax=Math.max(st.comboMax||0,rs.comboMax||0);
  for(const k in rs)if(k.startsWith('boss_'))st[k]=(st[k]||0)+rs[k];
  st.maxStage=Math.max(st.maxStage||0,G.stage+1);st.maxLevel=Math.max(st.maxLevel||0,rs.maxLevel);st['tier_'+G.cid]=Math.max(st['tier_'+G.cid]||0,G.P.tier);st.ult=Math.max(st.ult||0,G.rs.ult||0);st.bestLoop=Math.max(st.bestLoop||0,G.rs.bestLoop||0);
- st.petLv=Math.max(st.petLv||0,G.pet?G.pet.lv:0);
+ st.petLv=Math.max(st.petLv||0,G.pet?G.pet.lv:0);st['kills_'+G.cid]=(st['kills_'+G.cid]||0)+rs.kills;if(G.P.tier&&G.P.branch!=null){const bk='br'+G.P.branch+'_'+G.cid;st[bk]=Math.max(st[bk]||0,G.P.tier);}st.anoms=(st.anoms||0)+(rs.anoms||0);
  st.evoList=[...new Set([...(st.evoList||[]),...rs.evo])];
  for(const id in rs.seen){const m=meta.seen[id]||(meta.seen[id]={s:1,k:0});m.k+=rs.seen[id].k;}}
 
@@ -2652,7 +2727,7 @@ function openTavern(){const s=STAGES[G.stage];
  if(G.stage>=STAGES.length-1){openEndless();return;}
  G.tavBuy={};G.stageMight=0;recompute();
  $('#tavEye').textContent=`${s.sub} CLEAR`;$('#tavTitle').textContent=`${s.name} 평정 · 주막`;
- const n=STAGES[G.stage+1];$('#tavLede').textContent=`처치 ${G.kills}. 주막에서 엽전을 쓰고 ${n.sub} ${n.name}(으)로 떠난다. 떠나면 체력을 30% 회복하고, 남은 엽전은 출정이 끝난 뒤 상점 엽전이 된다.`;
+ const n=STAGES[G.stage+1];$('#tavLede').textContent=`처치 ${G.kills}. 주막에서 엽전을 쓰고 ${n.sub} ${n.name}(으)로 떠난다. 떠나면 체력을 30% 회복하고, 남은 엽전은 출정이 끝난 뒤 수련 도장에서 쓰는 엽전이 된다.`;
  renderTavern();show('tavern');}
 function renderTavern(){$('#tavCoins').textContent=`가진 엽전 ${G.coins}닢`;const box=$('#tavList');box.innerHTML='';
  if(ksOwned().length){const d=document.createElement('div');d.className='it';const K=G.ks?KS[G.ks]:null;d.innerHTML=`<span class="ic"><span class="seal" style="background:${K?NPCS[K.npc].col:'#4a3a30'}">${K?NPCS[K.npc].g:'情'}</span></span><div class="cm"><b>정표 바꾸기</b><p>${K?`지금 「${K.n}」 — ${K.d}`:'지금은 정표를 차지 않았다.'}</p></div><button id="tav-ks">바꾸기</button>`;d.querySelector('button').onclick=()=>openKsSwap(()=>{renderTavern();show('tavern');});box.appendChild(d);}
@@ -2712,7 +2787,7 @@ function renderPrep(){diffChips($('#diffChips'),$('#diffDesc'),renderPrep);
  {const mc=$('#modeChips');mc.innerHTML='';for(const k in MODES){const bt=document.createElement('button');bt.textContent=MODES[k].n;bt.setAttribute('aria-pressed',(prep.mode||'normal')===k);bt.onclick=()=>{prep.mode=k;meta.mode=k;saveMeta();renderPrep();};mc.appendChild(bt);}$('#modeDesc').textContent=MODES[prep.mode||'normal'].d;}
  const cc=$('#curseChips');cc.innerHTML='';
  for(let i=0;i<=10;i++){const bt=document.createElement('button');bt.textContent=i;bt.disabled=i>meta.curseMax;bt.setAttribute('aria-pressed',prep.curse===i);bt.onclick=()=>{prep.curse=i;renderPrep();};cc.appendChild(bt);}
- $('#curseDesc').textContent=prep.curse?`액운 ${prep.curse}: ${CURSES.slice(1,prep.curse+1).join(' · ')}. 상점 엽전 +${prep.curse*15}%.`:(meta.curseMax?'액운이 없는 평범한 밤. 높은 단계일수록 어렵고 엽전을 더 받는다.':'제10막을 완주하면 액운 단계가 열린다. 액운이 높을수록 어렵고 엽전을 더 받는다.');
+ $('#curseDesc').textContent=prep.curse?`액운 ${prep.curse}: ${CURSES.slice(1,prep.curse+1).join(' · ')}. 출정 뒤 엽전 +${prep.curse*15}%.`:(meta.curseMax?'액운이 없는 평범한 밤. 높은 단계일수록 어렵고 엽전을 더 받는다.':'제10막을 완주하면 액운 단계가 열린다. 액운이 높을수록 어렵고 엽전을 더 받는다.');
  {const kc=$('#ksChips');kc.innerHTML='';const own=ksOwned();if(meta.hub.ks&&!own.includes(meta.hub.ks))meta.hub.ks=null;
   for(const id of [null,...own]){const bt=document.createElement('button');bt.id='ks-'+(id||'none');bt.textContent=id?KS[id].n:'없음';bt.setAttribute('aria-pressed',meta.hub.ks===id);bt.onclick=()=>{meta.hub.ks=id;saveMeta();renderPrep();};kc.appendChild(bt);}
   $('#ksDesc').textContent=meta.hub.ks?`${NPCS[KS[meta.hub.ks].npc].n}의 정표 · ${KS[meta.hub.ks].d}`:own.length?'정표를 하나 차고 나가면 이번 출정 내내 효과가 이어진다. 주막에서 바꿀 수 있다.':'퇴마사 본부의 식구에게 막걸리를 건네면 정표를 받는다.';}
@@ -2727,7 +2802,7 @@ function renderCodex(){$('#tabTask').setAttribute('aria-selected',codexTab==='ta
   body.innerHTML=`<div class="help"><div class="hcard"><h3>괴이</h3><p>막마다 한 번, 평소와 다르게 구는 물건이 나타난다. 화면 가장자리 보라색 화살표를 따라가 곁에 2.5초 머물면 조사한다. 처음 조사한 괴이는 여기에 기록되고, 모은 수에 따라 퇴마사들의 이야기 조각이 열린다.</p>${ANOM.map(a=>{const c=(meta.anom||{})[a.id];return `<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:${c?'#3a1a4a':'#2a2228'}">${c?a.g:'?'}</span></span><div><p><b>${c?a.n:'???'}</b>${c?` · 조사 ${c}번`:''}</p><p>${c?a.d:'아직 만나지 못했다.'}</p></div></div>`;}).join('')}</div>`
    +Object.keys(STORY).map(cid=>`<div class="hcard"><h3>${CHARS[cid].name}의 이야기</h3><ol>${STORY[cid].map((t,i)=>`<li>${n>=STORY_AT[i]?t:`<small>괴이 ${STORY_AT[i]}종을 조사하면 열린다.</small>`}</li>`).join('')}</ol></div>`).join('')+'</div>';return;}
  if(codexTab==='task'){$('#codexSum').textContent=`이룬 과업 ${meta.done.length} / ${TASKS.length}`;
-  body.innerHTML=`<div class="tasklist">${TASKS.map(t=>{const d=meta.done.includes(t.id),v=Math.min(V(t.key),t.need);return `<div class="${d?'done':''}"><i>${d?'✓':''}</i><p style="margin:0"><b>${t.n}</b><span>${t.d}</span> <span class="pg">${d?'':`${v}/${t.need}`}</span></p><em>${t.rwText}</em></div>`;}).join('')}</div>`;}
+  body.innerHTML=`<div class="tasklist">${TASKS.map(t=>{const d=meta.done.includes(t.id),v=Math.min(V(t.key),t.need);return `<div class="${d?'done':''}"><img class="bd" src="${taskBadge(t)}" alt="${d?'달성':'미달성'}"><p style="margin:0"><b>${t.n}</b><span>${t.d}</span> <span class="pg">${d?'':`${v}/${t.need}`}</span></p><em>${t.rwText}</em></div>`;}).join('')}</div>`;}
  else{const seen=Object.keys(meta.seen).length;$('#codexSum').textContent=`만난 요괴 ${seen} / ${Object.keys(EN).length}`;
   const cat={n:'일반',e:'엘리트',m:'중간 보스',b:'막 보스'};
   body.innerHTML=`<div class="dogam">${STAGES.map((s,i)=>`<h3>${s.sub} ${s.name}</h3><div class="dgrid">${Object.keys(EN).filter(id=>EN[id].st===i+1).map(id=>{const e=EN[id],m=meta.seen[id];return `<div class="${m?'':'unk'}"><img src="${big(ESPR[id].n,3)}" alt=""><p style="margin:0;min-width:0"><b>${m?e.n:'???'}</b><span>${cat[e.c]}${m?` · 퇴치 ${m.k}`:''}</span><span>${m?e.d:'아직 만나지 못했다.'}</span></p></div>`;}).join('')}</div>`).join('')}</div><p class="credit">요괴 이름은 고성배 『한국 요괴 도감』(위즈덤하우스, 2019) 수록 요괴를 따랐고, 게임 속 행동은 놀이에 맞게 지어냈습니다.</p>`;}}
@@ -2757,7 +2832,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
   h+=hcard('한 판의 흐름',ul([`막은 모두 10개. 막마다 ${STAGE_T/60}분을 버틴다.`,`${MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.`,'막 보스를 쓰러뜨리면 보물상자를 열고 <b>주막</b>에 들른 뒤 다음 막으로 간다.','요괴가 떨군 구슬로 레벨이 오른다. 레벨이 오를 때마다 무기나 보패 하나를 고른다.','레벨 10·20·30·40·50에 <b>전직</b>한다.']));
   h+=hcard('막 안에서 만나는 것',ul(['<b>엘리트</b>: 금빛 체력 막대가 달린 큰 요괴. 쓰러뜨리면 보물상자를 떨군다.','<b>보물상자</b>: 진화 조건을 갖춘 무기가 있으면 진화시키고, 없으면 가진 것 하나를 강화한다.','<b>성황당</b>: 막마다 두 번 나타난다. 화면 가장자리의 금빛 화살표를 따라가 그 안에 3.5초 머물면 신령의 축복을 받는다.','<b>옹기</b>: 아무 공격에나 깨진다. 떡, 엽전, 복주머니, 큰 구슬이 나온다.','<b>떡</b>은 체력 회복, <b>복주머니</b>는 화면의 구슬을 모두 끌어온다.','레벨 10 전직 직후 <b>펫</b>(범·반달곰·해동청)을 고른다. 자세한 것은 「펫」 탭.','막마다 장애물(장독, 대숲, 바위, 석등, 장승, 비석 등)이 길을 막는다. 날아다니는 요괴와 보스는 넘어온다.']));
   h+=hcard('도사 전우치',ul([`체력이 <b>50%</b> 아래로 떨어지면 전우치가 구름을 타고 나타나 5초 동안 부적과 벼락으로 요괴를 친다. 보통 난이도 기준 ${45}초에 한 번.`,`체력이 <b>20%</b> 아래로 떨어지면 「금강불괴」 도술로 체력을 40% 채워 주고 10초 동안 방어 +5, 받는 피해 −30%를 걸어 준 뒤 5초 동안 함께 싸운다. 보통 난이도 기준 90초에 한 번.`,'쉬움은 더 자주, 어려움은 더 드물게 온다. 화면 오른쪽 위에 다음 출현까지 남은 시간이 보인다.']));
-  h+=hcard('주막과 엽전',ul(['막 사이 주막에서 이번 출정의 엽전으로 국밥(회복), 막걸리(다음 막 공격력 +20%), 산통·봉인 부적·물리기 패, 보부상 보따리(무작위 강화), 정화수(신령 축복)를 산다. 같은 물건은 살수록 비싸진다.','출정이 끝나면 남은 엽전과 처치 수, 도달한 막에 따라 <b>상점 엽전</b>을 받는다. 엽전 상점에서 영구 강화를 산다.','<b>퇴마록</b>의 과업을 이루면 퇴마사·무기·점괘 패가 해금되고 엽전과 산통 같은 보상이 붙는다. 처음에는 <b>선비</b>만 출정할 수 있고, 의원·장수·기생·무당은 과업으로 하나씩 열린다.','출정이 끝나면 <b>퇴마사 본부</b>로 돌아온다. 식구와 이야기하고 막걸리를 건네 <b>정표</b>를 받는다. 지난 출정은 <b>기록관</b>에 날짜와 함께 남는다.']));
+  h+=hcard('주막과 엽전',ul(['막 사이 주막에서 이번 출정의 엽전으로 국밥(회복), 막걸리(다음 막 공격력 +20%), 산통·봉인 부적·물리기 패, 보부상 보따리(무작위 강화), 정화수(신령 축복)를 산다. 같은 물건은 살수록 비싸진다.','출정이 끝나면 남은 엽전과 처치 수, 도달한 막에 따라 <b>엽전</b>을 받는다. 수련 도장에서 영구 강화를 산다.','<b>퇴마록</b>의 과업을 이루면 퇴마사·무기·점괘 패가 해금되고 엽전과 산통 같은 보상이 붙는다. 처음에는 <b>선비</b>만 출정할 수 있고, 의원·장수·기생·무당은 과업으로 하나씩 열린다.','출정이 끝나면 <b>퇴마사 본부</b>로 돌아온다. 식구와 이야기하고 막걸리를 건네 <b>정표</b>를 받는다. 지난 출정은 <b>기록관</b>에 날짜와 함께 남는다.']));
   h+=hcard('팁',ul(['진화 조건: 무기 최대 레벨(5) + 짝 보패 보유 + 보물상자. 카드 아래 「진화 짝」을 보고 보패를 같이 모으자.','원치 않는 무기나 보패가 계속 나오면 <b>봉인</b>으로 그 판에서 지워 버리자.','보스 발밑이 붉게 깜빡이면 돌진·순간이동 같은 큰 기술을 준비 중이다. 붉은 장판과 선 예고를 먼저 피하자.','보스 체력 막대의 금색 눈금(60%, 25%)에서 필살기가 나온다. 눈금 직전에 체력을 채워 두자.','「홀림」에 걸리면 보스 쪽으로 끌려간다. 반대 방향으로 계속 걸으면 버틸 수 있다.','장수의 등패는 요괴 탄을 막는다. 탄막이 많은 뒤쪽 막에서 특히 쓸모 있다.','무당은 레벨업 선택지가 4개라 원하는 조합을 맞추기 쉽다. 처음이라면 무당이나 장수가 편하다.'])); }
  if(helpTab==='class'){
   h+=hcard('5차 전직 이후의 성장',`<p>5차 전직(Lv 50)을 마친 뒤에도 레벨업마다 성장이 이어진다.</p>`
@@ -2805,7 +2880,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
   h+=hcard('하늘 신령의 강림',`<p>환웅을 따라 내려온 풍백·우사·운사 가운데 한 분이 막마다 한 번, 30~95초 사이 아무 때나 구름을 타고 내려온다. 셋 가운데 한 가지 가호를 무작위로 내리며 ${SKY_T}초 동안 이어진다. 남은 시간은 오른쪽 위 정보창에 나온다.</p>`+Object.keys(SKY).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#2a2228;color:${SKY[k].col}">${SKY[k].n[0]}</span></span><div><p><b>${SKY[k].n}</b> · ${SKY[k].t}</p><p>${SKY[k].fx.map(f=>`<b>${f.n}</b> ${f.d}`).join(' / ')}</p></div></div>`).join(''));
   h+=hcard('난이도',Object.keys(DIFFS).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:${k==='easy'?'#2f6b5a':k==='hard'?'#7a2018':'#3a5f9e'}">${DIFFS[k].n[0]}</span></span><div><p><b>${DIFFS[k].n}</b> · ${DIFFS[k].d}</p></div></div>`).join('')+'<p>모든 난이도에서 막 보스는 중간 보스를 토벌한 뒤에 나타난다.</p>');
   h+=hcard('점괘 패',`<p>출정 준비 화면에서 한 장을 고른다. 이번 출정의 규칙을 바꾼다.</p>`+Object.keys(CARDS).map(id=>{const ok=unlocked('card:'+id),lt=lockText('card:'+id);return `<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:15px;background:#2a2228">${CARDS[id].n[0]}</span></span><div><p><b>${CARDS[id].n}</b>${ok?'':' <span class="tag">잠김</span>'} · ${CARDS[id].d}</p>${!ok&&lt?`<p><small>${lt}</small></p>`:''}</div></div>`;}).join(''));
-  h+=hcard('액운 단계',`<p>제10막을 완주하면 다음 단계가 열린다. 단계는 앞 단계의 효과를 모두 안고 간다. 단계마다 상점 엽전 +15%.</p><ol>${CURSES.slice(1).map(c=>`<li>${c}</li>`).join('')}</ol>`); }
+  h+=hcard('액운 단계',`<p>제10막을 완주하면 다음 단계가 열린다. 단계는 앞 단계의 효과를 모두 안고 간다. 단계마다 출정 뒤 엽전 +15%.</p><ol>${CURSES.slice(1).map(c=>`<li>${c}</li>`).join('')}</ol>`); }
  if(helpTab==='foe'){
   const cat={n:'일반',e:'엘리트',m:'중간 보스',b:'막 보스'};
   h+=hcard('읽는 법',ul(['요괴 이름은 고성배 『한국 요괴 도감』(위즈덤하우스, 2019)을 따랐다. 게임 속 행동은 놀이에 맞게 지어냈다.','중간 보스와 막 보스는 아래 기술을 섞어 쓴다. 어려움에서는 다른 보스의 기술 두 가지가 무작위로 더해진다.','막 보스는 체력 60%와 25%에서 필살기를 쓴다(그슨대는 70%·40%·15%).','자세한 설명과 처치 수는 퇴마록의 요괴 도감에서 본다.']));
