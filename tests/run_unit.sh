@@ -10,5 +10,6 @@ SAVE=tests/fixtures/save_fxA_bad.json WANT=1 node tests/harness.js "$G" tests/un
 SAVE=tests/fixtures/save_fxA_mid.json WANT=0.7 node tests/harness.js "$G" tests/unit/fx_alpha_save.test.js || fail=1
 SAVE=tests/fixtures/save_v12.json WANT=v12 node tests/harness.js "$G" tests/unit/tale_save.test.js || fail=1
 SAVE=tests/fixtures/save_v13_bad.json WANT=bad node tests/harness.js "$G" tests/unit/tale_save.test.js || fail=1
+SAVE=tests/fixtures/save_ent_bad.json node tests/harness.js "$G" tests/unit/ent_size.test.js || fail=1
 for w in str mix arr; do SAVE=tests/fixtures/save_types_$w.json WANT=$w node tests/harness.js "$G" tests/unit/tale_save_types.test.js || fail=1; done
 [ $fail = 0 ] && echo "ALL PASS" || { echo "SOME FAILED"; exit 1; }

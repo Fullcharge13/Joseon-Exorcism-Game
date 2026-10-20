@@ -3,7 +3,7 @@ const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
 // @include tests/lib/tale_helpers.js
 meta.tale.frag={woochi:3,jiha:3,bari:3};
 const tick=(sec,f)=>{for(let i=0;i<Math.round(sec*60);i++){if(f)f();__t+=1000/60;if(modal)autoPick();frame(__t);}};
-function goAct(id,i){taleStart(id);step(3);for(let a=0;a<i;a++){G.tale.force=true;god();step(TALE_T+1);killBoss();for(let k=0;k<300&&modal!=='scene';k++)step(1/60,{pick:false});armUntil=0;sceneNext();}G.tale.force=false;god();G.P.regen=0;G.enemies.length=0;}
+function goAct(id,i){taleStart(id);step(3);for(let a=0;a<i;a++){G.tale.force=true;god();step(TALE_T+1);killBoss();for(let k=0;k<600&&G.tale.act===a;k++)step(1/60);}ok(G.tale.act===i,id+' '+(i+1)+'막에 들어감 (지금 '+(G.tale.act+1)+'막)');/* 보스 뒤 레벨업 창이 먼저 뜰 수 있어 창은 골라 넘기고, 다음 막이 될 때까지 */G.tale.force=false;god();G.P.regen=0;G.enemies.length=0;}
 // 전우치 1막: 전우치가 막 내내 곁에
 goAct('woochi',0);tick(60);ok(G.helper,'jwAlly: 60초 뒤에도 전우치가 곁에 있음');
 // 전우치 2막: 곡식 20섬
@@ -25,10 +25,10 @@ tick(3,()=>{G.P.x=W0.x+200;G.P.y=W0.y;});ok(Math.abs(G.taleMight-0.3)<0.03,'well
 // 지하국 3막: 회복 아이템 없음
 goAct('jiha',2);for(let i=0;i<400;i++){const e=spawnEnemy('jomagu',G.P.x+200,G.P.y);kill(e);}for(let i=0;i<60;i++)kill({prop:true,x:G.P.x+200,y:G.P.y});
 ok(!G.items.some(it=>it.k==='tteok'),'noHeal: 떡이 나오지 않음');
-{G.gems.length=0;G.queue.length=0;G.items.length=0;const h=G.P.maxHp;G.P.hp=h*0.5;G.P.regen=1;tick(1);ok(G.P.hp>h*0.5,'noHeal: 초당 회복은 그대로');G.P.regen=0;}
+{G.gems.length=0;G.queue.length=0;G.items.length=0;const h=G.P.maxHp;G.P.hp=h*0.5;G.P.regen=1;tick(1,()=>{G.gems.length=0;G.P.xp=0;G.P.regen=1;});/* 레벨업 고르기가 능력치를 다시 계산해 회복이 0이 되지 않게 */ok(G.P.hp>h*0.5,'noHeal: 초당 회복은 그대로');G.P.regen=0;}
 // 바리 1막: 역병
 goAct('bari',0);{G.gems.length=0;const P=G.P;P.maxHp=200;P.hp=200;tick(10);ok(P.hp<200&&P.hp>190,'plague: 초당 0.4% 잃음 (지금 '+P.hp.toFixed(1)+')');
- G.jw.cd20=G.jw.cd50=1e9;P.hp=2;tick(5);ok(P.hp>=1&&P.hp<1.05&&!G.over,'plague: 체력 1에서 멈춤 (지금 '+P.hp+' regen '+P.regen+')');}
+ G.jw.cd20=G.jw.cd50=1e9;P.hp=2;G.mods.noTteok=true;tick(5,()=>{G.items.length=0;});G.mods.noTteok=false;/* 떡을 주우면 체력이 오르므로 막는다(같은 걸음에 떨어져 주워질 수 있음) */ok(P.hp>=1&&P.hp<1.05&&!G.over,'plague: 체력 1에서 멈춤 (지금 '+P.hp+' regen '+P.regen+')');}
 // 바리 2막: 우물 셋을 차례로
 goAct('bari',1);const WS=G.tale.R.wells;ok(WS&&WS.length===3,'wells3: 우물 셋');G.st=TALE_T+1;
 tick(7,()=>{G.P.x=WS[1].x;G.P.y=WS[1].y;});ok(G.tale.R.wi===0,'wells3: 순서 밖 우물은 진행 안 함');
