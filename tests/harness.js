@@ -13,17 +13,19 @@ class FakeCtx{get globalAlpha(){return this._ga===undefined?1:this._ga;}set glob
 Object.setPrototypeOf(FakeCtx.prototype,new Proxy({},{get:(t,k)=>k==='createRadialGradient'||k==='createLinearGradient'?()=>({addColorStop:noop}):k==='measureText'?()=>({width:0}):k==='createPattern'?()=>({}):noop}));
 global.CanvasRenderingContext2D=FakeCtx;
 const ctxP=new FakeCtx();
-function el(){return {getContext:()=>ctxP,width:0,height:0,toDataURL:()=>'data:',style:{},hidden:false,innerHTML:'',textContent:'',children:[],appendChild:noop,addEventListener:noop,setAttribute:noop,querySelector:()=>el(),querySelectorAll:()=>[],onclick:null,click(){this.onclick&&this.onclick()},setPointerCapture:noop,getBoundingClientRect:()=>({left:0,top:0,right:0,bottom:0,width:0,height:0}),classList:{toggle:noop,add:noop,remove:noop,contains:()=>false},dataset:{},remove:noop,value:0,checked:false};}
+function el(){return {getContext:()=>ctxP,width:0,height:0,toDataURL:()=>'data:',style:{setProperty:noop,removeProperty:noop},hidden:false,innerHTML:'',textContent:'',children:[],appendChild:noop,addEventListener:noop,setAttribute:noop,querySelector:()=>el(),querySelectorAll:()=>[],onclick:null,click(){this.onclick&&this.onclick()},setPointerCapture:noop,getBoundingClientRect:()=>({left:0,top:0,right:0,bottom:0,width:0,height:0}),classList:{toggle:noop,add:noop,remove:noop,contains:()=>false},dataset:{},remove:noop,value:0,checked:false};}
 const els={};
 global.document={createElement:()=>el(),querySelector:s=>els[s]||(els[s]=el()),querySelectorAll:()=>[],getElementById:s=>els['#'+s]||(els['#'+s]=el()),addEventListener:noop,hidden:false,body:el(),documentElement:el()};
 global.window=global;global.innerWidth=800;global.innerHeight=600;global.devicePixelRatio=1;
-global.addEventListener=noop;global.requestAnimationFrame=noop;global.performance={now:()=>Date.now()};
+global.__ev={};global.addEventListener=(t,f)=>{(global.__ev[t]||(global.__ev[t]=[])).push(f);};
+global.__keydown=e=>{for(const f of global.__ev.keydown||[])f(Object.assign({preventDefault:noop,repeat:false,key:''},e));for(const f of global.__ev.keyup||[])f(Object.assign({preventDefault:noop},e));};global.requestAnimationFrame=noop;global.performance={now:()=>Date.now()};
 const store={};global.localStorage={getItem:k=>k in store?store[k]:null,setItem:(k,v)=>{store[k]=String(v);},removeItem:k=>{delete store[k];},clear:()=>{for(const k in store)delete store[k];}};
 if(process.env.SAVE){store['joseon-toema-v1']=fs.readFileSync(process.env.SAVE,'utf8');}
 global.setTimeout=(f)=>{f();return 0;};global.clearTimeout=noop;global.navigator={userAgent:'node',maxTouchPoints:0};
 global.__els=els;
 const html=fs.readFileSync(gamePath,'utf8');
 const game=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n');
-const test=fs.readFileSync(testPath,'utf8');
+// 시험 안의 「// @include 경로」 줄은 그 파일 내용으로 바꿔 넣는다(공용 도우미)
+const test=fs.readFileSync(testPath,'utf8').replace(/^\/\/ @include (\S+)$/mg,(_,f)=>fs.readFileSync(f,'utf8'));
 // 게임과 시험을 한 범위에서 실행(게임의 const/function을 시험이 바로 씀)
 eval(game+'\n;\n'+test);

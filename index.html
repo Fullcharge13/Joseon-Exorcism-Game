@@ -165,6 +165,9 @@ button.adv:hover{background:#fff6e2}
 .bonus{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:8px}
 .bonus button{background:var(--sumi);color:var(--hanji);border:0;padding:12px;font:16px var(--f-disp)}
 .bonus button:hover{background:#3a2e2c}
+.sceneArt{display:flex;justify-content:center}.sceneArt img{width:128px;height:128px;object-fit:contain;image-rendering:pixelated}
+.sceneSheet p{margin:0;font-size:16px;line-height:1.75;word-break:keep-all}.sceneFoot{color:#7a2018;font-weight:700}.sceneFoot:empty{display:none}
+#scene{max-width:620px}
 .sheet{background:var(--hanji);color:var(--sumi);padding:18px;box-shadow:4px 4px 0 #00000055;display:flex;flex-direction:column;gap:10px}
 .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
 .statgrid div{border-top:2px solid var(--sumi);padding-top:4px;min-width:0}
@@ -373,7 +376,7 @@ button.adv:hover{background:#fff6e2}
       <button class="btn ghost" id="setBtn">설정</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v16.3</p>
+    <p class="ver" id="verTag">v17.0</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -385,22 +388,32 @@ button.adv:hover{background:#fff6e2}
       <p id="modeDesc"></p>
       <div class="chips" id="modeChips"></div>
     </div>
-    <div class="panel">
+    <div class="panel" id="panTale" hidden>
+      <h3>설화</h3>
+      <p id="taleHint"></p>
+      <div class="pae" id="taleList"></div>
+    </div>
+    <div class="panel" id="panSkin" hidden>
+      <h3>차림</h3>
+      <p id="skinDesc"></p>
+      <div class="chips" id="skinChips"></div>
+    </div>
+    <div class="panel" id="panDiff">
       <h3>난이도</h3>
       <p id="diffDesc"></p>
       <div class="chips" id="diffChips"></div>
     </div>
-    <div class="panel">
+    <div class="panel" id="panCurse">
       <h3>액운 단계</h3>
       <p id="curseDesc"></p>
       <div class="chips" id="curseChips"></div>
     </div>
-    <div class="panel">
+    <div class="panel" id="panKs">
       <h3>정표</h3>
       <p id="ksDesc"></p>
       <div class="chips" id="ksChips"></div>
     </div>
-    <div class="panel">
+    <div class="panel" id="panPae">
       <h3>점괘 패</h3>
       <p>무당이 산통을 흔들어 패 한 장을 뽑습니다. 패는 이번 출정의 규칙을 바꿉니다. 과업을 이루면 패가 늘어납니다.</p>
       <div class="pae" id="paeList"></div>
@@ -452,6 +465,13 @@ button.adv:hover{background:#fff6e2}
     <div class="cards" id="blessCards"></div>
   </section>
 
+  <section class="screen" id="scene" hidden>
+    <div class="eyebrow" id="sceneEye"></div>
+    <div class="sceneArt"><img id="sceneArt" alt=""></div>
+    <h2 id="sceneTitle"></h2>
+    <div class="sheet sceneSheet"><p id="sceneText"></p><p class="sceneFoot" id="sceneFoot"></p></div>
+    <div class="row"><button class="btn" id="sceneNext">다음</button></div>
+  </section>
   <section class="screen" id="chest" hidden>
     <div class="eyebrow">TREASURE</div>
     <h2>보물상자</h2>
@@ -546,6 +566,7 @@ button.adv:hover{background:#fff6e2}
       <button role="tab" id="tabTask" aria-selected="true">과업</button>
       <button role="tab" id="tabDogam" aria-selected="false">요괴 도감</button>
       <button role="tab" id="tabAnom" aria-selected="false">괴이록</button>
+      <button role="tab" id="tabTale" aria-selected="false">설화록</button>
     </div>
     <p class="coinline" id="codexSum"></p>
     <div id="codexBody"></div>
@@ -798,6 +819,8 @@ const EN={
  jangjamari:{n:'장자마리',c:'m',st:10,t:'mask',A:'#3a5f9e',B:'#e0b048',d:'탈놀이에서 춤추며 판을 여는 자.'},
  // stage bosses
  dokchief:{n:'대장 도깨비',c:'b',st:1,t:'goblin',A:'#b8352a',B:'#6a4a30',pal:{y:'#ffd76a',r:'#1a1418'},d:'도깨비들의 우두머리. 방망이로 금을 쏟아 낸다.'},
+ jwclone:{n:'전우치의 분신',c:'b',st:0,t:'goblin',A:'#4a5a7a',tale:1,d:'도술이 저 혼자 걸어 나온 그림자.'},
+ jwshade:{n:'도술 그림자',c:'n',st:0,t:'ghost',A:'#4a5a7a',B:'#e0b048',hp:24,spd:30,dmg:8,r:5,xp:3,ai:'shoot',tale:1,d:'전우치의 모습을 흉내 내는 그림자.'},
  gumiho:{n:'구미호',c:'b',st:2,t:'fox9',A:'#f2efe8',pal:{w:'#e0b048',k:'#c23b2a'},d:'천 년 묵은 아홉 꼬리 여우.'},
  gangcheol:{n:'강철이',c:'b',st:3,t:'beast',A:'#2c4a7a',B:'#e0b048',d:'바람과 비, 우박을 몰고 다니는 짐승.'},
  imugi:{n:'이무기',c:'b',st:4,t:'serpent',A:'#2f7d6b',proc:'imugi',d:'용이 되지 못한 큰 뱀.'},
@@ -810,6 +833,7 @@ const EN={
 };
 const ESPR={};
 for(const id in EN){const e=EN[id];ESPR[id]=variants(mk(TPL[e.t],{...PAL,A:e.A,B:e.B||e.A,...(e.pal||{})}));}
+const DOGAM_IDS=Object.keys(EN).filter(id=>!EN[id].tale);
 const PSPR={tiger:variants(mk(TPL.tiger,{...PAL,A:'#d8862a',B:'#1a1418',k:'#1a1418',w:'#efe6d2'})),bear:variants(mk(TPL.bear,{...PAL,A:'#5a3e2a',B:'#efe6d2',k:'#1a1418',w:'#2a1a12'})),falcon:variants(mk(TPL.bird,{...PAL,A:'#8a8494',s:'#c8c4cc',k:'#e0b048',r:'#e0b048'}))};
 const PETS={
  tiger:{n:'범',kind:'호랑이',col:'#d8862a',d:'앞장서 달려들어 할퀴는 산군. 몇 마리에 큰 피해를 몰아준다.',
@@ -1085,6 +1109,9 @@ const TASKS=[
  T('dk10','도깨비의 단골','도깨비 샛길에 10번 들기','dkIn',10,{coins:200},'엽전 200'),
  T('lv100','백 번의 깨달음','한 출정에서 레벨 100 도달','maxLevel',100,{coins:300},'엽전 300'),
  T('curse10','액막이의 끝','액운 10에서 제10막 완주','curseClear',10,{coins:1000},'엽전 1000'),
+ T('t_frag1','이야기의 실마리','설화 흔적을 조사해 설화 조각 얻기','fragN',1,{coins:30},'엽전 30'),
+ T('t_tale1','옛이야기 한 편','설화 출정 한 편 끝맺기','taleN',1,{coins:100},'엽전 100'),
+ T('t_ending','새벽의 이야기','제10막을 평정하고 본편 결말 보기','ending',1,{coins:100},'엽전 100'),
 ];
 const MAXKEYS=new Set(['maxStage','maxLevel','tier_seonbi','tier_uiwon','tier_mudang','tier_jangsu','tier_gisaeng','tier_sangin','curseClear','petLv','ult','bestLoop','comboMax']);
 
@@ -1629,6 +1656,75 @@ for(const cid in JOBTASK){const C=CHARS[cid],N=JOBTASK[cid],sw=WD[C.start];
   T('j_b1_'+cid,N[2],`${C.branches[1].name}에서 5차 전직(${C.branches[1].tiers[4].name})`,'br1_'+cid,5,{coins:200},'엽전 200'),
   T('j_e_'+cid,N[3],`${eul(sw.name)} ${euro(sw.evoName)} 진화`,'evo:'+C.start,1,{coins:100},'엽전 100'),
   T('j_c_'+cid,N[4],`${euro(C.name)} 제10막 평정`,'clear_'+cid,1,{coins:300},'엽전 300'));}
+/* ======================= 설화 출정 (v17) ======================= */
+const TALES={
+ woochi:{n:'전우치전',cid:'seonbi',st:0,trace:'scroll',traceN:'낡은 족자',
+  src:'한국민족문화대백과사전 「전우치전」',url:'https://encykorea.aks.ac.kr/Article/E0049554',
+  lede:'여우에게서 천서를 빼앗은 도사 전우치와 함께 송도의 밤을 지킨다.',
+  frags:[
+   {art:'en:baekyeou',t:'송도에 사는 전우치는 어느 날 여우가 입에 문 구슬을 삼키고, 여우에게서 하늘의 글(천서)을 빼앗았다. 그날부터 그의 붓끝에서 구름이 일었다.'},
+   {art:'jw',t:'굶주린 백성을 보다 못한 전우치는 하늘 선관으로 꾸미고 임금 앞에 섰다. 옥황상제의 명이라며 황금 들보를 받아 내, 그것을 팔아 산 곡식을 집집마다 나누었다.'},
+   {art:'jw',t:'탐관오리를 골리고 억울한 이를 돕던 전우치는 끝내 역적이라는 누명을 썼다. 쫓기는 몸이 된 그는, 도술을 거두지 않고 더 깊은 밤으로 숨어들었다.'}],
+  start:{lvl:12,branch:1,w:[['meok',3],['buchae',2]]},
+  acts:[
+   {st:0,eq:0,rule:'jwAlly',boss:'gumiho',bossN:'천서를 찾는 여우',name:'송도 장터',art:'en:gumiho',intro:'송도 장터에 흰 여우가 나타났다. 전우치에게 빼앗긴 천서를 되찾으러 온 것이다. 전우치가 웃으며 부채를 펼쳤다. "선비 양반, 같이 가세."'},
+   {st:1,eq:1,rule:'grain',boss:'dokchief',bossN:'곡식을 노리는 도깨비',name:'곡식 나누기',art:'prop:grain',intro:'여우의 원한에 도깨비들이 들러붙어 곡식 창고를 노린다. 곡식 섬을 모아 굶는 집에 나누어야 한다.'},
+   {st:4,eq:2,dmg:0.75,rule:'clones',boss:'jwclone',bossN:'전우치의 분신',name:'도술의 끝',art:'jw',intro:'도술이 지나치면 도술이 사람을 부린다. 전우치의 그림자들이 저 혼자 걸어 나와 마을을 어지럽힌다.'}],
+  end:'분신들이 흩어지자 전우치는 한참 말이 없었다. 이튿날, 그는 화담 선생을 따라 산으로 들어가 도를 닦기로 했다고 한다. 떠나는 길에 그는 선비에게 쪽빛 도포 한 벌을 건넸다. "글로 싸우는 자에게는 이 빛이 어울리네."',
+  skin:{id:'jjok',n:'쪽빛 도포',A:'#2f4a7a'}},
+ jiha:{n:'지하국대적',cid:'jangsu',st:6,trace:'cave',traceN:'굴 입구',
+  src:'한국민족문화대백과사전 「지하국대적퇴치설화」',url:'https://encykorea.aks.ac.kr/Article/E0054449',
+  lede:'땅속 나라로 사람을 잡아간 대적을 쫓아 홀로 굴 아래로 내려간다.',
+  frags:[
+   {art:'en:jiha',t:'어느 마을의 딸이 하룻밤 새 사라졌다. 땅속 괴물이 데려갔다는 소문에, 부모는 딸을 찾아오는 이에게 재산과 사위 자리를 걸었다.'},
+   {art:'prop:cave',t:'용사는 산속에서 땅 밑으로 난 좁은 문을 찾았다. 밧줄을 타고 내려가던 부하들은 하나둘 겁을 먹고 올라가 버렸고, 용사만 홀로 어둠 속에 내렸다.'},
+   {art:'prop:well',t:'지하국의 우물가에서 잡혀 온 여인이 용사에게 몰래 물 한 바가지를 건넸다. 「힘내는 물」이었다. 그것을 마시자 큰 바위도 가볍게 들렸다.'}],
+  start:{lvl:14,branch:0,w:[['hwando',3],['pyeongon',2],['deungpae',1]]},
+  acts:[
+   {st:6,eq:1,rule:'dark',boss:'baekdusan',bossN:'굴을 지키는 산괴',name:'어두운 굴',art:'prop:cave',intro:'굴은 깊고 어둡다. 등불 하나에 의지해 내려간다.'},
+   {st:8,eq:2,dmg:0.65,rule:'well',boss:'bulgae',bossN:'대적의 불개',name:'우물가',art:'prop:well',intro:'대적의 집 앞 우물. 물 곁을 지키면 힘이 솟는다.'},
+   {st:9,eq:3,dmg:0.8,rule:'noHeal',boss:'jiha',bossN:'지하국 대적',name:'대적의 집',art:'en:jiha',intro:'머리 위에서 밧줄이 툭 끊어졌다. 이제 돌아갈 길은 대적을 쓰러뜨리는 것뿐이다.',bossHp:1.3}],
+  end:'대적이 쓰러지고 사람들을 밧줄로 올려 보냈지만, 위에 남은 부하들은 밧줄을 거두고 달아났다. 용사가 지하에 홀로 남아 있을 때, 산신의 목소리가 들렸다. 땅 위로 돌아온 용사는 부하들을 벌하고, 마을 사람들이 지어 준 청록 철릭을 입었다.',
+  skin:{id:'cheongrok',n:'청록 철릭',A:'#2f7a6a'}},
+ bari:{n:'바리공주',cid:'mudang',st:8,trace:'flower',traceN:'서천꽃밭의 꽃',
+  src:'한국민족문화대백과사전·한국민속신앙사전 「바리공주」(디지털 인문학 위키 「바리데기」 인용)',url:'https://dh.aks.ac.kr/~dh_edu/wiki/index.php/%EB%B0%94%EB%A6%AC%EB%8D%B0%EA%B8%B0',
+  lede:'버려진 일곱째 공주가 되어 부모를 살릴 약수를 찾아 저승 너머로 간다.',
+  frags:[
+   {art:'ch:mudang',t:'딸만 일곱을 둔 임금은 막내를 옥함에 담아 버렸다. 버려진 공주는 짐승들과 신령의 손에 자라, 바리공주라 불렸다.'},
+   {art:'en:yeoksin',t:'세월이 흘러 임금 부부가 깊은 병에 들었다. 저승 너머의 약수만이 살릴 수 있다는데, 여섯 언니도 신하들도 모두 고개를 저었다.'},
+   {art:'prop:flower',t:'바리공주는 "낳아 주신 은혜만으로도 가겠다"며 홀로 길을 나섰다. 저승 가는 길은 멀고, 꽃밭 너머에는 약수를 지키는 이가 기다리고 있었다.'}],
+  start:{lvl:14,branch:0,w:[['bujeok',3],['bara',2],['bangul',1]]},
+  acts:[
+   {st:5,eq:1,dmg:0.85,rule:'plague',boss:'yeoksin',bossN:'역병의 신',name:'병든 나라',art:'en:yeoksin',intro:'나라에 역병이 돈다. 역병의 신을 물리쳐야 길을 떠날 수 있다.'},
+   {st:3,eq:1,dmg:0.7,rule:'wells3',boss:'jigwi',bossN:'약수를 노리는 지귀',name:'약수 긷기',art:'prop:well',intro:'약수를 지키는 이가 말했다. "물을 긷고 불을 때고 나무를 하라. 그래야 약수를 주겠다."'},
+   {st:8,eq:2,dmg:0.7,rule:'flowers',boss:'saja',bossN:'저승사자',name:'서천꽃밭',art:'prop:flower',intro:'서천꽃밭. 숨을 살리는 꽃, 뼈를 살리는 꽃, 살을 살리는 꽃을 찾아야 한다.'}],
+  end:'약수와 꽃을 들고 돌아왔을 때 부모는 이미 숨을 거둔 뒤였다. 바리공주가 꽃을 놓고 약수를 흘려 넣자 두 사람이 눈을 떴다. 그 뒤 바리공주는 저승 가는 넋을 이끄는 신이 되었다고 한다. 무당은 굿판에서 그 이야기를 노래했고, 흰 무명옷을 지어 입었다.',
+  skin:{id:'muyeong',n:'흰 무명옷',A:'#e8e4d6'}},
+};
+/* 본편 결말: 제10막을 처음 평정하면 공통 4장, 퇴마사마다 처음 한 번 맺음말 */
+const ENDING={common:[
+ {title:'그림자가 무너지다',art:'en:geuseunde',t:'근정전 앞뜰에서 그슨대가 무너지자, 그 속에서 수많은 그림자가 흩어져 나왔다. 도깨비 웃음소리, 여우 울음, 쇠를 씹는 소리. 모두 어디선가 들어 본 이야기의 소리였다.'},
+ {title:'그슨대의 정체',art:'en:dokkaebi',t:'할머니 무릎에서 듣던 이야기, 장터 이야기꾼의 입담, 굿판의 무가. 더는 아무도 들려주지 않게 된 이야기들이 갈 곳을 잃고 밤마다 쌓였다. 그 밤이 그슨대였다.'},
+ {title:'퇴마록이 펼쳐지다',art:'prop:scroll',t:'퇴마록이 저절로 펼쳐졌다. 지난밤 물리친 요괴의 이름이 한 줄씩 적혀 있었다. 이름이 적힌 그림자는 더는 사람을 덮치지 않고, 책장 속으로 돌아가 조용히 누웠다.'},
+ {title:'새벽',art:'prop:dawn',t:'동이 텄다. 저잣거리에 첫 장이 서고, 주막 굴뚝에서 국밥 김이 올랐다. 누군가 아이를 무릎에 앉히고 입을 열었다. "옛날 옛적, 요괴가 들끓던 조선 팔도에……"'}],
+ epi:{
+ seonbi:'붓을 꺾으려다 그만두었다. 마지막 장을 덮으며, 이야기를 적는 일이 퇴마의 끝이 아니라 시작이라는 것을 알았다. 그는 서당을 열고, 아이들에게 글보다 옛이야기를 먼저 가르쳤다.',
+ uiwon:'역병이 물러간 마을에서 그는 다시 침을 들었다. 사람을 고치는 일과 이야기를 지키는 일은 닮아 있었다. 둘 다 잊히면 금이 간다.',
+ mudang:'새벽 굿판에서 그녀는 넋들을 위해 마지막 길닦음을 했다. 흰 무명천 위로 이야기들이 줄지어 건너갔다. 이번에는 아무도 뒤를 돌아보지 않았다.',
+ jangsu:'그는 투구를 벗어 성문 위에 걸었다. 지킬 것은 성이 아니라, 저녁마다 문간에 앉아 이야기를 나누는 사람들이었다. 그는 변방 대신 마을 어귀 장승 곁을 지키기로 했다.',
+ gisaeng:'그녀는 잊힌 이야기들로 새 노래를 지었다. 노래가 끝날 때마다 객석 어딘가에서 그림자 하나가 고개를 숙였다가, 웃으며 사라졌다.',
+ sangin:'장부를 덮으며 외상값 한 줄을 지웠다. 「이야기로 갚음」이라고 적고서. 그날부터 그의 보부상단은 장터마다 물건과 함께 옛이야기를 실어 날랐다.'}};
+/* 설화 막 규칙: start(막 시작) · tick(매 프레임) · ready(보스가 나와도 되는가) · hud(위쪽 진행 글). 동작은 아래 TALE_RULE_FN에서 붙인다 */
+const TALE_RULES={jwAlly:{n:'전우치와 함께'},grain:{n:'곡식 나누기'},clones:{n:'도술 그림자'},dark:{n:'어두운 굴'},well:{n:'힘내는 물'},noHeal:{n:'돌아갈 길 없음'},plague:{n:'역병'},wells3:{n:'약수 긷기'},flowers:{n:'살리는 꽃'}};
+const TALE_IDS=Object.keys(TALES);
+/* 설화 기록 바로잡기: 빠진 칸 채우기, 조각 0~3, 완주한 설화의 빛깔만 인정 */
+/* 저장 값의 모양이 틀어져도(문자열·숫자·배열) 객체로 바로잡는다. 완주 기록은 숫자 best·n이 있는 것만 남긴다 */
+function plainObj(o){return o&&typeof o==='object'&&!Array.isArray(o)?o:{};}
+function taleNorm(){const T0=meta.tale=plainObj(meta.tale);T0.frag=plainObj(T0.frag);T0.done=plainObj(T0.done);T0.skin=plainObj(T0.skin);
+ for(const id of Object.keys(T0.done)){const d=T0.done[id];if(!TALES[id]||!plainObj(d)||!Number.isFinite(d.best)||!Number.isFinite(d.n))delete T0.done[id];}
+ for(const id of TALE_IDS){const v=Math.round(+T0.frag[id]||0);T0.frag[id]=Math.max(0,Math.min(3,v));}
+ for(const cid in T0.skin){const k=T0.skin[cid];const t=TALE_IDS.map(i=>TALES[i]).find(t=>t.cid===cid&&t.skin.id===k);if(!t||!T0.done[TALE_IDS.find(i=>TALES[i]===t)])T0.skin[cid]=null;}
+ const E=meta.ending=plainObj(meta.ending);E.seen=!!E.seen;E.epi=Array.isArray(E.epi)?E.epi.filter(c=>CHARS[c]):[];}
 const SAVE_KEY='joseon-toema-v1';
 let meta={coins:0,up:{},best:null};
 try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s)meta=Object.assign(meta,s);}catch(e){}
@@ -1647,6 +1743,8 @@ const unlocked=k=>meta.unl.includes(k);
 if((meta.saveVer||0)<12){const had=meta.unl.filter(k=>k.startsWith('char:')).length;meta.unl=meta.unl.filter(k=>!k.startsWith('char:')||k==='char:seonbi');if(!meta.unl.includes('char:seonbi'))meta.unl.unshift('char:seonbi');
  for(const t of TASKS)if(meta.done.includes(t.id)&&t.rw.unlock&&t.rw.unlock.startsWith('char:')&&!meta.unl.includes(t.rw.unlock))meta.unl.push(t.rw.unlock);
  if(had>1)meta.migNote=true;meta.saveVer=12;saveMeta();}
+/* v17: 설화 출정 기록(meta.tale)과 본편 결말 기록(meta.ending) */
+taleNorm();if((meta.saveVer||0)<13){meta.saveVer=13;saveMeta();}
 
 /* ======================= audio ======================= */
 let AC=null,muted=false,lastHit=0;
@@ -1664,7 +1762,7 @@ function newGame(cid,card,curse,diff='normal',mode='normal'){
    base:{maxHp:100,spd:1,might:1,area:1,cd:1,amount:0,magnet:1,armor:0,regen:0,xpGain:1,dur:1,luck:0,crit:0.05,critDmg:1.5,healM:1,pspd:1},
    P:{x:0,y:0,r:5,hp:1,maxHp:0,face:1,dirx:1,diry:0,lvl:1,xp:0,next:xpNeed(1),iframe:0,moving:false,revive:meta.upB.revive?0:(m.revive||0),branch:null,tier:0,healAcc:0,slowT:0,shieldT:0},
    weapons:[],passives:{},bless:{},enemies:[],projs:[],ebul:[],gems:[],items:[],fx:[],zones:[],ezones:[],spirits:[],warns:[],movers:[],
-   spawnT:0,eliteT:40,swarmDone:false,boss:null,mid:null,midDone:false,bossDone:false,queue:[],flash:null,shake:0,pull:null,wind:null,dark:0,helper:null,jwBuff:0,pet:null,petQ:[],petGuard:0,jw:{cd50:0,cd20:0},gateMsg:false,sky:null,skyGod:null,skyAt:rnd(32,95),loop:0,clearRec:false,grazeT:0,mode,rushG:null,anom:null,anomAt:rnd(20,90),awkN:0,ult:null,call:0,wk:{},tmOf:{},cb:{n:0,t:0},cbStage:0,q:null,dk:null,dkAt:undefined,dkC:null,dkBoon:false,ks:(meta.hub.ks&&ksOwned().includes(meta.hub.ks))?meta.hub.ks:null,ksGot:{},tmAt:undefined,callBuff:0,guardT:0,seongT:0,blessOrder:[],duo:{},path:null,
+   spawnT:0,eliteT:40,swarmDone:false,boss:null,mid:null,midDone:false,bossDone:false,queue:[],flash:null,shake:0,pull:null,wind:null,dark:0,helper:null,jwBuff:0,pet:null,petQ:[],petGuard:0,jw:{cd50:0,cd20:0},gateMsg:false,sky:null,skyGod:null,skyAt:rnd(32,95),loop:0,clearRec:false,grazeT:0,mode,rushG:null,anom:null,anomAt:rnd(20,90),awkN:0,ult:null,call:0,wk:{},tmOf:{},cb:{n:0,t:0},cbStage:0,q:null,dk:null,dkAt:undefined,dkC:null,dkBoon:false,ks:(mode!=='tale'&&meta.hub.ks&&ksOwned().includes(meta.hub.ks))?meta.hub.ks:null,ksGot:{},tmAt:undefined,callBuff:0,guardT:0,seongT:0,blessOrder:[],duo:{},path:null,
    shrine:null,shrineN:0,potT:3,banned:new Set(),stageMight:0,jinogwi:null,
    rr:1+(meta.extra.rr||0)+(meta.upB.rr?0:(m.rr||0)),sk:1+(meta.extra.sk||0)+(meta.upB.rr?(m.rr||0):0),bn:1+(meta.extra.bn||0),
    rs:{kills:0,elites:0,mids:0,pots:0,tteok:0,shrines:0,tavern:0,maxStage:1,maxLevel:1,seen:{},evo:new Set()},
@@ -1683,7 +1781,7 @@ function newGame(cid,card,curse,diff='normal',mode='normal'){
  if(curse>=6)M.eCnt*=1.25; if(curse>=7)M.eBul*=1.2; if(curse>=8)M.midUlt=true; if(curse>=9)B.maxHp*=0.8; if(curse>=10)M.extraUlt=true;
  if(diff==='easy'){M.eHp*=0.7;M.dmgIn*=0.7;M.bossOrder=true;M.bossCd=1.3;M.elite*=0.7;M.jw50=30;M.jw20=60;}
  if(diff==='hard'){M.eHp*=1.35;M.dmgIn*=1.25;M.bossCd=0.75;M.borrow=2;M.midUlt=true;M.eliteWithMid=true;M.elite*=1.2;M.jw50=60;M.jw20=120;}
- goalSnap();
+ goalSnap();tracePlan();
  recompute();G.P.hp=G.P.maxHp;
  addWeapon(C.start);
  $('#hud').hidden=false;$('#hudbtns').hidden=false;$('#bossbar').hidden=true;
@@ -1864,7 +1962,7 @@ function investigate(a){const A=ANOM.find(x=>x.id===a.id),P=G.P,before=anomFound
  if(r<0.3){const c=25+G.stage*6;G.coins+=c;rw=`엽전 ${c}닢`;}else if(r<0.55){addCall(40);rw='신내림 +40';}else if(r<0.8){gainXp(P.next*0.5/P.xpGain);rw='깨달음';}else{G.queue.push('seal');rw='인장 하나';}
  toastBig(`괴이 조사${first?' · 새로 기록':''}`,`${A.n} — ${rw}`);flash('192,128,255',0.25);particle(a.x,a.y-8,'#c080ff',20,60,0.7);snd(330,0.3,'triangle',0.05);setTimeout(()=>snd(220,0.4,'triangle',0.04),150);
  const after=anomFound();for(const n of STORY_AT)if(before<n&&after>=n)setTimeout(()=>toast('퇴마록 · 이야기 조각이 열렸다'),1600);}
-function drawAnom(a){const st=STAGES[G.stage],k=st.ob,x=R(a.x),y=R(a.y),t=G.time;b.save();
+function drawAnom(a){const st=curStg(),k=st.ob,x=R(a.x),y=R(a.y),t=G.time;b.save();
  const A=a.id;let sx=1,sy=1,ox=0,oy=0,rot=0,al=1;
  if(A==='flip')sy=-1;if(A==='mirror')sx=-1;if(A==='shake'){ox=Math.round(Math.sin(t*40))*1;}if(A==='ghost')al=0.35+Math.abs(Math.sin(t*2))*0.4;if(A==='spin')rot=t*1.2;if(A==='grow'){sx=sy=1+Math.sin(t*2)*0.25;}if(A==='tiny'){sx=sy=0.5;}if(A==='float')oy=-6+Math.sin(t*2)*2;
  if(A==='dark'){b.globalAlpha=0.5;b.fillStyle='#000';b.beginPath();b.ellipse(x,y-6,26,20,0,0,TAU);b.fill();}
@@ -1876,11 +1974,120 @@ function drawAnom(a){const st=STAGES[G.stage],k=st.ob,x=R(a.x),y=R(a.y),t=G.time
  if(Math.random()<0.1)particle(a.x+rnd(-10,10),a.y-rnd(0,14),'#c080ff',1,8,0.6);
  if(a.prog>0){b.strokeStyle='#c080ff';b.lineWidth=2;b.beginPath();b.arc(x,y-8,16,-Math.PI/2,-Math.PI/2+TAU*a.prog/a.need);b.stroke();}
  emblem('anom:'+a.id,a.x,a.y-30,0.9);}
+/* ---- 설화록 (퇴마록 탭) ---- */
+function taleCodexHTML(){const E=meta.ending,lock='<small>??? · 이 퇴마사로 제10막을 평정하면 열린다.</small>';
+ let h=`<div class="help"><div class="hcard"><h3>본편 결말</h3>${E.seen?`<ol>${ENDING.common.map(c=>`<li><b>${c.title}</b> — ${c.t}</li>`).join('')}</ol>`:`<p>${lock}</p>`}
+  <h4>퇴마사의 맺음말</h4>${Object.keys(CHARS).map(cid=>`<p><b>${CHARS[cid].name}</b> · ${E.epi.includes(cid)?ENDING.epi[cid]:lock}</p>`).join('')}</div>`;
+ for(const id of TALE_IDS){const T=TALES[id],f=meta.tale.frag[id],D=meta.tale.done[id],S=STAGES[T.st];
+  h+=`<div class="hcard"><h3>${f?T.n:'???'} <small>조각 ${f}/3${D?` · 완주 ${D.n}번 · 가장 빠른 ${fmtT(D.best)}`:''}</small></h3><ol>${T.frags.map((x,i)=>`<li>${i<f?x.t:`<small>${S.sub} ${S.name}의 금빛 흔적을 조사하면 열린다.</small>`}</li>`).join('')}</ol>
+   <h4>끝맺음</h4><p>${D?T.end:'<small>설화 출정을 끝맺으면 열린다.</small>'}</p>
+   <p class="credit">출처: <a href="${T.url}" target="_blank" rel="noopener">${T.src}</a>. 게임 속 장면과 싸움은 원전을 바탕으로 새로 지었습니다.</p></div>`;}
+ return h+'</div>';}
+/* ---- 본편 결말 (제10막 첫 평정) ---- */
+function endingPages(cid){const E=meta.ending,l=[];
+ if(!E.seen)ENDING.common.forEach((c,i)=>l.push({eye:`결말 ${i+1}/4`,title:c.title,t:c.t,art:c.art}));
+ if(!E.epi.includes(cid))l.push({eye:'맺음말',title:`${CHARS[cid].name}의 새벽`,t:ENDING.epi[cid],art:'ch:'+cid,foot:E.seen&&E.epi.length?'':'퇴마록 「설화록」에서 다시 읽을 수 있다.'});
+ return l;}
+function openEnding(done){const cid=G.cid,l=endingPages(cid);openScene(l,()=>{const E=meta.ending;E.seen=true;if(!E.epi.includes(cid))E.epi.push(cid);G.rs.ending=1;saveMeta();checkTasks();done&&done();});}
+/* ---- 설화 출정 한 판 ---- */
+const TALE_T=90,TALE_HEAL=0.5;   // 막 사이 회복(주막이 없으므로 본편 30%보다 많이)
+/* 설화 출정이 채우지 않는 본편 진행 기록: 막 도달·레벨·전직(정해진 힘으로 시작하므로) */
+const TALE_NOREC=/^(maxStage|maxLevel|tier_|bestLoop)/;
+/* 규칙 동작: start(R) 막 시작 · tick(R,dt) 매 프레임 · ready(R) 보스가 나와도 되나 · hud(R) 진행 글 · kill(R,e) 처치 때 · draw(R) 그리기 · goal(R) 화살표 */
+function placeNear(d0,d1){const P=G.P;for(let t=0;t<30;t++){const a=Math.random()*TAU,d=rnd(d0,d1),x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d*0.75,o={x,y,r:12};pushOut(o,12);if(Math.hypot(o.x-x,o.y-y)<2)return {x,y};}return {x:P.x+d0,y:P.y};}
+function drawProp(k,x,y,glow){const sp=PROP[k];if(glow){b.globalAlpha=0.35+Math.abs(Math.sin(G.time*3))*0.3;b.fillStyle='#ffe08a';b.beginPath();b.ellipse(R(x),R(y),14,6,0,0,TAU);b.fill();b.globalAlpha=1;}b.drawImage(sp,R(x-sp.width/2),R(y-sp.height));}
+const FLOWERS=['숨살이꽃','뼈살이꽃','살살이꽃'];
+const TALE_RULE_FN={
+ jwAlly:{start(){summonJW('ally');},tick(){if(!G.helper)summonJW('ally');G.helper.t=Math.max(G.helper.t,2);}},
+ grain:{start(R){R.grain=0;G.mods.noTteok=true;},kill(R,e){if(!e.boss&&Math.random()<(G.st>TALE_T?0.1:0.05))dropItem('grain',e.x,e.y);},
+  ready:R=>R.grain>=20,hud:R=>`곡식 ${Math.min(20,R.grain)}/20`},
+ clones:{start(R){R.ct=6;},tick(R,dt){R.ct-=dt;if(R.ct<=0&&!G.boss){R.ct=5;for(let i=0;i<2;i++)spawnEnemy('jwshade');}}},
+ dark:{tick(){if(!G.bossDone)G.dark=Math.max(G.dark,1.5);}},
+ well:{start(R){R.well=placeNear(70,110);G.taleMight=0;},tick(R,dt){const P=G.P,d=Math.hypot(P.x-R.well.x,P.y-R.well.y);
+   G.taleMight=d<30?Math.min(0.6,G.taleMight+0.06*dt):Math.max(0,G.taleMight-0.1*dt);if(d<30&&Math.random()<0.2)particle(R.well.x+rnd(-6,6),R.well.y-8,'#8fd3ff',1,20,0.5);},
+  hud:()=>`물의 힘 +${Math.round(G.taleMight*100)}%`,draw(R){drawProp('well',R.well.x,R.well.y+4,G.taleMight<0.6);},goal:R=>R.well},
+ noHeal:{start(){G.mods.noTteok=true;}},
+ plague:{tick(R,dt){const P=G.P;if(P.hp>1)P.hp=Math.max(1,P.hp-P.maxHp*0.004*dt);}},
+ wells3:{start(R){R.wells=[];for(let k=0;k<3;k++)R.wells.push(placeNear(120+k*40,180+k*50));R.wi=0;R.wp=0;},
+  tick(R,dt){if(R.wi>=3)return;const P=G.P,w=R.wells[R.wi],d=Math.hypot(P.x-w.x,P.y-w.y);
+   if(d<30){R.wp+=dt;if(Math.random()<0.25)particle(w.x+rnd(-6,6),w.y-8,'#8fd3ff',1,20,0.5);if(R.wp>=6){R.wi++;R.wp=0;toast(R.wi<3?`약수 ${R.wi}/3 · 다음 우물로`:'약수 항아리가 찼다','big');snd(660,0.3,'triangle',0.05);}}else R.wp=Math.max(0,R.wp-dt*0.5);},
+  ready:R=>R.wi>=3,hud:R=>`우물 ${R.wi}/3`,
+  draw(R){R.wells.forEach((w,k)=>{drawProp('well',w.x,w.y+4,k===R.wi);if(k===R.wi&&R.wp>0){b.strokeStyle='#8fd3ff';b.lineWidth=2;b.beginPath();b.arc(Math.round(w.x),Math.round(w.y)-8,16,-Math.PI/2,-Math.PI/2+TAU*R.wp/6);b.stroke();}});},goal:R=>R.wi<3?R.wells[R.wi]:null},
+ flowers:{start(R){R.got=0;R.fl=placeNear(180,280);},
+  tick(R){if(!R.fl)return;const P=G.P;if(Math.hypot(P.x-R.fl.x,P.y-R.fl.y)<14){toast(`${FLOWERS[R.got]}을 꺾었다 · ${R.got+1}/3`,'big');R.got++;particle(R.fl.x,R.fl.y-6,'#ffb0c0',14,40,0.6);snd(784,0.25,'triangle',0.05);R.fl=R.got<3?placeNear(200,320):null;}},
+  ready:R=>R.got>=3,hud:R=>`꽃 ${R.got}/3`,draw(R){if(R.fl)drawProp('flower',R.fl.x,R.fl.y,true);},goal:R=>R.fl}};
+/* 설화 막의 세기: G.stage=eq로 두어 막 번호에 걸린 성장(체력·피해·수·보스 체력)은 본편 eq막을 따르고,
+   배경 막(st) 요괴의 기본 체력·피해 차이만 여기서 맞춘다 */
+function poolAvg(st,k){const S=STAGES[st],l=S.early.concat(S.late);return l.reduce((a,id)=>a+(EN[id][k]||0),0)/l.length;}
+function taleScale(A){const st=A.st,eq=A.eq;if(eq===st)return {hp:1,dmg:1,boss:1};
+ return {hp:poolAvg(eq,'hp')/poolAvg(st,'hp'),dmg:poolAvg(eq,'dmg')/poolAvg(st,'dmg'),boss:1};}
+function taleRule(){const A=TALES[G.tale.id].acts[G.tale.act];return A.rule?TALE_RULE_FN[A.rule]:null;}
+function taleStart(id){const T=TALES[id],S=T.start;initAudio();
+ newGame(T.cid,null,0,'normal','tale');
+ G.tale={id,act:0,t0:G.time,time:0,rec:false,m0:{eHp:G.mods.eHp,dmgIn:G.mods.dmgIn,bossHp:G.mods.bossHp},R:{}};
+ G.weapons.length=0;for(const [w,lv] of S.w){addWeapon(w);G.weapons[G.weapons.length-1].lv=lv;}
+ const P=G.P;P.lvl=S.lvl;P.xp=0;P.next=xpNeed(S.lvl);G.rs.maxLevel=S.lvl;
+ grantTier(S.branch);G.queue.length=0;recompute();P.hp=P.maxHp;refreshSlots();
+ taleAct(0,false);
+ const A=T.acts[0];openScene([{eye:`설화 출정 · ${T.n}`,title:T.n,t:T.lede,art:'ch:'+T.cid},{eye:`${T.n} · 1막`,title:A.name,t:A.intro,art:A.art}],()=>toast(`1막 · ${A.name}`,'big'));}
+function taleAct(i,heal=true){const T=TALES[G.tale.id],A=T.acts[i],M=G.mods,m0=G.tale.m0;G.tale.act=i;G.tale.R={};
+ G.stage=A.eq;G.tale.st=A.st;G.st=0;G.bossDone=false;G.boss=null;G.mid=null;G.midDone=true;G.swarmDone=false;G.eliteT=40;G.shrine=null;G.shrineN=0;G.gateMsg=false;
+ G.skyAt=rnd(32,95);G.skyGod=null;G.anom=null;G.anomAt=undefined;G.trace=null;G.traceAt=undefined;G.dk=null;G.dkAt=undefined;G.q=null;
+ G.enemies.length=0;G.ebul.length=0;G.warns=[];G.ezones=[];G.pull=null;G.wind=null;G.dark=0;G.zones=G.zones.filter(z=>z.follow);G.items=[];
+ const sc=taleScale(A);G.taleMight=0;M.eHp=m0.eHp*sc.hp*(A.eHp||1);M.dmgIn=m0.dmgIn*sc.dmg*(A.dmg||1);M.bossHp=m0.bossHp*sc.boss*(A.bossHp||1);M.noTteok=false;
+ if(heal)G.P.hp=Math.min(G.P.maxHp,G.P.hp+G.P.maxHp*TALE_HEAL);
+ const r=taleRule();if(r&&r.start)r.start(G.tale.R);
+ $('#bossbar').hidden=true;if(heal)toast(`${i+1}막 · ${A.name}`,'big');$('#stageName').textContent=`${T.n} · ${i+1}막 ${A.name}`;}
+function taleReady(){if(G.tale.force)return true;const r=taleRule();return !r||!r.ready||r.ready(G.tale.R);}
+function taleTick(dt){const r=taleRule();if(r&&r.tick)r.tick(G.tale.R,dt);
+ if(G.st>=TALE_T&&!G.boss&&taleReady()){const A=TALES[G.tale.id].acts[G.tale.act];spawnBoss(A.boss,false);G.boss.taleN=A.bossN;toast(`막 보스 · ${A.bossN}`,'big red');}}
+function taleClock(){const r=taleRule(),h=r&&r.hud?r.hud(G.tale.R):'';if(G.boss)return 'BOSS';if(G.st<TALE_T)return (h?h+' · ':'')+fmtT(TALE_T-G.st);return h||'BOSS';}
+function taleCleared(){const T=TALES[G.tale.id],i=G.tale.act;
+ if(i<T.acts.length-1){const A=T.acts[i+1];openScene([{eye:`${T.n} · ${i+2}막`,title:A.name,t:A.intro,art:A.art}],()=>taleAct(i+1));return;}
+ taleFinish();}
+function taleFinish(){const T=TALES[G.tale.id],D=meta.tale.done,id=G.tale.id,first=!D[id],tm=G.time-G.tale.t0;
+ G.tale.time=tm;const d=D[id]||(D[id]={best:tm,n:0});G.tale.rec=first||tm<d.best;d.best=Math.min(d.best,tm);d.n++;G.rs.tales=(G.rs.tales||0)+1;
+ if(first)meta.tale.skin[T.cid]=T.skin.id;saveMeta();
+ const foot=first?`${CHARS[T.cid].name}의 「${T.skin.n}」${jong(T.skin.n)?'이':'가'} 열렸다. 바로 입혀 두었고, 출정 준비의 「차림」에서 바꿀 수 있다.`:(G.tale.rec?`새 기록 · ${fmtT(tm)}`:`완주 ${fmtT(tm)} · 가장 빠른 완주 ${fmtT(d.best)}`);
+ openScene([{eye:`${T.n} · 끝맺음`,title:T.n,t:T.end,art:'ch:'+T.cid,foot}],()=>endGame(true));}
+/* ---- 설화 흔적 (본편 · 관련 막에서 한 번) ---- */
+const ga=w=>w+(jong(w)?'이':'가');
+function traceFor(st){if(!G||G.mode!=='normal'||G.loop>0)return null;return TALE_IDS.find(id=>TALES[id].st===st&&meta.tale.frag[id]<3)||null;}
+function tracePlan(){G.trace=null;G.traceAt=undefined;G.traceId=traceFor(G.stage);if(!G.traceId)return;
+ for(let k=0;k<40;k++){const t=rnd(25,85);if(G.anomAt===undefined||Math.abs(t-G.anomAt)>=15){G.traceAt=t;return;}}
+ G.traceAt=G.anomAt<55?85:25;}
+function spawnTrace(){const P=G.P,id=G.traceId;
+ for(let t=0;t<30;t++){const ang=Math.random()*TAU,d=rnd(150,260),x=P.x+Math.cos(ang)*d,y=P.y+Math.sin(ang)*d*0.75;const o={x,y,r:10};pushOut(o,10);
+  if(Math.hypot(o.x-x,o.y-y)<2){G.trace={id,x,y,prog:0,need:2.5,t:0};toast(`금빛 흔적 · ${TALES[id].traceN}`,'');return;}}
+ G.traceAt=G.st+3;}
+function updTrace(dt){const P=G.P;
+ if(G.traceAt!==undefined&&G.st>=G.traceAt&&!G.trace&&!G.bossDone){G.traceAt=undefined;spawnTrace();}
+ const a=G.trace;if(!a)return;a.t+=dt;const d=Math.hypot(P.x-a.x,P.y-a.y);
+ if(d<24){a.prog+=dt;if(Math.random()<0.3)particle(a.x+rnd(-8,8),a.y-rnd(4,16),'#ffe08a',1,15,0.5);
+  if(a.prog>=a.need){G.trace=null;takeFrag(a.id);}}else a.prog=Math.max(0,a.prog-dt*0.5);}
+function achNote(small,title,text){const box=$('#ach');if(!box)return;const d=document.createElement('div');d.className='achv';d.setAttribute('role','status');
+ d.innerHTML=`<img src="${big(PROP.scroll,3)}" alt=""><div><small>${small}</small><b>${title}</b><span>${text}</span></div>`;box.appendChild(d);setTimeout(()=>d.remove&&d.remove(),6000);}
+function takeFrag(id){const T=TALES[id];const n=meta.tale.frag[id]=Math.min(3,meta.tale.frag[id]+1);G.rs.frags=(G.rs.frags||0)+1;saveMeta();
+ const open=n===3,f=T.frags[n-1];
+ flash('255,224,138',0.25);particle(G.P.x,G.P.y-8,'#ffe08a',20,60,0.7);snd(392,0.3,'triangle',0.05);
+ openScene([{eye:`설화 조각 ${n}/3 · ${T.n}`,title:T.traceN,t:f.t,art:f.art,foot:open?`설화 출정 『${T.n}』${jong(T.n)?'이':'가'} 열렸다 — 출정 준비의 「설화 출정」에서 고를 수 있다.`:''}],null);
+ if(open)achNote('설화 출정 열림',`『${T.n}』`,`${CHARS[T.cid].name} · 출정 준비 → 설화 출정`);
+ checkTasks();}
+function drawTrace(a){const sp=PROP[TALES[a.id].trace],x=R(a.x),y=R(a.y),t=G.time;
+ b.globalAlpha=0.35+Math.abs(Math.sin(t*2))*0.25;b.fillStyle='#ffe08a';b.beginPath();b.ellipse(x,y,16,7,0,0,TAU);b.fill();
+ b.globalAlpha=0.9;pxRing(x,y,18,13,'#ffe08a',t*5,4,2);b.globalAlpha=1;
+ b.drawImage(sp,R(x-sp.width/2),R(y-sp.height-2+Math.sin(t*2)));
+ if(Math.random()<0.12)particle(a.x+rnd(-10,10),a.y-rnd(0,14),'#ffe08a',1,8,0.6);
+ if(a.prog>0){b.strokeStyle='#ffe08a';b.lineWidth=2;b.beginPath();b.arc(x,y-8,16,-Math.PI/2,-Math.PI/2+TAU*a.prog/a.need);b.stroke();}}
 function addWeapon(id){G.weapons.push({id,lv:1,evo:false,t:0.2,on:false,pos:[]});}
-function stageToast(){const s=STAGES[G.stage],lp=G.loop?` · ${G.loop+1}바퀴`:'';toast(`${s.sub} · ${s.name}${lp}`,'big');$('#stageName').textContent=`${s.sub} ${s.name}${lp}`;}
+function stageToast(){const s=curStg(),lp=G.loop?` · ${G.loop+1}바퀴`:'';toast(`${s.sub} · ${s.name}${lp}`,'big');$('#stageName').textContent=`${s.sub} ${s.name}${lp}`;}
 function curTier(){const P=G.P;return P.tier?CHARS[G.cid].branches[P.branch].tiers[P.tier-1]:null;}
 function className(){const t=curTier();return t?t.name:CHARS[G.cid].name;}
-function playerLook(){const t=curTier();return t?t.look:CHARS[G.cid].look;}
+/* 옷 빛깔: 차림의 옷 색(A)만 바꾸고, 띠·깃(T·C)은 원래 색을 지킨다 */
+const skinCache=new Map();
+function skinLook(L,A){if(!A)return L;let m=skinCache.get(L);if(!m)skinCache.set(L,m={});return m[A]||(m[A]=Object.assign({},L,{A,T:L.T||L.A}));}
+function taleSkin(cid){const k=meta.tale.skin[cid];if(!k)return null;const id=TALE_IDS.find(i=>TALES[i].cid===cid&&TALES[i].skin.id===k);return id&&meta.tale.done[id]?TALES[id].skin:null;}
+function playerLook(){const t=curTier(),L=t?t.look:CHARS[G.cid].look,sk=taleSkin(G.cid);return sk?skinLook(L,sk.A):L;}
 function flash(c,t){if(!meta.set.flash)t*=0.3;G.flash={c,t};}
 
 /* ======================= world helpers ======================= */
@@ -1913,11 +2120,12 @@ function hurt(e,dmg,kb=0,fx=0,fy=0,noCrit){
  if(!noCrit&&!G._dg&&duoOn('yongho')&&Math.random()<0.08){G._dg=1;bolt(e.x,e.y,14,(20+15*G.stage)*P.might);G._dg=0;}
  if(e.hp<=0&&!e.dead)kill(e);}
 const ITEM_CAP=300;
-function dropItem(k,x,y){G.items.push({k,x,y});if(G.items.length>ITEM_CAP){const i=G.items.findIndex(it=>it.k!=='chest');if(i>=0)G.items.splice(i,1);}}
+function dropItem(k,x,y){if(k==='tteok'&&G.mods.noTteok)return;   // 떡이 없는 설화 막: 처치·신내림·쌍신 어느 길로도 떡을 떨어뜨리지 않는다
+ G.items.push({k,x,y});if(G.items.length>ITEM_CAP){const i=G.items.findIndex(it=>it.k!=='chest');if(i>=0)G.items.splice(i,1);}}
 function kill(e){e.dead=true;
  if(e.prop){G.rs.pots++;particle(e.x,e.y,'#b0702e',8,50,0.4);snd(300,0.08,'square',0.03);const r=Math.random();
   if(r<0.35&&!G.mods.noTteok)dropItem('tteok',e.x,e.y);else if(r<0.7){for(let i=0;i<3;i++)dropItem('coin',e.x+rnd(-4,4),e.y+rnd(-3,3));}else if(r<0.82)dropItem('pouch',e.x,e.y);else G.gems.push({x:e.x,y:e.y,v:10+G.stage*6,mag:false});return;}
- G.kills++;G.rs.kills++;cbKill();const sn=G.rs.seen[e.kind]||(G.rs.seen[e.kind]={s:1,k:0});sn.k++;
+ G.kills++;G.rs.kills++;cbKill();if(!EN[e.kind].tale){const sn=G.rs.seen[e.kind]||(G.rs.seen[e.kind]={s:1,k:0});sn.k++;}
  particle(e.x,e.y,e.kind==='gwihwa'?'#8fd3ff':'#efe6d2',5,50,0.35);
  if(e.clone)return;
  addCall(e.boss?(e.mid?25:40):e.elite?6:0.25);
@@ -1932,6 +2140,7 @@ function kill(e){e.dead=true;
  if(e.ai==='explode'){const nb=G.stage===8?4:6;for(let i=0;i<nb;i++)ebul(e.x,e.y,i/nb*TAU+Math.random(),45,{dmg:e.dmg*(G.stage===8?0.5:0.7),col:'#c080ff'});}
  if(G.jinogwi&&Math.random()<G.jinogwi.ch)G.spirits.push({own:'temp',src:'jinogwi',look:'soul',x:e.x,y:e.y,ph:0,id:Math.random(),dmg:G.jinogwi.dmg,sp:130,life:G.jinogwi.life});
  G.gems.push({x:e.x,y:e.y,v:e.xp,mag:false});
+ if(G.mode==='tale'){const tr=taleRule();if(tr&&tr.kill)tr.kill(G.tale.R,e);}
  const r=Math.random()/G.P.drop;if(r<0.025)dropItem('coin',e.x+2,e.y);else if(r<0.031&&!G.mods.noTteok)dropItem('tteok',e.x,e.y);else if(r<0.0328)dropItem('pouch',e.x,e.y);}
 function explode(p){aoe(p.x,p.y,p.br,p.dmg,30);G.fx.push({t:'ring',x:p.x,y:p.y,r:3,maxR:p.br,col:'#ff9a4a',life:0.25,max:0.25});particle(p.x,p.y,'#ffb04a',8,70,0.4);G.shake=Math.max(G.shake,1);snd(110,0.12,'sawtooth',0.03);}
 function warn(o){G.warns.push(Object.assign({max:o.t,col:'#ff3a2a',src:CUR_SRC},o));}
@@ -1947,6 +2156,10 @@ function spawnPot(){const P=G.P,a=Math.random()*TAU,d=rnd(70,130);const x=P.x+Ma
 function spawnShrine(){const P=G.P,a=Math.random()*TAU,d=rnd(120,150);G.shrine={x:P.x+Math.cos(a)*d,y:P.y+Math.sin(a)*d*0.8,prog:0,need:G.ks==='ocheon'?2.1:3.5};toast('어디선가 성황당의 방울 소리가 들린다');}
 
 /* ======================= spawning ======================= */
+/* 지금 막의 모습(배경·요괴 종류). 설화 출정은 막의 세기(G.stage)와 모습(G.tale.st)을 따로 둔다 */
+/* 결과·상태 창의 「막」 칸: 설화 출정은 설화의 막(『전우치전』 3막), 본편은 제n막(바퀴) */
+function stageLabel(){if(G.mode==='tale'&&G.tale)return `『${TALES[G.tale.id].n}』 ${G.tale.act+1}막`;return `${curStg().sub}${G.loop?` · ${G.loop+1}바퀴`:''}`;}
+function curStg(){return STAGES[G.mode==='tale'&&G.tale?G.tale.st:G.stage];}
 function stageHpF(s){return 1+s+HP_MID_K*Math.pow(Math.max(0,s-2),2);}
 const HP_MID_K=0.15;
 function spawnEnemy(id,x,y,opt={}){
@@ -1957,11 +2170,12 @@ function spawnEnemy(id,x,y,opt={}){
   heavy:d.heavy,ai:d.ai,fly:d.fly,kx:0,ky:0,flash:0,hc:{},slow:0,frz:0,vx:0,bob:Math.random()*TAU,sc:d.sc||1,spr:id,dot:0,dotT:0,dotTick:0,left:LEFT_FACING.has(d.t)};
  Object.assign(e,opt);G.enemies.push(e);
  if(d.c==='n'&&!e.boss&&!e.prop&&!e.clone&&!opt.novr)maybeVariant(e);
- if(!G.rs.seen[id])G.rs.seen[id]={s:1,k:0};return e;}
-function spawnElite(){const id=STAGES[G.stage].elite;const e=spawnEnemy(id);e.elite=true;e.hp=e.maxHp=e.maxHp*10;e.et=2;toast(`엘리트 ${EN[id].n} 출현`,'red');}
+ if(!G.rs.seen[id]&&!EN[id].tale)G.rs.seen[id]={s:1,k:0};return e;}
+function spawnElite(){const id=curStg().elite;const e=spawnEnemy(id);e.elite=true;e.hp=e.maxHp=e.maxHp*10;e.et=2;toast(`엘리트 ${EN[id].n} 출현`,'red');}
 
 /* ======================= bosses ======================= */
 const BOSS={
+ jwclone:{skills:['blink','foxOrbs','ring'],ults:[{n:'분신술',sk:'clones'}]},
  yagwang:{skills:['shoeSteal','ring','blink'],ult:'ring2'},
  jangsan:{skills:['charm','dash3'],ult:'dash3'},
  geumdwaeji:{skills:['charge','summon'],minion:'sikingyeon',ult:'charge'},
@@ -2045,7 +2259,7 @@ const BSK={
 const BOSS_MAXX=4,BOSS_T=40,BOSS_T_MID=18,BOSS_K=0.06,BOSS_CAP=0.06,MID_CAP=0.1;
 function playerDps(){const a=G.dpsBuf;if(!a||!a.length)return 0;return a.reduce((x,y)=>x+y,0)/a.length;}
 function updDps(dt){G.dpsT=(G.dpsT||0)+dt;if(G.dpsT>=1){G.dpsT-=1;const b=G.dpsBuf||(G.dpsBuf=[]);b.push(G.dpsAcc||0);G.dpsAcc=0;if(b.length>20)b.shift();}}
-function spawnBoss(id,isMid){const s=STAGES[G.stage],D=BOSS[id],E=EN[id];const a=Math.random()*TAU,R0=Math.hypot(W/2,H/2)+10;
+function spawnBoss(id,isMid){const s=curStg(),D=BOSS[id],E=EN[id];const a=Math.random()*TAU,R0=Math.hypot(W/2,H/2)+10;
  const baseHp=BOSS_HP[G.stage]*(isMid?0.32:1)*G.mods.bossHp*G.mods.eHp;const hp=Math.max(baseHp,Math.min(baseHp*BOSS_MAXX,playerDps()*(isMid?BOSS_T_MID:BOSS_T)*BOSS_K*G.mods.bossHp*(G.mods.eHp>1?Math.sqrt(G.mods.eHp):1)));
  let ults=[];if(!isMid){ults=(D.thr||[0.6,0.25]).slice();if(G.mods.extraUlt)ults.unshift(0.85);}else if(G.mods.midUlt)ults=[0.5];
  const e=spawnEnemy(id,G.P.x+Math.cos(a)*R0,G.P.y+Math.sin(a)*R0,{boss:true,mid:isMid,bossKind:id,def:D,sc:isMid?2.2:3,r:isMid?11:14,spd:(isMid?28:24)+G.stage*2.5,dmg:(15+G.stage*6)*(isMid?0.8:1),cd:2.2,act:null,last:null,ults,ultI:0});
@@ -2057,18 +2271,19 @@ function spawnBoss(id,isMid){const s=STAGES[G.stage],D=BOSS[id],E=EN[id];const a
  if(isMid)G.mid=e;else G.boss=e;
  if(isMid&&G.mods.eliteWithMid)spawnElite();
  toast(`${isMid?'중간 보스':'막 보스'} · ${E.n}`,'big red');snd(80,0.6,'sawtooth',0.06);}
+const bnm=e=>e.taleN||EN[e.bossKind].n;
 function bossAI(e,dt){const D=e.def;
  if(e.ults.length&&e.hp/e.maxHp<=e.ults[0]&&!e.ulting){e.ults.shift();G.pull=null;if(e.inv){e.inv=false;e.hidden=false;}
   let sk,name;if(D.ults){const u=D.ults[e.ultI%D.ults.length];e.ultI++;sk=u.sk;name=u.n;}else{sk=D.ult;name=BSK[sk].label;}
-  e.act=sk;e.ulting=true;BSK[sk].start(e);toastUlt(EN[e.bossKind].n,name);if(!G.flash)flash('120,0,0',0.4);snd(60,0.8,'sawtooth',0.07);return;}
+  e.act=sk;e.ulting=true;BSK[sk].start(e);toastUlt(bnm(e),name);if(!G.flash)flash('120,0,0',0.4);snd(60,0.8,'sawtooth',0.07);return;}
  if(e.act){if(BSK[e.act].tick(e,dt)){e.last=e.act;e.act=null;e.ulting=false;e.cd=Math.max(0.8,2.0-G.stage*0.12)*rnd(0.8,1.2)*(e.mid?1.3:1)*G.mods.bossCd;}return;}
  e.cd-=dt;if(e.cd<=0){if(G.mods.bossOrder){e.act=e.skills[e.si++%e.skills.length];}else{const opts=e.skills.filter(s=>s!==e.last);e.act=opts[Math.random()*opts.length|0];}BSK[e.act].start(e);}}
 function bossDown(e){G.pull=null;
  for(let i=0;i<(e.mid?6:14);i++)G.gems.push({x:e.x+rnd(-20,20),y:e.y+rnd(-20,20),v:e.xp*2+10,mag:!e.mid});
  particle(e.x,e.y,'#e0b048',40,120,0.9);snd(200,0.8,'triangle',0.06);
- const k='boss_'+e.bossKind;G.rs[k]=(G.rs[k]||0)+1;
- if(e.mid){G.mid=null;G.rs.mids++;dropItem('chest',e.x,e.y);toast(`${EN[e.bossKind].n} 퇴치`,'big');if(!G.boss)$('#bossbar').hidden=true;return;}
- G.boss=null;G.bossDone=true;$('#bossbar').hidden=true;if(G.mode!=='rush'&&(G.stage===4||G.stage===9)){G.rs.mak=(G.rs.mak||0)+1;setTimeout(()=>toast('마을에서 막걸리 한 병을 보내왔다'),900);}flash('255,255,255',0.5);G.dark=0;G.wind=null;
+ const k='boss_'+e.bossKind;G.rs[k]=(G.rs[k]||0)+1;   // 설화 출정의 보스도 본편 보스 과업에 센다
+ if(e.mid){G.mid=null;G.rs.mids++;dropItem('chest',e.x,e.y);toast(`${bnm(e)} 퇴치`,'big');if(!G.boss)$('#bossbar').hidden=true;return;}
+ G.boss=null;G.bossDone=true;$('#bossbar').hidden=true;if(G.mode==='normal'&&(G.stage===4||G.stage===9)){G.rs.mak=(G.rs.mak||0)+1;setTimeout(()=>toast('마을에서 막걸리 한 병을 보내왔다'),900);}flash('255,255,255',0.5);G.dark=0;G.wind=null;
  for(const g of G.gems)g.mag=true;
  for(const en of G.enemies)if(!en.dead){en.dead=true;particle(en.x,en.y,'#efe6d2',2,30,0.3);}
  G.mid=null;G.ebul.length=0;G.warns=G.warns.filter(w=>w.friendly);G.ezones.length=0;
@@ -2077,7 +2292,8 @@ function bossDown(e){G.pull=null;
 /* ======================= update ======================= */
 function update(dt){
  const P=G.P;G.time+=dt;G.dtNow=dt;
- if(G.clearT!==undefined){G.clearT-=dt;if(G.clearT<=0){G.clearT=undefined;if(G.mode==='rush')rushReward();else claimDk(()=>claimPath(()=>openChest(3+(G.mods.chestPlus||0),()=>openTavern())));}}
+ if(G.clearT!==undefined){G.clearT-=dt;if(G.clearT<=0){G.clearT=undefined;if(G.mode==='rush')rushReward();else if(G.mode==='tale')taleCleared();else claimDk(()=>claimPath(()=>openChest(3+(G.mods.chestPlus||0),()=>openTavern())));
+   if(modal)return;}}   // 막을 끝맺는 창이 열렸으면 이번 걸음은 여기서 멈춘다(같은 걸음에 주운 상자 창이 덮어쓰지 않게)
  else if(!G.bossDone){G.st+=dt;}
  let mx=(keys.ArrowRight||keys.KeyD?1:0)-(keys.ArrowLeft||keys.KeyA?1:0),my=(keys.ArrowDown||keys.KeyS?1:0)-(keys.ArrowUp||keys.KeyW?1:0);
  if(joy&&joy.active){const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.hypot(dx,dy);if(d>6){mx=dx/Math.max(d,30);my=dy/Math.max(d,30);}}
@@ -2089,24 +2305,28 @@ function update(dt){
  pushOut(P,P.r);
  G.dark=Math.max(0,G.dark-dt);
  P.iframe-=dt;if(P.hp<P.maxHp)heal(P.regen*dt);if(P.shieldCd)P.shieldT-=dt;
- updJW(dt);updSky(dt);updCall(dt);updAnom(dt);updDps(dt);updDk(dt);updCombo(dt);updQuest();
+ updJW(dt);updSky(dt);updCall(dt);updAnom(dt);updTrace(dt);updDps(dt);updDk(dt);updCombo(dt);updQuest();
+ if(modal)return;   // 괴이·흔적·샛길 창이 열렸으면 이번 걸음은 여기까지(같은 걸음에 주운 상자 창이 덮어쓰지 않게)
  if(G.tmAt!==undefined&&G.st>=G.tmAt){G.tmAt=undefined;G.queue.push('temper');}
 
  if(!G.bossDone){
-  if(G.mode!=='rush'&&G.st>=MID_T&&!G.midDone){G.midDone=true;spawnBoss(STAGES[G.stage].mid,true);}
-  if(G.mode!=='rush'&&G.st>=STAGE_T&&!G.boss){if(G.midDone&&!G.mid)spawnBoss(STAGES[G.stage].boss,false);else if(!G.gateMsg){G.gateMsg=true;toast('중간 보스를 토벌해야 막 보스가 나타난다','red');}}
+  if(G.mode==='tale')taleTick(dt);
+  else if(G.mode!=='rush'&&G.st>=MID_T&&!G.midDone){G.midDone=true;spawnBoss(curStg().mid,true);}
+  if(G.mode==='normal'&&G.st>=STAGE_T&&!G.boss){if(G.midDone&&!G.mid)spawnBoss(curStg().boss,false);else if(!G.gateMsg){G.gateMsg=true;toast('중간 보스를 토벌해야 막 보스가 나타난다','red');}}
   G.spawnT-=dt;if(G.spawnT<=0){G.spawnT=0.25;
    const target=Math.min(CAP.e,(12+Math.min(G.st,STAGE_T)*0.8+G.stage*20)*(G.boss?0.45:1)*G.mods.eCnt*(G.path&&G.path.hard?1.15:1)*(G.mode==='rush'?0.4:1));const alive=G.enemies.length;
-   const s=STAGES[G.stage],list=G.st>45?s.early.concat(s.late):s.early;
+   const s=curStg(),list=G.st>45?s.early.concat(s.late):s.early;
    let n=Math.min(8,Math.ceil((target-alive)*0.3));for(let i=0;i<n;i++){const id=list[Math.random()*list.length|0];if(EN[id].ai==='swarm'){const a=Math.random()*TAU,R0=Math.hypot(W/2,H/2)+16,x=P.x+Math.cos(a)*R0,y=P.y+Math.sin(a)*R0;for(let j=0;j<3;j++)spawnEnemy(id,x+rnd(-8,8),y+rnd(-8,8));i+=2;}else spawnEnemy(id);}}
   G.eliteT-=dt*G.mods.elite;if(G.mode!=='rush'&&G.eliteT<=0&&!G.boss&&(G.mods.eliteWithMid||!G.mid)){G.eliteT=45;spawnElite();}
-  if(G.mode!=='rush'&&!G.swarmDone&&G.st>90){G.swarmDone=true;const s=STAGES[G.stage];toast('요괴 떼가 몰려온다','red');for(let i=0;i<36;i++){const a=i/36*TAU;spawnEnemy(s.early[i%s.early.length],P.x+Math.cos(a)*(W*0.55),P.y+Math.sin(a)*(H*0.6));}}
+  if(G.mode!=='rush'&&!G.swarmDone&&G.st>90){G.swarmDone=true;const s=curStg();toast('요괴 떼가 몰려온다','red');for(let i=0;i<36;i++){const a=i/36*TAU;spawnEnemy(s.early[i%s.early.length],P.x+Math.cos(a)*(W*0.55),P.y+Math.sin(a)*(H*0.6));}}
   if(G.shrineN<2&&!G.shrine&&G.st>(G.shrineN?80:25)){G.shrineN++;spawnShrine();}
   G.potT-=dt;if(G.potT<=0){G.potT=7;if(G.enemies.filter(e=>e.prop).length<6)spawnPot();}
  }
  if(G.shrine){const s=G.shrine,d=Math.hypot(P.x-s.x,P.y-s.y);if(d<22){s.prog+=dt;if(Math.random()<0.2)particle(s.x,s.y-10,'#e0b048',1,20);if(s.prog>=s.need){G.shrine=null;G.rs.shrines++;G.queue.push('bless');snd(880,0.4,'triangle',0.05);}}else s.prog=Math.max(0,s.prog-dt*0.5);}
  buildGrid();
+ const tmM=P.might;if(G.taleMight)P.might*=1+G.taleMight;try{
  for(const w of G.weapons){const d=WD[w.id];CUR_SRC=w.id;const p0=G.projs.length,z0=G.zones.length,f0=G.fx.length,m0=G.movers.length,s0=G.spirits.length;runW(w,d.type==='c'?dt*G.mods.cls:dt,P);postW(w,dt,P,p0,z0,f0,m0,s0);}CUR_SRC=null;
+ }finally{P.might=tmM;}
  updSpirits(dt);
  petUpd(dt);CUR_SRC=null;
  for(const m of G.movers){HSRC=m.src||null;m.x+=m.vx*dt;m.life-=dt;if(Math.random()<0.6)particle(m.x-m.dir*16,m.y+2,'#bfe0ff',1,20,0.4);
@@ -2134,6 +2354,7 @@ function update(dt){
   if(d<8){it.dead=true;
    if(it.k==='coin'){G.coins+=Math.round((1+P.coinPlus)*G.mods.coin);snd(1200,0.06,'triangle',0.03);if(duoOn('bokrok')){const r=Math.random();if(r<0.04)dropItem('tteok',it.x+rnd(-12,12),it.y+rnd(-10,10));else if(r<0.06)dropItem('pouch',it.x+rnd(-12,12),it.y+rnd(-10,10));}}
    else if(it.k==='tteok'){heal(30*P.tteokM);G.rs.tteok++;particle(P.x,P.y,'#7fe0a0',8,40);snd(660,0.1,'triangle');}
+   else if(it.k==='grain'){if(G.tale&&G.tale.R.grain!==undefined){G.tale.R.grain++;particle(P.x,P.y-4,'#e0b048',6,30,0.4);snd(700,0.08,'triangle',0.03);}}
    else if(it.k==='pouch'){for(const g of G.gems)g.mag=true;snd(880,0.2,'triangle');toast('복주머니: 구슬을 모두 끌어온다');}
    else if(it.k==='chest'){openChest(1+(G.mods.chestPlus||0));}}}
  G.items=G.items.filter(i=>!i.dead);
@@ -2248,6 +2469,29 @@ function drawSky(){const g=G.skyGod;if(!g)return;const a=Math.min(1,g.t*1.5),god
  for(const [ox,oy,r] of [[-7,1,5],[0,0,7],[7,1,5],[-3,3,5],[4,3,5]]){b.beginPath();b.ellipse(g.x+ox,g.y+oy,r,r*0.55,0,0,TAU);b.fill();}
  b.globalAlpha=a*0.3;b.fillStyle=god.col;b.beginPath();b.ellipse(g.x,g.y-8,10,12,0,0,TAU);b.fill();b.globalAlpha=a;drawSpr(charSpr(god.look),g.x,g.y-1+Math.sin(G.time*2)*1.5,g.x>G.P.x);b.globalAlpha=1;}
 const JW_LOOK=lk('gat','#4a5a7a',{T:'#e0b048',L:'#c23b2a',C:'#efe6d2',item:'fan'});
+ESPR.jwclone=ESPR.jwshade=charSpr(JW_LOOK);
+/* 설화 소품 도트(흔적·규칙 소품·장면 그림) */
+const PROP={
+ scroll:mk(['.yyyyyyyy.','.wwwwwwww.','.wkkwwkkw.','.wwwwwwww.','.wkwkkwkw.','.wwwwwwww.','.wkkwkwkw.','.wwwwwwww.','.yyyyyyyy.','..n....n..'],PAL),
+ cave:mk(['...xxxx...','..xXXXXx..','.xXkkkkXx.','xXkkkkkkXx','xXkkkkkkXx','xXkkkkkkXx','xXkkkkkkXx','gxXkkkkXxg','ggxxxxxxgg'],PAL),
+ flower:mk(['..r....p..','.rwr..pwp.','..r.y..p..','..g.y.g...','...gyg....','..yyyyy...','...ywy....','....g.....','...ggg....','....g.....'],PAL),
+ well:mk(['.nnnnnnnn.','.n......n.','.n..kk..n.','.nnnnnnnn.','xXXXXXXXXx','xXccccccXx','xXbbbbbbXx','xXXXXXXXXx','.xxxxxxxx.'],PAL),
+ grain:mk(['...nn....','..oyyo...','.oyyyyo..','oyyoyyyo.','oyyyyoyo.','oyoyyyyo.','.oyyyyo..','..oooo...'],PAL),
+ dawn:mk(['..........','....yy....','...yyyy...','rrryyyyrrr','RRRRRRRRRR','nnnnnnnnnn','kknkknkknk'],PAL),
+};
+ICS.grain=PROP.grain;
+function artSpr(a){if(!a)return null;if(a==='jw')return charSpr(JW_LOOK);const [k,v]=a.split(':');
+ if(k==='en')return ESPR[v]?ESPR[v].n:null;if(k==='ch')return CHARS[v]?charSpr(CHARS[v].look).n:null;if(k==='prop')return PROP[v]||null;return null;}
+/* 이야기 장면 창: openScene(쪽 배열, 다 읽은 뒤 할 일) */
+let scenePages=null,sceneI=0,sceneDone=null;
+function renderScene(){const pg=scenePages[sceneI],last=sceneI===scenePages.length-1;
+ $('#sceneEye').textContent=pg.eye||'';$('#sceneTitle').textContent=pg.title||'';$('#sceneText').textContent=pg.t||'';$('#sceneFoot').textContent=pg.foot||'';
+ const sp=artSpr(pg.art),im=$('#sceneArt');if(sp){const c=sp.n||sp;im.src=big(c,Math.max(2,Math.floor(96/Math.max(c.width,c.height))));im.hidden=false;}else im.hidden=true;
+ $('#sceneNext').textContent=last?'계속':'다음';}
+function openScene(pages,done){scenePages=pages;sceneI=0;sceneDone=done||null;renderScene();show('scene');snd(520,0.2,'triangle',0.04);}
+function sceneNext(){if(modal!=='scene'||!scenePages||!armed())return;
+ if(sceneI<scenePages.length-1){sceneI++;renderScene();armUntil=performance.now()+250;return;}
+ const cb=sceneDone;scenePages=null;sceneDone=null;show(null);if(cb)cb();}
 function summonJW(mode){const P=G.P;G.helper=Object.assign(G.helper||{x:P.x-24,y:P.y-14,at:0,bt:0,ph:0},{t:5,mode});
  if(mode==='20'){heal(P.maxHp*0.4/P.healM);G.jwBuff=10;toastBig('도사 전우치의 도술','금강불괴 · 회복과 방어');flash('255,230,160',0.4);particle(P.x,P.y-6,'#e0b048',24,60,0.7);}
  else{toastBig('도사 전우치 출현','분신술 · 요괴 토벌');flash('230,240,255',0.25);}
@@ -2366,7 +2610,7 @@ const DKB={
  eun:{g:'銀',n:'은 나와라 뚝딱',d:'최대 체력 +30, 체력을 모두 채운다.',f:()=>{G.base.maxHp+=30;recompute();G.P.hp=G.P.maxHp;}},
  ttuk:{g:'槌',n:'뚝딱 수련',d:'곧바로 세 번 레벨업한다.',f:()=>{const P=G.P;for(let i=0;i<3;i++)gainXp((P.next-P.xp+1)/P.xpGain);}},
  dun:{g:'變',n:'둔갑술',d:'재사용 대기 −10%.',f:()=>{G.base.cd*=0.9;}}};
-function dkPlan(){G.dk=null;G.dkAt=G.mode!=='rush'&&(G.ks==='gamtu'||Math.random()<0.5)?rnd(40,110):undefined;}
+function dkPlan(){G.dk=null;G.dkAt=G.mode==='normal'&&(G.ks==='gamtu'||Math.random()<0.5)?rnd(40,110):undefined;}
 function spawnDk(){const P=G.P;for(let t=0;t<20;t++){const a=Math.random()*TAU,d=rnd(140,220),x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d*0.75,o={x,y,r:10};pushOut(o,10);
   if(Math.hypot(o.x-x,o.y-y)<2){G.dk={x,y,prog:0,need:1.2,life:45};toast('도깨비불이 일렁이는 샛길이 열렸다');return;}}}
 function updDk(dt){const P=G.P;if(G.bossDone||G.clearT!==undefined){if(G.dk){G.dk=null;}return;}
@@ -2402,7 +2646,7 @@ const QUESTS={
  graze:{n:'탄 스치기',key:'graze',need:()=>8,ok:()=>G.stage>=3},
  variant:{n:'변종 퇴치',key:'variants',need:()=>12,ok:()=>variantChance()>0.05},
  anom:{n:'괴이 조사',key:'anoms',need:()=>1}};
-function questPlan(){G.q=null;if(G.mode==='rush')return;const l=Object.keys(QUESTS).filter(k=>!QUESTS[k].ok||QUESTS[k].ok()),k=l[Math.random()*l.length|0],Q=QUESTS[k];
+function questPlan(){G.q=null;if(G.mode!=='normal')return;const l=Object.keys(QUESTS).filter(k=>!QUESTS[k].ok||QUESTS[k].ok()),k=l[Math.random()*l.length|0],Q=QUESTS[k];
  G.q={id:k,need:Q.need(G.stage),base:k==='combo'?0:(G.rs[Q.key]||0),done:false};G.cbStage=0;}
 function questProg(){const q=G.q;if(!q)return 0;return Math.min(q.need,q.id==='combo'?G.cbStage:(G.rs[QUESTS[q.id].key]||0)-q.base);}
 function updQuest(){const q=G.q;if(!q||q.done||G.bossDone)return;if(questProg()>=q.need){q.done=true;const c=30+G.stage*10;G.coins+=c;G.rs.quests=(G.rs.quests||0)+1;G.rs.mak=(G.rs.mak||0)+1;
@@ -2517,19 +2761,19 @@ function srcName(s,cid){if(WD[s])return WD[s].name;if(s==='ult')return ULT[cid]?
 function srcIcon(s){if(WD[s])return iconHTML(s);const g=s==='ult'?'極':s==='call'?'神':s.startsWith('pet:')?'獸':'?';return `<span class="seal" style="background:#7a2018">${g}</span>`;}
 function snapRun(win){const P=G.P,dm=G.rs.dmg||{},tot=Object.values(dm).reduce((a,v)=>a+v,0);
  return {t:Date.now(),cid:G.cid,cls:className(),tier:P.tier,mode:G.mode,diff:G.diff,curse:G.curse,card:G.card,ks:G.ks||null,win:!!win,stage:G.stage,loop:G.loop,time:Math.round(totalTime()),kills:G.kills,lvl:P.lvl,combo:G.rs.comboMax||0,
-  where:G.mode==='rush'?`${G.stage+1}번째 원정`:STAGES[G.stage].name,tot:Math.round(tot),
+  where:G.mode==='rush'?`${G.stage+1}번째 원정`:G.mode==='tale'?`『${TALES[G.tale.id].n}』 ${G.tale.act+1}막`:curStg().name,tale:G.mode==='tale'?G.tale.id:undefined,tot:Math.round(tot),
   dmg:Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>[k,Math.round(v)]),
   w:G.weapons.map(w=>({id:w.id,e:w.evo?1:0,l:w.lv,lb:w.lb||0,tm:w.tm||null})),p:{...G.passives},bl:Object.keys(G.bless),duo:Object.keys(G.duo||{}),pet:G.pet?G.pet.type:null,dk:G.rs.dkIn||0,tmN:G.rs.temper||0,q:G.rs.quests||0};}
 function runScore(r){return ((r.win?1:0)+r.loop)*1e8+(r.stage+1)*1e6+Math.min(999999,r.kills);}
 function archiveRun(win){const A=meta.arch,r=snapRun(win),R=A.rec;
  A.runs.unshift(r);if(A.runs.length>50)A.runs.length=50;
  const better=(k,v,lower)=>{const o=R[k];if(!o||(lower?v<o.v:v>o.v))R[k]={v,r};};
- if(r.win&&r.mode!=='rush'&&!r.loop)better('fast',r.time,true);
+ if(r.win&&r.mode==='normal'&&!r.loop)better('fast',r.time,true);if(r.win&&r.mode==='tale')better('tale',r.time,true);
  if(r.win&&r.mode==='rush')better('rush',r.time,true);
- better('kills',r.kills);better('lvl',r.lvl);better('surv',r.time);better('combo',r.combo);better('dmg',r.tot);
- if(r.win&&r.mode!=='rush')better('curse',r.curse);if(r.loop)better('loop',r.loop+1);
- const C=A.cls[r.cid]||(A.cls[r.cid]={n:0,wins:0,kills:0,best:null,src:{}});C.n++;if(r.win)C.wins++;C.kills+=r.kills;
- if(!C.best||runScore(r)>runScore(C.best))C.best=r;
+ better('kills',r.kills);if(r.mode!=='tale')better('lvl',r.lvl);better('surv',r.time);better('combo',r.combo);better('dmg',r.tot);
+ if(r.win&&r.mode==='normal')better('curse',r.curse);if(r.loop)better('loop',r.loop+1);
+ const C=A.cls[r.cid]||(A.cls[r.cid]={n:0,wins:0,kills:0,best:null,src:{}});C.n++;if(r.win&&r.mode!=='tale')C.wins++;C.kills+=r.kills;
+ if(r.mode!=='tale'&&(!C.best||runScore(r)>runScore(C.best)))C.best=r;
  const mins=Math.max(0.5,r.time/60);for(const [k,v] of Object.entries(G.rs.dmg||{})){const s=C.src[k]||(C.src[k]={d:0,m:0,n:0});s.d+=v;s.m+=mins;s.n++;}
  return r;}
 let archTab='rec';
@@ -2537,7 +2781,7 @@ function openArch(from){archFrom=from||'title';archTab='rec';renderArch();show('
 let archFrom='title';
 function buildMini(r){return `<div class="mini">${r.w.map(w=>{const d=WD[w.id];if(!d)return '';return `<span class="m${d.fuse?' f':w.e?' e':''}" title="${(w.e?d.evoName:d.name)}${w.tm?' · 담금질 '+TEMPER[w.tm].n:''}">${iconHTML(w.id)}${w.tm?`<i>${TEMPER[w.tm].g}</i>`:''}</span>`;}).join('')}${Object.keys(r.p).map(id=>PD[id]?`<span class="m" title="${PD[id].name} ${r.p[id]}">${iconHTML(id)}</span>`:'').join('')}</div>`;}
 const clsT=r=>r.cls&&r.cls!==CHARS[r.cid].name?' · '+r.cls:'';
-function runLine(r){const J=jdate(r.t),C=CHARS[r.cid];const res=r.mode==='rush'?(r.win?'원정 완주':`${r.stage+1}번째 원정에서 쓰러짐`):r.win?(r.loop?`끝없는 밤 ${r.loop+1}바퀴 끝에 새벽`:'새벽을 맞음'):`${r.loop?`${r.loop+1}바퀴 · `:''}${r.where}에서 쓰러짐`;
+function runLine(r){const J=jdate(r.t),C=CHARS[r.cid];const res=r.mode==='tale'?(r.win?`설화 『${TALES[r.tale]?TALES[r.tale].n:''}』 완주`:`설화 ${r.where}에서 쓰러짐`):r.mode==='rush'?(r.win?'원정 완주':`${r.stage+1}번째 원정에서 쓰러짐`):r.win?(r.loop?`끝없는 밤 ${r.loop+1}바퀴 끝에 새벽`:'새벽을 맞음'):`${r.loop?`${r.loop+1}바퀴 · `:''}${r.where}에서 쓰러짐`;
  return {J,C,res};}
 function recCard(title,k,fmt){const o=meta.arch.rec[k];if(!o)return `<div class="rec none"><h4>${title}</h4><p>아직 기록이 없다.</p></div>`;const {J,C,res}=runLine(o.r);
  return `<div class="rec"><h4>${title}</h4><strong>${fmt(o.v)}</strong><p><b>${C.name}</b>${clsT(o.r)} · ${res}</p>${buildMini(o.r)}<p class="when">${J.j} <small>(${J.s})</small></p></div>`;}
@@ -2546,7 +2790,7 @@ function renderArch(){for(const [k,id] of [['rec','tabRec'],['cls','tabCls'],['l
  if(archTab==='rec'){body.innerHTML=`<div class="recs">`+[
    recCard('가장 빠른 새벽','fast',v=>fmtT(v)),recCard('한 출정 최다 처치','kills',v=>v.toLocaleString()+'마리'),recCard('가장 높은 레벨','lvl',v=>'Lv '+v),
    recCard('가장 오래 버틴 밤','surv',v=>fmtT(v)),recCard('가장 긴 연격','combo',v=>v.toLocaleString()+'연격'),recCard('가장 큰 피해','dmg',v=>v.toLocaleString()),
-   recCard('가장 높은 액운 평정','curse',v=>'액운 '+v),recCard('가장 먼 끝없는 밤','loop',v=>v+'바퀴'),recCard('가장 빠른 퇴마 원정','rush',v=>fmtT(v))].join('')+`</div>`;return;}
+   recCard('가장 높은 액운 평정','curse',v=>'액운 '+v),recCard('가장 먼 끝없는 밤','loop',v=>v+'바퀴'),recCard('가장 빠른 퇴마 원정','rush',v=>fmtT(v)),recCard('가장 빠른 설화','tale',v=>fmtT(v))].join('')+`</div>`;return;}
  if(archTab==='cls'){body.innerHTML=`<div class="help">`+Object.keys(CHARS).map(cid=>{const Ch=CHARS[cid],C=A.cls[cid],ok=unlocked('char:'+cid);
    if(!C)return hcard(`<span class="seal" style="width:28px;height:28px;font-size:18px">${Ch.seal}</span>${ok?Ch.name:'???'}`,`<p>${ok?'아직 이 퇴마사로 출정한 기록이 없다.':charLock(cid)}</p>`);
    const top=Object.entries(C.src).map(([k,s])=>[k,s.d/s.m,s.n]).sort((a,b)=>b[1]-a[1]).slice(0,3),tot=top.reduce((a,x)=>a+x[1],0)||1,B=C.best,{J,res}=runLine(B);
@@ -2558,7 +2802,7 @@ function renderArch(){for(const [k,id] of [['rec','tabRec'],['cls','tabCls'],['l
      <h4>가장 효율적인 무기·기술 (분당 피해)</h4>${top.length?top.map(([k,v,n])=>`<div class="hrow"><span class="ic">${srcIcon(k)}</span><div><p><b>${srcName(k,cid)}</b> · 분당 ${Math.round(v).toLocaleString()} <small>(${n}판 · 상위 셋 중 ${Math.round(v/tot*100)}%)</small></p></div></div>`).join(''):'<p>피해 기록이 아직 없다.</p>'}`);}).join('')+`</div>`;return;}
  body.innerHTML=A.runs.length?`<div class="logs">${A.runs.map(r=>{const {J,C,res}=runLine(r);const main=r.dmg[0];
    return `<div class="log${r.win?' win':''}"><div class="lh"><span class="seal">${C.seal}</span><div><b>${C.name}${clsT(r)}</b><p>${res}</p></div><span class="tm">${J.j}<br><small>${J.s}</small></span></div>
-    <p class="ls">${r.mode==='rush'?'퇴마 원정':DIFFS[r.diff].n}${r.curse?` · 액운 ${r.curse}`:''} · ${fmtT(r.time)} · Lv ${r.lvl} · ${r.kills.toLocaleString()}마리 · 연격 ${r.combo}${main?` · 주력 ${srcName(main[0],r.cid)}`:''}${r.ks?` · 정표 ${KS[r.ks].n}`:''}</p>${buildMini(r)}</div>`;}).join('')}</div>`:'<p class="lede">아직 기록된 출정이 없다. 첫 출정을 마치면 이곳에 날짜와 함께 남는다.</p>';}
+    <p class="ls">${r.mode==='rush'?'퇴마 원정':r.mode==='tale'?'설화 출정':DIFFS[r.diff].n}${r.curse?` · 액운 ${r.curse}`:''} · ${fmtT(r.time)} · Lv ${r.lvl} · ${r.kills.toLocaleString()}마리 · 연격 ${r.combo}${main?` · 주력 ${srcName(main[0],r.cid)}`:''}${r.ks?` · 정표 ${KS[r.ks].n}`:''}</p>${buildMini(r)}</div>`;}).join('')}</div>`:'<p class="lede">아직 기록된 출정이 없다. 첫 출정을 마치면 이곳에 날짜와 함께 남는다.</p>';}
 
 
 /* ---- 캐릭터 상태창 ---- */
@@ -2605,18 +2849,20 @@ function renderStatus(){const P=G.P,C=CHARS[G.cid],t=curTier();
   h+=hcard('정표 · 점괘 · 그 밖',ot.join(''));}
  else{const D=DIFFS[G.diff];const st=[['최대 체력',Math.round(P.maxHp)],['공격력',pct(P.might)],['치명타',pct(P.crit)],['치명 피해',pct(P.critDmg)],['범위',pct(P.area)],['재사용 대기',pct(P.cd)],['투사체 수',sgn(P.amount)],['지속시간',pct(P.dur)],['투사체 속도',pct(P.pspd)],['이동 속도',pct(P.spd)],['줍는 범위',Math.round(P.magnet)],['방어',P.armor],['초당 회복',(+P.regen.toFixed(2))],['회복량',pct(P.healM)],['경험치',pct(P.xpGain)],['받는 피해 감소',pct(P.dmgRed)],['떡 회복',pct(P.tteokM)],['드롭',pct(P.drop)],['부활',P.revive],['피격 무적 추가',(+P.iframeB.toFixed(2))+'초']];
   h+=hcard('능력치',`<div class="stgrid">${st.map(([a,v])=>`<div><span>${a}</span><strong>${v}</strong></div>`).join('')}</div>`);
-  h+=hcard('이번 출정',`<div class="stgrid">${[['막',`${STAGES[G.stage].sub}${G.loop?` · ${G.loop+1}바퀴`:''}`],['버틴 시간',fmtT(totalTime())],['처치',G.kills.toLocaleString()],['엽전',G.coins],['난이도',D.n],['액운',G.curse],['산통·물리기·봉인',`${G.rr} · ${G.sk} · ${G.bn}`],['담금질',G.rs.temper||0],['인장',G.rs.seals||0],['스침',G.rs.graze||0]].map(([a,v])=>`<div><span>${a}</span><strong>${v}</strong></div>`).join('')}</div>`);}
+  h+=hcard('이번 출정',`<div class="stgrid">${[['막',stageLabel()],['버틴 시간',fmtT(totalTime())],['처치',G.kills.toLocaleString()],['엽전',G.coins],['난이도',D.n],['액운',G.curse],['산통·물리기·봉인',`${G.rr} · ${G.sk} · ${G.bn}`],['담금질',G.rs.temper||0],['인장',G.rs.seals||0],['스침',G.rs.graze||0]].map(([a,v])=>`<div><span>${a}</span><strong>${v}</strong></div>`).join('')}</div>`);}
  body.innerHTML=h;}
 
 /* ======================= tasks & codex ======================= */
-function V(key){if(key==='anomKinds')return anomFound();if(key==='charN')return Object.keys(CHARS).filter(id=>unlocked('char:'+id)).length;if(key==='runs')return meta.hub.runs||0;
+function V(key){if(key==='anomKinds')return anomFound();
+ if(key==='fragN')return TALE_IDS.reduce((a,id)=>a+meta.tale.frag[id],0);if(key==='taleN')return TALE_IDS.filter(id=>meta.tale.done[id]).length;if(key==='ending')return meta.ending.seen?1:0;if(key==='charN')return Object.keys(CHARS).filter(id=>unlocked('char:'+id)).length;if(key==='runs')return meta.hub.runs||0;
  if(key.startsWith('evo:')){const id=key.slice(4);return ((meta.stats.evoList||[]).includes(id)||(G&&G.rs.evo.has(id)))?1:0;}
  if(key.startsWith('kills_')){const c=key.slice(6);return (meta.stats[key]||0)+(G&&!G.merged&&G.cid===c?G.rs.kills:0);}
- if(/^br[01]_/.test(key)){const b=+key[2],c=key.slice(4);return Math.max(meta.stats[key]||0,G&&G.cid===c&&G.P.branch===b?G.P.tier:0);}
+ if(/^br[01]_/.test(key)){const b=+key[2],c=key.slice(4);return Math.max(meta.stats[key]||0,G&&G.mode!=='tale'&&G.cid===c&&G.P.branch===b?G.P.tier:0);}
+ if(G&&G.mode==='tale'&&TALE_NOREC.test(key))return meta.stats[key]||0;
  if(key.startsWith('clear_'))return meta.stats[key]||0;if(key==='ksN')return ksOwned().length;if(key==='codex'){const s=new Set([...Object.keys(meta.seen),...(G?Object.keys(G.rs.seen):[])]);return s.size;}
  if(key==='evo'){const s=new Set([...(meta.stats.evoList||[]),...(G?[...G.rs.evo]:[])]);return s.size;}
  const m=meta.stats[key]||0;if(!G||G.merged)return m;
- let r=G.rs[key]||0;if(key.startsWith('tier_'))r=key==='tier_'+G.cid?G.P.tier:0;if(key==='petLv')r=G.pet?G.pet.lv:0;if(key==='maxStage')r=G.stage+1;
+ let r=G.rs[key]||0;if(key.startsWith('tier_'))r=key==='tier_'+G.cid?G.P.tier:0;if(key==='petLv')r=G.pet?G.pet.lv:0;if(key==='maxStage')r=G.mode==='tale'?0:G.stage+1;
  return MAXKEYS.has(key)?Math.max(m,r):m+r;}
 function grantReward(rw){if(rw.coins)meta.coins+=rw.coins;if(rw.unlock&&!meta.unl.includes(rw.unlock))meta.unl.push(rw.unlock);
  for(const k of ['rr','sk','bn'])if(rw[k]){meta.extra[k]=(meta.extra[k]||0)+rw[k];if(G)G[k]+=rw[k];}}
@@ -2662,7 +2908,8 @@ const TASK_IC={k100:['enemy','dokkaebi'],k1000:['char','uiwon'],k5000:['enemy','
  loop1:['seal','夜','#1a1418'],loop3:['seal','夜','#3a1a4a'],rush1:['seal','征','#7a2018'],rush10:['seal','征','#9a6a10'],var100:['seal','變','#2a2228'],anom6:['seal','怪','#3a1a4a'],anom12:['seal','怪','#9a6a10'],
  temper1:['seal','鍛','#9a4a10'],temper10:['seal','鍛','#7a2018'],dk1:['seal','鬼','#2a6a6a'],dk10:['seal','鬼','#1a4a4a'],quest10:['seal','依','#2f6b5a'],quest30:['seal','依','#9a6a10'],combo300:['seal','連','#9a6a10'],combo1000:['seal','連','#7a2018'],
  ks3:['seal','情','#7a2018'],allchar:['seal','六','#9a6a10'],runs30:['seal','卅','#4a3a30']};
-function taskSpec(t){if(TASK_IC[t.id])return TASK_IC[t.id];const k=t.key;
+const TALE_TASK_IC={t_frag1:['seal','話','#9a6a10'],t_tale1:['seal','說','#2f4a7a'],t_ending:['seal','曉','#7a2018']};
+function taskSpec(t){if(TASK_IC[t.id])return TASK_IC[t.id];if(TALE_TASK_IC[t.id])return TALE_TASK_IC[t.id];const k=t.key;
  if(t.rw.unlock&&t.rw.unlock.startsWith('char:'))return ['char',t.rw.unlock.slice(5)];
  if(t.rw.unlock&&t.rw.unlock.startsWith('w:'))return ['icon',t.rw.unlock.slice(2)];
  if(k.startsWith('boss_'))return ['enemy',k.slice(5)];
@@ -2694,8 +2941,8 @@ function taskToast(t){const box=$('#ach');if(!box)return;const d=document.create
 function mergeRun(){const rs=G.rs,st=meta.stats;
  for(const k of ['kills','elites','mids','pots','tteok','shrines','tavern','awkTot','duo','calls','fuse','seals','graze','rushRounds','rushClear','variants','temper','dkIn','quests'])st[k]=(st[k]||0)+(rs[k]||0);st.comboMax=Math.max(st.comboMax||0,rs.comboMax||0);
  for(const k in rs)if(k.startsWith('boss_'))st[k]=(st[k]||0)+rs[k];
- st.maxStage=Math.max(st.maxStage||0,G.stage+1);st.maxLevel=Math.max(st.maxLevel||0,rs.maxLevel);st['tier_'+G.cid]=Math.max(st['tier_'+G.cid]||0,G.P.tier);st.ult=Math.max(st.ult||0,G.rs.ult||0);st.bestLoop=Math.max(st.bestLoop||0,G.rs.bestLoop||0);
- st.petLv=Math.max(st.petLv||0,G.pet?G.pet.lv:0);st['kills_'+G.cid]=(st['kills_'+G.cid]||0)+rs.kills;if(G.P.tier&&G.P.branch!=null){const bk='br'+G.P.branch+'_'+G.cid;st[bk]=Math.max(st[bk]||0,G.P.tier);}st.anoms=(st.anoms||0)+(rs.anoms||0);
+ if(G.mode!=='tale')st.maxStage=Math.max(st.maxStage||0,G.stage+1);if(G.mode!=='tale'){st.maxLevel=Math.max(st.maxLevel||0,rs.maxLevel);st['tier_'+G.cid]=Math.max(st['tier_'+G.cid]||0,G.P.tier);}st.ult=Math.max(st.ult||0,G.rs.ult||0);st.bestLoop=Math.max(st.bestLoop||0,G.rs.bestLoop||0);
+ st.petLv=Math.max(st.petLv||0,G.pet?G.pet.lv:0);st['kills_'+G.cid]=(st['kills_'+G.cid]||0)+rs.kills;if(G.mode!=='tale'&&G.P.tier&&G.P.branch!=null){const bk='br'+G.P.branch+'_'+G.cid;st[bk]=Math.max(st[bk]||0,G.P.tier);}st.anoms=(st.anoms||0)+(rs.anoms||0);
  st.evoList=[...new Set([...(st.evoList||[]),...rs.evo])];
  for(const id in rs.seen){const m=meta.seen[id]||(meta.seen[id]={s:1,k:0});m.k+=rs.seen[id].k;}
  /* v16.2 이번 출정 수치를 저장했으니 과업 계산(V)에서 다시 더하지 않는다 */
@@ -2736,7 +2983,7 @@ function applyOpt(o){
  refreshSlots();}
 
 /* ======================= screens ======================= */
-const PICK_SCREENS=new Set(['levelup','adv','bless','petpick','pick','chest']);let armUntil=0;
+const PICK_SCREENS=new Set(['levelup','adv','bless','petpick','pick','chest','scene']);let armUntil=0;
 function show(id){for(const s of document.querySelectorAll('.screen'))s.hidden=s.id!==id;$('#overlay').hidden=!id;modal=id;
  {const hb=$('#hudbtns');if(hb)hb.style.visibility=id?'hidden':'';}
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
@@ -2772,7 +3019,7 @@ let advPick=[];
 function grantTier(bi,bonus){const P=G.P,C=CHARS[G.cid];P.branch=bi;const t=C.branches[bi].tiers[P.tier];P.tier++;
  t.apply(G.base);if(bonus)bonus.f(G.base);addWeapon(t.skill);recompute();refreshSlots();show(null);
  toast(`${TIER_NAME[P.tier]} 전직 · ${t.name}`,'big');flash('255,230,160',0.3);particle(P.x,P.y-6,'#e0b048',24,70,0.7);
- if(P.tier===1&&!G.pet)openPet();}
+ if(P.tier===1&&!G.pet&&G.mode!=='tale')openPet();}
 function openAdv(){const P=G.P,C=CHARS[G.cid],box=$('#advCards');box.innerHTML='';advPick=[];
  $('#advEye').textContent=`CLASS ADVANCE · ${P.tier+1}차 · LV ${(P.tier+1)*10}`;
  if(P.tier===0){
@@ -2841,8 +3088,8 @@ const TAVERN=[
 ];
 const TAV_ICON={gukbap:'gukbap',makgeolli:'makgeolli',santong:'santong',bujeok:'bujeok',mul:'santong',bottari:'bottari',jeonghwa:'jeonghwasu',injang:'nakgwan'};
 function tavPrice(it){return Math.round(it.p*(1+G.stage*0.3)*Math.pow(1.5,G.tavBuy[it.id]||0));}
-function openTavern(){const s=STAGES[G.stage];
- if(G.stage>=STAGES.length-1){openEndless();return;}
+function openTavern(){const s=curStg();
+ if(G.stage>=STAGES.length-1){if(G.mode==='normal'&&endingPages(G.cid).length)openEnding(openEndless);else openEndless();return;}
  G.tavBuy={};G.stageMight=0;recompute();
  $('#tavEye').textContent=`${s.sub} CLEAR`;$('#tavTitle').textContent=`${s.name} 평정 · 주막`;
  const n=STAGES[G.stage+1];$('#tavLede').textContent=`처치 ${G.kills}. 주막에서 엽전을 쓰고 ${n.sub} ${n.name}(으)로 떠난다. 떠나면 체력을 30% 회복하고, 남은 엽전은 출정이 끝난 뒤 수련 도장에서 쓰는 엽전이 된다.`;
@@ -2854,28 +3101,31 @@ function renderTavern(){$('#tavCoins').textContent=`가진 엽전 ${G.coins}닢`
   d.querySelector('button').onclick=()=>{if(G.coins<p)return;G.coins-=p;G.rs.tavern+=p;G.tavBuy[it.id]=(G.tavBuy[it.id]||0)+1;it.f();snd(1000,0.1,'triangle');
    if(G.tavBless){G.tavBless=false;G.afterBless=()=>{renderTavern();show('tavern');};openBless('정화수를 올리다');return;}
    if(G.tavSeal){G.tavSeal=false;G.afterSeal=()=>{renderTavern();show('tavern');};openSeal();return;}renderTavern();};box.appendChild(d);}}
-function nextStage(){G.stage++;G.st=0;G.bossDone=false;G.boss=null;G.mid=null;G.midDone=false;G.swarmDone=false;G.eliteT=40;G.shrine=null;G.shrineN=0;G.gateMsg=false;G.skyAt=rnd(32,95);G.skyGod=null;G.anom=null;G.anomAt=rnd(20,90);G.dkC=null;dkPlan();questPlan();
+function nextStage(){G.stage++;G.st=0;G.bossDone=false;G.boss=null;G.mid=null;G.midDone=false;G.swarmDone=false;G.eliteT=40;G.shrine=null;G.shrineN=0;G.gateMsg=false;G.skyAt=rnd(32,95);G.skyGod=null;G.anom=null;G.anomAt=rnd(20,90);G.dkC=null;dkPlan();questPlan();tracePlan();
  G.enemies.length=0;G.ebul.length=0;G.warns=[];G.ezones=[];G.pull=null;G.wind=null;G.dark=0;
  G.zones=G.zones.filter(z=>z.follow);G.items=G.items.filter(i=>i.k==='chest');G.rs.maxStage=Math.max(G.rs.maxStage,G.stage+1);
  G.P.hp=Math.min(G.P.maxHp,G.P.hp+G.P.maxHp*0.3);show(null);stageToast();checkTasks();}
 function statHTML(){const P=G.P;
- return [[G.mode==='rush'?'원정':'막',G.mode==='rush'?`${G.stage+1} / ${STAGES.length}`:`${STAGES[G.stage].sub}${G.loop?` · ${G.loop+1}바퀴`:''}`],['버틴 시간',fmtT(totalTime())],['레벨',P.lvl],['처치',G.kills],['엽전',G.coins],['직업',className(),1],['펫',G.pet?`${PETS[G.pet.type].n} Lv ${G.pet.lv}`:'없음',1],['난이도',DIFFS[G.diff].n,1],['액운',G.curse],['점괘 패',G.card?CARDS[G.card].n:'없음',1],['공격력',Math.round(P.might*100)+'%'],['치명타',Math.round(P.crit*100)+'%']].map(([a,v,k])=>`<div><span>${a}</span><strong${k?' class="k"':''}>${v}</strong></div>`).join('');}
+ return [[G.mode==='rush'?'원정':'막',G.mode==='rush'?`${G.stage+1} / ${STAGES.length}`:stageLabel()],['버틴 시간',fmtT(totalTime())],['레벨',P.lvl],['처치',G.kills],['엽전',G.coins],['직업',className(),1],['펫',G.pet?`${PETS[G.pet.type].n} Lv ${G.pet.lv}`:'없음',1],['난이도',DIFFS[G.diff].n,1],['액운',G.curse],['점괘 패',G.card?CARDS[G.card].n:'없음',1],['공격력',Math.round(P.might*100)+'%'],['치명타',Math.round(P.crit*100)+'%']].map(([a,v,k])=>`<div><span>${a}</span><strong${k?' class="k"':''}>${v}</strong></div>`).join('');}
 function buildHTML(){return (G.pet?`<div class="slot pet" title="${PETS[G.pet.type].n}"><img src="${big(PSPR[G.pet.type].n,2)}" alt="${PETS[G.pet.type].n}"><b>${G.pet.lv}</b></div>`:'')+G.weapons.map(w=>{const d=WD[w.id];return d.type==='c'?`<div class="slot cls${w.awk?' awk':''}" title="${w.awk?AWK[w.awk].n+'의 ':''}${d.name}"><span class="si" style="background:${d.col}">${d.g}</span><b>${w.lv}${w.lb?'+'+w.lb:''}</b></div>`:`<div class="slot ${d.fuse?'fuse':w.evo?'evo':''}" title="${w.evo?d.evoName:d.name}${w.tm?' · 담금질 '+TEMPER[w.tm].n:''}${(w.seals||[]).length?' · 인장 '+w.seals.map(k=>SEALS[k].g).join(''):''}"><img src="${ICON[w.id]}" alt="${w.evo?d.evoName:d.name}">${(w.seals||[]).length?`<i class="sl">${'•'.repeat(w.seals.length)}</i>`:''}${w.tm?`<i class="tm">${TEMPER[w.tm].g}</i>`:''}<b>${d.fuse?'合':w.evo?'★':w.lv}${w.lb?'+'+w.lb:''}</b></div>`;}).join('')
  +Object.keys(G.passives).map(id=>`<div class="slot" title="${PD[id].name}"><img src="${ICON[id]}" alt="${PD[id].name}"><b>${G.passives[id]}</b></div>`).join('')
  +(G.ult?`<div class="slot ult" title="${ULT[G.cid].n}"><span class="si" style="background:#7a2018">${ULT[G.cid].g}</span></div>`:'')
  +Object.keys(G.duo||{}).map(id=>`<div class="slot god duo" title="${DUO[id].n}"><span class="si" style="background:#3a1a4a">${duoG(id)}</span></div>`).join('')
  +Object.keys(G.bless).map(id=>`<div class="slot god" title="${BLESS[id].n}"><span class="si" style="background:${BLESS[id].col}">${BLESS[id].g}</span><b>${G.bless[id]}</b></div>`).join('');}
-function totalTime(){return (G.loop*STAGES.length+G.stage)*STAGE_T+Math.min(G.st,STAGE_T);}
+function totalTime(){if(G.mode==='tale')return G.time-G.tale.t0;return (G.loop*STAGES.length+G.stage)*STAGE_T+Math.min(G.st,STAGE_T);}
 function endGame(win){if(G.over)return;G.over=true;G.P.iframe=0;
- if(win&&G.mode!=='rush')recordClear();if(win&&G.mode==='rush')meta.stats.rushBest=Math.max(meta.stats.rushBest||0,STAGES.length);const cleared=win||G.loop>0;
+ if(win&&G.mode==='normal')recordClear();if(win&&G.mode==='rush')meta.stats.rushBest=Math.max(meta.stats.rushBest||0,STAGES.length);const cleared=win||G.loop>0;
  mergeRun();
- const earned=Math.round((G.coins+Math.floor(G.kills/25)+G.stage*15+(cleared?150:0)+G.loop*150)*(1+G.curse*0.15)*DIFFS[G.diff].coin*(G.mods.coinShop||1));meta.coins+=earned;
+ const earned=Math.round((G.coins+Math.floor(G.kills/25)+(G.mode==='tale'?G.tale.act:G.stage)*15+(cleared?150:0)+G.loop*150)*(1+G.curse*0.15)*DIFFS[G.diff].coin*(G.mods.coinShop||1));meta.coins+=earned;
  {const r=archiveRun(win),h=meta.hub;h.runs++;h.mak+=(G.rs.mak||0);h.last={win:!!win,kills:G.kills,where:r.where,cls:r.cls,lvl:r.lvl};G.archR=r;}
  checkTasks();
- const rec={stage:G.stage,kills:G.kills,win};if(!meta.best||G.stage>meta.best.stage||(G.stage===meta.best.stage&&G.kills>meta.best.kills))meta.best=rec;saveMeta();
+ const rec={stage:G.stage,kills:G.kills,win};if(G.mode!=='tale'&&(!meta.best||G.stage>meta.best.stage||(G.stage===meta.best.stage&&G.kills>meta.best.kills)))meta.best=rec;saveMeta();
+ if(G.mode==='tale'){const T=TALES[G.tale.id],A=T.acts[G.tale.act];$('#overEye').textContent=win?'TALE CLEAR':'TALE';
+  $('#overTitle').textContent=win?`『${T.n}』${jong(T.n)?'을':'를'} 끝맺었다 · ${fmtT(G.tale.time)}${G.tale.rec?' · 새 기록':''}`:`『${T.n}』 ${G.tale.act+1}막 「${A.name}」에서 쓰러졌다`;
+  $('#overStats').innerHTML=statHTML()+overExtra(earned);showGoals();$('#overBuild').innerHTML=buildHTML();setTimeout(()=>show('over'),win?200:700);return;}
  if(G.mode==='rush'){$('#overEye').textContent=win?'EXPEDITION CLEAR':'EXPEDITION';$('#overTitle').textContent=win?'열 번의 원정을 모두 마쳤다':`${G.stage+1}번째 원정에서 쓰러졌다`;$('#overStats').innerHTML=statHTML()+overExtra(earned);showGoals();$('#overBuild').innerHTML=buildHTML();setTimeout(()=>show('over'),win?200:700);return;}
  $('#overEye').textContent=win?'VICTORY':(G.loop?'ENDLESS NIGHT':'GAME OVER');
- $('#overTitle').textContent=win?(G.loop?`끝없는 밤 ${G.loop+1}바퀴 끝에 새벽을 맞았다`:'그슨대를 걷어 내고 새벽을 맞았다'):(G.loop?`끝없는 밤 ${G.loop+1}바퀴 · ${STAGES[G.stage].name}에서 쓰러졌다`:`${STAGES[G.stage].name}에서 쓰러졌다`);
+ $('#overTitle').textContent=win?(G.loop?`끝없는 밤 ${G.loop+1}바퀴 끝에 새벽을 맞았다`:'그슨대를 걷어 내고 새벽을 맞았다'):(G.loop?`끝없는 밤 ${G.loop+1}바퀴 · ${curStg().name}에서 쓰러졌다`:`${curStg().name}에서 쓰러졌다`);
  $('#overStats').innerHTML=statHTML()+overExtra(earned);showGoals();
  $('#overBuild').innerHTML=buildHTML();
  setTimeout(()=>show('over'),win?200:700);}
@@ -2901,7 +3151,28 @@ function openPrep(){if(!selChar)return;prep.curse=Math.min(prep.curse,meta.curse
 function diffChips(box,desc,after){box.innerHTML='';
  for(const k of ['easy','normal','hard']){const bt=document.createElement('button');bt.textContent=DIFFS[k].n;bt.setAttribute('aria-pressed',prep.diff===k);bt.onclick=()=>{prep.diff=k;meta.diff=k;saveMeta();after();};box.appendChild(bt);}
  desc.textContent=DIFFS[prep.diff].d;}
-const MODES={normal:{n:'출정',d:'열 개의 막을 차례로 버티며 평정한다. 제10막 뒤에는 끝없는 밤으로 이어 갈 수 있다.'},rush:{n:'퇴마 원정',d:'보스만 열 번 연달아 상대한다. 막마다 보스 셋 가운데 하나를 등급(하·중·상)을 보고 고르고, 쓰러뜨리면 넋의 선물을 받는다. 요괴는 적게 나온다.'}};
+const MODES={normal:{n:'출정',d:'열 개의 막을 차례로 버티며 평정한다. 제10막 뒤에는 끝없는 밤으로 이어 갈 수 있다.'},tale:{n:'설화 출정',d:'옛이야기 한 편을 세 막으로 따라간다. 퇴마사와 시작 힘이 정해져 있고, 막마다 이야기의 규칙이 붙는다. 끝내면 옷 빛깔과 결말 글을 얻고, 다시 하면 가장 빠른 완주에 도전한다.'},rush:{n:'퇴마 원정',d:'보스만 열 번 연달아 상대한다. 막마다 보스 셋 가운데 하나를 등급(하·중·상)을 보고 고르고, 쓰러뜨리면 넋의 선물을 받는다. 요괴는 적게 나온다.'}};
+function taleCards(){return TALE_IDS.map(id=>{const T=TALES[id],f=meta.tale.frag[id],D=meta.tale.done[id],S=STAGES[T.st];
+  if(f<3)return {id,state:'lock',name:'???',sub:`조각 ${f}/3 · ${S.sub} ${S.name}에서 금빛 흔적을 찾자`};
+  const base=`${CHARS[T.cid].name} · ${T.lede} · 보상 ${T.skin.n}`;
+  return D?{id,state:'done',name:T.n,sub:`${base} · 가장 빠른 완주 ${fmtT(D.best)} (${D.n}번)`}:{id,state:'open',name:T.n,sub:base};});}
+function skinChoices(cid){const l=[{id:null,n:'기본'}];for(const id of TALE_IDS){const T=TALES[id];if(T.cid===cid&&meta.tale.done[id])l.push({id:T.skin.id,n:T.skin.n,A:T.skin.A});}return l;}
+function setSkin(cid,k){if(!skinChoices(cid).some(c=>c.id===k))return;meta.tale.skin[cid]=k;saveMeta();}
+function renderTalePrep(){const tale=prep.mode==='tale';
+ for(const id of ['#panDiff','#panCurse','#panKs','#panPae'])$(id).hidden=tale;$('#panTale').hidden=!tale;
+ const cards=taleCards(),openN=cards.filter(c=>c.state!=='lock').length;
+ if(prep.tale&&!cards.some(c=>c.id===prep.tale&&c.state!=='lock'))prep.tale=null;
+ if(tale&&!prep.tale&&openN)prep.tale=cards.find(c=>c.state!=='lock').id;
+ if(tale){const box=$('#taleList');box.innerHTML='';
+  $('#taleHint').textContent=openN?'설화를 하나 고르세요. 퇴마사와 시작 힘은 설화마다 정해져 있습니다.':'아직 열린 설화가 없습니다. 출정 중 관련 막에 나타나는 금빛 흔적을 조사해 설화 조각 3개를 모으면 열립니다.';
+  for(const c of cards){const bt=document.createElement('button');bt.disabled=c.state==='lock';bt.setAttribute('aria-pressed',prep.tale===c.id);bt.id='tale-'+c.id;
+   bt.innerHTML=`<b>${c.name}${c.state==='done'?' · 완주':''}</b><span>${c.sub}</span>`;bt.onclick=()=>{prep.tale=c.id;renderPrep();};box.appendChild(bt);}}
+ const sk=skinChoices(selChar);$('#panSkin').hidden=tale||sk.length<2;
+ if(!tale&&sk.length>=2){const cur=meta.tale.skin[selChar]||null,cc=$('#skinChips');cc.innerHTML='';
+  for(const c of sk){const bt=document.createElement('button');bt.textContent=c.n;bt.setAttribute('aria-pressed',cur===c.id);bt.onclick=()=>{setSkin(selChar,c.id);renderPrep();};cc.appendChild(bt);}
+  $('#skinDesc').textContent=`설화 출정에서 얻은 옷 빛깔. 모든 전직 차림의 옷 색이 바뀐다. 지금: ${(sk.find(c=>c.id===cur)||sk[0]).n}`;}
+ const go=$('#goBtn');go.textContent=tale?'설화 출정':'출정';go.disabled=tale&&!prep.tale;
+ $('#prepTitle').textContent=tale?'설화 출정 준비':`${CHARS[selChar].name} · 출정 준비`;}
 function renderPrep(){diffChips($('#diffChips'),$('#diffDesc'),renderPrep);
  {const mc=$('#modeChips');mc.innerHTML='';for(const k in MODES){const bt=document.createElement('button');bt.textContent=MODES[k].n;bt.setAttribute('aria-pressed',(prep.mode||'normal')===k);bt.onclick=()=>{prep.mode=k;meta.mode=k;saveMeta();renderPrep();};mc.appendChild(bt);}$('#modeDesc').textContent=MODES[prep.mode||'normal'].d;}
  const cc=$('#curseChips');cc.innerHTML='';
@@ -2913,17 +3184,19 @@ function renderPrep(){diffChips($('#diffChips'),$('#diffDesc'),renderPrep);
  const pl=$('#paeList');pl.innerHTML='';
  const none=document.createElement('button');none.innerHTML='<b>패 없음</b><span>규칙을 바꾸지 않는다.</span>';none.setAttribute('aria-pressed',!prep.card);none.onclick=()=>{prep.card=null;renderPrep();};pl.appendChild(none);
  for(const id in CARDS){const ok=unlocked('card:'+id),c=CARDS[id];const bt=document.createElement('button');bt.disabled=!ok;bt.setAttribute('aria-pressed',prep.card===id);
-  bt.innerHTML=`<b>${ok?c.n:'???'}</b><span>${ok?c.d:'과업으로 해금'}</span>`;bt.onclick=()=>{prep.card=id;renderPrep();};pl.appendChild(bt);}}
+  bt.innerHTML=`<b>${ok?c.n:'???'}</b><span>${ok?c.d:'과업으로 해금'}</span>`;bt.onclick=()=>{prep.card=id;renderPrep();};pl.appendChild(bt);}
+ renderTalePrep();}
 let codexTab='task';
 let codexFrom='title';
 function openCodex(from){codexFrom=from||'title';codexTab='task';renderCodex();show('codex');}
-function renderCodex(){$('#tabTask').setAttribute('aria-selected',codexTab==='task');$('#tabDogam').setAttribute('aria-selected',codexTab==='dogam');$('#tabAnom').setAttribute('aria-selected',codexTab==='anom');const body=$('#codexBody');
+function renderCodex(){$('#tabTask').setAttribute('aria-selected',codexTab==='task');$('#tabDogam').setAttribute('aria-selected',codexTab==='dogam');$('#tabAnom').setAttribute('aria-selected',codexTab==='anom');$('#tabTale').setAttribute('aria-selected',codexTab==='tale');const body=$('#codexBody');
+ if(codexTab==='tale'){const f=TALE_IDS.reduce((a,id)=>a+meta.tale.frag[id],0);$('#codexSum').textContent=`설화 조각 ${f} / ${TALE_IDS.length*3} · 끝맺은 설화 ${TALE_IDS.filter(id=>meta.tale.done[id]).length} / ${TALE_IDS.length}`;body.innerHTML=taleCodexHTML();return;}
  if(codexTab==='anom'){const n=anomFound();$('#codexSum').textContent=`조사한 괴이 ${n} / ${ANOM.length}`;
   body.innerHTML=`<div class="help"><div class="hcard"><h3>괴이</h3><p>막마다 한 번, 평소와 다르게 구는 물건이 나타난다. 화면 가장자리 보라색 화살표를 따라가 곁에 2.5초 머물면 조사한다. 처음 조사한 괴이는 여기에 기록되고, 모은 수에 따라 퇴마사들의 이야기 조각이 열린다.</p>${ANOM.map(a=>{const c=(meta.anom||{})[a.id];return `<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:${c?'#3a1a4a':'#2a2228'}">${c?a.g:'?'}</span></span><div><p><b>${c?a.n:'???'}</b>${c?` · 조사 ${c}번`:''}</p><p>${c?a.d:'아직 만나지 못했다.'}</p></div></div>`;}).join('')}</div>`
    +Object.keys(STORY).map(cid=>`<div class="hcard"><h3>${CHARS[cid].name}의 이야기</h3><ol>${STORY[cid].map((t,i)=>`<li>${n>=STORY_AT[i]?t:`<small>괴이 ${STORY_AT[i]}종을 조사하면 열린다.</small>`}</li>`).join('')}</ol></div>`).join('')+'</div>';return;}
  if(codexTab==='task'){$('#codexSum').textContent=`이룬 과업 ${meta.done.length} / ${TASKS.length}`;
   body.innerHTML=`<div class="tasklist">${TASKS.map(t=>{const d=meta.done.includes(t.id),v=Math.min(V(t.key),t.need);return `<div class="${d?'done':''}"><img class="bd" src="${taskBadge(t)}" alt="${d?'달성':'미달성'}"><p style="margin:0"><b>${t.n}</b><span>${t.d}</span> <span class="pg">${d?'':`${v}/${t.need}`}</span></p><em>${t.rwText}</em></div>`;}).join('')}</div>`;}
- else{const seen=Object.keys(meta.seen).length;$('#codexSum').textContent=`만난 요괴 ${seen} / ${Object.keys(EN).length}`;
+ else{const seen=Object.keys(meta.seen).length;$('#codexSum').textContent=`만난 요괴 ${seen} / ${DOGAM_IDS.length}`;
   const cat={n:'일반',e:'엘리트',m:'중간 보스',b:'막 보스'};
   body.innerHTML=`<div class="dogam">${STAGES.map((s,i)=>`<h3>${s.sub} ${s.name}</h3><div class="dgrid">${Object.keys(EN).filter(id=>EN[id].st===i+1).map(id=>{const e=EN[id],m=meta.seen[id];return `<div class="${m?'':'unk'}"><img src="${big(ESPR[id].n,3)}" alt=""><p style="margin:0;min-width:0"><b>${m?e.n:'???'}</b><span>${cat[e.c]}${m?` · 퇴치 ${m.k}`:''}</span><span>${m?e.d:'아직 만나지 못했다.'}</span></p></div>`;}).join('')}</div>`).join('')}</div><p class="credit">요괴 이름은 고성배 『한국 요괴 도감』(위즈덤하우스, 2019) 수록 요괴를 따랐고, 게임 속 행동은 놀이에 맞게 지어냈습니다.</p>`;}}
 function renderShop(){$('#shopCoins').textContent=`보유 엽전 ${meta.coins}닢`;const box=$('#shopList');box.innerHTML='';
@@ -3010,7 +3283,8 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
   h+='<p class="credit">아직 만나지 못한 요괴는 ???로 표시된다.</p>'; }
  $('#helpBody').innerHTML=h;}
 {const _u=castUlt;castUlt=function(){const f0=G.fx.length,m0=G.movers.length;_u();tagNew(f0,m0,'ult');};const _c=castCall;castCall=function(){if(!G)return;const f0=G.fx.length,m0=G.movers.length;_c();tagNew(f0,m0,'call');};}
-function begin(){if(!selChar)return;if(meta.migNote){meta.migNote=false;saveMeta();}initAudio();newGame(selChar,prep.card,prep.curse,prep.diff,prep.mode||'normal');}
+function begin(){if(!selChar)return;if(meta.migNote){meta.migNote=false;saveMeta();}initAudio();
+ if(prep.mode==='tale'){const c=taleCards().find(c=>c.id===prep.tale);if(c&&c.state!=='lock')taleStart(prep.tale);return;}newGame(selChar,prep.card,prep.curse,prep.diff,prep.mode||'normal');}
 function goHome(){G=null;$('#hud').hidden=true;$('#hudbtns').hidden=true;renderTitle();show('title');}
 
 $('#startBtn').onclick=openPrep;
@@ -3019,16 +3293,17 @@ $('#prepBack').onclick=()=>{renderTitle();show('title');};
 $('#paeRand').onclick=()=>{const ok=Object.keys(CARDS).filter(id=>unlocked('card:'+id));prep.card=ok[Math.random()*ok.length|0]||null;renderPrep();snd(500,0.15,'square',0.03);};
 $('#codexBtn').onclick=()=>openCodex('title');$('#helpBtn').onclick=()=>openHelp('title');$('#pauseHelp').onclick=()=>openHelp('pause');
 $('#helpBack').onclick=()=>{if(helpFrom==='pause')show('pause');else{renderTitle();show('title');}};$('#codexBack').onclick=()=>{if(codexFrom==='over'&&G)show('over');else if(codexFrom==='hub')openHub();else{renderTitle();show('title');}};
-$('#tabTask').onclick=()=>{codexTab='task';renderCodex();};$('#tabAnom').onclick=()=>{codexTab='anom';renderCodex();};$('#tabDogam').onclick=()=>{codexTab='dogam';renderCodex();};
+$('#tabTask').onclick=()=>{codexTab='task';renderCodex();};$('#tabTale').onclick=()=>{codexTab='tale';renderCodex();};$('#tabAnom').onclick=()=>{codexTab='anom';renderCodex();};$('#tabDogam').onclick=()=>{codexTab='dogam';renderCodex();};
 $('#shopBtn').onclick=()=>{renderShop();show('shop');};
 $('#shopBack').onclick=()=>{renderTitle();show('title');};
 $('#setBtn').onclick=()=>openSettings('title');$('#pauseSet').onclick=()=>openSettings('pause');
 $('#setBack').onclick=()=>{if(prevScreen==='pause')show('pause');else{renderTitle();show('title');}};
+$('#sceneNext').onclick=()=>sceneNext();
 $('#chestOk').onclick=()=>{const cb=chestCb;chestCb=null;show(null);if(cb)cb();};
 $('#tavGo').onclick=openPath;
 $('#resumeBtn').onclick=()=>show(null);
 $('#quitBtn').onclick=()=>{show(null);endGame(false);};
-$('#againBtn').onclick=()=>{newGame(G.cid,G.card,G.curse,G.diff,G.mode);};
+$('#againBtn').onclick=()=>{if(G.mode==='tale'){taleStart(G.tale.id);return;}newGame(G.cid,G.card,G.curse,G.diff,G.mode);};
 $('#homeBtn').onclick=()=>{$('#toast').innerHTML='';G=null;$('#hud').hidden=true;$('#hudbtns').hidden=true;openHub();};
 $('#hubBtn').onclick=openHub;$('#hubGo').onclick=()=>{renderTitle();show('title');};$('#hubArch').onclick=()=>openArch('hub');$('#archBtn').onclick=()=>openArch('title');
 $('#archBack').onclick=()=>{if(archFrom==='hub')openHub();else{renderTitle();show('title');}};
@@ -3054,6 +3329,7 @@ addEventListener('keydown',e=>{keys[e.code]=true;
  else if(modal==='pick'&&n>=1&&n<=pickFns.length)pickFns[n-1]();
  if(!modal&&e.code==='Space'&&!e.repeat)castCall();
  if(modal==='chest'&&(e.code==='Enter'||e.code==='Space')){e.preventDefault();$('#chestOk').click();}
+ if(modal==='scene'&&(e.code==='Enter'||e.code==='Space'||n===1)){e.preventDefault();sceneNext();}
  if(e.code.startsWith('Arrow')||e.code==='Space')e.preventDefault();});
 addEventListener('keyup',e=>{keys[e.code]=false;});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;if(G&&!G.over&&!modal)openPause();});
@@ -3071,7 +3347,7 @@ function resize(){DPR=LOW?1:Math.min(window.devicePixelRatio||1,2);const cw=Math
 addEventListener('resize',resize);resize();
 
 function hash(x,y){let h=(x*374761393+y*668265263)|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;}
-function drawGround(cx,cy){const st=STAGES[G.stage],gr=st.gr,T=16;b.fillStyle=gr[0];b.fillRect(0,0,W,H);
+function drawGround(cx,cy){const st=curStg(),gr=st.gr,T=16;b.fillStyle=gr[0];b.fillRect(0,0,W,H);
  const tx0=Math.floor(cx/T),ty0=Math.floor(cy/T),tx1=Math.floor((cx+W)/T),ty1=Math.floor((cy+H)/T);
  for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++){const h=hash(tx,ty),sx=tx*T-cx,sy=ty*T-cy;
   if(st.paved){b.fillStyle=h<0.4?gr[1]:gr[0];b.fillRect(sx,sy,T,T);b.fillStyle=gr[2];b.fillRect(sx,sy+T-1,T,1);b.fillRect(sx+((ty&1)?8:0),sy,1,T);
@@ -3079,7 +3355,7 @@ function drawGround(cx,cy){const st=STAGES[G.stage],gr=st.gr,T=16;b.fillStyle=gr
   else{if(h<0.3){b.fillStyle=gr[1];b.fillRect(sx,sy,T,T);}
    if(h>0.82){b.fillStyle=gr[3];b.fillRect(sx+3,sy+5,2,1);b.fillRect(sx+10,sy+11,1,1);}
    if(h>0.6&&h<0.66){b.fillStyle=gr[3];b.fillRect(sx+6,sy+8,1,3);b.fillRect(sx+8,sy+7,1,4);}}}}
-function drawObstacles(cx,cy){const st=STAGES[G.stage],k=st.ob;const tx0=Math.floor(cx/OT)-1,ty0=Math.floor(cy/OT)-1,tx1=Math.floor((cx+W)/OT)+1,ty1=Math.floor((cy+H)/OT)+1;
+function drawObstacles(cx,cy){const st=curStg(),k=st.ob;const tx0=Math.floor(cx/OT)-1,ty0=Math.floor(cy/OT)-1,tx1=Math.floor((cx+W)/OT)+1,ty1=Math.floor((cy+H)/OT)+1;
  for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++){const o=obstAt(tx,ty);if(o)drawOb(k,R(o.x),R(o.y),o.r);}}
 function drawOb(k,x,y,r){const rr=R(r);b.fillStyle='rgba(0,0,0,0.35)';b.fillRect(x-rr,y,rr*2,2);
  switch(k){
@@ -3213,6 +3489,8 @@ function render(){
  for(const w of G.warns)drawWarn(w);
  if(G.shrine)drawShrine(G.shrine);
  if(G.anom)drawAnom(G.anom);
+ if(G.trace)drawTrace(G.trace);
+ if(G.mode==='tale'){const tr=taleRule();if(tr&&tr.draw)tr.draw(G.tale.R);}
  if(G.dk)drawDk(G.dk);
  for(const g of G.gems){if(g.x<cx-4||g.x>cx+W+4||g.y<cy-4||g.y>cy+H+4)continue;const c=g.v<4?'#6fd3c1':g.v<15?'#7fb0ff':'#ff7a8a';const x=R(g.x),y=R(g.y);b.fillStyle=c;b.fillRect(x-1,y,3,1);b.fillRect(x,y-1,1,3);b.fillStyle='#fff';b.fillRect(x,y-1,1,1);}
  for(const it of G.items){if(it.x<cx-10||it.x>cx+W+10||it.y<cy-12||it.y>cy+H+10)continue;const s=ICS[it.k];const bob=R(Math.sin(G.time*4+it.x));if(it.k==='chest'){b.fillStyle='rgba(224,176,72,0.25)';b.fillRect(R(it.x-7),R(it.y-9+bob),14,12);}b.drawImage(s,R(it.x-4),R(it.y-8+bob));}
@@ -3301,6 +3579,8 @@ function render(){
  if(G.dark>0){const px=P.x-cx,py=P.y-cy-6,g=b.createRadialGradient(px,py,22,px,py,64);g.addColorStop(0,'rgba(4,2,8,0)');g.addColorStop(1,`rgba(4,2,8,${Math.min(0.96,G.dark*0.5)})`);b.fillStyle=g;b.fillRect(0,0,W,H);}
  if(G.shrine)edgeArrow(G.shrine.x,G.shrine.y,cx,cy,'#e0b048');
  if(G.anom)edgeArrow(G.anom.x,G.anom.y,cx,cy,'#c080ff');
+ if(G.trace)edgeArrow(G.trace.x,G.trace.y,cx,cy,'#ffe08a');
+ if(G.mode==='tale'){const tr=taleRule(),tg=tr&&tr.goal&&tr.goal(G.tale.R);if(tg)edgeArrow(tg.x,tg.y,cx,cy,'#ffe08a');}
  if(G.dk)edgeArrow(G.dk.x,G.dk.y,cx,cy,'#5af0d0');
  const bt=G.boss||G.mid;if(bt&&!bt.hidden)edgeArrow(bt.x,bt.y,cx,cy,'#ff5a3a');
  if(G.flash){b.fillStyle=`rgba(${G.flash.c},${Math.min(0.6,G.flash.t)})`;b.fillRect(0,0,W,H);}
@@ -3316,7 +3596,7 @@ function drawTitleBg(){titleT+=0.016;b.fillStyle='#15121a';b.fillRect(0,0,W,H);
 function blit(){if(!buf.width||!buf.height||!cvs.width||!cvs.height)return;ctx.imageSmoothingEnabled=false;ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(buf,0,0,W,H,0,0,W*S*DPR,H*S*DPR);}
 
 function hud(){const P=G.P;$('#xpfill').style.width=clamp(P.xp/P.next,0,1)*100+'%';$('#lvl').textContent='LV '+P.lvl;
- const rem=G.bossDone?0:Math.max(0,STAGE_T-G.st);$('#clock').textContent=G.boss?'BOSS':G.mode==='rush'?`원정 ${G.stage+1}/${STAGES.length}`:(G.st>=STAGE_T&&G.mid?'MID':fmtT(rem));
+ const rem=G.bossDone?0:Math.max(0,STAGE_T-G.st);$('#clock').textContent=G.boss?'BOSS':G.mode==='rush'?`원정 ${G.stage+1}/${STAGES.length}`:G.mode==='tale'?taleClock():(G.st>=STAGE_T&&G.mid?'MID':fmtT(rem));
  {const cb=$('#callBtn'),k=callGod();cb.style.setProperty('--p',Math.floor(G.call));cb.classList.toggle('ready',G.call>=100);cb.title=`신내림 · ${CALL[k].n} (Space)`;}
  $('#stats').innerHTML=`처치 ${G.kills}<br><span class="c">엽전 ${G.coins}</span><br>전우치 ${G.helper?'출현':(G.jw.cd50>0?Math.ceil(G.jw.cd50)+'s':'대기')}${G.sky&&G.sky.t>0?`<br><span style="color:${SKY[G.sky.k].col}">${SKY[G.sky.k].n}·${G.sky.n} ${Math.ceil(G.sky.t)}s</span>`:''}${G.path?`<br><span style="color:${G.path.hard?'#ff8a6a':'#9af0b0'}">길 끝: ${PATHS[G.path.id].s}${G.path.hard?' ×2':''}</span>`:''}${G.q?`<br><span style="color:${G.q.done?'#9af0b0':'#efe6d2'}">의뢰 ${QUESTS[G.q.id].n} ${G.q.done?'완료':questProg()+'/'+G.q.need}</span>`:''}${G.cb.n>=10?`<br><span style="color:${['#efe6d2','#ffd080','#ffb060','#ff8a6a','#ff5a8a'][cbTier()]}">연격 ${G.cb.n}</span>`:''}${G.dkC?`<br><span style="color:#5af0d0">짐 ${DKC[G.dkC].n}</span>`:''}${G.guardT>0?`<br>철갑 ${Math.ceil(G.guardT)}s`:G.seongT>0?`<br>수호 ${Math.ceil(G.seongT)}s`:G.callBuff>0?`<br>청룡 ${Math.ceil(G.callBuff)}s`:''}`;
  const bt=G.boss||G.mid,bb=$('#bossbar');
