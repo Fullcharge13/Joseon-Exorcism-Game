@@ -126,7 +126,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .card{position:relative;background:var(--hanji);color:var(--sumi);border:0;text-align:left;padding:14px;display:flex;gap:12px;align-items:flex-start;box-shadow:4px 4px 0 #00000055;min-width:0}
 .card:hover{background:#fff6e2}
 .arming .screen button{pointer-events:none}
-.arming .screen .card,.arming .screen .row{opacity:.6;transition:opacity .18s steps(2)}
+.arming .screen .card,.arming .screen .row{opacity:.6;transition:opacity .45s steps(3)}
 .banmode .card{outline:2px dashed var(--red);outline-offset:-6px}
 .ic{width:40px;height:40px;flex:none;background:#2a2228;padding:4px;display:grid;place-items:center}
 .ic img{width:32px;height:32px;image-rendering:pixelated}
@@ -377,7 +377,7 @@ button.adv:hover{background:#fff6e2}
       <button class="btn ghost" id="setBtn">설정</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v17.1</p>
+    <p class="ver" id="verTag">v17.2</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -1761,7 +1761,9 @@ taleNorm();if((meta.saveVer||0)<13){meta.saveVer=13;saveMeta();}
 
 /* ======================= audio ======================= */
 let AC=null,muted=false,lastHit=0;
-function initAudio(){if(AC){if(AC.state==='suspended')try{AC.resume();}catch(_){}return;}try{AC=new (window.AudioContext||window.webkitAudioContext)();if(AC&&AC.state==='suspended')AC.resume();}catch(e){}}
+/* 멈춘 오디오 되살리기: resume()은 약속을 돌려주므로 거절도 받아 둔다(콘솔에 처리되지 않은 오류가 남지 않게) */
+function resumeAudio(){if(!AC||AC.state!=='suspended')return;try{const r=AC.resume();if(r&&r.catch)r.catch(()=>{});}catch(_){}}
+function initAudio(){if(AC){resumeAudio();return;}try{AC=new (window.AudioContext||window.webkitAudioContext)();resumeAudio();}catch(e){}}
 function snd(f,d=0.06,type='square',v=0.035){if(!AC||muted||!meta.set.vol)return;try{const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(Math.max(40,f*0.6),t+d);g.gain.setValueAtTime(v*meta.set.vol/70,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
 
 /* ======================= run state ======================= */
@@ -2998,11 +3000,12 @@ function applyOpt(o){
  refreshSlots();}
 
 /* ======================= screens ======================= */
+const ARM_MS=500;   // 입력 보호: 고르기 창이 열린 뒤 0.5초 동안 누름 무시(프로젝트 규칙 0.3~0.6초, v17.2에서 0.18초 → 0.5초로 되돌림)
 const PICK_SCREENS=new Set(['levelup','adv','bless','petpick','pick','chest','scene']);let armUntil=0;
 function show(id){for(const s of document.querySelectorAll('.screen'))s.hidden=s.id!==id;$('#overlay').hidden=!id;modal=id;
  {const hb=$('#hudbtns');if(hb)hb.style.visibility=id?'hidden':'';}
- if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();if(id&&joy){try{cvs.releasePointerCapture(joy.id);}catch(_){}joy=null;}
- const ov=$('#overlay');if(PICK_SCREENS.has(id)){armUntil=performance.now()+180;ov.classList.add('arming');clearTimeout(show._t);show._t=setTimeout(()=>ov.classList.remove('arming'),180);}else ov.classList.remove('arming');}
+ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();   /* 창이 떠도 누르고 있는 이동 손가락은 놓지 않는다(v16.3 이동 중 카드 고르기, v17.2에서 되돌림) */
+ const ov=$('#overlay');if(PICK_SCREENS.has(id)){armUntil=performance.now()+ARM_MS;ov.classList.add('arming');clearTimeout(show._t);show._t=setTimeout(()=>ov.classList.remove('arming'),ARM_MS);}else ov.classList.remove('arming');}
 const armed=()=>performance.now()>=armUntil;
 /* v16.3 고르기 창 터치: 다른 손가락이 화면에 닿아 있으면(이동 중) 휴대폰 브라우저가 탭을 클릭으로 보내지 않는다.
    고르기 창에서는 같은 버튼 위에서 손가락을 떼면 바로 누른 것으로 처리하고, 뒤따르는 클릭은 한 번 걸러 두 번 처리되지 않게 한다. */
@@ -3351,7 +3354,7 @@ addEventListener('blur',()=>{for(const k in keys)keys[k]=false;if(G&&!G.over&&!m
 cvs.addEventListener('pointerdown',e=>{if(modal||joy)return;initAudio();joy={id:e.pointerId,ox:e.clientX,oy:e.clientY,x:e.clientX,y:e.clientY,active:true};try{cvs.setPointerCapture(e.pointerId);}catch(_){}});
 cvs.addEventListener('pointermove',e=>{if(joy&&joy.id===e.pointerId){joy.x=e.clientX;joy.y=e.clientY;}});
 const endJoy=e=>{if(joy&&joy.id===e.pointerId){try{cvs.releasePointerCapture(e.pointerId);}catch(_){}joy=null;}};
-cvs.addEventListener('pointerup',endJoy);cvs.addEventListener('pointercancel',endJoy);
+cvs.addEventListener('pointerup',endJoy);cvs.addEventListener('pointercancel',endJoy);cvs.addEventListener('lostpointercapture',endJoy);   // 붙잡기를 잃어도 이동 손가락이 남아 다음 터치를 막지 않게
 
 /* ======================= render ======================= */
 function resize(){DPR=LOW?1:Math.min(window.devicePixelRatio||1,2);const cw=Math.max(1,innerWidth||0),ch=Math.max(1,innerHeight||0);const tgt={big:160,mid:200,small:260}[meta.set.scale]||200;
@@ -3427,16 +3430,14 @@ function drawZone(z){const a=Math.min(1,z.life/0.4),ry=z.r*0.75;
  else{b.globalAlpha=a*0.8;for(let i=0;i<3;i++){const t=(G.time*1.5+i/3)%1;b.fillStyle=lite(z.col);b.fillRect(R(z.x+Math.cos(i*2.1+z.x)*z.r*0.5),R(z.y-t*8+Math.sin(i*2.1)*z.r*0.3),1,1);}}
  b.globalAlpha=1;}
 function heroBox(){const P=G.P,ps=charSpr(playerLook()),k=entK(),w=ps.w*k,h=ps.hgt*k;return {x0:R(P.x-w/2)-1,y0:R(P.y-h)-2,x1:R(P.x+w/2)+1,y1:R(P.y+2)+3};}
+/* 플레이어 둘레의 따뜻한 빛: 크기(hk)마다 한 번만 그려 두고 다시 쓴다(매 장면 그라디언트를 만들지 않게) */
+const GLOW_RES=4,glowCache={};
+function heroGlow(hk){if(glowCache[hk])return glowCache[hk];const w=52*hk,h=32*hk,c=document.createElement('canvas');c.width=Math.ceil(w*GLOW_RES);c.height=Math.ceil(h*GLOW_RES);
+ const g=c.getContext('2d');g.scale(GLOW_RES,GLOW_RES);const lg=g.createRadialGradient(w/2,h/2-2*hk,3*hk,w/2,h/2-2*hk,26*hk);lg.addColorStop(0,'rgba(255,230,160,0.14)');lg.addColorStop(1,'rgba(255,230,160,0)');
+ g.fillStyle=lg;g.beginPath();g.ellipse(w/2,h/2,26*hk,16*hk,0,0,TAU);g.fill();return glowCache[hk]=c;}
 function drawHero(){drawHeroBody();drawHpBar();}
 function drawHeroBody(){const P=G.P,ps=charSpr(playerLook()),pb=P.moving&&Math.sin(G.time*14)>0?-1:0;
- if(P.iframe>0&&Math.floor(G.time*20)%2)return;
- const hk=entK();
- if(P.moving){
-  b.save();b.translate(R(P.x),R(P.y+pb));
-  b.rotate((P.face>0?0.08:-0.08)+Math.sin(G.time*14)*0.03);
-  drawSpr(ps,0,0,P.face<0,P.iframe>0.3,hk);
-  b.restore();
- }else drawSpr(ps,P.x,P.y+pb,P.face<0,P.iframe>0.3,hk);}
+ if(!(P.iframe>0&&Math.floor(G.time*20)%2))drawSpr(ps,P.x,P.y+pb,P.face<0,P.iframe>0.3,entK());}   // v17.2 걸을 때 돌려 그리기(도트가 깨짐)는 뺌
 function drawHpBar(){const P=G.P;
  const w=14,x=R(P.x-w/2),y=R(P.y+2);b.fillStyle='#000';b.fillRect(x-1,y-1,w+2,4);b.fillStyle='#5a1a14';b.fillRect(x,y,w,2);b.fillStyle='#d24a34';b.fillRect(x,y,R(w*clamp(P.hp/P.maxHp,0,1)),2);}
 function drawSpirit(s){const x=R(s.x),y=R(s.y+Math.sin(s.ph)*2);
@@ -3528,7 +3529,6 @@ function render(){
   if(pk==='imugi'&&e.boss){drawImugi(e);continue;}if(pk==='eoduk'&&e.boss){drawEoduk(e);continue;}if(pk==='geuseunde'&&e.boss){drawGeuseunde(e);continue;}
   const s=ESPR[e.spr]||ESPR[e.kind],esc=e.sc*entK(e);const flip=e.left?(e.vx>0):(e.vx<0);
   const bob=e.fly?Math.sin(e.bob)*1.5-2:(Math.sin(e.bob)>0?-1:0);
-  if(e.boss&&!LOW){const bg=b.createRadialGradient(e.x,e.y-e.r*0.5,e.r*0.3,e.x,e.y-e.r*0.5,e.r*2.2);bg.addColorStop(0,'rgba(255,50,40,0.18)');bg.addColorStop(1,'rgba(255,50,40,0)');b.fillStyle=bg;b.beginPath();b.ellipse(e.x,e.y-e.r*0.3,e.r*2.2,e.r*1.3,0,0,TAU);b.fill();}
   if(e.boss&&e.act&&BSK[e.act].mv===0&&Math.floor(G.time*10)%2){b.fillStyle='rgba(255,60,40,0.35)';b.beginPath();b.ellipse(e.x,e.y,(e.r+4)*entK(e),(e.r+4)*0.5*entK(e),0,0,TAU);b.fill();}
   if(e.cs==='wind'&&Math.floor(G.time*12)%2){b.fillStyle='rgba(255,90,60,0.5)';b.fillRect(R(e.x-1),R(e.y-e.r*2*esc-5),2,3);}
   drawSpr(s,e.x,e.y+bob,flip,e.flash>0,esc,e.clone?0.55:(e.fly&&!e.boss&&EN[e.kind].t.startsWith('ghost')?0.85:1));
@@ -3543,7 +3543,7 @@ function render(){
  drawJW();
  drawSky();
  const hk=entK();shadow(P.x,P.y,5*hk);
- if(!LOW){const lg=b.createRadialGradient(P.x,P.y-5*hk,3*hk,P.x,P.y-5*hk,26*hk);lg.addColorStop(0,'rgba(255,230,160,0.14)');lg.addColorStop(1,'rgba(255,230,160,0)');b.fillStyle=lg;b.beginPath();b.ellipse(P.x,P.y-3*hk,26*hk,16*hk,0,0,TAU);b.fill();}
+ if(!LOW){const g=heroGlow(hk);b.drawImage(g,R(P.x-g.width/(2*GLOW_RES)),R(P.y-3*hk-g.height/(2*GLOW_RES)),g.width/GLOW_RES,g.height/GLOW_RES);}
  const look=playerLook(),ps=charSpr(look);const pb=P.moving&&Math.sin(G.time*14)>0?-1:0;
  if(look.aura){b.globalAlpha=0.25+Math.sin(G.time*3)*0.1;b.fillStyle=look.aura;b.beginPath();b.ellipse(P.x,P.y-7*hk,9*hk,10*hk,0,0,TAU);b.fill();b.globalAlpha=1;if(!LOW&&Math.random()<0.15)particle(P.x+rnd(-5,5)*hk,P.y-rnd(2,12)*hk,look.aura,1,8,0.6);}
  if(G.sky&&G.sky.t>0){const c=SKY[G.sky.k].rgb;b.strokeStyle=`rgba(${c},${0.35+Math.sin(G.time*5)*0.2})`;b.lineWidth=1;b.beginPath();b.ellipse(P.x,P.y+1,9*hk,3*hk,0,0,TAU);b.stroke();}
@@ -3654,7 +3654,7 @@ function frame(now){const raw=now-last;const dt=Math.min(0.05,raw/1000);last=now
   perfWatch(raw);
  }catch(e){if(errN++<5)console.warn('frame error',e);}
  finally{requestAnimationFrame(frame);}}
-document.addEventListener('visibilitychange',()=>{last=performance.now();pm.acc=0;pm.n=0;pm.slow=0;if(document.hidden&&G&&!G.over&&!modal)openPause();if(!document.hidden&&AC&&AC.state==='suspended')try{AC.resume();}catch(_){}});
+document.addEventListener('visibilitychange',()=>{last=performance.now();pm.acc=0;pm.n=0;pm.slow=0;if(document.hidden&&G&&!G.over&&!modal)openPause();if(!document.hidden)resumeAudio();});
 function start(){renderTitle();show('title');requestAnimationFrame(frame);}
 window.claude?.hot?.ready?window.claude.hot.ready(start):start();
 </script>

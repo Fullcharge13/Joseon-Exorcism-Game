@@ -14,6 +14,7 @@ game = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else 'index.html').resolve(
 old = pathlib.Path(sys.argv[2]).resolve() if len(sys.argv) > 2 and sys.argv[2] != '-' else None
 out = pathlib.Path(sys.argv[3] if len(sys.argv) > 3 else '/tmp/ent_size'); out.mkdir(parents=True, exist_ok=True)
 fails = []; report = {}
+MASK_HERO = True
 def ok(c, m):
     if not c: fails.append(m)
 SEED = "(()=>{let s=777;Math.random=()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648;};})();"
@@ -41,10 +42,14 @@ with sync_playwright() as p:
         for name, path in (('old', old), ('new', game)):
             ctx, pg, errs = open_page(path, 1280, 720, False)
             pg.evaluate("()=>{cancelAnimationFrame&&0;}")
-            pg.evaluate(SCENE, 1); shots[name] = img(pg.evaluate(SNAP)); ok(not errs, f"{name} 오류 {errs}"); ctx.close()
+            pg.evaluate(SCENE, 1); shots[name] = img(pg.evaluate(SNAP)); ok(not errs, f"{name} 오류 {errs}")
+            pbox = pg.evaluate("()=>{const x=(G.P.x-RCX)*S,y=(G.P.y-RCY)*S;return [Math.floor(x-28*S),Math.floor(y-22*S),Math.ceil(x+28*S),Math.ceil(y+16*S)];}"); ctx.close()
         a, b2 = shots['old'], shots['new']
         from PIL import ImageChops
         dm = ImageChops.difference(a, b2).convert('L').point(lambda v: 255 if v else 0)
+        if MASK_HERO:   # v17.2부터 플레이어 둘레에 옅은 빛이 있어, 그 둘레만 빼고 비교한다
+            from PIL import ImageDraw
+            ImageDraw.Draw(dm).rectangle(pbox, fill=0)
         diff = dm.histogram()[255]
         report['기본=옛 판 다른 픽셀'] = diff
         ok(diff == 0, f"기본 크기 화면이 옛 판과 다름: {diff}픽셀")
@@ -59,6 +64,7 @@ with sync_playwright() as p:
             kk = k if st['hd'] else 1
             x0 = st['px'] - int(st['pw'] * kk * st['S'] / 2); x1 = st['px'] + int(st['pw'] * kk * st['S'] / 2)
             y0 = st['py'] - int(st['ph'] * kk * st['S']); y1 = st['py'] - int(st['S'] * 2)
+            pal = set(tuple(c) for c in pg.evaluate("()=>{const c=charSpr(playerLook()).n,d=c.getContext('2d').getImageData(0,0,c.width,c.height).data,o=new Set();for(let i=0;i<d.length;i+=4)if(d[i+3]===255)o.add(d[i]+','+d[i+1]+','+d[i+2]);return [...o].map(s=>s.split(',').map(Number));}"))
             runs = {}
             for y in range(max(0, y0 + 2), min(im.height, y1), max(1, st['S'])):
                 row = [im.getpixel((x, y)) for x in range(max(0, x0), min(im.width, x1))]
@@ -66,7 +72,7 @@ with sync_playwright() as p:
                 while i < len(row):
                     j = i
                     while j < len(row) and row[j] == row[i]: j += 1
-                    if 0 < i and j < len(row): runs[j - i] = runs.get(j - i, 0) + 1   # 양 끝은 잘린 칸이라 뺌
+                    if 0 < i and j < len(row) and tuple(row[i]) in pal: runs[j - i] = runs.get(j - i, 0) + 1   # 양 끝은 잘린 칸이라 빼고, 캐릭터 색만 센다
                     i = j
             unit = st['S'] * kk
             okset = {int(unit), int(unit) + (0 if unit == int(unit) else 1)}
