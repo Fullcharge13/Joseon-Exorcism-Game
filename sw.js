@@ -1,5 +1,5 @@
 /* 조선퇴마록 오프라인 캐시: 게임 파일은 네트워크를 먼저 보고(새 판 반영), 안 되면 저장본으로. 글꼴은 저장본을 먼저. */
-const CACHE='joseon-v17.2';
+const CACHE='joseon-v17.3';
 const CORE=['./','./index.html','./manifest.webmanifest','./docs/app/icon-180.png','./docs/app/icon-192.png','./docs/app/icon-512.png','./docs/app/icon-maskable-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});

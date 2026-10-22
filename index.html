@@ -255,7 +255,11 @@ button.adv:hover{background:#fff6e2}
 .hcard ul,.hcard ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
 .hcard b{font-weight:700}
 .hcard small{color:#6b5f52}
+.diagbox{display:flex;flex-direction:column;gap:6px;margin-top:6px}.diagbox textarea{width:100%;box-sizing:border-box;min-height:64px;resize:vertical;font:11px/1.4 ui-monospace,monospace;background:#1a1418;color:var(--hanji);border:1px solid #4a3a40;padding:6px;-webkit-user-select:text;user-select:text}
 .hrow{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:start;border-top:1px dashed #c9b998;padding-top:8px}
+.hrow.wide{grid-template-columns:72px 1fr}.hrow.wide .ic{width:72px;height:48px;padding:0;background:#2a2620}.hrow.wide .ic img{width:72px;height:48px}
+.hcard .hrow:first-of-type{border-top:0;padding-top:0}
+img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;margin-right:2px}
 .hrow .ic{width:40px;height:40px}
 .hrow p+p{margin-top:2px}
 .looks{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-end}
@@ -377,7 +381,7 @@ button.adv:hover{background:#fff6e2}
       <button class="btn ghost" id="setBtn">설정</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v17.2</p>
+    <p class="ver" id="verTag">v17.3</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -607,6 +611,10 @@ button.adv:hover{background:#fff6e2}
       <label>초당 프레임 표시 <input type="checkbox" id="setFps"></label>
     </div>
     <p class="hint" id="perfNote"></p>
+    <div class="diagbox"><p class="hint"><b>오류 기록</b> · <span id="diagN">기록 없음</span></p>
+      <p class="hint">게임이 멈추거나 오류가 나면 이 기기에만 적어 둡니다(바깥으로 보내지 않음). 문제가 있었다면 복사해서 알려 주세요.</p>
+      <textarea id="diagText" readonly rows="4" aria-label="오류 기록"></textarea>
+      <div class="row"><button class="btn ghost small" id="diagCopy">복사</button><button class="btn ghost small" id="diagClear">지우기</button></div></div>
     <p class="hint">설정은 이 브라우저에 저장됩니다.</p>
     <div class="row"><button class="btn ghost small" id="resetBtn">처음부터 다시 (저장 지우기)</button></div>
     <div class="row"><button class="btn ghost" id="setBack">돌아가기</button></div>
@@ -1751,6 +1759,38 @@ if(!meta.unl){meta.unl=['char:seonbi','card:gilil','card:hyungnyeon'];if(meta.be
 meta.extra=meta.extra||{rr:0,sk:0,bn:0};meta.anom=meta.anom||{};
 meta.upB=meta.upB||{};
 function saveMeta(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(meta));}catch(e){}}
+/* ======================= 멈춤 기록 (v17.3) =======================
+   휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
+   게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
+const GAME_VER='v17.3',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
+let DIAG={log:[],hb:null};try{const d=JSON.parse(localStorage.getItem(DIAG_KEY)||'null');if(d&&typeof d==='object'&&!Array.isArray(d)){DIAG.log=Array.isArray(d.log)?d.log.filter(e=>e&&typeof e==='object').slice(-DIAG_MAX):[];DIAG.hb=d.hb&&typeof d.hb==='object'?d.hb:null;}}catch(e){}
+const diagSeen=new Set();let diagStuck=0,diagNoScr=0,diagLastT=null,diagHbT=0;
+function diagSave(){try{localStorage.setItem(DIAG_KEY,JSON.stringify(DIAG));}catch(e){}}
+function diagNow(){const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;}
+function diagState(){try{const vis=[...document.querySelectorAll('.screen')].filter(x=>!x.hidden).map(x=>x.id);
+ return G?{mode:G.mode,cid:G.cid,stage:G.stage+1,loop:G.loop,lvl:G.P.lvl,tier:G.P.tier,t:Math.round(G.time),modal,vis,over:!!G.over,en:G.enemies.length,fx:G.fx.length,low:LOW,ent:meta.set.ent,hd:hdOn(),fps:Math.round(fpsV),tale:G.tale?G.tale.id+':'+(G.tale.act+1):undefined}:{modal,vis};}catch(e){return {err:String(e)};}}
+function diagNote(kind,msg='',extra){const k=kind+'|'+msg;if(diagSeen.has(k))return;diagSeen.add(k);
+ DIAG.log.push(Object.assign({at:diagNow(),ver:GAME_VER,kind,msg:String(msg).slice(0,300),st:diagState()},extra||{}));if(DIAG.log.length>DIAG_MAX)DIAG.log.splice(0,DIAG.log.length-DIAG_MAX);diagSave();}
+function diagErr(kind,e){const m=e&&e.message?e.message:String(e);const at=e&&e.stack?String(e.stack).split('\n').slice(0,3).map(x=>x.trim()).join(' < ').slice(0,300):'';diagNote(kind,m,at?{at_code:at}:undefined);}
+function diagDevice(){const sc=typeof screen!=='undefined'?screen:{};return `${navigator.userAgent} · 화면 ${innerWidth}×${innerHeight} · 화질 ${window.devicePixelRatio||1}`+(sc.width?` · 기기 ${sc.width}×${sc.height}`:'');}
+function diagText(){if(!DIAG.log.length)return '';return [`조선퇴마록 ${GAME_VER} 오류 기록 · ${diagNow()}`,`기기: ${diagDevice()}`,...DIAG.log.map((e,i)=>`${i+1}. [${e.at} ${e.ver}] ${e.kind}${e.msg?': '+e.msg:''}${e.at_code?' @ '+e.at_code:''} | ${JSON.stringify(e.st)}`)].join('\n');}
+function diagClear(){DIAG.log=[];diagSeen.clear();diagSave();}
+function diagRender(msg){const n=DIAG.log.length,t=$('#diagText');if(t)t.value=diagText();const c=$('#diagN');if(c)c.textContent=msg||(n?`기록 ${n}건`:'기록 없음');
+ const cp=$('#diagCopy'),cl=$('#diagClear');if(cp)cp.disabled=!n;if(cl)cl.disabled=!n;}
+function diagCopy(){const box=$('#diagText'),t=(box&&box.value)||diagText();if(!t)return;   // 보이는 글 그대로 복사const pick=()=>{const a=$('#diagText');try{a.focus();a.select();a.setSelectionRange(0,t.length);}catch(e){}diagRender('글상자를 길게 눌러 복사하세요');};
+ try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>diagRender('복사했습니다'),pick);return;}}catch(e){}pick();}
+/* 매 장면: 진행 멈춤(창 없이 3초 넘게 시간 정지)·창 없음(2초)·긴 끊김(보이는 동안 한 장면 3초 넘게)·5초마다 마지막 상태 */
+function diagWatch(raw){if(document.hidden)return;
+ if(raw>3000&&raw<600000&&G&&!G.over)diagNote('긴 끊김',Math.round(raw)+'ms');
+ if(G&&!G.over&&!modal){if(diagLastT===G.time){diagStuck+=raw;if(diagStuck>3000)diagNote('진행 멈춤','창 없이 3초 넘게 게임 시간이 흐르지 않음');}else diagStuck=0;diagLastT=G.time;}else{diagStuck=0;diagLastT=null;}
+ if(modal&&modal!=='freeze'){const sc=document.getElementById(modal);if(sc&&sc.hidden){diagNoScr+=raw;if(diagNoScr>2000)diagNote('창 없음',modal);}else diagNoScr=0;}else diagNoScr=0;
+ diagHbT+=raw;if(diagHbT>5000){diagHbT=0;DIAG.hb={at:diagNow(),playing:!!(G&&!G.over),hidden:false,clean:false,st:diagState()};diagSave();}}
+/* 지난 실행이 게임 중에 갑자기 끝났는지(앱 전환으로 숨긴 뒤 끝난 것은 뺀다) */
+{const hb=DIAG.hb;if(hb&&hb.playing&&!hb.hidden&&!hb.clean)diagNote('게임 중 끊김','지난 실행이 게임 중에 끝남(멈춤·강제 종료 가능성)',{st:hb.st,last:hb.at});DIAG.hb=null;diagSave();}
+addEventListener('error',e=>diagErr('페이지 오류',e&&e.error?e.error:(e&&e.message?e.message+(e.filename?' ('+e.filename+':'+e.lineno+')':''):e)));
+addEventListener('unhandledrejection',e=>diagErr('처리되지 않은 오류',e&&e.reason!==undefined?e.reason:e));
+addEventListener('pagehide',()=>{if(DIAG.hb){DIAG.hb.clean=true;diagSave();}});
+
 const unlocked=k=>meta.unl.includes(k);
 /* v12.1: 예전 저장에서 저절로 열린 퇴마사는 잠그고, 과업으로 연 퇴마사만 남긴다 */
 if((meta.saveVer||0)<12){const had=meta.unl.filter(k=>k.startsWith('char:')).length;meta.unl=meta.unl.filter(k=>!k.startsWith('char:')||k==='char:seonbi');if(!meta.unl.includes('char:seonbi'))meta.unl.unshift('char:seonbi');
@@ -1771,7 +1811,8 @@ let G=null,modal='title',selChar=null,prevScreen='title',prep={card:null,curse:0
 const TMP=[],TMP2=[];
 const keys={};let joy=null;
 
-function newGame(cid,card,curse,diff='normal',mode='normal'){
+function newGame(cid,card,curse,diff='normal',mode='normal'){diagSeen.clear();diagStuck=0;diagNoScr=0;diagLastT=null;   // 멈춤 기록: 같은 종류는 한 판에 한 번
+
  const C=CHARS[cid],m=meta.up;
  G={cid,card,curse,diff,stage:0,st:0,time:0,dtNow:0,kills:0,coins:0,over:false,
    base:{maxHp:100,spd:1,might:1,area:1,cd:1,amount:0,magnet:1,armor:0,regen:0,xpGain:1,dur:1,luck:0,crit:0.05,critDmg:1.5,healM:1,pspd:1},
@@ -3223,9 +3264,9 @@ function renderShop(){$('#shopCoins').textContent=`보유 엽전 ${meta.coins}�
   d.querySelector('#upa-'+u.id).onclick=()=>{meta.upB[u.id]=false;saveMeta();renderShop();snd(600,0.08,'triangle');};
   d.querySelector('#upb-'+u.id).onclick=()=>{meta.upB[u.id]=true;saveMeta();renderShop();snd(700,0.08,'triangle');};
   d.querySelector('#buy-'+u.id).onclick=()=>{if(meta.coins<c||mx)return;meta.coins-=c;meta.up[u.id]=l+1;saveMeta();renderShop();snd(1000,0.1,'triangle');};box.appendChild(d);}}
-function openSettings(from){prevScreen=from;const s=meta.set;$('#setVol').value=s.vol;$('#setShake').checked=s.shake;$('#setNums').checked=s.nums;$('#setFlash').checked=s.flash;$('#setFxA').value=String(s.fxA);$('#setScale').value=s.scale;$('#setEnt').value=String(entOff?1:s.ent);$('#setEntNote').textContent=entOff?'화면이 느려져 지금은 기본 크기로 그리고 있습니다. 2배를 다시 고르면 돌아갑니다.':'보이는 넓이는 그대로 두고 그림만 키웁니다. 맞는 범위는 바뀌지 않습니다. 성능 모드가 자동이면 느려질 때 저절로 기본으로 돌아갑니다.';$('#setJoy').checked=s.joy;$('#setPerf').value=s.perf;$('#setFps').checked=s.fps;perfNote();show('settings');}
+function openSettings(from){prevScreen=from;diagRender();const s=meta.set;$('#setVol').value=s.vol;$('#setShake').checked=s.shake;$('#setNums').checked=s.nums;$('#setFlash').checked=s.flash;$('#setFxA').value=String(s.fxA);$('#setScale').value=s.scale;$('#setEnt').value=String(entOff?1:s.ent);$('#setEntNote').textContent=entOff?'화면이 느려져 지금은 기본 크기로 그리고 있습니다. 2배를 다시 고르면 돌아갑니다.':'보이는 넓이는 그대로 두고 그림만 키웁니다. 맞는 범위는 바뀌지 않습니다. 성능 모드가 자동이면 느려질 때 저절로 기본으로 돌아갑니다.';$('#setJoy').checked=s.joy;$('#setPerf').value=s.perf;$('#setFps').checked=s.fps;perfNote();show('settings');}
 function perfNote(){const n=$('#perfNote');if(n)n.textContent=meta.set.perf==='auto'?(autoLow?'자동: 지금은 절약 모드로 돌아가는 중입니다.':'자동: 지금은 고화질로 돌아가는 중입니다. 3초 넘게 느려지면 절약으로 바뀝니다.'):'';}
-function bindSettings(){const s=meta.set,save=()=>{saveMeta();};
+function bindSettings(){const s=meta.set,save=()=>{saveMeta();};$('#diagCopy').onclick=diagCopy;$('#diagClear').onclick=()=>{diagClear();diagRender('지웠습니다');};
  $('#setVol').oninput=e=>{s.vol=+e.target.value;save();};$('#setVol').onchange=()=>{initAudio();snd(660,0.1,'triangle');};
  $('#setShake').onchange=e=>{s.shake=e.target.checked;save();};$('#setNums').onchange=e=>{s.nums=e.target.checked;save();};
  $('#setFlash').onchange=e=>{s.flash=e.target.checked;save();};$('#setFxA').onchange=e=>{const v=+e.target.value;s.fxA=v===0.7||v===0.4?v:1;save();};$('#setScale').onchange=e=>{s.scale=e.target.value;save();resize();};$('#setEnt').onchange=e=>{const v=+e.target.value;s.ent=v===2?2:1;entOff=false;save();resize();};$('#setJoy').onchange=e=>{s.joy=e.target.checked;save();};
@@ -3235,16 +3276,71 @@ let helpTab='basic',helpFrom='title';
 function openHelp(from){helpFrom=from;renderHelp();show('help');}
 const lockText=k=>{const t=TASKS.find(t=>t.rw.unlock===k);return t?`과업 「${t.n}」(${t.d})로 해금`:'';};
 const hcard=(h,body)=>`<div class="hcard"><h3>${h}</h3>${body}</div>`;
+/* 도움말 그림(v17.3): 게임이 쓰는 도트를 정수 배율로 키워 그림으로 쓴다. 장판·경고·성황당은 실제 그리기 함수로 작은 장면을 그려 잘라 낸다 */
+const HELPIMG={};
+function hpix(c,box=32,sq=true){const w=c.width,h=c.height,k=Math.max(1,Math.floor(box/Math.max(w,h)));const o=document.createElement('canvas');o.width=sq?box:w*k;o.height=sq?box:h*k;
+ const x=o.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(c,sq?Math.floor((box-w*k)/2):0,sq?Math.floor((box-h*k)/2):0,w*k,h*k);return o.toDataURL();}
+function hsnap(w,h,fn){const G0=G,rx=RCX,ry=RCY;try{if(!G)G={time:0.45,P:{x:0,y:0}};RCX=0;RCY=0;EMQ.length=0;b.save();b.setTransform(1,0,0,1,0,0);b.globalAlpha=1;b.imageSmoothingEnabled=false;
+  b.fillStyle='#2a2620';b.fillRect(0,0,w,h);fn();b.restore();
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(buf,0,0,w,h,0,0,w,h);
+  for(let i=0;i<EMQ.length;i+=4){const inf=embInfo(EMQ[i]);if(!inf)continue;const ex=Math.round(EMQ[i+1]-6),ey=Math.round(EMQ[i+2]-6);x.fillStyle='#0a080c';x.fillRect(ex,ey,12,12);x.fillStyle=inf.bd;x.fillRect(ex+1,ey+1,10,10);x.fillStyle=inf.bg;x.fillRect(ex+2,ey+2,8,8);
+   if(inf.ic)x.drawImage(inf.ic,ex+2,ey+2,8,8);else if(inf.bang){x.fillStyle='#fff6d0';x.fillRect(ex+5,ey+3,2,4);x.fillRect(ex+5,ey+8,2,1);}}
+  return c;}catch(e){return null;}finally{G=G0;RCX=rx;RCY=ry;EMQ.length=0;}}
+const inl=src=>src?`<img class="inl" src="${src}" alt="">`:'';
+function hrowI(img,t,wide){return `<div class="hrow${wide?' wide':''}"><span class="ic">${img?`<img src="${img}" alt="">`:''}</span><div><p>${t}</p></div></div>`;}
+function hseal(g,bg){const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d');x.fillStyle='#0a080c';x.fillRect(0,0,32,32);x.fillStyle='#e0b048';x.fillRect(2,2,28,28);x.fillStyle=bg;x.fillRect(4,4,24,24);
+ x.font='bold 18px "Song Myung", serif';x.textAlign='center';x.textBaseline='middle';x.fillStyle='#fff6d0';x.fillText(g,16,17);return c.toDataURL();}
+function helpImgs(){if(HELPIMG.ok)return HELPIMG;const H=HELPIMG,sp=s=>s&&s.n?hpix(s.n):'',ic=k=>ICS[k]?hpix(ICS[k]):'';
+ H.hero=sp(charSpr(CHARS.seonbi.look));H.tier=sp(charSpr(CHARS.seonbi.branches[0].tiers[0].look));H.mudang=sp(charSpr(CHARS.mudang.look));H.jw=sp(charSpr(JW_LOOK));
+ H.boss=sp(ESPR.dokchief);H.tiger=sp(PSPR.tiger);H.bear=sp(PSPR.bear);H.falcon=sp(PSPR.falcon);
+ for(const k of ['chest','pot','tteok','pouch','coin','gukbap','makgeolli','santong','bottari','meok','seochaek','deungpae'])H[k]=ic(k);
+ H.evo=ICON.meok||H.meok;H.ban=hseal('封','#5a2a50');H.btns=hseal('停','#3a3a48');H.status=hseal('狀','#2f4a7a');H.book=hseal('錄','#7a2018');H.hub=hseal('府','#2f6b5a');
+ const el=STAGES[0].early.find(id=>ESPR[id])||'dokkaebi';
+ const sn=(w,h,fn,box)=>{const c=hsnap(w,h,fn);return c?hpix(c,box||Math.max(w,h)*2,false):'';};
+ H.elite=sn(24,24,()=>{const s=ESPR[el];drawSpr(s,12,19,false,false,1.6);b.fillStyle='#000';b.fillRect(4,20,16,2);b.fillStyle='#e0b048';b.fillRect(4,20,12,2);},32);
+ H.gem=sn(12,12,()=>{const c='#7fb0ff';b.fillStyle=c;b.fillRect(5,6,3,1);b.fillRect(6,5,1,3);b.fillStyle='#6fd3c1';b.fillRect(2,3,3,1);b.fillRect(3,2,1,3);b.fillStyle='#ff7a8a';b.fillRect(8,9,3,1);b.fillRect(9,8,1,3);},32);
+ H.shrine=sn(32,32,()=>drawShrine({x:15,y:27,prog:0,need:1}),32);
+ H.ob=sn(24,24,()=>drawOb(STAGES[0].ob,12,18,7),32);
+ H.zone=sn(36,24,()=>{pxArea(18,13,14,'#8fd3ff',1,0.3,false);const ry=14*0.75;emblem('bujeok',18,13-ry,1);},72);
+ H.warn=sn(36,24,()=>drawWarn({x:18,y:12,r:14,t:0.5,max:1.2,col:'#ff5a3a',src:'boss'}),72);
+ H.line=sn(36,24,()=>drawWarn({kind:'line',x:2,y:12,a:0,len:32,w:10,t:0.6,max:1.2,col:'#ff5a3a',src:'boss'}),72);
+ H.tele=sn(24,24,()=>{b.fillStyle='rgba(255,60,40,0.35)';b.beginPath();b.ellipse(12,19,9,4.5,0,0,TAU);b.fill();drawSpr(ESPR.dokchief,12,19,false,false,1.4);},32);
+ H.ok=true;return H;}
 function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
  for(const [k,n] of HELP_TABS){const bt=document.createElement('button');bt.setAttribute('role','tab');bt.setAttribute('aria-selected',helpTab===k);bt.textContent=n;bt.onclick=()=>{helpTab=k;renderHelp();};tb.appendChild(bt);}
  const ul=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;let h='';
- if(helpTab==='basic'){
-  h+=hcard('장판과 경고 표식 읽기',ul(['내 장판은 점무늬로 채운 도트 원에 <b>점선 테두리가 돌고</b>, 위쪽 테두리에 <b>그 장판을 만든 무기·기술 아이콘</b>이 붙는다. 아이콘은 왼쪽 위 슬롯 아이콘과 같다.','펫이 깐 장판에는 펫 표식(虎·熊·鷹)이 붙는다.','<b>붉은 점선 원과 가운데 ! 표식</b>은 보스나 요괴의 공격 예고다. 안쪽 점무늬가 바깥 테두리까지 차오르면 터지고, 직전에는 테두리가 깜빡인다.','띠 모양 경고는 돌진·광선 경로다. 화살표(>)가 가리키는 방향으로 온다.']))+hcard('조작',ul(['이동: <b>WASD</b> 또는 방향키. 휴대폰은 화면 아무 곳이나 누른 채 끌면 그쪽으로 걷는다.','공격은 모두 자동이다. 움직이며 피하는 데만 집중하면 된다.','일시정지: <b>ESC</b> 또는 <b>P</b>, 휴대폰은 오른쪽 아래 <b>정지</b> 버튼. 오른쪽 아래 버튼은 왼쪽부터 <b>신내림</b>·<b>소리</b>·<b>상태</b>·<b>정지</b>.','<b>캐릭터 상태창</b>: <b>C</b>(또는 Tab) 키나 오른쪽 아래 <b>상태</b> 버튼. 지금 쓰는 무기·직업 기술·보패·축복·정표와 능력치, 무기마다 이번 출정에서 준 피해와 비중을 본다. 열어 둔 동안 게임이 멈춘다. 일시정지 화면에서도 열 수 있다.','레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>X</b> 물리기, <b>B</b> 봉인.']));
-  h+=hcard('한 판의 흐름',ul([`막은 모두 10개. 막마다 ${STAGE_T/60}분을 버틴다.`,`${MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.`,'막 보스를 쓰러뜨리면 보물상자를 열고 <b>주막</b>에 들른 뒤 다음 막으로 간다.','요괴가 떨군 구슬로 레벨이 오른다. 레벨이 오를 때마다 무기나 보패 하나를 고른다.','레벨 10·20·30·40·50에 <b>전직</b>한다.']));
-  h+=hcard('막 안에서 만나는 것',ul(['<b>엘리트</b>: 금빛 체력 막대가 달린 큰 요괴. 쓰러뜨리면 보물상자를 떨군다.','<b>보물상자</b>: 진화 조건을 갖춘 무기가 있으면 진화시키고, 없으면 가진 것 하나를 강화한다.','<b>성황당</b>: 막마다 두 번 나타난다. 화면 가장자리의 금빛 화살표를 따라가 그 안에 3.5초 머물면 신령의 축복을 받는다.','<b>옹기</b>: 아무 공격에나 깨진다. 떡, 엽전, 복주머니, 큰 구슬이 나온다.','<b>떡</b>은 체력 회복, <b>복주머니</b>는 화면의 구슬을 모두 끌어온다.','레벨 10 전직 직후 <b>펫</b>(범·반달곰·해동청)을 고른다. 자세한 것은 「펫」 탭.','막마다 장애물(장독, 대숲, 바위, 석등, 장승, 비석 등)이 길을 막는다. 날아다니는 요괴와 보스는 넘어온다.']));
-  h+=hcard('도사 전우치',ul([`체력이 <b>50%</b> 아래로 떨어지면 전우치가 구름을 타고 나타나 5초 동안 부적과 벼락으로 요괴를 친다. 보통 난이도 기준 ${45}초에 한 번.`,`체력이 <b>20%</b> 아래로 떨어지면 「금강불괴」 도술로 체력을 40% 채워 주고 10초 동안 방어 +5, 받는 피해 −30%를 걸어 준 뒤 5초 동안 함께 싸운다. 보통 난이도 기준 90초에 한 번.`,'쉬움은 더 자주, 어려움은 더 드물게 온다. 화면 오른쪽 위에 다음 출현까지 남은 시간이 보인다.']));
-  h+=hcard('주막과 엽전',ul(['막 사이 주막에서 이번 출정의 엽전으로 국밥(회복), 막걸리(다음 막 공격력 +20%), 산통·봉인 부적·물리기 패, 보부상 보따리(무작위 강화), 정화수(신령 축복)를 산다. 같은 물건은 살수록 비싸진다.','출정이 끝나면 남은 엽전과 처치 수, 도달한 막에 따라 <b>엽전</b>을 받는다. 수련 도장에서 영구 강화를 산다.','<b>퇴마록</b>의 과업을 이루면 퇴마사·무기·점괘 패가 해금되고 엽전과 산통 같은 보상이 붙는다. 처음에는 <b>선비</b>만 출정할 수 있고, 의원·장수·기생·무당은 과업으로 하나씩 열린다.','출정이 끝나면 <b>퇴마사 본부</b>로 돌아온다. 식구와 이야기하고 막걸리를 건네 <b>정표</b>를 받는다. 지난 출정은 <b>기록관</b>에 날짜와 함께 남는다.']));
-  h+=hcard('팁',ul(['진화 조건: 무기 최대 레벨(5) + 짝 보패 보유 + 보물상자. 카드 아래 「진화 짝」을 보고 보패를 같이 모으자.','원치 않는 무기나 보패가 계속 나오면 <b>봉인</b>으로 그 판에서 지워 버리자.','보스 발밑이 붉게 깜빡이면 돌진·순간이동 같은 큰 기술을 준비 중이다. 붉은 장판과 선 예고를 먼저 피하자.','보스 체력 막대의 금색 눈금(60%, 25%)에서 필살기가 나온다. 눈금 직전에 체력을 채워 두자.','「홀림」에 걸리면 보스 쪽으로 끌려간다. 반대 방향으로 계속 걸으면 버틸 수 있다.','장수의 등패는 요괴 탄을 막는다. 탄막이 많은 뒤쪽 막에서 특히 쓸모 있다.','무당은 레벨업 선택지가 4개라 원하는 조합을 맞추기 쉽다. 처음이라면 무당이나 장수가 편하다.'])); }
+ if(helpTab==='basic'){const I=helpImgs(),r=(img,t)=>hrowI(img,t),rw=(img,t)=>hrowI(img,t,true);
+  h+=hcard('장판과 경고 표식 읽기',rw(I.zone,'내 장판은 점무늬로 채운 도트 원에 <b>점선 테두리가 돌고</b>, 위쪽 테두리에 <b>그 장판을 만든 무기·기술 아이콘</b>이 붙는다. 아이콘은 왼쪽 위 슬롯 아이콘과 같다. 펫이 깐 장판에는 펫 표식(虎·熊·鷹)이 붙는다.')
+   +rw(I.warn,'<b>붉은 점선 원과 가운데 ! 표식</b>은 보스나 요괴의 공격 예고다. 안쪽 점무늬가 바깥 테두리까지 차오르면 터지고, 직전에는 테두리가 깜빡인다.')
+   +rw(I.line,'띠 모양 경고는 돌진·광선 경로다. 화살표(>)가 가리키는 방향으로 온다.'))
+   +hcard('조작',r(I.hero,'이동: <b>WASD</b> 또는 방향키. 휴대폰은 화면 아무 곳이나 누른 채 끌면 그쪽으로 걷는다. 공격은 모두 자동이다. 움직이며 피하는 데만 집중하면 된다.')
+   +r(I.btns,'일시정지: <b>ESC</b> 또는 <b>P</b>, 휴대폰은 오른쪽 아래 <b>정지</b> 버튼. 오른쪽 아래 버튼은 왼쪽부터 <b>신내림</b>·<b>소리</b>·<b>상태</b>·<b>정지</b>.')
+   +r(I.status,'<b>캐릭터 상태창</b>: <b>C</b>(또는 Tab) 키나 오른쪽 아래 <b>상태</b> 버튼. 지금 쓰는 무기·직업 기술·보패·축복·정표와 능력치, 무기마다 이번 출정에서 준 피해와 비중을 본다. 열어 둔 동안 게임이 멈춘다. 일시정지 화면에서도 열 수 있다.')
+   +r(I.santong,'레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>X</b> 물리기, <b>B</b> 봉인.'));
+  h+=hcard('한 판의 흐름',r(I.boss,`막은 모두 10개. 막마다 ${STAGE_T/60}분을 버틴다. ${MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.`)
+   +r(I.chest,'막 보스를 쓰러뜨리면 보물상자를 열고 <b>주막</b>에 들른 뒤 다음 막으로 간다.')
+   +r(I.gem,'요괴가 떨군 구슬로 레벨이 오른다. 레벨이 오를 때마다 무기나 보패 하나를 고른다.')
+   +r(I.tier,'레벨 10·20·30·40·50에 <b>전직</b>한다.'));
+  h+=hcard('막 안에서 만나는 것',r(I.elite,'<b>엘리트</b>: 금빛 체력 막대가 달린 큰 요괴. 쓰러뜨리면 보물상자를 떨군다.')
+   +r(I.chest,'<b>보물상자</b>: 진화 조건을 갖춘 무기가 있으면 진화시키고, 없으면 가진 것 하나를 강화한다.')
+   +r(I.shrine,'<b>성황당</b>: 막마다 두 번 나타난다. 화면 가장자리의 금빛 화살표를 따라가 그 안에 3.5초 머물면 신령의 축복을 받는다.')
+   +r(I.pot,'<b>옹기</b>: 아무 공격에나 깨진다. 떡, 엽전, 복주머니, 큰 구슬이 나온다.')
+   +r(I.tteok,`<b>떡</b>은 체력 회복, ${inl(I.pouch)}<b>복주머니</b>는 화면의 구슬을 모두 끌어온다.`)
+   +r(I.tiger,`레벨 10 전직 직후 <b>펫</b>(${inl(I.tiger)}범·${inl(I.bear)}반달곰·${inl(I.falcon)}해동청)을 고른다. 자세한 것은 「펫」 탭.`)
+   +r(I.ob,'막마다 장애물(장독, 대숲, 바위, 석등, 장승, 비석 등)이 길을 막는다. 날아다니는 요괴와 보스는 넘어온다.'));
+  h+=hcard('도사 전우치',r(I.jw,`체력이 <b>50%</b> 아래로 떨어지면 전우치가 구름을 타고 나타나 5초 동안 부적과 벼락으로 요괴를 친다. 보통 난이도 기준 ${45}초에 한 번.`)
+   +r(I.jw,`체력이 <b>20%</b> 아래로 떨어지면 「금강불괴」 도술로 체력을 40% 채워 주고 10초 동안 방어 +5, 받는 피해 −30%를 걸어 준 뒤 5초 동안 함께 싸운다. 보통 난이도 기준 90초에 한 번.`)
+   +`<p class="hint">쉬움은 더 자주, 어려움은 더 드물게 온다. 화면 오른쪽 위에 다음 출현까지 남은 시간이 보인다.</p>`);
+  h+=hcard('주막과 엽전',r(I.gukbap,`막 사이 주막에서 이번 출정의 엽전으로 국밥(회복), ${inl(I.makgeolli)}막걸리(다음 막 공격력 +20%), ${inl(I.santong)}산통·봉인 부적·물리기 패, ${inl(I.bottari)}보부상 보따리(무작위 강화), 정화수(신령 축복)를 산다. 같은 물건은 살수록 비싸진다.`)
+   +r(I.coin,'출정이 끝나면 남은 엽전과 처치 수, 도달한 막에 따라 <b>엽전</b>을 받는다. 수련 도장에서 영구 강화를 산다.')
+   +r(I.book,'<b>퇴마록</b>의 과업을 이루면 퇴마사·무기·점괘 패가 해금되고 엽전과 산통 같은 보상이 붙는다. 처음에는 <b>선비</b>만 출정할 수 있고, 의원·장수·기생·무당은 과업으로 하나씩 열린다.')
+   +r(I.hub,'출정이 끝나면 <b>퇴마사 본부</b>로 돌아온다. 식구와 이야기하고 막걸리를 건네 <b>정표</b>를 받는다. 지난 출정은 <b>기록관</b>에 날짜와 함께 남는다.'));
+  h+=hcard('팁',r(I.evo,`진화 조건: 무기 최대 레벨(5) + 짝 보패 보유 + 보물상자. 카드 아래 「진화 짝」을 보고 보패를 같이 모으자. (예: ${inl(I.meok)}먹탄 + ${inl(I.seochaek)}서책 → ${WD.meok.evoName})`)
+   +r(I.ban,'원치 않는 무기나 보패가 계속 나오면 <b>봉인</b>으로 그 판에서 지워 버리자.')
+   +r(I.tele,'보스 발밑이 붉게 깜빡이면 돌진·순간이동 같은 큰 기술을 준비 중이다. 붉은 장판과 선 예고를 먼저 피하자. 보스 체력 막대의 금색 눈금(60%, 25%)에서 필살기가 나온다. 눈금 직전에 체력을 채워 두자.')
+   +r(I.boss,'「홀림」에 걸리면 보스 쪽으로 끌려간다. 반대 방향으로 계속 걸으면 버틸 수 있다.')
+   +r(I.deungpae,'장수의 등패는 요괴 탄을 막는다. 탄막이 많은 뒤쪽 막에서 특히 쓸모 있다.')
+   +r(I.mudang,'무당은 레벨업 선택지가 4개라 원하는 조합을 맞추기 쉽다. 처음이라면 무당이나 장수가 편하다.')); }
  if(helpTab==='class'){
   h+=hcard('5차 전직 이후의 성장',`<p>5차 전직(Lv 50)을 마친 뒤에도 레벨업마다 성장이 이어진다.</p>`
    +`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#7a2018">覺</span></span><div><p><b>오의 각성</b> · Lv ${AWK_LV.join('·')}</p><p>직업 기술 하나를 골라 각성한다. 한 기술은 한 번만 각성한다. ${Object.values(AWK).map(a=>`<b>${a.n}</b> ${a.d}`).join(' / ')} 늘 켜져 있는 기술(결계·소환·궤도형)은 극의만 고를 수 있다.</p></div></div>`
@@ -3652,9 +3748,10 @@ function frame(now){const raw=now-last;const dt=Math.min(0.05,raw/1000);last=now
   if(!document.hidden){render();drawFps();}
   if(G){hudT-=dt;if(hudT<=0){hudT=0.1;hud();}}
   perfWatch(raw);
- }catch(e){if(errN++<5)console.warn('frame error',e);}
+ }catch(e){diagErr('오류',e);if(errN++<5)console.warn('frame error',e);}
+ try{diagWatch(raw);}catch(_){}
  finally{requestAnimationFrame(frame);}}
-document.addEventListener('visibilitychange',()=>{last=performance.now();pm.acc=0;pm.n=0;pm.slow=0;if(document.hidden&&G&&!G.over&&!modal)openPause();if(!document.hidden)resumeAudio();});
+document.addEventListener('visibilitychange',()=>{last=performance.now();if(document.hidden&&DIAG.hb){DIAG.hb.hidden=true;diagSave();}pm.acc=0;pm.n=0;pm.slow=0;if(document.hidden&&G&&!G.over&&!modal)openPause();if(!document.hidden)resumeAudio();});
 function start(){renderTitle();show('title');requestAnimationFrame(frame);}
 window.claude?.hot?.ready?window.claude.hot.ready(start):start();
 </script>

@@ -21,6 +21,7 @@ global.__ev={};global.addEventListener=(t,f)=>{(global.__ev[t]||(global.__ev[t]=
 global.__keydown=e=>{for(const f of global.__ev.keydown||[])f(Object.assign({preventDefault:noop,repeat:false,key:''},e));for(const f of global.__ev.keyup||[])f(Object.assign({preventDefault:noop},e));};global.requestAnimationFrame=noop;global.performance={now:()=>Date.now()};
 const store={};global.localStorage={getItem:k=>k in store?store[k]:null,setItem:(k,v)=>{store[k]=String(v);},removeItem:k=>{delete store[k];},clear:()=>{for(const k in store)delete store[k];}};
 if(process.env.SAVE){store['joseon-toema-v1']=fs.readFileSync(process.env.SAVE,'utf8');}
+if(process.env.DIAG_SAVE){store['joseon-toema-diag']=fs.readFileSync(process.env.DIAG_SAVE,'utf8');}   // 멈춤 기록(v17.3) 미리 넣기
 global.setTimeout=(f)=>{f();return 0;};global.clearTimeout=noop;global.navigator={userAgent:'node',maxTouchPoints:0};
 global.__els=els;
 const html=fs.readFileSync(gamePath,'utf8');
