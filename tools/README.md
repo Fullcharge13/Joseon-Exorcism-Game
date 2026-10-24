@@ -4,10 +4,12 @@
 
 | 명령 | 하는 일 |
 |---|---|
-| `python3 build.py` | `src/shell.html` + `src/js/*.js`(+ `src/i18n/*.js`) → `index.html` |
+| `python3 build.py` | `src/shell.html` + `src/js/*.js`(+ `src/i18n/zh/*.json` 간체 사전) → `index.html` |
 | `python3 build.py --check` | 지금 `index.html`이 `src/`로 만든 결과와 같은지(단위 시험 처음에 자동으로 돈다) |
 | `node tools/i18n_wrap.js` | 코드 속에 아직 `_t()`로 감싸지 않은 한국어 문구를 센다(0이어야 함). `--apply`는 자동으로 감싼다 |
 | `python3 tools/i18n_extract.py` | 한글이 든 문자열을 모두 훑어 센다(표·감싼 문구 포함, 대략의 양 보기) |
+| `python3 tools/i18n_keys.py` | 번역할 원문 전체(데이터 표·`_t` 열쇠·화면 틀 글)를 `docs/i18n/원문.json`으로(v18.1). `NODE_PATH`는 `i18n_wrap.js`와 같음 |
+| `python3 tools/i18n_todo.py [영역] [--n N]` | 간체 사전(`src/i18n/zh/*.json`)에 아직 없는 원문을 영역별로 보인다 |
 | `tools/split_once.py` | v18.0에서 한 번 쓴 나누기 도구(기록용, 다시 쓰지 않음) |
 
 - `i18n_wrap.js`는 `@babel/parser`·`@babel/traverse` 7.25.6이 필요하다(배포물에는 들어가지 않음): `npm i --prefix /tmp/i18n @babel/parser@7.25.6 @babel/traverse@7.25.6` 뒤 `NODE_PATH=/tmp/i18n/node_modules node tools/i18n_wrap.js`.

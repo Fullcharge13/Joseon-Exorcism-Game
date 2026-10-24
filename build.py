@@ -4,7 +4,7 @@
   python3 build.py --check   # 만들 결과가 지금 index.html 과 같은지만 본다(다르면 실패)
 src/shell.html 의 <!--JS--> 자리에 src/i18n/*.js 와 src/js/*.js 를 이름 순서대로 이어 붙인다.
 """
-import sys, pathlib, hashlib
+import sys, pathlib, hashlib, json
 ROOT = pathlib.Path(__file__).resolve().parent
 SRC = ROOT / 'src'
 OUT = ROOT / 'index.html'
@@ -18,7 +18,11 @@ def build_text():
     if not parts:
         raise SystemExit('src/js/*.js 가 없습니다')
     i18n = sorted((SRC / 'i18n').glob('*.js')) if (SRC / 'i18n').exists() else []
-    js = ''.join(p.read_text(encoding='utf8') for p in parts[:1] + i18n + parts[1:])   # 00_boot 다음에 문구 표
+    zh = ''
+    for f in sorted((SRC / 'i18n' / 'zh').glob('*.json')) if (SRC / 'i18n' / 'zh').exists() else []:   # v18.1 간체 사전(영역별 파일)
+        d = json.loads(f.read_text(encoding='utf8')); d.pop('_설명', None)
+        zh += f'Object.assign(I18N.zh,{json.dumps(d, ensure_ascii=False, separators=(",", ":"))});   // {f.name}\n'
+    js = parts[0].read_text(encoding='utf8') + zh + ''.join(p.read_text(encoding='utf8') for p in i18n + parts[1:])   # 00_boot 다음에 사전
     if '</script' in js.lower():
         raise SystemExit('src/js 안에 </script 글자가 있으면 페이지가 깨집니다(문자열이면 <\\/script 로)')
     for p in parts + i18n:

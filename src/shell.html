@@ -24,6 +24,8 @@
   color-scheme:dark;
 }
 [hidden]{display:none!important}
+html:lang(zh-CN){--f-disp:"Noto Serif SC","Song Myung","Noto Serif CJK SC",serif;--f-body:"Noto Sans SC","Gowun Dodum","PingFang SC","Microsoft YaHei",sans-serif}
+.langsw{display:flex;gap:6px;justify-content:center;margin:0 0 6px}.langsw .btn{min-width:72px}.langsw .btn[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
 *,*::before,*::after{box-sizing:border-box}
 img{max-width:100%}
 html,body{margin:0;height:100%;overflow:hidden;font-size:14px;background:var(--ink);color:var(--hanji);font-family:var(--f-body);-webkit-user-select:none;user-select:none;touch-action:none}
@@ -377,6 +379,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
 
 <div id="overlay">
   <section class="screen" id="title">
+    <div class="langsw" id="langSw" role="group" aria-label="Language" hidden></div>
     <div class="eyebrow">Joseon Night Survivors</div>
     <h1>조선<em>퇴마</em>록</h1>
     <p class="lede">해가 지면 요괴가 몰려온다. 한양 저잣거리에서 근정전까지 열 개의 막을 버텨라.</p>
@@ -394,7 +397,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button class="btn ghost" id="labBtn" hidden>조합 시험장</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v18.0</p>
+    <p class="ver" id="verTag">v18.1</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -611,6 +614,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
     <div class="eyebrow">SETTINGS</div>
     <h2>설정</h2>
     <div class="setlist">
+      <label id="setLangRow" hidden>언어 · Language <select id="setLang"></select></label>
       <label>효과음 크기 <input type="range" id="setVol" min="0" max="100" step="5"></label>
       <label>화면 흔들림 <input type="checkbox" id="setShake"></label>
       <label>피해 숫자 표시 <input type="checkbox" id="setNums"></label>

@@ -337,7 +337,7 @@ function taleCleared(){const T=TALES[G.tale.id],i=G.tale.act;
 function taleFinish(){const T=TALES[G.tale.id],D=meta.tale.done,id=G.tale.id,first=!D[id],tm=G.time-G.tale.t0;
  G.tale.time=tm;const d=D[id]||(D[id]={best:tm,n:0});G.tale.rec=first||tm<d.best;d.best=Math.min(d.best,tm);d.n++;G.rs.tales=(G.rs.tales||0)+1;
  if(first)meta.tale.skin[T.cid]=T.skin.id;saveMeta();
- const foot=first?_t("{name}의 「{n}」{p} 열렸다. 바로 입혀 두었고, 출정 준비의 「차림」에서 바꿀 수 있다.",{name:CHARS[T.cid].name,n:T.skin.n,p:jong(T.skin.n)?'이':'가'}):(G.tale.rec?_t("새 기록 · {p}",{p:fmtT(tm)}):_t("완주 {p} · 가장 빠른 완주 {p2}",{p:fmtT(tm),p2:fmtT(d.best)}));   //i18n-skip 조사(간체 문구는 {p}를 쓰지 않음)
+ const foot=first?_t("{name}의 「{n}」{p} 열렸다. 바로 입혀 두었고, 출정 준비의 「차림」에서 바꿀 수 있다.",{name:CHARS[T.cid].name,n:T.skin.n,p:LANG==='ko'?(jong(T.skin.n)?'이':'가'):''}):(G.tale.rec?_t("새 기록 · {p}",{p:fmtT(tm)}):_t("완주 {p} · 가장 빠른 완주 {p2}",{p:fmtT(tm),p2:fmtT(d.best)}));   //i18n-skip 조사(간체 문구는 {p}를 쓰지 않음)
  openScene([{eye:_t("{n} · 끝맺음",{n:T.n}),title:T.n,t:T.end,art:'ch:'+T.cid,foot}],()=>endGame(true));}
 /* ---- 설화 흔적 (본편 · 관련 막에서 한 번) ---- */
 const ga=w=>w+(jong(w)?'이':'가');   //i18n-skip 조사 고르기
@@ -359,7 +359,7 @@ function achNote(small,title,text){const box=$('#ach');if(!box)return;const d=do
 function takeFrag(id){const T=TALES[id];const n=meta.tale.frag[id]=Math.min(3,meta.tale.frag[id]+1);G.rs.frags=(G.rs.frags||0)+1;saveMeta();
  const open=n===3,f=T.frags[n-1];
  flash('255,224,138',0.25);particle(G.P.x,G.P.y-8,'#ffe08a',20,60,0.7);snd(392,0.3,'triangle',0.05);
- openScene([{eye:_t("설화 조각 {n}/3 · {n2}",{n:n,n2:T.n}),title:T.traceN,t:f.t,art:f.art,foot:open?_t("설화 출정 『{n}』{p} 열렸다 — 출정 준비의 「설화 출정」에서 고를 수 있다.",{n:T.n,p:jong(T.n)?'이':'가'}):''}],null);   //i18n-skip 조사(간체 문구는 {p}를 쓰지 않음)
+ openScene([{eye:_t("설화 조각 {n}/3 · {n2}",{n:n,n2:T.n}),title:T.traceN,t:f.t,art:f.art,foot:open?_t("설화 출정 『{n}』{p} 열렸다 — 출정 준비의 「설화 출정」에서 고를 수 있다.",{n:T.n,p:LANG==='ko'?(jong(T.n)?'이':'가'):''}):''}],null);   //i18n-skip 조사(간체 문구는 {p}를 쓰지 않음)
  if(open)achNote(_t("설화 출정 열림"),`『${T.n}』`,_t("{name} · 출정 준비 → 설화 출정",{name:CHARS[T.cid].name}));
  checkTasks();}
 function drawTrace(a){const sp=PROP[TALES[a.id].trace],x=R(a.x),y=R(a.y),t=G.time;

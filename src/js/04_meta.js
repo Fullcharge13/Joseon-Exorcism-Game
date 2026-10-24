@@ -115,7 +115,7 @@ function saveMeta(){if(LAB)return;try{localStorage.setItem(SAVE_KEY,JSON.stringi
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER='v18.0',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
+const GAME_VER='v18.1',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
 let DIAG={log:[],hb:null};try{const d=JSON.parse(localStorage.getItem(DIAG_KEY)||'null');if(d&&typeof d==='object'&&!Array.isArray(d)){DIAG.log=Array.isArray(d.log)?d.log.filter(e=>e&&typeof e==='object').slice(-DIAG_MAX):[];DIAG.hb=d.hb&&typeof d.hb==='object'?d.hb:null;}}catch(e){}
 const diagSeen=new Set();let diagStuck=0,diagNoScr=0,diagLastT=null,diagHbT=0;
 function diagSave(){try{localStorage.setItem(DIAG_KEY,JSON.stringify(DIAG));}catch(e){}}

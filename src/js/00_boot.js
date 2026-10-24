@@ -10,11 +10,12 @@ let S=3,W=320,H=180,DPR=1,vig=null;
    끼워 넣기 {name}, 한국어 조사 {name:을}·{name:으로}·{name:이}·{name:은}·{name:과} (마지막 글자가 한글이 아니면 받침 없음).
    같은 원문이 뜻이 다를 때만 '원문|꼬리표'. 데이터 표는 applyLang()이 사전으로 덧씌운다. 설계: docs/specs/2026-10-24-다국어.md */
 const I18N={zh:{}};let LANG='ko';
-const LANG_ZH_PUBLIC=false;let tMissed=false;   // v18.1에서 간체 사전이 채워지면 true(시작 화면 단추 공개)
+const LANG_ZH_PUBLIC=true;let tMissed=false;   // v18.1: 간체 사전이 다 채워져 시작 화면·설정에 언어 단추를 연다
+const FD=()=>LANG==='zh'?'"Noto Serif SC","Noto Serif CJK SC","Songti SC","SimSun","Song Myung", serif':'"Song Myung", serif';   // 캔버스 제목 글꼴(간체는 간체 글꼴 먼저)
 const jongOf=w=>{w=String(w);const c=w.charCodeAt(w.length-1)-0xAC00;return c>=0&&c<11172?c%28:0;};
 const JOSA={'을':['을','를'],'를':['을','를'],'이':['이','가'],'가':['이','가'],'은':['은','는'],'는':['은','는'],'과':['과','와'],'와':['과','와']};   //i18n-skip 조사 표(번역하지 않음)
 function fillT(s,v,ko=true){return s.replace(/\{(\w+)(?::(을|를|이|가|은|는|과|와|으로|로))?\}/g,(m,k,j)=>{if(!v||!(k in v))return m;const x=String(v[k]);if(!j||!ko)return x;   // 간체 문구에 {x:을}이 남아도 조사를 붙이지 않음
  const jg=jongOf(x);if(j==='으로'||j==='로')return x+(jg===0||jg===8?'로':'으로');const p=JOSA[j];return x+(jg?p[0]:p[1]);});}   //i18n-skip 조사 고르기(번역하지 않음)
 function _t(s,v){   // 이름이 _t 인 까닭: 코드 곳곳에 t 라는 지역 변수(시간·과업)가 있어 가려진다
 const base=s.includes('|')?s.slice(0,s.indexOf('|')):s;if(LANG==='ko')return fillT(base,v);
- const z=I18N[LANG]&&I18N[LANG][s];if(z==null){if(!tMissed&&typeof diagNote==='function'){tMissed=true;diagNote('i18n',_t("번역 없음: ")+base.slice(0,60));}return fillT(base,v);}return fillT(z,v,false);}
+ const z=I18N[LANG]&&I18N[LANG][s];if(z==null){if(!tMissed&&typeof diagNote==='function'){tMissed=true;diagNote('i18n','번역 없음: '+base.slice(0,60));}return fillT(base,v);}return fillT(z,v,false);}   //i18n-skip 오류 기록 글은 한국어

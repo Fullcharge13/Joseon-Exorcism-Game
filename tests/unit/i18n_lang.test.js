@@ -10,5 +10,5 @@ setLang('zh');ok(LANG==='zh'&&meta.set.lang==='zh','간체로 바꾸고 저장')
 ok(meta.coins===coins&&JSON.stringify(meta.up)===ups,'진행 저장은 그대로');
 setLang('ko');ok(WD.meok.name===n0&&WD.meok.desc[1]===d0,'한국어로 되돌림');
 setLang('zh');setLang('zh');setLang('ko');ok(WD.meok.name===n0,'여러 번 바꿔도 원문이 지켜짐');
-I18N.zh=z0;ok(typeof LANG_ZH_PUBLIC!=='undefined'&&LANG_ZH_PUBLIC===false,'v18.0에서는 중국어 단추 숨김');
+I18N.zh=z0;ok(typeof LANG_ZH_PUBLIC!=='undefined'&&LANG_ZH_PUBLIC===true,'v18.1: 중국어 단추 공개');
 if(fails.length){console.log('FAIL i18n_lang\n  '+fails.join('\n  '));process.exitCode=1;}else console.log('PASS i18n_lang');

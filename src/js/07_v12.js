@@ -159,8 +159,8 @@ function hubReq(r){const st=meta.stats,h=meta.hub;for(const k in r){const v=r[k]
 function npcNext(id){const N=NPCS[id],rd=meta.hub.read[id]||0,aff=meta.hub.aff[id]||0;const L=N.lines;
  for(let i=0;i<L.length;i++){if(rd&(1<<i))continue;const r=L[i].r;if(r.aff&&aff<r.aff)continue;if(hubReq(r))return i;}return -1;}
 function npcReact(id){const h=meta.hub,l=h.last;if(!l||h.rx[id]===h.runs||!(id==='jumo'||id==='jeonwoochi'))return null;
- if(id==='jumo')return l.win?_t("새벽을 맞았다면서요! {p}마리라니, 오늘은 국밥에 고기 두 점 더 얹어 줄게요.",{p:l.kills.toLocaleString()}):_t("지난밤엔 {where}에서 실려 왔어요. 요괴 {p}마리를 잡았다니, 국밥 한 그릇 값은 했네요.",{where:l.where,p:l.kills.toLocaleString()});
- return l.win?_t("그슨대의 그림자가 걷히는 게 여기서도 보였네. {cls}(이)라… 이름값을 했어.",{cls:l.cls}):_t("{where}이라. {lvl}레벨이면 나쁘지 않아. 다음엔 내가 조금 더 일찍 내려가 주지.",{where:l.where,lvl:l.lvl});}
+ if(id==='jumo')return l.win?_t("새벽을 맞았다면서요! {p}마리라니, 오늘은 국밥에 고기 두 점 더 얹어 줄게요.",{p:l.kills.toLocaleString()}):_t("지난밤엔 {where}에서 실려 왔어요. 요괴 {p}마리를 잡았다니, 국밥 한 그릇 값은 했네요.",{where:runWhere(l),p:l.kills.toLocaleString()});
+ return l.win?_t("그슨대의 그림자가 걷히는 게 여기서도 보였네. {cls}(이)라… 이름값을 했어.",{cls:runCls(l)}):_t("{where}이라. {lvl}레벨이면 나쁘지 않아. 다음엔 내가 조금 더 일찍 내려가 주지.",{where:runWhere(l),lvl:l.lvl});}
 function npcHasNew(id){return npcNext(id)>=0||!!npcReact(id);}
 function openHub(){renderHub();show('hub');}
 /* 본부 식구 그림: 차림(look)이 있으면 퇴마사 도트, 따로 그린 도트(spr)가 있으면 그것(v17.5 패랭이 도깨비), 없으면 요괴 도깨비 */
@@ -204,6 +204,7 @@ function srcIcon(s){if(WD[s])return iconHTML(s);const g=s==='ult'?'極':s==='cal
 function snapRun(win){const P=G.P,dm=G.rs.dmg||{},tot=Object.values(dm).reduce((a,v)=>a+v,0);
  return {t:Date.now(),cid:G.cid,cls:className(),tier:P.tier,mode:G.mode,diff:G.diff,curse:G.curse,card:G.card,ks:G.ks||null,win:!!win,stage:G.stage,loop:G.loop,time:Math.round(totalTime()),kills:G.kills,lvl:P.lvl,combo:G.rs.comboMax||0,
   where:G.mode==='rush'?_t("{p}번째 원정",{p:G.stage+1}):G.mode==='tale'?_t("『{n}』 {p}막",{n:TALES[G.tale.id].n,p:G.tale.act+1}):curStg().name,tale:G.mode==='tale'?G.tale.id:undefined,tot:Math.round(tot),
+  v:2,br:P.tier?P.branch:undefined,act:G.mode==='tale'?G.tale.act:undefined,   // v18.1(v:2): 언어를 바꿔도 다시 만들 수 있게 아이디도 남김(cls·where 글은 옛 판 호환으로 그대로)
   dmg:Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>[k,Math.round(v)]),
   w:G.weapons.map(w=>({id:w.id,e:w.evo?1:0,l:w.lv,lb:w.lb||0,tm:w.tm||null})),p:{...G.passives},bl:Object.keys(G.bless),duo:Object.keys(G.duo||{}),pet:G.pet?G.pet.type:null,dk:G.rs.dkIn||0,tmN:G.rs.temper||0,q:G.rs.quests||0};}
 function runScore(r){return ((r.win?1:0)+r.loop)*1e8+(r.stage+1)*1e6+Math.min(999999,r.kills);}
@@ -222,8 +223,20 @@ let archTab='rec';
 function openArch(from){archFrom=from||'title';archTab='rec';renderArch();show('arch');}
 let archFrom='title';
 function buildMini(r){return `<div class="mini">${r.w.map(w=>{const d=WD[w.id];if(!d)return '';return `<span class="m${d.fuse?' f':w.e?' e':''}" title="${(w.e?d.evoName:d.name)}${w.tm?_t(" · 담금질 ")+TEMPER[w.tm].n:''}">${iconHTML(w.id)}${w.tm?`<i>${TEMPER[w.tm].g}</i>`:''}</span>`;}).join('')}${Object.keys(r.p).map(id=>PD[id]?`<span class="m" title="${PD[id].name} ${r.p[id]}">${iconHTML(id)}</span>`:'').join('')}</div>`;}
-const clsT=r=>r.cls&&r.cls!==CHARS[r.cid].name?' · '+r.cls:'';
-function runLine(r){const J=jdate(r.t),C=CHARS[r.cid];const res=r.mode==='tale'?(r.win?_t("설화 『{p}』 완주",{p:TALES[r.tale]?TALES[r.tale].n:''}):_t("설화 {where}에서 쓰러짐",{where:r.where})):r.mode==='rush'?(r.win?_t("원정 완주"):_t("{p}번째 원정에서 쓰러짐",{p:r.stage+1})):r.win?(r.loop?_t("끝없는 밤 {p}바퀴 끝에 새벽",{p:r.loop+1}):_t("새벽을 맞음")):_t("{p}{where}에서 쓰러짐",{p:r.loop?_t("{p}바퀴 · ",{p:r.loop+1}):'',where:r.where});
+/* v18.1: 기록의 직업·장소를 지금 언어로. 아이디가 있으면 표에서 다시 만들고, 옛 기록(완성된 한국어 글)은 사전으로 옮긴다. */
+const trS=s=>LANG!=='ko'&&s&&I18N[LANG]&&I18N[LANG][s]||s;
+function runCls(r){const C=CHARS[r.cid];if(!C)return r.cls||'';
+ if(r.v===2){const T=r.tier&&C.branches[r.br]&&C.branches[r.br].tiers[r.tier-1];return T?T.name:C.name;}
+ return trS(r.cls)||C.name;}
+function runWhere(r){if(r.v===2){if(r.mode==='rush')return _t("{p}번째 원정",{p:r.stage+1});
+  if(r.mode==='tale'&&TALES[r.tale])return _t("『{n}』 {p}막",{n:TALES[r.tale].n,p:(r.act||0)+1});
+  if(r.mode!=='tale'&&STAGES[r.stage])return STAGES[r.stage].name;}
+ const w=r.where||'';if(LANG==='ko')return w;let m;
+ if((m=/^(\d+)번째 원정$/.exec(w)))return _t("{p}번째 원정",{p:+m[1]});   //i18n-skip
+ if((m=/^『(.+)』 (\d+)막$/.exec(w)))return _t("『{n}』 {p}막",{n:trS(m[1]),p:+m[2]});   //i18n-skip
+ return trS(w);}
+const clsT=r=>{const c=runCls(r);return c&&c!==(CHARS[r.cid]||{}).name?' · '+c:'';};
+function runLine(r){const J=jdate(r.t),C=CHARS[r.cid];const res=r.mode==='tale'?(r.win?_t("설화 『{p}』 완주",{p:TALES[r.tale]?TALES[r.tale].n:''}):_t("설화 {where}에서 쓰러짐",{where:runWhere(r)})):r.mode==='rush'?(r.win?_t("원정 완주"):_t("{p}번째 원정에서 쓰러짐",{p:r.stage+1})):r.win?(r.loop?_t("끝없는 밤 {p}바퀴 끝에 새벽",{p:r.loop+1}):_t("새벽을 맞음")):_t("{p}{where}에서 쓰러짐",{p:r.loop?_t("{p}바퀴 · ",{p:r.loop+1}):'',where:runWhere(r)});
  return {J,C,res};}
 function recCard(title,k,fmt){const o=meta.arch.rec[k];if(!o)return _t("<div class=\"rec none\"><h4>{title}</h4><p>아직 기록이 없다.</p></div>",{title:title});const {J,C,res}=runLine(o.r);
  return `<div class="rec"><h4>${title}</h4><strong>${fmt(o.v)}</strong><p><b>${C.name}</b>${clsT(o.r)} · ${res}</p>${buildMini(o.r)}<p class="when">${J.j} <small>(${J.s})</small></p></div>`;}
@@ -237,7 +250,7 @@ function renderArch(){for(const [k,id] of [['rec','tabRec'],['cls','tabCls'],['l
    if(!C)return hcard(`<span class="seal" style="width:28px;height:28px;font-size:18px">${Ch.seal}</span>${ok?Ch.name:'???'}`,`<p>${ok?_t("아직 이 퇴마사로 출정한 기록이 없다."):charLock(cid)}</p>`);
    const top=Object.entries(C.src).map(([k,s])=>[k,s.d/s.m,s.n]).sort((a,b)=>b[1]-a[1]).slice(0,3),tot=top.reduce((a,x)=>a+x[1],0)||1,B=C.best,{J,res}=runLine(B);
    return hcard(`<span class="seal" style="width:28px;height:28px;font-size:18px">${Ch.seal}</span>${Ch.name}`,
-    _t("<p>출정 <b>{n}</b>번 · 새벽 <b>{wins}</b>번 · 모두 <b>{p}</b>마리 퇴치</p>\n     <h4>가장 좋았던 조합</h4><p><b>{cls}</b> · {res} · Lv {lvl} · {p2}마리{p3}{p4}</p>{p5}\n     {p6}\n     <p class=\"when\">{j} <small>({s})</small></p>\n     <h4>가장 효율적인 무기·기술 (분당 피해)</h4>{p7}",{n:C.n,wins:C.wins,p:C.kills.toLocaleString(),cls:B.cls,res:res,lvl:B.lvl,p2:B.kills.toLocaleString(),p3:B.ks?_t(" · 정표 {n}",{n:KS[B.ks].n}):'',p4:B.card?_t(" · 패 {n}",{n:CARDS[B.card].n}):'',p5:buildMini(B),p6:B.dmg.length?_t("<p><small>그 판의 주력: {p}</small></p>",{p:B.dmg.slice(0,3).map(([k,v])=>`${srcName(k,cid)} ${Math.round(v/Math.max(1,B.tot)*100)}%`).join(' · ')}):'',j:J.j,s:J.s,p7:top.length?top.map(([k,v,n])=>_t("<div class=\"hrow\"><span class=\"ic\">{p}</span><div><p><b>{p2}</b> · 분당 {p3} <small>({n}판 · 상위 셋 중 {p4}%)</small></p></div></div>",{p:srcIcon(k),p2:srcName(k,cid),p3:Math.round(v).toLocaleString(),n:n,p4:Math.round(v/tot*100)})).join(''):_t("<p>피해 기록이 아직 없다.</p>")}));}).join('')+`</div>`;return;}
+    _t("<p>출정 <b>{n}</b>번 · 새벽 <b>{wins}</b>번 · 모두 <b>{p}</b>마리 퇴치</p>\n     <h4>가장 좋았던 조합</h4><p><b>{cls}</b> · {res} · Lv {lvl} · {p2}마리{p3}{p4}</p>{p5}\n     {p6}\n     <p class=\"when\">{j} <small>({s})</small></p>\n     <h4>가장 효율적인 무기·기술 (분당 피해)</h4>{p7}",{n:C.n,wins:C.wins,p:C.kills.toLocaleString(),cls:runCls(B),res:res,lvl:B.lvl,p2:B.kills.toLocaleString(),p3:B.ks?_t(" · 정표 {n}",{n:KS[B.ks].n}):'',p4:B.card?_t(" · 패 {n}",{n:CARDS[B.card].n}):'',p5:buildMini(B),p6:B.dmg.length?_t("<p><small>그 판의 주력: {p}</small></p>",{p:B.dmg.slice(0,3).map(([k,v])=>`${srcName(k,cid)} ${Math.round(v/Math.max(1,B.tot)*100)}%`).join(' · ')}):'',j:J.j,s:J.s,p7:top.length?top.map(([k,v,n])=>_t("<div class=\"hrow\"><span class=\"ic\">{p}</span><div><p><b>{p2}</b> · 분당 {p3} <small>({n}판 · 상위 셋 중 {p4}%)</small></p></div></div>",{p:srcIcon(k),p2:srcName(k,cid),p3:Math.round(v).toLocaleString(),n:n,p4:Math.round(v/tot*100)})).join(''):_t("<p>피해 기록이 아직 없다.</p>")}));}).join('')+`</div>`;return;}
  body.innerHTML=A.runs.length?`<div class="logs">${A.runs.map(r=>{const {J,C,res}=runLine(r);const main=r.dmg[0];
    return _t("<div class=\"log{p}\"><div class=\"lh\"><span class=\"seal\">{seal}</span><div><b>{name}{p2}</b><p>{res}</p></div><span class=\"tm\">{j}<br><small>{s}</small></span></div>\n    <p class=\"ls\">{p3}{p4} · {p5} · Lv {lvl} · {p6}마리 · 연격 {combo}{p7}{p8}</p>{p9}</div>",{p:r.win?' win':'',seal:C.seal,name:C.name,p2:clsT(r),res:res,j:J.j,s:J.s,p3:r.mode==='rush'?_t("퇴마 원정"):r.mode==='tale'?_t("설화 출정"):DIFFS[r.diff].n,p4:r.curse?_t(" · 액운 {curse}",{curse:r.curse}):'',p5:fmtT(r.time),lvl:r.lvl,p6:r.kills.toLocaleString(),combo:r.combo,p7:main?_t(" · 주력 {p}",{p:srcName(main[0],r.cid)}):'',p8:r.ks?_t(" · 정표 {n}",{n:KS[r.ks].n}):'',p9:buildMini(r)});}).join('')}</div>`:_t("<p class=\"lede\">아직 기록된 출정이 없다. 첫 출정을 마치면 이곳에 날짜와 함께 남는다.</p>");}
 

@@ -335,7 +335,7 @@ const WD={
    w.t=(w.evo?1.8:L5(w,[2.4,2.3,2.3,2.2,2]))*P.cd;}},
  yut:{name:'윷',type:'w',max:5,evo:'seochaek',evoName:'윷판 모',evoDesc:'던질 때마다 걸 이상이 나오고, 모가 나오면 둘레가 크게 터진다.',
   desc:['윷가락을 던져 나온 끗수(도·개·걸·윷·모)만큼 윷가락이 요괴에게 날아간다. 모가 나오면 둘레가 터진다.','윷가락 +1','피해 +','관통 +1','윷가락 +1, 빨라짐'],
-  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const r=Math.random(),k=w.evo?(r<0.45?3:r<0.8?4:5):(r<0.15?1:r<0.5?2:r<0.8?3:r<0.93?4:5),NM=[_t("도"),_t("개"),_t("걸"),_t("윷"),_t("모")];
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const r=Math.random(),k=w.evo?(r<0.45?3:r<0.8?4:5):(r<0.15?1:r<0.5?2:r<0.8?3:r<0.93?4:5),NM=[_t("도"),_t("개"),_t("걸"),_t("윷|끗"),_t("모")];
    const n=k+(w.evo?2:w.lv>=5?2:w.lv>=2?1:0)+P.amount,dmg=(w.evo?22:L5(w,[13,13,16,16,18]))*P.might,pr=w.evo?3:L5(w,[1,1,1,2,2]);
    for(let i=0;i<n;i++){const tg=randomEnemy(180);const a=tg?Math.atan2(tg.y-P.y,tg.x-P.x)+rnd(-0.15,0.15):Math.random()*TAU;shoot(P.x,P.y-4,a,220*P.pspd,'yut',dmg,pr,0.9,3);}
    if(k===5)pulseRing(P.x,P.y,(w.evo?80:60)*P.area,dmg*2.5,'#e0b048',80);

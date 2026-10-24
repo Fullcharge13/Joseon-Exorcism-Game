@@ -51,7 +51,7 @@ function drawEmblems(){if(!EMQ.length)return;const k=S*DPR,sz=12*k;ctx.save();ct
   ctx.fillStyle='#0a080c';ctx.fillRect(x,y,sz,sz);ctx.fillStyle=inf.bd;ctx.fillRect(x+k,y+k,sz-2*k,sz-2*k);ctx.fillStyle=inf.bg;ctx.fillRect(x+2*k,y+2*k,sz-4*k,sz-4*k);
   if(inf.ic)ctx.drawImage(inf.ic,x+2*k,y+2*k,8*k,8*k);
   else if(inf.bang){ctx.fillStyle='#fff6d0';ctx.fillRect(x+5*k,y+3*k,2*k,4*k);ctx.fillRect(x+5*k,y+8*k,2*k,k);}
-  else{ctx.font=`bold ${Math.round(7.5*k)}px "Song Myung", serif`;ctx.fillStyle='#0a080c';ctx.fillText(inf.g,x+sz/2+Math.max(1,k/3),y+sz/2+Math.max(1,k/3));ctx.fillStyle='#fff6d0';ctx.fillText(inf.g,x+sz/2,y+sz/2);}}
+  else{ctx.font=`bold ${Math.round(7.5*k)}px ${FD()}`;ctx.fillStyle='#0a080c';ctx.fillText(inf.g,x+sz/2+Math.max(1,k/3),y+sz/2+Math.max(1,k/3));ctx.fillStyle='#fff6d0';ctx.fillText(inf.g,x+sz/2,y+sz/2);}}
  ctx.restore();EMQ.length=0;}
 function pxArea(x,y,r,col,a,ph,big){const ry=r*0.75;
  b.globalAlpha=0.08*a;b.fillStyle=col;b.beginPath();b.ellipse(x,y,r,ry,0,0,TAU);b.fill();
@@ -159,7 +159,7 @@ function edgeSign(kind,o,cx,cy){const sx=o.x-cx,sy=o.y-cy;if(sx>4&&sx<W-4&&sy>4&
  EDGEQ.push({x:clamp(W/2+Math.cos(a)*W,12,W-12),y:clamp(H/2+Math.sin(a)*H,22,H-12),a,kind,txt:o.edgeSay?o.edgeSay.txt:''});}
 let GUIR=[];const BUBW=new Map();   // 마지막 장면의 말풍선·표지 사각형(화면 픽셀, 시험용)
 function drawGuideUI(){GUIR=[];if(!BUBQ.length&&!EDGEQ.length)return;const k=S*DPR,fs=clamp(6.5*S,12,18)*DPR,u=fs/6.5,VW=W*k,VH=H*k;
- ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.font=`bold ${Math.round(fs)}px "Song Myung", serif`;ctx.textBaseline='middle';
+ ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.font=`bold ${Math.round(fs)}px ${FD()}`;ctx.textBaseline='middle';
  const P=G.P,px=(P.x-RCX)*k,py=(P.y-RCY)*k,hh=20*entK()*k,hw=8*entK()*k;
  for(const q of BUBQ){ctx.globalAlpha=q.a==null?1:q.a;const ck=q.txt+'|'+q.col+'|'+fs;let tw=BUBW.get(ck);if(tw==null){tw=ctx.measureText(q.txt).width;if(BUBW.size>80)BUBW.clear();BUBW.set(ck,tw);}const pw=Math.round(tw+8*u),ph=Math.round(fs+5*u);
   let bx=Math.round(clamp(q.x*k-pw/2,4*u,VW-pw-4*u)),by=Math.round(q.y*k-ph-5*u);
@@ -290,7 +290,7 @@ function render(){
   else if(f.t==='bolt'){b.globalAlpha=clamp(k,0,1);b.strokeStyle=f.col||'#fff6c0';b.lineWidth=2;b.beginPath();let x=f.x,y=f.y-H;b.moveTo(x,y);let sd=f.seed;while(y<f.y){y+=8;sd=(sd*9301+49297)%233280;x+=(sd/233280-0.5)*10;b.lineTo(x,Math.min(y,f.y));}b.stroke();b.fillStyle='rgba(255,246,192,0.5)';b.beginPath();b.ellipse(f.x,f.y,8,6,0,0,TAU);b.fill();b.globalAlpha=1;}
   else if(f.t==='chain'){b.globalAlpha=clamp(k,0,1);b.strokeStyle=f.col;b.lineWidth=2;b.beginPath();f.pts.forEach((p,i)=>i?b.lineTo(p[0],p[1]):b.moveTo(p[0],p[1]));b.stroke();b.strokeStyle='#ffd0c0';b.lineWidth=1;b.stroke();b.globalAlpha=1;}
   else if(f.t==='beam'){b.save();b.translate(f.x,f.y);b.rotate(f.a);b.globalAlpha=clamp(k,0,1)*0.6;b.fillStyle=f.col;b.fillRect(0,-f.w/2,f.len,f.w);b.globalAlpha=clamp(k,0,1);b.fillStyle=f.col==='#1a1418'?'#3a3540':'#fff';b.fillRect(0,-1,f.len,2);b.restore();b.globalAlpha=1;}
-  else if(f.t==='glyph'){b.font=(f.big?'bold 16px':'bold 13px')+' "Song Myung", serif';b.textAlign='center';b.fillStyle='rgba(0,0,0,0.3)';b.fillRect(R(f.x-3),R(f.y),6,2);b.fillStyle='#0a080c';b.fillText(f.ch,R(f.x)+1,R(f.y-f.h)+1);b.fillStyle=f.big?'#ffd76a':'#efe6d2';b.fillText(f.ch,R(f.x),R(f.y-f.h));}}});
+  else if(f.t==='glyph'){b.font=(f.big?'bold 16px ':'bold 13px ')+FD();b.textAlign='center';b.fillStyle='rgba(0,0,0,0.3)';b.fillRect(R(f.x-3),R(f.y),6,2);b.fillStyle='#0a080c';b.fillText(f.ch,R(f.x)+1,R(f.y-f.h)+1);b.fillStyle=f.big?'#ffd76a':'#efe6d2';b.fillText(f.ch,R(f.x),R(f.y-f.h));}}});
  for(const f of G.fx)if(f.t==='num')drawNum(f,f.max?f.life/f.max:1);
  /* v16.2 요괴 탄은 내 효과 위에, 언제나 또렷하게 */
  for(const q of G.ebul){const x=R(q.x),y=R(q.y);b.fillStyle=q.col||'#ff5a8a';b.fillRect(x-2,y-1,4,2);b.fillRect(x-1,y-2,2,4);b.fillStyle='#fff';b.fillRect(x,y-1,1,1);}
@@ -370,6 +370,6 @@ function openLab(){const box=$('#labList');box.innerHTML='';
   box.appendChild(row);}
  show('lab');}
 if(LAB){$('#labBtn').hidden=false;$('#labBtn').onclick=openLab;$('#labBack').onclick=()=>{renderTitle();show('title');};}
-function start(){{const l=detectLang();setLang(l==='zh'&&!LANG_ZH_PUBLIC?'ko':l,false);}   // v18.0: 간체 사전이 채워질 때까지는 한국어
+function start(){{const l=detectLang();setLang(l==='zh'&&!LANG_ZH_PUBLIC?'ko':l,false);}bindLangSw();
  renderTitle();if(LAB)openLab();else show('title');requestAnimationFrame(frame);}
 window.claude?.hot?.ready?window.claude.hot.ready(start):start();
