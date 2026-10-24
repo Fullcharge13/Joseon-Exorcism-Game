@@ -135,6 +135,18 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .card b{font:21px var(--f-disp);font-weight:400}
 .card p{margin:0;font-size:13px;line-height:1.45;color:#4a3f38}
 .card small{font-size:11px;color:#6b5f52;display:block}
+.card.pair{box-shadow:inset 0 0 0 3px #c8961e,4px 4px 0 #00000055}
+.card .bdgs{display:flex;flex-wrap:wrap;gap:4px}.badge.pairb{background:#9a6a10;color:#fff3c8}
+.card .evo{display:block;margin-top:6px;padding:4px 6px;background:#00000010;border-left:3px solid #c8961e;font-size:12px;line-height:1.55}
+.card .evo .et{font-size:10px;color:#8a6a2a;margin-right:2px}.card .evo .er{display:block}
+.card .ep{font-weight:700;white-space:nowrap}.card .ep img{width:16px;height:16px;vertical-align:-3px;image-rendering:pixelated;margin-right:2px}
+.card .ep.own{color:#8a5a00}.card .ep.no{color:#8f857a;font-weight:400}.card .ep.no img{opacity:.45;filter:grayscale(1)}
+.card .evo i{font-style:normal}.card .evo .y{color:#2f6b3a;font-weight:700}.card .evo .n{color:#9a8f82}
+.lablist{display:flex;flex-direction:column;gap:6px;max-height:60vh;overflow:auto}
+.labrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:6px 8px;background:#00000010;font-size:13px}
+.labrow .ep{font-weight:700;white-space:nowrap}.labrow .ep img{width:18px;height:18px;vertical-align:-4px;image-rendering:pixelated;margin-right:2px}
+.labrow small{color:#8a7f72}.labrow .lb2{margin-left:auto;display:flex;gap:4px}.btn.sm{padding:4px 8px;font-size:12px}.labrow .btn.ghost{color:var(--sumi);border-color:#6b5f52;background:#fff8}
+.card .evo b{font:inherit;font-weight:700;color:#7a2018;white-space:nowrap}.card .evo em{display:block;font-style:normal;color:#a0281c;font-weight:700}
 .card kbd{position:absolute;right:8px;bottom:8px;color:#8a7c6a;border-color:#c9b998}
 .tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .tools button{background:var(--panel);border:1px solid var(--line);padding:8px 14px;font:15px var(--f-disp);display:flex;gap:6px;align-items:center}
@@ -379,9 +391,10 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button class="btn ghost" id="archBtn">기록관</button>
       <button class="btn ghost" id="shopBtn">수련 도장</button>
       <button class="btn ghost" id="setBtn">설정</button>
+      <button class="btn ghost" id="labBtn" hidden>조합 시험장</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v17.3</p>
+    <p class="ver" id="verTag">v17.4</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -477,6 +490,14 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
     <div class="sheet sceneSheet"><p id="sceneText"></p><p class="sceneFoot" id="sceneFoot"></p></div>
     <div class="row"><button class="btn" id="sceneNext">다음</button></div>
   </section>
+  <section class="screen" id="lab" hidden>
+    <div class="eyebrow">COMBO LAB · 개발용</div>
+    <h2>조합 시험장</h2>
+    <p class="hint">무기와 진화 짝 보패를 골라 바로 시작합니다. 「상자 진화」는 무기 최대 레벨 + 짝 보패를 들고 보물상자 앞에서, 「카드 보기」는 짝 보패 카드가 나온 레벨업 창에서 시작합니다. 받는 피해가 없고, <b>이 주소에서는 아무것도 저장되지 않습니다.</b></p>
+    <div class="sheet"><div class="lablist" id="labList"></div></div>
+    <div class="row"><button class="btn ghost" id="labBack">돌아가기</button></div>
+  </section>
+
   <section class="screen" id="chest" hidden>
     <div class="eyebrow">TREASURE</div>
     <h2>보물상자</h2>
@@ -996,7 +1017,7 @@ const PD={
  gamcho:{name:'감초',max:5,job:'uiwon',desc:'모든 회복량 +20% · 초당 회복 +0.15'},
  nogyong:{name:'녹용',max:5,job:'uiwon',desc:'최대 체력 +12 · 피격 후 무적 +0.06초'},
  sahyang:{name:'사향',max:5,job:'uiwon',desc:'치명타 피해 +15%'},
- myeongtae:{name:'명태',max:5,job:'mudang',desc:'엽전·떡·복주머니가 더 자주 나온다 (+25%)'},
+ myeongtae:{name:'명태',max:5,job:'mudang',also:['sangin'],desc:'엽전·떡·복주머니가 더 자주 나온다 (+25%)'},
  osaek:{name:'오색천',max:5,job:'mudang',desc:'범위 +6% · 지속시간 +6%'},
  jeonghwasu:{name:'정화수',max:5,job:'mudang',desc:'초당 회복 +0.25 · 경험치 +4%'},
  tugu:{name:'투구',max:5,job:'jangsu',desc:'방어 +1 · 최대 체력 +5'},
@@ -1758,11 +1779,13 @@ applyPerf();
 if(!meta.unl){meta.unl=['char:seonbi','card:gilil','card:hyungnyeon'];if(meta.best)meta.unl.push('char:uiwon','char:mudang','char:jangsu','char:gisaeng','char:sangin');}
 meta.extra=meta.extra||{rr:0,sk:0,bn:0};meta.anom=meta.anom||{};
 meta.upB=meta.upB||{};
-function saveMeta(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(meta));}catch(e){}}
+/* v17.4 조합 시험장: 주소에 ?combo를 붙였을 때만 열린다. 이때는 저장을 하지 않는다(진행·엽전·과업이 남지 않음). */
+let LAB=false;try{LAB=/[?&]combo\b/.test(location.search);}catch(e){}
+function saveMeta(){if(LAB)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify(meta));}catch(e){}}
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER='v17.3',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
+const GAME_VER='v17.4',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
 let DIAG={log:[],hb:null};try{const d=JSON.parse(localStorage.getItem(DIAG_KEY)||'null');if(d&&typeof d==='object'&&!Array.isArray(d)){DIAG.log=Array.isArray(d.log)?d.log.filter(e=>e&&typeof e==='object').slice(-DIAG_MAX):[];DIAG.hb=d.hb&&typeof d.hb==='object'?d.hb:null;}}catch(e){}
 const diagSeen=new Set();let diagStuck=0,diagNoScr=0,diagLastT=null,diagHbT=0;
 function diagSave(){try{localStorage.setItem(DIAG_KEY,JSON.stringify(DIAG));}catch(e){}}
@@ -3007,7 +3030,8 @@ function mergeRun(){const rs=G.rs,st=meta.stats;
  G.merged=true;}
 
 /* ======================= level-up options ======================= */
-const jobOk=d=>!d.job||d.job===G.cid;
+const jobHas=(d,c)=>d.job===c||!!(d.also&&d.also.includes(c));   // v17.4: also = 함께 쓰는 퇴마사(명태: 무당·상인, 상인 됫박의 진화 짝)
+const jobOk=d=>!d.job||jobHas(d,G.cid);
 const wUnlocked=id=>!WD[id].lock||unlocked('w:'+id);
 function genOptions(){const pool=[],B=G.banned;
  for(const w of G.weapons){if(w.lv<WD[w.id].max&&!B.has(w.id))pool.push({k:'wup',id:w.id,wt:WD[w.id].type==='c'?1.5:1.3});}
@@ -3021,16 +3045,34 @@ function genOptions(){const pool=[],B=G.banned;
  if(!picks.length)return [{k:'heal'},{k:'cash'}].map(decorate);
  return picks.map(decorate);}
 function iconHTML(id){const d=WD[id];if(d&&d.type==='c')return `<span class="seal" style="background:${d.col}">${d.g}</span>`;if(BLESS[id])return `<span class="seal" style="background:${BLESS[id].col}">${BLESS[id].g}</span>`;return `<img src="${ICON[id]}" alt="">`;}
-function evoHint(id){const d=WD[id];return d.evo?`<small>진화 짝: ${PD[d.evo].name} → ${d.evoName}</small>`:'';}
+/* v17.4 진화 짝 강조: 무기 카드는 짝 보패를 가졌는지, 보패 카드는 그 보패와 짝인 무기를 가졌는지 보여 준다.
+   evoState → {kind:'w'|'p', pair(강조할지), ready(상자를 열면 진화), rows:[{wid,pid,own,lv,evoName}]} · 진화했거나 짝이 없으면 null */
+function evoState(o){if(!G)return null;
+ if(o.k==='wnew'||o.k==='wup'){const d=WD[o.id];if(!d||d.type!=='w'||!d.evo)return null;const w=G.weapons.find(w=>w.id===o.id);if(w&&w.evo)return null;
+  const lv=w?w.lv:0,has=(G.passives[d.evo]||0)>0,nl=o.k==='wup'?lv+1:1;
+  return {kind:'w',pair:has,ready:has&&nl>=d.max,rows:[{wid:o.id,pid:d.evo,own:has,lv,evoName:d.evoName}]};}
+ if(o.k==='pnew'||o.k==='pup'){const rows=[];
+  for(const wid in WD){const d=WD[wid];if(d.evo!==o.id||d.type!=='w'||!jobOk(d))continue;const w=G.weapons.find(w=>w.id===wid);
+   if(w){if(!w.evo)rows.push({wid,pid:o.id,own:true,lv:w.lv,evoName:d.evoName});}
+   else if(wUnlocked(wid)&&!G.weapons.some(x=>x.kids&&x.kids.some(k=>k.id===wid)))rows.push({wid,pid:o.id,own:false,lv:0,evoName:d.evoName});}
+  if(!rows.length)return null;rows.sort((a,b)=>b.own-a.own);
+  return {kind:'p',pair:rows.some(r=>r.own),ready:rows.some(r=>r.own&&r.lv>=WD[r.wid].max),rows};}
+ return null;}
+const epH=(id,name,own)=>`<span class="ep ${own?'own':'no'}"><img src="${ICON[id]}" alt="">${name}</span>`;
+function evoHTML(o){const st=evoState(o);if(!st)return '';
+ if(st.kind==='w'){const r=st.rows[0];
+  return `<span class="evo"><span class="et">진화 짝</span> ${epH(r.pid,PD[r.pid].name,r.own)} <i class="${r.own?'y':'n'}">${r.own?'보유':'아직 없음'}</i> → <b>${r.evoName}</b>${st.ready?`<em>${o.k==='wup'?'이번에 LV '+WD[o.id].max+' · ':''}보물상자를 열면 진화</em>`:''}</span>`;}
+ const pn=PD[o.id].name;
+ return `<span class="evo"><span class="et">진화 짝</span>${st.rows.map(r=>`<span class="er">${epH(r.wid,WD[r.wid].name,r.own)} <i class="${r.own?'y':'n'}">${r.own?'보유 LV '+r.lv:'없음'}</i> + ${pn} → <b>${r.evoName}</b></span>`).join('')}${st.ready?'<em>보물상자를 열면 진화</em>':''}</span>`;}
 function decorate(o){
  if(o.k==='heal')return {...o,ic:iconHTML('tteok'),name:'떡 한 접시',desc:'체력을 50 회복한다.',badge:'보급',bc:''};
  if(o.k==='cash')return {...o,ic:iconHTML('coin'),name:'엽전 꾸러미',desc:'엽전 25닢을 얻는다.',badge:'보급',bc:''};
  if(o.k==='lb'){const d=WD[o.id],w=G.weapons.find(w=>w.id===o.id),l=w.lb||0;return {...o,ic:iconHTML(o.id),name:(w.evo?d.evoName:d.name)+' 한계 돌파',desc:`피해 +5%${(l+1)%5===0?' · 범위 +10%':''}. 끝없이 쌓을 수 있다.`,badge:`돌파 ${l} → ${l+1}`,bc:'lb'};}
  if(o.k==='wnew'||o.k==='wup'){const d=WD[o.id],w=G.weapons.find(w=>w.id===o.id);
-  if(o.k==='wnew')return {...o,ic:iconHTML(o.id),name:d.name,desc:d.desc[0]+evoHint(o.id),badge:d.job?'전용 무기':'신규 무기',bc:d.job?'job':'new'};
-  return {...o,ic:iconHTML(o.id),name:w.evo?d.evoName:d.name,desc:d.desc[w.lv]+(d.type==='w'?evoHint(o.id):''),badge:`LV ${w.lv} → ${w.lv+1}`,bc:d.type==='c'?'cls':''};}
+  if(o.k==='wnew')return {...o,ic:iconHTML(o.id),name:d.name,desc:d.desc[0]+evoHTML(o),badge:d.job?'전용 무기':'신규 무기',bc:d.job?'job':'new',pair:!!(evoState(o)||{}).pair};
+  return {...o,ic:iconHTML(o.id),name:w.evo?d.evoName:d.name,desc:d.desc[w.lv]+evoHTML(o),badge:`LV ${w.lv} → ${w.lv+1}`,bc:d.type==='c'?'cls':'',pair:!!(evoState(o)||{}).pair};}
  const d=PD[o.id],l=G.passives[o.id]||0;
- return {...o,ic:iconHTML(o.id),name:d.name,desc:d.desc,badge:l?`LV ${l} → ${l+1}`:(d.job?'전용 보패':'신규 보패'),bc:l?'':(d.job?'job':'new')};}
+ return {...o,ic:iconHTML(o.id),name:d.name,desc:d.desc+evoHTML(o),badge:l?`LV ${l} → ${l+1}`:(d.job?'전용 보패':'신규 보패'),bc:l?'':(d.job?'job':'new'),pair:!!(evoState(o)||{}).pair};}
 function applyOpt(o){
  if(o.k==='heal')heal(50);
  else if(o.k==='cash')G.coins+=25;
@@ -3063,8 +3105,8 @@ let curOpts=[],banMode=false;
 function openLevel(regen=true){if(regen)curOpts=genOptions();banMode=false;renderLevel();show('levelup');if(regen){snd(660,0.15,'triangle',0.05);setTimeout(()=>snd(990,0.2,'triangle',0.05),90);}}
 function renderLevel(){const box=$('#luCards');box.innerHTML='';box.classList.toggle('banmode',banMode);
  $('#luEye').textContent=`LEVEL UP · LV ${G.P.lvl}`;$('#luTitle').textContent=banMode?'봉인할 것을 고르세요':['수련의 결실','깨달음이 오다','기운이 차오른다','한 고비를 넘다'][G.P.lvl%4];
- curOpts.forEach((o,i)=>{const bt=document.createElement('button');bt.className='card';bt.id='opt'+i;
-  bt.innerHTML=`<span class="ic">${o.ic}</span><div class="cm"><span class="badge ${o.bc}">${o.badge}</span><b>${o.name}</b><p>${o.desc}</p></div><kbd>${i+1}</kbd>`;
+ curOpts.forEach((o,i)=>{const bt=document.createElement('button');bt.className='card'+(o.pair?' pair':'');bt.id='opt'+i;
+  bt.innerHTML=`<span class="ic">${o.ic}</span><div class="cm"><span class="bdgs"><span class="badge ${o.bc}">${o.badge}</span>${o.pair?'<span class="badge pairb">진화 짝</span>':''}</span><b>${o.name}</b><p>${o.desc}</p></div><kbd>${i+1}</kbd>`;
   bt.onclick=()=>pickOpt(i);box.appendChild(bt);});
  $('#rrN').textContent='×'+G.rr;$('#skN').textContent='×'+G.sk;$('#bnN').textContent='×'+G.bn;
  $('#rrBtn').disabled=G.rr<=0;$('#skBtn').disabled=G.sk<=0;$('#bnBtn').disabled=G.bn<=0;$('#bnBtn').setAttribute('aria-pressed',banMode);}
@@ -3347,7 +3389,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
    +`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#7a2018">極</span></span><div><p><b>궁극 오의</b> · Lv ${ULT_LV} (각성 4번 이상)</p><p>${Object.values(ULT).map(u=>`<b>${u.n}</b>`).join(' · ')} — 직업마다 하나. 24초마다 저절로 펼쳐진다.</p></div></div>`
    +`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#9a6a10">破</span></span><div><p><b>한계 돌파</b> · Lv 50부터, 또는 더 올릴 것이 없을 때</p><p>만렙 무기·기술의 카드가 「한계 돌파」로 나온다. 돌파마다 피해 +5%, 5번마다 범위 +10%. 끝없이 쌓인다. 보물 상자도 올릴 것이 없으면 돌파를 준다.</p></div></div>`);
   for(const id in CHARS){const C=CHARS[id],ok=unlocked('char:'+id);
-   const jw=Object.keys(WD).filter(k=>WD[k].job===id&&WD[k].type==='w'&&!WD[k].fuse).map(k=>WD[k].name).join(', '),jp=Object.keys(PD).filter(k=>PD[k].job===id).map(k=>PD[k].name).join(', ');
+   const jw=Object.keys(WD).filter(k=>WD[k].job===id&&WD[k].type==='w'&&!WD[k].fuse).map(k=>WD[k].name).join(', '),jp=Object.keys(PD).filter(k=>jobHas(PD[k],id)).map(k=>PD[k].name).join(', ');
    let body=`<p>${C.desc}</p><p><b>특성</b> ${C.trait} · <b>시작 무기</b> ${WD[C.start].name}</p><p><b>전용 무기</b> ${jw} · <b>전용 보패</b> ${jp}</p>${ok?'':`<p><span class="tag">잠김</span> ${charLock(id)}</p>`}`;
    for(const br of C.branches){body+=`<h4>${br.name}</h4><div class="looks"><figure><img src="${big(charSpr(C.look).n,3)}" alt=""><figcaption>${C.name}</figcaption></figure>${br.tiers.map(t=>`<figure><img src="${big(charSpr(t.look).n,3)}" alt=""><figcaption>${t.name}</figcaption></figure>`).join('')}</div>`;
     body+=`<ol>${br.tiers.map((t,i)=>`<li><b>Lv ${(i+1)*10} ${t.name}</b> · 기술 「${WD[t.skill].name}」 ${WD[t.skill].desc[0]} <small>보너스: ${t.bonus}</small></li>`).join('')}</ol>`;}
@@ -3366,7 +3408,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
  if(helpTab==='item'){
   const prow=id=>{const d=PD[id],ev=Object.keys(WD).filter(k=>WD[k].evo===id).map(k=>`${WD[k].name} → ${WD[k].evoName}`).join(', ');return `<div class="hrow"><span class="ic"><img src="${ICON[id]}" alt=""></span><div><p><b>${d.name}</b> · ${d.desc} <small>(최대 ${d.max}레벨)</small></p>${ev?`<p><small>진화 짝: ${ev}</small></p>`:''}</div></div>`;};
   h+=hcard('공용 보패',Object.keys(PD).filter(k=>!PD[k].job).map(prow).join(''));
-  for(const id in CHARS)h+=hcard(`${CHARS[id].name} 전용 보패`,Object.keys(PD).filter(k=>PD[k].job===id).map(prow).join(''));
+  for(const id in CHARS)h+=hcard(`${CHARS[id].name} 전용 보패`,Object.keys(PD).filter(k=>jobHas(PD[k],id)).map(prow).join(''));
   h+=hcard('신내림',`<p>요괴를 잡으면 오른쪽 아래 <b>신내림</b> 버튼의 게이지가 찬다 (보통 요괴 0.25, 엘리트 6, 중간 보스 25, 막 보스 40, 맞을 때 2). 가득 차면 <b>Space</b> 또는 버튼을 눌러 신령의 힘을 빌린다. 축복을 가장 많이 받은 신령(같으면 먼저 받은 신령)의 기술이 나간다.</p>`+Object.keys(CALL).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:${k==='none'?'#4a3a30':BLESS[k].col}">${CALL[k].g}</span></span><div><p><b>${CALL[k].n}</b>${k==='none'?' (축복이 없을 때)':' · '+BLESS[k].n} — ${CALL[k].d}</p></div></div>`).join(''));
   h+=hcard('쌍신 축복',`<p>짝이 맞는 두 신령의 축복을 모두 받으면, 다음 축복 고르기에 두 신령이 함께 내리는 쌍신 축복이 섞여 나온다.</p>`+Object.keys(DUO).map(id=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:12px;background:#3a1a4a">${duoG(id)}</span></span><div><p><b>${DUO[id].n}</b> · ${BLESS[DUO[id].a].n} + ${BLESS[DUO[id].b].n} — ${DUO[id].d}</p></div></div>`).join(''));
   h+=hcard('신령 축복',`<p>성황당에서 기도하거나 주막에서 정화수를 사면 신령 셋 가운데 하나의 축복을 고른다. 같은 신령은 3단계까지 깊어진다.</p>`+Object.keys(BLESS).map(id=>`<div class="hrow"><span class="ic">${iconHTML(id)}</span><div><p><b>${BLESS[id].n}</b> · ${BLESS[id].d} <small>(단계마다)</small></p></div></div>`).join('')); }
@@ -3752,6 +3794,23 @@ function frame(now){const raw=now-last;const dt=Math.min(0.05,raw/1000);last=now
  try{diagWatch(raw);}catch(_){}
  finally{requestAnimationFrame(frame);}}
 document.addEventListener('visibilitychange',()=>{last=performance.now();if(document.hidden&&DIAG.hb){DIAG.hb.hidden=true;diagSave();}pm.acc=0;pm.n=0;pm.slow=0;if(document.hidden&&G&&!G.over&&!modal)openPause();if(!document.hidden)resumeAudio();});
-function start(){renderTitle();show('title');requestAnimationFrame(frame);}
+/* 조합 시험장: 진화 무기마다 쓸 수 있는 퇴마사 하나(전용 무기는 그 퇴마사, 공용은 짝 보패를 받을 수 있는 첫 퇴마사) */
+function labList(){const out=[];for(const wid in WD){const d=WD[wid];if(!d.evo||d.type!=='w')continue;const p=PD[d.evo];
+  const cid=d.job||Object.keys(CHARS).find(c=>!p.job||jobHas(p,c))||'seonbi';out.push({wid,pid:d.evo,cid});}return out;}
+function labStart(wid,mode){const it=labList().find(x=>x.wid===wid);if(!it)return;const d=WD[wid];
+ newGame(it.cid,null,0,'normal');G.lab=true;G.queue.length=0;G.mods.dmgIn=0;
+ G.weapons=[];G.passives={};addWeapon(wid);const w=G.weapons[0];
+ if(mode==='card'){w.lv=d.max-1;recompute();refreshSlots();
+  const other=Object.keys(PD).find(id=>id!==it.pid&&jobOk(PD[id]));
+  curOpts=[decorate({k:'pnew',id:it.pid}),decorate({k:'wup',id:wid}),...(other?[decorate({k:'pnew',id:other})]:[])];banMode=false;renderLevel();show('levelup');return;}
+ w.lv=d.max;G.passives[it.pid]=1;recompute();refreshSlots();dropItem('chest',G.P.x+28,G.P.y);toast('옆의 보물상자를 주우세요 → '+d.evoName);}
+function openLab(){const box=$('#labList');box.innerHTML='';
+ for(const it of labList()){const d=WD[it.wid],row=document.createElement('div');row.className='labrow';
+  row.innerHTML=`<span class="ep own"><img src="${ICON[it.wid]}" alt="">${d.name}</span> + <span class="ep own"><img src="${ICON[it.pid]}" alt="">${PD[it.pid].name}</span> → <b>${d.evoName}</b> <small>${CHARS[it.cid].name}</small><span class="lb2"><button class="btn sm" data-m="evo">상자 진화</button><button class="btn ghost sm" data-m="card">카드 보기</button></span>`;
+  for(const b of row.querySelectorAll('button'))b.onclick=()=>labStart(it.wid,b.dataset.m);
+  box.appendChild(row);}
+ show('lab');}
+if(LAB){$('#labBtn').hidden=false;$('#labBtn').onclick=openLab;$('#labBack').onclick=()=>{renderTitle();show('title');};}
+function start(){renderTitle();if(LAB)openLab();else show('title');requestAnimationFrame(frame);}
 window.claude?.hot?.ready?window.claude.hot.ready(start):start();
 </script>

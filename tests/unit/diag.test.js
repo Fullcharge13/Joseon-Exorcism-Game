@@ -33,7 +33,7 @@ else{
  // 저장 실패에도 안전
  const si=localStorage.setItem;localStorage.setItem=()=>{throw new Error('quota');};let thrown=false;try{diagNote('시험','저장 실패');}catch(e){thrown=true;}localStorage.setItem=si;ok(!thrown,'저장 실패에도 오류 없음');
  // 글로 옮기기
- const tx=diagText();ok(/v17\.3/.test(tx)&&/항목 29/.test(tx)&&/node/i.test(tx),'복사용 글에 버전·내용·브라우저 정보');
+ const tx=diagText();ok(tx.includes(GAME_VER)&&/항목 29/.test(tx)&&/node/i.test(tx),'복사용 글에 버전·내용·브라우저 정보');
  // 지우기
  diagClear();ok(DIAG.log.length===0&&JSON.parse(localStorage.getItem('joseon-toema-diag')).log.length===0,'지우기');
  // 5초마다 마지막 상태, 숨기면 표시
