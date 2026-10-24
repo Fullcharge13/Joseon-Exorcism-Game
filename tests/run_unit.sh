@@ -2,6 +2,7 @@
 # 단위 시험 전부 실행: bash tests/run_unit.sh [게임.html]
 cd "$(dirname "$0")/.." || exit 1
 G=${1:-index.html}; fail=0
+if [ -z "$1" ]; then python3 build.py --check || fail=1; fi   # v18.0: src/ 를 고친 뒤 index.html 을 다시 만들었는지
 for t in tests/unit/*.test.js; do
   case "$t" in *fx_alpha_save*|*tale_save*) continue;; esac
   node tests/harness.js "$G" "$t" || fail=1
