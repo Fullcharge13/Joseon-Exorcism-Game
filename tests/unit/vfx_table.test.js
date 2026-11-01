@@ -6,6 +6,10 @@ if(typeof STAGE_VFX!=='undefined'){
  STAGE_VFX.forEach((v,i)=>{ok(v&&typeof v.night==='number'&&v.night>=0&&v.night<=1,`${i+1}막 night 0~1`);ok(v&&/^#[0-9a-f]{6}$/i.test(v.tint||''),`${i+1}막 tint 색`);ok(v&&v.lamp,`${i+1}막 빛나는 물건`);});
  for(let i=1;i<9;i++)ok(STAGE_VFX[i].night>=STAGE_VFX[i-1].night,`${i+1}막 밤이 ${i}막보다 얕아지지 않음`);
  ok(STAGE_VFX[9].dawn===true,'10막 새벽 표시');
+ // v18.3 날씨·풀
+ const WX=['glow','leaf','dust','mist','ash','mote','snow','spray','soul','none'];
+ STAGE_VFX.forEach((v,i)=>{ok(WX.includes(v.weather),`${i+1}막 weather 정해진 종류 (${v.weather})`);ok(v.grass===null||(Array.isArray(v.grass)&&v.grass.length===3&&v.grass.every(c=>/^#[0-9a-f]{6}$/i.test(c))),`${i+1}막 grass는 null 또는 색 셋`);});
+ ok(STAGE_VFX[4].grass===null&&STAGE_VFX[9].grass===null&&STAGE_VFX[6].grass===null,'돌바닥·눈 막(5·7·10)은 풀 없음');
  // 밤의 깊이: 설정·막·새벽
  meta.set.vfx='on';newGame('seonbi','gilil',0,'normal');G.queue.length=0;
  G.stage=0;const n1=vfxNight();G.stage=8;const n9=vfxNight();ok(n1>0&&n9>n1,'켬: 1막 '+n1+' < 9막 '+n9);

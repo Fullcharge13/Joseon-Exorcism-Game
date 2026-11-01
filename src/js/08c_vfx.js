@@ -1,20 +1,27 @@
-/* ======================= 분위기 층 (v18.2) =======================
+/* ======================= 분위기 층 (v18.2~) =======================
+   v18.3: 흔들리는 풀(vfxGrass, 바닥 뒤) · 막별 날씨(vfxWeather, 어둠 다음·빛 번짐 전)
    보기만 하는 효과: 막이 갈수록 깊어지는 밤, 막별 어둠 색, 빛나는 물건, 요괴 탄·경고 장판의 빛, 잔해.
    게임 규칙·맞는 범위는 건드리지 않는다. 설계: docs/specs/2026-11-01-분위기-층.md
    - 엔진이 부르는 곳: 바닥 뒤 vfxGround(cx,cy) · 피해 숫자·요괴 탄 직전 vfxLight(cx,cy) · kill 안 vfxDebris(e) · bossDown 10막 G.dawnT
    - 무거운 그림은 미리 굽는다: 어둠(화면 크기·밤 단계가 바뀔 때만), 빛 번짐(색마다 한 장), 새벽빛 */
 // night: 어둠 세기(0~1) · tint: 어둠 색(막의 색감) · lamp: 빛나는 물건 · dawn: 막 보스 뒤 새벽
 const STAGE_VFX=[
- {night:0.20,tint:'#2a1428',lamp:'chorong'},    // 1 한양 저잣거리 · 해 질 녘
- {night:0.28,tint:'#0e1c18',lamp:'firefly'},    // 2 대숲 오솔길 · 초저녁
- {night:0.32,tint:'#1e1610',lamp:'torch'},      // 3 범 나오는 고개
- {night:0.40,tint:'#0c1622',lamp:'boat'},       // 4 안개 낀 나루 · 밤
- {night:0.48,tint:'#14121e',lamp:'seokdeung'},  // 5 폐허가 된 산사 · 한밤
- {night:0.50,tint:'#1c1a0c',lamp:'candle'},     // 6 역병 도는 마을
- {night:0.50,tint:'#0e1426',lamp:'snow'},       // 7 백두산 골짜기
- {night:0.52,tint:'#0a1418',lamp:'fishfire'},   // 8 동해 바닷가
- {night:0.60,tint:'#120a1e',lamp:'neokbul'},    // 9 저승길 · 가장 깊음
- {night:0.56,tint:'#1a0c12',lamp:'palace',dawn:true}];   // 10 근정전 앞뜰 · 보스 뒤 새벽
+ {night:0.20,tint:'#2a1428',lamp:'chorong',weather:'glow',grass:['#3d4528','#55603a','#76844a']},     // 1 한양 저잣거리 · 해 질 녘 · 저녁놀
+ {night:0.28,tint:'#0e1c18',lamp:'firefly',weather:'leaf',grass:['#1f3a28','#2f5a3a','#4a7a50']},     // 2 대숲 오솔길 · 초저녁 · 날리는 댓잎
+ {night:0.32,tint:'#1e1610',lamp:'torch',weather:'dust',grass:['#4a4428','#6a6236','#8a8248']},       // 3 범 나오는 고개 · 흙바람
+ {night:0.40,tint:'#0c1622',lamp:'boat',weather:'mist',grass:['#26383a','#3a5258','#5a7a7a']},        // 4 안개 낀 나루 · 밤 · 물안개
+ {night:0.48,tint:'#14121e',lamp:'seokdeung',weather:'ash',grass:null},                               // 5 폐허가 된 산사 · 한밤 · 떨어지는 재(돌바닥)
+ {night:0.50,tint:'#1c1a0c',lamp:'candle',weather:'mote',grass:['#4a4224','#625a30','#7e7440']},      // 6 역병 도는 마을 · 누런 먼지
+ {night:0.50,tint:'#0e1426',lamp:'snow',weather:'snow',grass:null},                                   // 7 백두산 골짜기 · 눈발(눈 덮인 땅)
+ {night:0.52,tint:'#0a1418',lamp:'fishfire',weather:'spray',grass:['#3a4a3a','#4e6450','#6e8466']},  // 8 동해 바닷가 · 물보라
+ {night:0.60,tint:'#120a1e',lamp:'neokbul',weather:'soul',grass:['#2e2a34','#423c4a','#5a5266']},     // 9 저승길 · 가장 깊음 · 넋 안개
+ {night:0.56,tint:'#1a0c12',lamp:'palace',dawn:true,weather:'none',grass:null}];                       // 10 근정전 앞뜰 · 보스 뒤 새벽(박석)
+// v18.3 날씨(보기만): n=입자 수(켬) · c=색 · vx,vy=흐름(px/초) · sw=흔들림 · w,h=입자 크기 · a=불투명도 · fog=[색,덩어리 수,불투명도] · sky=위쪽 빛
+const VFX_WX={none:{n:0},glow:{n:0,sky:'255,150,90'},
+ leaf:{n:36,c:'#9ab85a',vx:22,vy:26,sw:10,w:2,h:1,a:0.85},dust:{n:60,c:'#9a8058',vx:70,vy:5,sw:3,w:3,h:1,a:0.35},
+ mist:{n:0,fog:['200,215,230',4,0.13]},ash:{n:70,c:'#a0a0a8',vx:5,vy:12,sw:6,w:1,h:1,a:0.6},
+ mote:{n:50,c:'#c8b060',vx:6,vy:-3,sw:8,w:1,h:1,a:0.55,fog:['190,170,90',2,0.08]},snow:{n:110,c:'#eef4ff',vx:-10,vy:30,sw:8,w:1,h:1,a:0.85},
+ spray:{n:50,c:'#bfe0ff',vx:12,vy:-20,sw:4,w:1,h:1,a:0.6},soul:{n:20,c:'#b08ad8',vx:4,vy:-6,sw:12,w:1,h:1,a:0.6,fog:['150,110,200',3,0.11]}};
 // 빛나는 물건: post=땅에 선 것(몸체를 그림), float=떠다니는 빛 · c=빛 색 · r=빛 반지름 · d=격자 칸(96px)마다 나올 확률
 const VFX_LAMP={
  chorong:{post:1,c:'255,170,80',r:52,d:0.22},torch:{post:1,c:'255,140,60',r:50,d:0.16},boat:{post:1,c:'255,190,110',r:46,d:0.14},
@@ -22,7 +29,7 @@ const VFX_LAMP={
  palace:{post:1,c:'255,120,80',r:46,d:0.1},
  firefly:{float:14,c:'210,255,140',r:10},snow:{float:10,c:'220,235,255',r:12},neokbul:{float:12,c:'140,200,255',r:16}};
 let VFX_WARN_UP=false;   // 밤이면 보스 경고 장판을 어둠 위(요괴 위)에 그린다: 어둠에 묻히지 않게
-const VFXS={rs:12345,debris:[],lastT:0,dk:{key:''},glow:{},dawn:null};
+const VFXS={rs:12345,debris:[],lastT:0,dk:{key:''},glow:{},dawn:null,fog:{},sky:null,tuft:{}};
 function vfxRnd(){VFXS.rs=(VFXS.rs*1103515245+12345)%2147483648;return VFXS.rs/2147483648;}   // 보기만 하는 효과는 게임 난수를 쓰지 않는다: 효과를 켜도 게임 진행이 같게
 function vfxLevel(){const v=meta.set.vfx;return v==='off'?'off':v==='soft'?'soft':'on';}
 function vfxSi(){const s=curStg();const i=STAGES.indexOf(s);return i<0?0:i;}
@@ -32,6 +39,27 @@ function vfxDawn(){if(!G)return 0;const V=STAGE_VFX[vfxSi()];return V.dawn&&G.da
 const vfxCanvas=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');if(x)f(x,w,h);return c;};
 function vfxGlowImg(c){return VFXS.glow[c]||(VFXS.glow[c]=vfxCanvas(32,32,x=>{const g=x.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,`rgba(${c},1)`);g.addColorStop(1,`rgba(${c},0)`);x.fillStyle=g;x.fillRect(0,0,32,32);}));}
 const vfxHex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)).join(',');
+function vfxWeatherN(){const lv=vfxLevel();if(lv==='off'||!G||LOW)return 0;const X=VFX_WX[STAGE_VFX[vfxSi()].weather]||VFX_WX.none;return Math.min(120,Math.round(X.n*Math.max(1,W*H/(400*225))*(lv==='soft'?0.5:1)));}   // 넓은 화면(휴대폰 세로)은 넓이만큼 늘리되 120까지
+function vfxFogImg(c){return VFXS.fog[c]||(VFXS.fog[c]=vfxCanvas(128,128,x=>{const g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,`rgba(${c},1)`);g.addColorStop(1,`rgba(${c},0)`);x.fillStyle=g;x.fillRect(0,0,128,128);}));}
+// 날씨: 입자는 상태 없이 번호와 시각으로 자리를 계산한다(저장·할당 없음). 카메라를 조금 따라가 세상에 붙어 보이게
+function vfxWeather(cx,cy,soft){const X=VFX_WX[STAGE_VFX[vfxSi()].weather]||VFX_WX.none,t=G.time;
+ if(X.sky){if(!VFXS.sky||VFXS.sky.width!==W||VFXS.sky.height!==H||VFXS.sky.c!==X.sky){VFXS.sky=vfxCanvas(W,H,x=>{const g=x.createLinearGradient(0,0,0,H*0.7);g.addColorStop(0,`rgba(${X.sky},0.22)`);g.addColorStop(1,`rgba(${X.sky},0)`);x.fillStyle=g;x.fillRect(0,0,W,H);});VFXS.sky.c=X.sky;}
+  b.globalAlpha=soft;b.drawImage(VFXS.sky,0,0);}
+ if(X.fog){const [c,k,a]=X.fog,img=vfxFogImg(c);for(let i=0;i<k;i++){const r=110+i*24,fx=((i*137+t*(6+i*2)-cx*0.5)%(W+2*r)+W+2*r)%(W+2*r)-r,fy=((i*89+Math.sin(t*0.2+i)*20-cy*0.5)%(H+2*r)+H+2*r)%(H+2*r)-r;b.globalAlpha=a*soft;b.drawImage(img,fx-r,fy-r,r*2,r*2);}}
+ const n=vfxWeatherN();if(n){b.fillStyle=X.c;const WW=W+20,HH=H+20;for(let i=0;i<n;i++){const ph=hash(i,13)*TAU,sp=0.6+hash(i,14)*0.8;
+   const x=((hash(i,11)*WW*3+X.vx*sp*t+Math.sin(t*1.3*sp+ph)*X.sw-cx*0.35)%WW+WW)%WW-10,y=((hash(i,12)*HH*3+X.vy*sp*t-cy*0.35)%HH+HH)%HH-10;
+   b.globalAlpha=X.a*(0.6+0.4*Math.sin(t*2+ph));   /* 약하게는 개수만 절반(진하기는 그대로) */b.fillRect(R(x),R(y),X.w,X.h);}}
+ b.globalAlpha=1;}
+// 흔들리는 풀: 흔들림 5단계를 미리 그려 두고 고른다. 퇴마사 둘레(14px)는 밀려 눕는다(그때만 점으로 그림)
+function vfxTuft(gp,v,ph){const k=vfxSi()*100+v*10+ph;   // 숫자 번호표(매 프레임 글자를 만들지 않음, 막마다 따로)
+return VFXS.tuft[k]||(VFXS.tuft[k]=vfxCanvas(16,8,x=>{const n=4+(v%3),sway=(ph-2)*0.6;for(let i=0;i<n;i++){const hgt=3+((v*7+i*3)%4);for(let q=0;q<hgt;q++){const ox=Math.round(sway*q/hgt);x.fillStyle=q===hgt-1?gp[2]:q>hgt/2?gp[1]:gp[0];x.fillRect(4+i*2+ox,7-q,1,1);}}}));}
+function vfxGrass(cx,cy,soft){const gp=STAGE_VFX[vfxSi()].grass;if(!gp)return;const T=16,t=G.time,P=G.P,gust=Math.sin(t*0.6)*0.8,dens=soft<1?0.1:0.2;
+ const tx0=Math.floor(cx/T)-1,ty0=Math.floor(cy/T)-1,tx1=Math.floor((cx+W)/T)+1,ty1=Math.floor((cy+H)/T)+1;
+ for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++){if(hash(tx*3+7,ty*5+1)>dens)continue;const v=Math.floor(hash(tx,ty*9)*6),n=4+(v%3),bx=tx*T+hash(tx+1,ty)*12+2,by=ty*T+hash(tx,ty+2)*12+4;
+  const dx=bx-P.x,dy=by-(P.y+2),d=Math.hypot(dx,dy),push=d<14?(14-d)/14:0;
+  if(push>0.05){for(let i=0;i<n;i++){const x=R(bx-n-4+4+i*2-cx),hgt=Math.max(1,Math.round((3+((v*7+i*3)%4))*(1-push*0.6))),sw=Math.sign(dx||1)*push*3+gust;
+    for(let q=0;q<hgt;q++){b.fillStyle=q===hgt-1?gp[2]:q>hgt/2?gp[1]:gp[0];b.fillRect(x+Math.round(sw*q/hgt),R(by-cy)-q,1,1);}}continue;}
+  const ph=Math.max(0,Math.min(4,Math.round(2+Math.sin(t*2.4+bx*0.09+by*0.05)*1.4+gust)));b.drawImage(vfxTuft(gp,v,ph),R(bx-n-4-cx),R(by-7-cy));}}
 // 잔해: 요괴·옹기를 쓰러뜨리면 조각이 튀었다가 바닥에 몇 초 남는다(밟으면 밀림)
 function vfxDebris(e){const lv=vfxLevel();if(lv==='off'||!e)return;const cap=(LOW?60:260)*(lv==='soft'?0.5:1),D=VFXS.debris;
  const E=EN[e.kind]||{},cols=e.prop?['#8a5a2e','#b0702e','#5a3a1e']:[E.A||'#6a5a50',E.B||'#3a3030','#2a2220'],n=e.prop?9:LOW?2:4;
@@ -59,6 +87,7 @@ function vfxLampBody(k,x,y,t,tx){const sw=Math.round(Math.sin(t*1.6+tx)*0.6),fl=
  else if(k==='candle'){for(const o of [0,4]){b.fillStyle='#e8dcc0';b.fillRect(x+o+1,y-4,2,4);b.fillStyle=fl?'#ffd040':'#ff9a30';b.fillRect(x+o+1,y-6,1,2);}}}
 // 바닥 뒤: 빛나는 물건 몸체와 잔해(화면 좌표)
 function vfxGround(cx,cy){if(vfxLevel()==='off'||!G)return;const t=G.time,P=G.P,dt=Math.min(0.05,Math.max(0,t-VFXS.lastT));VFXS.lastT=t;
+ if(!LOW)vfxGrass(cx,cy,vfxLevel()==='soft'?0.5:1);   // v18.3
  const k=STAGE_VFX[vfxSi()].lamp;if(!LOW&&VFX_LAMP[k]&&VFX_LAMP[k].post)vfxEachLamp(cx,cy,(x,y,tx)=>vfxLampBody(k,R(x-cx),R(y-cy),t,tx));
  const D=VFXS.debris;for(let i=D.length-1;i>=0;i--){const q=D[i];q.life-=dt;if(q.life<=0){D.splice(i,1);continue;}
   if(q.z>0||q.vz>0){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vz-=260*dt;q.z+=q.vz*dt;if(q.z<0){q.z=0;q.vz=-q.vz*0.3;q.vx*=0.5;q.vy*=0.5;if(q.vz<12)q.vz=0;}}
@@ -74,6 +103,7 @@ function vfxLight(cx,cy){const lv=vfxLevel();if(lv==='off'||!G)return;const n=vf
  const dw=vfxDawn();if(dw>0){if(!VFXS.dawn||VFXS.dawn.width!==W||VFXS.dawn.height!==H)VFXS.dawn=vfxCanvas(W,H,(x)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(255,200,140,0.35)');g.addColorStop(1,'rgba(255,200,140,0)');x.fillStyle=g;x.fillRect(0,0,W,H);});
   b.globalAlpha=Math.sin(dw*Math.PI)*0.6+dw*0.3;b.drawImage(VFXS.dawn,0,0);b.globalAlpha=1;}
  if(LOW){b.restore();return;}   // 절약 모드: 미리 구운 어둠 한 장만(요괴 탄·경고·숫자는 어둠 위에 그리므로 그대로 잘 보임)
+ vfxWeather(cx,cy,lv==='soft'?0.5:1);   // v18.3 날씨: 어둠 위, 빛 번짐·요괴 탄·경고·숫자 아래
  b.globalCompositeOperation='lighter';const soft=lv==='soft'?0.6:1;
  for(const l of vfxLights(cx,cy)){if(l.kind==='hero')continue;   // 퇴마사 둘레는 어둠 그림이 이미 밝게 비워 둠. 그림 위에 더하면 도트 색이 번진다(ent_size)
   const rr=l.r*(l.kind==='warn'?0.95:0.6);b.globalAlpha=l.a*soft*(0.4+n*1.2);b.drawImage(vfxGlowImg(l.c),l.x-rr,l.y-rr,rr*2,rr*2);}

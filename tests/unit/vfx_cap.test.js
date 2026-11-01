@@ -25,4 +25,17 @@ if(ready){meta.set.vfx='on';newGame('seonbi','gilil',0,'normal');G.queue.length=
 if(ready){const run=v=>{meta.set.vfx=v;let s=7;const r0=Math.random;Math.random=()=>{s=(s*16807)%2147483647;return (s-1)/2147483646;};newGame('seonbi','gilil',0,'normal');G.queue.length=0;
   for(let i=0;i<30;i++)kill(spawnEnemy(curStg().early[0],G.P.x+40,G.P.y));const x=Math.random();Math.random=r0;return x;};
  ok(run('on')===run('off'),'켬·끔에서 게임 난수 순서가 같음');meta.set.vfx='on';}
+// v18.3 날씨 입자 상한: 켬 120 · 약하게 60 · 절약·끔 0
+if(typeof vfxWeatherN!=='function')fails.push('vfxWeatherN 있음');else{meta.set.vfx='on';newGame('seonbi','gilil',0,'normal');G.queue.length=0;
+ let mx=0;for(let st=0;st<10;st++){G.stage=st;mx=Math.max(mx,vfxWeatherN());}ok(mx>0&&mx<=120,'날씨 입자 켬 ≤120: '+mx);
+ meta.set.vfx='soft';let ms=0;for(let st=0;st<10;st++){G.stage=st;ms=Math.max(ms,vfxWeatherN());}ok(ms<=60,'약하게 ≤60: '+ms);
+ meta.set.vfx='on';LOW=true;let ml=0;for(let st=0;st<10;st++){G.stage=st;ml=Math.max(ml,vfxWeatherN());}LOW=false;ok(ml===0,'절약 0: '+ml);
+ meta.set.vfx='off';G.stage=6;ok(vfxWeatherN()===0,'끔 0');meta.set.vfx='on';}
+// v18.3 「약하게」는 날씨를 절반: 입자 수만 줄이고 하나하나의 진하기는 켬과 같다(검토 지적)
+if(typeof vfxWeather==='function'){newGame('seonbi','gilil',0,'normal');G.queue.length=0;G.stage=6;
+ const maxA=v=>{meta.set.vfx=v;let m=0;const d=Object.getOwnPropertyDescriptor(Object.getPrototypeOf(b),'globalAlpha');Object.defineProperty(b,'globalAlpha',{configurable:true,get(){return d.get.call(this);},set(x){if(x<1&&x>m)m=x;d.set.call(this,x);}});
+  const fr=b.fillRect;let cnt=0;b.fillRect=function(...a){cnt++;return fr.apply(this,a);};vfxWeather(0,0,v==='soft'?0.5:1);b.fillRect=fr;delete b.globalAlpha;return [m,cnt];};
+ const [aOn,nOn]=maxA('on'),[aSoft,nSoft]=maxA('soft');ok(aSoft>=aOn*0.9&&nSoft<nOn&&nSoft>=nOn*0.4,'약하게: 진하기 같음('+aOn.toFixed(2)+'/'+aSoft.toFixed(2)+'), 입자 '+nOn+'→'+nSoft);meta.set.vfx='on';}
+// 10막 모두 풀·날씨·빛을 한 번씩 그려 봐도 오류 없음
+{let err='';for(const v of ['on','soft']){meta.set.vfx=v;for(let st=0;st<10;st++){newGame('seonbi','gilil',0,'normal');G.queue.length=0;G.stage=st;try{vfxGround(G.P.x-W/2,G.P.y-H/2);vfxLight(G.P.x-W/2,G.P.y-H/2);}catch(e){err+=`${v} ${st+1}막 ${e.message}; `;}}}ok(!err,'10막 그리기 오류 없음 '+err);meta.set.vfx='on';}
 if(fails.length){console.log('FAIL vfx_cap\n  '+fails.join('\n  '));process.exitCode=1;}else console.log('PASS vfx_cap');
