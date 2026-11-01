@@ -10,6 +10,9 @@ if(typeof STAGE_VFX!=='undefined'){
  const WX=['glow','leaf','dust','mist','ash','mote','snow','spray','soul','none'];
  STAGE_VFX.forEach((v,i)=>{ok(WX.includes(v.weather),`${i+1}막 weather 정해진 종류 (${v.weather})`);ok(v.grass===null||(Array.isArray(v.grass)&&v.grass.length===3&&v.grass.every(c=>/^#[0-9a-f]{6}$/i.test(c))),`${i+1}막 grass는 null 또는 색 셋`);});
  ok(STAGE_VFX[4].grass===null&&STAGE_VFX[9].grass===null&&STAGE_VFX[6].grass===null,'돌바닥·눈 막(5·7·10)은 풀 없음');
+ // v18.4 바닥 무늬
+ const GK=['road','leaf','gravel','puddle','crack','dry','drift','sand','rift','bakseok'];
+ STAGE_VFX.forEach((v,i)=>{ok(v.ground&&GK.includes(v.ground.k)&&Array.isArray(v.ground.c)&&v.ground.c.length>=2&&v.ground.c.every(c=>/^#[0-9a-f]{6}$/i.test(c)),`${i+1}막 ground 무늬(${v.ground&&v.ground.k})`);});
  // 밤의 깊이: 설정·막·새벽
  meta.set.vfx='on';newGame('seonbi','gilil',0,'normal');G.queue.length=0;
  G.stage=0;const n1=vfxNight();G.stage=8;const n9=vfxNight();ok(n1>0&&n9>n1,'켬: 1막 '+n1+' < 9막 '+n9);

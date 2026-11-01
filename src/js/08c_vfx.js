@@ -1,21 +1,22 @@
 /* ======================= 분위기 층 (v18.2~) =======================
    v18.3: 흔들리는 풀(vfxGrass, 바닥 뒤) · 막별 날씨(vfxWeather, 어둠 다음·빛 번짐 전)
+   v18.4: 바닥 무늬(vfxGroundChunks: 128px 바닥 조각을 미리 구워 덮음, drawGround가 부름)
    보기만 하는 효과: 막이 갈수록 깊어지는 밤, 막별 어둠 색, 빛나는 물건, 요괴 탄·경고 장판의 빛, 잔해.
    게임 규칙·맞는 범위는 건드리지 않는다. 설계: docs/specs/2026-11-01-분위기-층.md
    - 엔진이 부르는 곳: 바닥 뒤 vfxGround(cx,cy) · 피해 숫자·요괴 탄 직전 vfxLight(cx,cy) · kill 안 vfxDebris(e) · bossDown 10막 G.dawnT
    - 무거운 그림은 미리 굽는다: 어둠(화면 크기·밤 단계가 바뀔 때만), 빛 번짐(색마다 한 장), 새벽빛 */
 // night: 어둠 세기(0~1) · tint: 어둠 색(막의 색감) · lamp: 빛나는 물건 · dawn: 막 보스 뒤 새벽
 const STAGE_VFX=[
- {night:0.20,tint:'#2a1428',lamp:'chorong',weather:'glow',grass:['#3d4528','#55603a','#76844a']},     // 1 한양 저잣거리 · 해 질 녘 · 저녁놀
- {night:0.28,tint:'#0e1c18',lamp:'firefly',weather:'leaf',grass:['#1f3a28','#2f5a3a','#4a7a50']},     // 2 대숲 오솔길 · 초저녁 · 날리는 댓잎
- {night:0.32,tint:'#1e1610',lamp:'torch',weather:'dust',grass:['#4a4428','#6a6236','#8a8248']},       // 3 범 나오는 고개 · 흙바람
- {night:0.40,tint:'#0c1622',lamp:'boat',weather:'mist',grass:['#26383a','#3a5258','#5a7a7a']},        // 4 안개 낀 나루 · 밤 · 물안개
- {night:0.48,tint:'#14121e',lamp:'seokdeung',weather:'ash',grass:null},                               // 5 폐허가 된 산사 · 한밤 · 떨어지는 재(돌바닥)
- {night:0.50,tint:'#1c1a0c',lamp:'candle',weather:'mote',grass:['#4a4224','#625a30','#7e7440']},      // 6 역병 도는 마을 · 누런 먼지
- {night:0.50,tint:'#0e1426',lamp:'snow',weather:'snow',grass:null},                                   // 7 백두산 골짜기 · 눈발(눈 덮인 땅)
- {night:0.52,tint:'#0a1418',lamp:'fishfire',weather:'spray',grass:['#3a4a3a','#4e6450','#6e8466']},  // 8 동해 바닷가 · 물보라
- {night:0.60,tint:'#120a1e',lamp:'neokbul',weather:'soul',grass:['#2e2a34','#423c4a','#5a5266']},     // 9 저승길 · 가장 깊음 · 넋 안개
- {night:0.56,tint:'#1a0c12',lamp:'palace',dawn:true,weather:'none',grass:null}];                       // 10 근정전 앞뜰 · 보스 뒤 새벽(박석)
+ {night:0.20,tint:'#2a1428',lamp:'chorong',weather:'glow',ground:{k:'road',c:['#4e3e30','#62503e','#2c231e']},grass:['#3d4528','#55603a','#76844a']},     // 1 한양 저잣거리 · 해 질 녘 · 저녁놀
+ {night:0.28,tint:'#0e1c18',lamp:'firefly',weather:'leaf',ground:{k:'leaf',c:['#24301f','#8a5a2a','#6a7a2a']},grass:['#1f3a28','#2f5a3a','#4a7a50']},     // 2 대숲 오솔길 · 초저녁 · 날리는 댓잎
+ {night:0.32,tint:'#1e1610',lamp:'torch',weather:'dust',ground:{k:'gravel',c:['#3e382c','#5e5646','#22201a']},grass:['#4a4428','#6a6236','#8a8248']},       // 3 범 나오는 고개 · 흙바람
+ {night:0.40,tint:'#0c1622',lamp:'boat',weather:'mist',ground:{k:'puddle',c:['#0c141c','#6a9ab0','#16222c']},grass:['#26383a','#3a5258','#5a7a7a']},        // 4 안개 낀 나루 · 밤 · 물안개
+ {night:0.48,tint:'#14121e',lamp:'seokdeung',weather:'ash',ground:{k:'crack',c:['#1c1c24','#3a3a46']},grass:null},                               // 5 폐허가 된 산사 · 한밤 · 떨어지는 재(돌바닥)
+ {night:0.50,tint:'#1c1a0c',lamp:'candle',weather:'mote',ground:{k:'dry',c:['#24200f','#4a4230']},grass:['#4a4224','#625a30','#7e7440']},      // 6 역병 도는 마을 · 누런 먼지
+ {night:0.50,tint:'#0e1426',lamp:'snow',weather:'snow',ground:{k:'drift',c:['#8a94a8','#a8b2c6']},grass:null},                                   // 7 백두산 골짜기 · 눈발(눈 덮인 땅)
+ {night:0.52,tint:'#0a1418',lamp:'fishfire',weather:'spray',ground:{k:'sand',c:['#4a4636','#d8d0b8','#8a8270']},grass:['#3a4a3a','#4e6450','#6e8466']},  // 8 동해 바닷가 · 물보라
+ {night:0.60,tint:'#120a1e',lamp:'neokbul',weather:'soul',ground:{k:'rift',c:['#08060c','#8a5ab0']},grass:['#2e2a34','#423c4a','#5a5266']},     // 9 저승길 · 가장 깊음 · 넋 안개
+ {night:0.56,tint:'#1a0c12',lamp:'palace',dawn:true,weather:'none',ground:{k:'bakseok',c:['#3e2e32','#2a1e22']},grass:null}];                       // 10 근정전 앞뜰 · 보스 뒤 새벽(박석)
 // v18.3 날씨(보기만): n=입자 수(켬) · c=색 · vx,vy=흐름(px/초) · sw=흔들림 · w,h=입자 크기 · a=불투명도 · fog=[색,덩어리 수,불투명도] · sky=위쪽 빛
 const VFX_WX={none:{n:0},glow:{n:0,sky:'255,150,90'},
  leaf:{n:36,c:'#9ab85a',vx:22,vy:26,sw:10,w:2,h:1,a:0.85},dust:{n:60,c:'#9a8058',vx:70,vy:5,sw:3,w:3,h:1,a:0.35},
@@ -29,7 +30,7 @@ const VFX_LAMP={
  palace:{post:1,c:'255,120,80',r:46,d:0.1},
  firefly:{float:14,c:'210,255,140',r:10},snow:{float:10,c:'220,235,255',r:12},neokbul:{float:12,c:'140,200,255',r:16}};
 let VFX_WARN_UP=false;   // 밤이면 보스 경고 장판을 어둠 위(요괴 위)에 그린다: 어둠에 묻히지 않게
-const VFXS={rs:12345,debris:[],lastT:0,dk:{key:''},glow:{},dawn:null,fog:{},sky:null,tuft:{}};
+const VFXS={chunks:new Map(),chunkSi:-1,rs:12345,debris:[],lastT:0,dk:{key:''},glow:{},dawn:null,fog:{},sky:null,tuft:{}};
 function vfxRnd(){VFXS.rs=(VFXS.rs*1103515245+12345)%2147483648;return VFXS.rs/2147483648;}   // 보기만 하는 효과는 게임 난수를 쓰지 않는다: 효과를 켜도 게임 진행이 같게
 function vfxLevel(){const v=meta.set.vfx;return v==='off'?'off':v==='soft'?'soft':'on';}
 function vfxSi(){const s=curStg();const i=STAGES.indexOf(s);return i<0?0:i;}
@@ -60,6 +61,51 @@ function vfxGrass(cx,cy,soft){const gp=STAGE_VFX[vfxSi()].grass;if(!gp)return;co
   if(push>0.05){for(let i=0;i<n;i++){const x=R(bx-n-4+4+i*2-cx),hgt=Math.max(1,Math.round((3+((v*7+i*3)%4))*(1-push*0.6))),sw=Math.sign(dx||1)*push*3+gust;
     for(let q=0;q<hgt;q++){b.fillStyle=q===hgt-1?gp[2]:q>hgt/2?gp[1]:gp[0];b.fillRect(x+Math.round(sw*q/hgt),R(by-cy)-q,1,1);}}continue;}
   const ph=Math.max(0,Math.min(4,Math.round(2+Math.sin(t*2.4+bx*0.09+by*0.05)*1.4+gust)));b.drawImage(vfxTuft(gp,v,ph),R(bx-n-4-cx),R(by-7-cy));}}
+// v18.4 바닥 무늬: 128px 바닥 조각을 미리 구워(원래 바닥 칸 + 막별 무늬) 덮는다. 매 프레임 칸을 하나씩 칠하던 것보다 가볍다.
+// 무늬는 세상 좌표의 함수라 조각 경계에서도 이어진다. 보기만 하는 것이고 길을 막지 않는다. 끔·절약 모드는 예전 그리기 그대로.
+const VFX_CH=128;
+function vfxGroundTiles(g,st,ox,oy,x0,y0,x1,y1){const gr=st.gr,T=16;   // 09_render drawGround의 칸 그리기와 같은 규칙(g 위에, ox,oy만큼 옮겨)
+ for(let ty=Math.floor(y0/T);ty<=Math.floor((y1-1)/T);ty++)for(let tx=Math.floor(x0/T);tx<=Math.floor((x1-1)/T);tx++){const h=hash(tx,ty),sx=tx*T-ox,sy=ty*T-oy;
+  if(st.paved){g.fillStyle=h<0.4?gr[1]:gr[0];g.fillRect(sx,sy,T,T);g.fillStyle=gr[2];g.fillRect(sx,sy+T-1,T,1);g.fillRect(sx+((ty&1)?8:0),sy,1,T);
+   if(h>0.85){g.fillRect(sx+4,sy+5,5,1);g.fillRect(sx+8,sy+6,1,3);}}
+  else{if(h<0.3){g.fillStyle=gr[1];g.fillRect(sx,sy,T,T);}
+   if(h>0.82){g.fillStyle=gr[3];g.fillRect(sx+3,sy+5,2,1);g.fillRect(sx+10,sy+11,1,1);}
+   if(h>0.6&&h<0.66){g.fillStyle=gr[3];g.fillRect(sx+6,sy+8,1,3);g.fillRect(sx+8,sy+7,1,4);}}}}
+// 길(띠): 가로 길은 420px마다, 세로 길은 520px마다 굽이친다. 반환: 길 가운데로부터의 거리(작을수록 길 안)
+function vfxRoadD(x,y){const k=Math.round((y-60*Math.sin(x/140))/420),dy=Math.abs(y-(k*420+60*Math.sin(x/140+k))),
+ m=Math.round((x-70*Math.sin(y/160))/520),dx=Math.abs(x-(m*520+70*Math.sin(y/160+m)));return Math.min(dy,dx);}
+function vfxDeco(g,V,ox,oy){const D=V.ground,c=D.c,k=D.k,S=2;
+ const band=(w,f)=>{for(let y=0;y<VFX_CH;y+=S)for(let x=0;x<VFX_CH;x+=S){const wx=ox+x,wy=oy+y,d=vfxRoadD(wx,wy),ww=w+3*Math.sin(wx/37+wy/53);if(d<ww-1||(d<ww+1&&hash(wx>>1,wy>>1)<0.5))f(x,y,wx,wy,d<ww*0.5);}};
+ const blobs=(cell,p,rmin,rmax,f)=>{for(let gy=Math.floor((oy-rmax)/cell);gy<=Math.floor((oy+VFX_CH+rmax)/cell);gy++)for(let gx=Math.floor((ox-rmax)/cell);gx<=Math.floor((ox+VFX_CH+rmax)/cell);gx++){
+   if(hash(gx*7+1,gy*13+5)>p)continue;const bx=gx*cell+hash(gx,gy+3)*cell,by=gy*cell+hash(gx+3,gy)*cell,r=rmin+hash(gx+9,gy+9)*(rmax-rmin);f(bx-ox,by-oy,r,gx,gy);}};
+ if(k==='road'){const stones=[];band(11,(x,y,wx,wy,mid)=>{g.fillStyle=c[0];g.fillRect(x,y,S,S);if(mid&&x<=VFX_CH-S*2&&(wx>>3)%3===0&&(wy>>2)%2===0&&hash(wx>>3,wy>>2)<0.5)stones.push(x,y);   /* 조각 경계를 넘는 돌은 놓지 않음(반쪽 돌 없게) */});   // 거리 계산은 한 번만
+  for(let i=0;i<stones.length;i+=2){g.fillStyle=c[1];g.fillRect(stones[i],stones[i+1],S*2,S);g.fillStyle=c[2];g.fillRect(stones[i],stones[i+1]+S,S*2,1);}}
+ else if(k==='leaf'){band(10,(x,y,wx,wy)=>{g.fillStyle=c[0];g.fillRect(x,y,S,S);const h=hash(wx,wy);if(h<0.08){g.fillStyle=h<0.04?c[1]:c[2];g.fillRect(x,y,2,1);}});}
+ else if(k==='gravel'){band(9,(x,y,wx,wy)=>{g.fillStyle=c[0];g.fillRect(x,y,S,S);const h=hash(wx,wy);if(h<0.12){g.fillStyle=h<0.06?c[1]:c[2];g.fillRect(x,y,1,1);}});}
+ else if(k==='puddle'){blobs(72,0.35,7,16,(bx,by,r)=>{g.fillStyle=c[0];g.beginPath();g.ellipse(bx,by,r,r*0.55,0,0,TAU);g.fill();g.fillStyle=c[2];g.fillRect(Math.round(bx-r*0.6),Math.round(by+r*0.4),Math.round(r*1.2),1);g.fillStyle=c[1];g.fillRect(Math.round(bx-r*0.3),Math.round(by-r*0.25),Math.max(2,Math.round(r*0.4)),1);});}
+ else if(k==='crack'||k==='rift'||k==='dry'){blobs(k==='dry'?56:64,k==='dry'?0.45:0.3,8,18,(bx,by,r,gx,gy)=>{g.fillStyle=c[0];let x=bx,y=by;
+   for(let i=0;i<(k==='dry'?3:2);i++){let a=hash(gx+i,gy*3)*TAU;x=bx;y=by;for(let s2=0;s2<r;s2++){a+=(hash(gx+s2,gy+i)-0.5)*0.9;x+=Math.cos(a);y+=Math.sin(a)*0.7;g.fillRect(Math.round(x),Math.round(y),1,1);
+    if(k==='rift'&&s2%2===0){g.fillStyle=c[1];g.globalAlpha=0.8;g.fillRect(Math.round(x),Math.round(y)-1,1,1);g.globalAlpha=1;g.fillStyle=c[0];}}}
+   if(k==='dry'){g.fillStyle=c[1];g.globalAlpha=0.35;g.beginPath();g.ellipse(bx,by,r,r*0.6,0,0,TAU);g.fill();g.globalAlpha=1;}});}
+ else if(k==='drift'){blobs(80,0.4,12,26,(bx,by,r)=>{g.fillStyle=c[1];g.globalAlpha=0.55;g.beginPath();g.ellipse(bx,by,r,r*0.45,0,0,TAU);g.fill();g.globalAlpha=1;g.fillStyle=c[0];g.fillRect(Math.round(bx-r*0.5),Math.round(by+r*0.42),Math.round(r),1);});}
+ else if(k==='sand'){blobs(76,0.4,12,24,(bx,by,r,gx,gy)=>{g.fillStyle=c[0];g.beginPath();g.ellipse(bx,by,r,r*0.5,0,0,TAU);g.fill();
+   for(let i=0;i<3;i++)if(hash(gx+i,gy+7)<0.6){g.fillStyle=i===0?c[1]:c[2];g.fillRect(Math.round(bx+(hash(gx,i)-0.5)*r),Math.round(by+(hash(i,gy)-0.5)*r*0.4),2,1);}});}
+ else if(k==='bakseok'){band(12,(x,y,wx,wy,mid)=>{if(((wx>>3)&1)===((wy>>3)&1)){   /* &1: 음수 좌표에서도 같은 바둑판 */g.fillStyle=c[1];g.globalAlpha=0.5;g.fillRect(x,y,S,S);g.globalAlpha=1;}});}}
+function vfxChunk(si,ix,iy){const key=si+':'+ix+':'+iy;let c=VFXS.chunks.get(key);if(c)return c;
+ const st=STAGES[si],V=STAGE_VFX[si],ox=ix*VFX_CH,oy=iy*VFX_CH;
+ c=vfxCanvas(VFX_CH,VFX_CH,g=>{g.fillStyle=st.gr[0];g.fillRect(0,0,VFX_CH,VFX_CH);vfxGroundTiles(g,st,ox,oy,ox,oy,ox+VFX_CH,oy+VFX_CH);vfxDeco(g,V,ox,oy);});
+ VFXS.chunks.set(key,c);VFXS.made=(VFXS.made||0)+1;return c;}   // 버리는 것은 vfxGroundChunks가(보이는 조각은 버리지 않음)
+// drawGround가 부른다(켬·고화질일 때 true). 보이는 조각은 버리지 않는다. 새 조각은 한 프레임에 2장까지 굽고,
+// 아직 없는 조각 자리는 그 자리만 예전 칸 그리기로 채운다(무늬 전체가 깜빡이지 않게). 남은 몫으로 화면 바로 바깥 조각을 미리 굽는다.
+function vfxGroundChunks(cx,cy){if(vfxLevel()==='off'||LOW||!G)return false;const si=vfxSi(),st=STAGES[si],M=VFXS.chunks;if(VFXS.chunkSi!==si){M.clear();VFXS.chunkSi=si;}
+ const x0=Math.floor(cx/VFX_CH),y0=Math.floor(cy/VFX_CH),x1=Math.floor((cx+W-1)/VFX_CH),y1=Math.floor((cy+H-1)/VFX_CH);let budget=2;
+ for(let iy=y0;iy<=y1;iy++)for(let ix=x0;ix<=x1;ix++){const key=si+':'+ix+':'+iy;let c=M.get(key);if(!c&&budget>0){c=vfxChunk(si,ix,iy);budget--;}
+  const ox=ix*VFX_CH,oy=iy*VFX_CH;
+  if(c){M.delete(key);M.set(key,c);b.drawImage(c,ox-cx,oy-cy);}   // 쓴 조각은 맨 뒤로(오래 안 쓴 것부터 버림)
+  else{b.fillStyle=st.gr[0];b.fillRect(ox-cx,oy-cy,VFX_CH,VFX_CH);vfxGroundTiles(b,st,cx,cy,ox,oy,ox+VFX_CH,oy+VFX_CH);}}
+ for(let iy=y0-1;iy<=y1+1&&budget>0;iy++)for(let ix=x0-1;ix<=x1+1&&budget>0;ix++){if(iy>=y0&&iy<=y1&&ix>=x0&&ix<=x1)continue;if(!M.has(si+':'+ix+':'+iy)){vfxChunk(si,ix,iy);budget--;}}
+ const cap=Math.max(64,(x1-x0+3)*(y1-y0+3)+8);while(M.size>cap)M.delete(M.keys().next().value);   // 보이는 조각은 방금 맨 뒤로 옮겼으니 앞쪽(오래된 것)만 버린다
+ return true;}
 // 잔해: 요괴·옹기를 쓰러뜨리면 조각이 튀었다가 바닥에 몇 초 남는다(밟으면 밀림)
 function vfxDebris(e){const lv=vfxLevel();if(lv==='off'||!e)return;const cap=(LOW?60:260)*(lv==='soft'?0.5:1),D=VFXS.debris;
  const E=EN[e.kind]||{},cols=e.prop?['#8a5a2e','#b0702e','#5a3a1e']:[E.A||'#6a5a50',E.B||'#3a3030','#2a2220'],n=e.prop?9:LOW?2:4;

@@ -7,7 +7,8 @@ function resize(){DPR=LOW?1:Math.min(window.devicePixelRatio||1,2);const cw=Math
 addEventListener('resize',resize);resize();
 
 function hash(x,y){let h=(x*374761393+y*668265263)|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;}
-function drawGround(cx,cy){const st=curStg(),gr=st.gr,T=16;b.fillStyle=gr[0];b.fillRect(0,0,W,H);
+function drawGround(cx,cy){if(vfxGroundChunks(cx,cy))return;   // v18.4 분위기 효과를 켜면 미리 구운 바닥 조각(무늬 포함)
+ const st=curStg(),gr=st.gr,T=16;b.fillStyle=gr[0];b.fillRect(0,0,W,H);
  const tx0=Math.floor(cx/T),ty0=Math.floor(cy/T),tx1=Math.floor((cx+W)/T),ty1=Math.floor((cy+H)/T);
  for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++){const h=hash(tx,ty),sx=tx*T-cx,sy=ty*T-cy;
   if(st.paved){b.fillStyle=h<0.4?gr[1]:gr[0];b.fillRect(sx,sy,T,T);b.fillStyle=gr[2];b.fillRect(sx,sy+T-1,T,1);b.fillRect(sx+((ty&1)?8:0),sy,1,T);
