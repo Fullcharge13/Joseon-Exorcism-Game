@@ -30,7 +30,8 @@ function hurt(e,dmg,kb=0,fx=0,fy=0,noCrit){
 const ITEM_CAP=300;
 function dropItem(k,x,y){if(k==='tteok'&&G.mods.noTteok)return;   // 떡이 없는 설화 막: 처치·신내림·쌍신 어느 길로도 떡을 떨어뜨리지 않는다
  G.items.push({k,x,y});if(G.items.length>ITEM_CAP){const i=G.items.findIndex(it=>it.k!=='chest');if(i>=0)G.items.splice(i,1);}}
-function kill(e){e.dead=true;
+function kill(e){vfxDebris(e);e.dead=true;   // v18.2 잔해(보기만)
+
  if(e.prop){G.rs.pots++;particle(e.x,e.y,'#b0702e',8,50,0.4);snd(300,0.08,'square',0.03);const r=Math.random();
   if(r<0.35&&!G.mods.noTteok)dropItem('tteok',e.x,e.y);else if(r<0.7){for(let i=0;i<3;i++)dropItem('coin',e.x+rnd(-4,4),e.y+rnd(-3,3));}else if(r<0.82)dropItem('pouch',e.x,e.y);else G.gems.push({x:e.x,y:e.y,v:10+G.stage*6,mag:false});return;}
  G.kills++;G.rs.kills++;cbKill();if(!EN[e.kind].tale){const sn=G.rs.seen[e.kind]||(G.rs.seen[e.kind]={s:1,k:0});sn.k++;}
@@ -186,7 +187,8 @@ function bossAI(e,dt){const D=e.def;
   e.act=sk;e.ulting=true;BSK[sk].start(e);toastUlt(bnm(e),name);if(!G.flash)flash('120,0,0',0.4);snd(60,0.8,'sawtooth',0.07);return;}
  if(e.act){if(BSK[e.act].tick(e,dt)){e.last=e.act;e.act=null;e.ulting=false;e.cd=Math.max(0.8,2.0-G.stage*0.12)*rnd(0.8,1.2)*(e.mid?1.3:1)*G.mods.bossCd;}return;}
  e.cd-=dt;if(e.cd<=0){if(G.mods.bossOrder){e.act=e.skills[e.si++%e.skills.length];}else{const opts=e.skills.filter(s=>s!==e.last);e.act=opts[Math.random()*opts.length|0];}BSK[e.act].start(e);}}
-function bossDown(e){G.pull=null;
+function bossDown(e){G.pull=null;if(!e.mid&&G.mode==='normal'&&STAGE_VFX[vfxSi()].dawn)G.dawnT=G.time;   // v18.2 제10막 막 보스 뒤 새벽
+
  for(let i=0;i<(e.mid?6:14);i++)G.gems.push({x:e.x+rnd(-20,20),y:e.y+rnd(-20,20),v:e.xp*2+10,mag:!e.mid});
  particle(e.x,e.y,'#e0b048',40,120,0.9);snd(200,0.8,'triangle',0.06);
  const k='boss_'+e.bossKind;G.rs[k]=(G.rs[k]||0)+1;   // 설화 출정의 보스도 본편 보스 과업에 센다

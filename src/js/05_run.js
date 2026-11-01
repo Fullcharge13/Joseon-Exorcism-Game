@@ -3,7 +3,7 @@ let G=null,modal='title',selChar=null,prevScreen='title',prep={card:null,curse:0
 const TMP=[],TMP2=[];
 const keys={};let joy=null;
 
-function newGame(cid,card,curse,diff='normal',mode='normal'){diagSeen.clear();diagStuck=0;diagNoScr=0;diagLastT=null;   // 멈춤 기록: 같은 종류는 한 판에 한 번
+function newGame(cid,card,curse,diff='normal',mode='normal'){VFXS.debris.length=0;diagSeen.clear();diagStuck=0;diagNoScr=0;diagLastT=null;   // 멈춤 기록: 같은 종류는 한 판에 한 번
 
  const C=CHARS[cid],m=meta.up;
  G={cid,card,curse,diff,stage:0,st:0,time:0,dtNow:0,kills:0,coins:0,over:false,

@@ -93,14 +93,15 @@ const SAVE_KEY='joseon-toema-v1';
 let meta={coins:0,up:{},best:null};
 try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s)meta=Object.assign(meta,s);}catch(e){}
 meta.up=meta.up||{};meta.stats=meta.stats||{};meta.seen=meta.seen||{};meta.done=meta.done||[];meta.curseMax=meta.curseMax||0;
-meta.set=Object.assign({vol:70,shake:true,nums:true,flash:true,scale:'mid',joy:true,perf:'auto',fps:false,fxA:1},meta.set||{});
+meta.set=Object.assign({vol:70,shake:true,nums:true,flash:true,scale:'mid',joy:true,perf:'auto',fps:false,fxA:1,vfx:'on'},meta.set||{});
 /* 설정 값 바로잡기: 고를 수 있는 값이 아니면 기본으로 */
 /* v17.1 2배 정밀 그리기: 캐릭터·요괴 크기가 기본이 아니고, 절약 모드가 아니고, 느려짐으로 끄지 않았을 때 */
 function hdOn(){return meta.set.ent>1&&!LOW&&!entOff;}
 /* v17.1 그림 배율: 플레이어·펫·전우치(인자 없음)·요괴는 설정값, 보스는 1.5배까지, 따로 그리는 큰 보스는 1배. 판정(r)은 건드리지 않는다 */
 function entK(e){if(!hdOn())return 1;const k=meta.set.ent;if(!e)return k;
  if(e.boss||e.clone){const pk=e.boss&&EN[e.kind]&&EN[e.kind].proc;if(pk==='imugi'||pk==='eoduk'||pk==='geuseunde')return 1;return Math.min(k,1.5);}return k;}   // 보스의 분신도 보스처럼
-function normSet(){const t=meta.set;if(![1,0.7,0.4].includes(t.fxA))t.fxA=1;if(![1,2].includes(t.ent))t.ent=1;}
+function normSet(){const t=meta.set;if(!['on','soft','off'].includes(t.vfx))t.vfx='on';   // v18.2 분위기 효과
+ if(![1,0.7,0.4].includes(t.fxA))t.fxA=1;if(![1,2].includes(t.ent))t.ent=1;}
 normSet();
 let entOff=false;   // v17.1 느려짐 감지가 이번 실행에서 캐릭터·요괴 크기를 끈 상태(저장값은 그대로)
 let LOW=false,autoLow=false;const CAP={p:420,n:240,e:300};
@@ -115,7 +116,7 @@ function saveMeta(){if(LAB)return;try{localStorage.setItem(SAVE_KEY,JSON.stringi
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER='v18.1',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
+const GAME_VER='v18.2',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
 let DIAG={log:[],hb:null};try{const d=JSON.parse(localStorage.getItem(DIAG_KEY)||'null');if(d&&typeof d==='object'&&!Array.isArray(d)){DIAG.log=Array.isArray(d.log)?d.log.filter(e=>e&&typeof e==='object').slice(-DIAG_MAX):[];DIAG.hb=d.hb&&typeof d.hb==='object'?d.hb:null;}}catch(e){}
 const diagSeen=new Set();let diagStuck=0,diagNoScr=0,diagLastT=null,diagHbT=0;
 function diagSave(){try{localStorage.setItem(DIAG_KEY,JSON.stringify(DIAG));}catch(e){}}

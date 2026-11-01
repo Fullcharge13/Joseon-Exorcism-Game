@@ -29,8 +29,9 @@ def run(path, rich):
         out['_pageerrors'] = errs; br.close()
     return out
 import re
-LANGLN = re.compile(r'(한국어|中文|언어 · Language)(\s*(한국어|中文))*\s*')   # v18.1에 새로 생긴 언어 단추·설정 줄은 옛 판에 없는 것이 맞음
-VER = lambda x: '\n'.join(l for l in re.sub(r'v\d+\.\d+', 'vX', x).split('\n') if not LANGLN.fullmatch(l)) if isinstance(x, str) else [VER(y) for y in x] if isinstance(x, list) else x   # 판 번호는 다르게 보이는 것이 맞음
+LANGLN = re.compile(r'(한국어|中文|언어 · Language|분위기 효과|켬|약하게|끔)(\s*(한국어|中文|켬|약하게|끔))*\s*')   # v18.1 언어 단추·설정 줄, v18.2 설정 「분위기 효과」(켬·약하게·끔)는 옛 판에 없는 것이 맞음
+VER0 = lambda x, k='': '\n'.join(l for l in re.sub(r'v\d+\.\d+', 'vX', x).split('\n') if not (k in NEWROW and LANGLN.fullmatch(l))) if isinstance(x, str) else [VER0(y, k) for y in x] if isinstance(x, list) else x   # 판 번호는 다르게 보이는 것이 맞음
+NEWROW = ('title', 'settings')   # 새 줄을 거르는 화면은 언어 단추·설정이 있는 두 곳뿐(다른 화면의 회귀를 가리지 않게)
 fails = []; total = 0
 for rich in (False, True):
     a, b = run(old, rich), run(new, rich); tag = '넉넉한 저장' if rich else '처음 저장'
@@ -38,7 +39,7 @@ for rich in (False, True):
         if k == '_pageerrors': continue
         total += 1
         for f in ('screens', 'overlay', 'hud', 'toast', 'canvas', 'err'):
-            if VER(a[k][f]) != VER(b[k][f]):
+            if VER0(a[k][f], k) != VER0(b[k][f], k):
                 x = a[k][f] if isinstance(a[k][f], str) else '\n'.join(map(str, a[k][f])); y = b[k][f] if isinstance(b[k][f], str) else '\n'.join(map(str, b[k][f]))
                 d = [l for l in difflib.unified_diff(x.split('\n'), y.split('\n'), lineterm='', n=0) if l[:1] in '+-' and l[:3] not in ('+++', '---')][:6]
                 fails.append(f'{tag} {k} {f}: ' + ' | '.join(d))

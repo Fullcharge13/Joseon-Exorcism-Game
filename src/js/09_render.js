@@ -202,12 +202,12 @@ function render(){
  b.imageSmoothingEnabled=false;
  if(!G){drawTitleBg();blit();return;}
  const P=G.P;let cx=R(P.x-W/2),cy=R(P.y-H/2);if(G.shake>0&&meta.set.shake){cx+=R(rnd(-G.shake,G.shake));cy+=R(rnd(-G.shake,G.shake));}RCX=cx;RCY=cy;EMQ.length=0;BUBQ.length=0;EDGEQ.length=0;
- drawGround(cx,cy);b.save();b.translate(-cx,-cy);
+ drawGround(cx,cy);vfxGround(cx,cy);b.save();b.translate(-cx,-cy);
  fxLayer(()=>{for(const z of G.zones)drawZone(z);
  for(const w of wAll())if(w.id==='bangul'&&w.R){w.pulse=(w.pulse||0)-0.016;b.globalAlpha=w.evo?0.85:0.55;pxRing(P.x,P.y-3,w.R,w.R*0.8,'#e0b048',G.time*8,5,3);if(w.pulse>0){b.globalAlpha=w.pulse*2*0.6;b.fillStyle=dith('#e0b048',true);b.beginPath();b.ellipse(P.x,P.y-3,w.R,w.R*0.8,0,0,TAU);b.fill();}b.globalAlpha=1;emblem('bangul',P.x+w.R*0.71,P.y-3-w.R*0.57,0.7);}});
  for(const z of G.ezones){const a=Math.min(1,z.life),c=z.col||'#7a3aa0',ry=z.r*0.75;b.globalAlpha=0.12*a;b.fillStyle=c;b.beginPath();b.ellipse(z.x,z.y,z.r,ry,0,0,TAU);b.fill();b.globalAlpha=0.75*a;b.fillStyle=dith(c,true);b.fill();
   b.globalAlpha=a;pxRing(z.x,z.y,z.r,ry,c,G.time*6,3,2);if(z.r>=12){for(let i=0;i<3;i++){const t=(G.time*0.9+i/3+z.x*0.01)%1;b.fillStyle=lite(c);b.fillRect(R(z.x+Math.cos(i*2.1+z.y)*z.r*0.5),R(z.y+Math.sin(i*2.1)*ry*0.5-t*5),1,1);}}if(z.r>=18)emblem('boss',z.x,z.y,a*0.8);b.globalAlpha=1;}
- for(const w of G.warns)drawWarn(w);
+ VFX_WARN_UP=vfxNight()>0.05;if(!VFX_WARN_UP)for(const w of G.warns)drawWarn(w);
  if(G.shrine)drawShrine(G.shrine);
  if(G.anom)drawAnom(G.anom);
  if(G.trace)drawTrace(G.trace);
@@ -291,6 +291,8 @@ function render(){
   else if(f.t==='chain'){b.globalAlpha=clamp(k,0,1);b.strokeStyle=f.col;b.lineWidth=2;b.beginPath();f.pts.forEach((p,i)=>i?b.lineTo(p[0],p[1]):b.moveTo(p[0],p[1]));b.stroke();b.strokeStyle='#ffd0c0';b.lineWidth=1;b.stroke();b.globalAlpha=1;}
   else if(f.t==='beam'){b.save();b.translate(f.x,f.y);b.rotate(f.a);b.globalAlpha=clamp(k,0,1)*0.6;b.fillStyle=f.col;b.fillRect(0,-f.w/2,f.len,f.w);b.globalAlpha=clamp(k,0,1);b.fillStyle=f.col==='#1a1418'?'#3a3540':'#fff';b.fillRect(0,-1,f.len,2);b.restore();b.globalAlpha=1;}
   else if(f.t==='glyph'){b.font=(f.big?'bold 16px ':'bold 13px ')+FD();b.textAlign='center';b.fillStyle='rgba(0,0,0,0.3)';b.fillRect(R(f.x-3),R(f.y),6,2);b.fillStyle='#0a080c';b.fillText(f.ch,R(f.x)+1,R(f.y-f.h)+1);b.fillStyle=f.big?'#ffd76a':'#efe6d2';b.fillText(f.ch,R(f.x),R(f.y-f.h));}}});
+ vfxLight(cx,cy);   // v18.2 분위기 층: 이 아래(피해 숫자·요괴 탄·체력 막대)는 어둠 위에 또렷하게
+ if(VFX_WARN_UP)for(const w of G.warns)drawWarn(w);   // 밤에는 보스 경고를 어둠 위에 그린다(vfx_read)
  for(const f of G.fx)if(f.t==='num')drawNum(f,f.max?f.life/f.max:1);
  /* v16.2 요괴 탄은 내 효과 위에, 언제나 또렷하게 */
  for(const q of G.ebul){const x=R(q.x),y=R(q.y);b.fillStyle=q.col||'#ff5a8a';b.fillRect(x-2,y-1,4,2);b.fillRect(x-1,y-2,2,4);b.fillStyle='#fff';b.fillRect(x,y-1,1,1);}
