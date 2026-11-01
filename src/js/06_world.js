@@ -29,7 +29,8 @@ function hurt(e,dmg,kb=0,fx=0,fy=0,noCrit){
  if(e.hp<=0&&!e.dead)kill(e);}
 const ITEM_CAP=300;
 function dropItem(k,x,y){if(k==='tteok'&&G.mods.noTteok)return;   // 떡이 없는 설화 막: 처치·신내림·쌍신 어느 길로도 떡을 떨어뜨리지 않는다
- G.items.push({k,x,y});if(G.items.length>ITEM_CAP){const i=G.items.findIndex(it=>it.k!=='chest');if(i>=0)G.items.splice(i,1);}}
+ const it={k,x,y};pushOut(it,G.P.r);pushOut(it,G.P.r);G.items.push(it);   // v18.3 장애물 안에 떨어지면 밖으로 밀어 퇴마사가 닿게(drop_reach)
+ if(G.items.length>ITEM_CAP){const i=G.items.findIndex(it=>it.k!=='chest');if(i>=0)G.items.splice(i,1);}}
 function kill(e){vfxDebris(e);e.dead=true;   // v18.2 잔해(보기만)
 
  if(e.prop){G.rs.pots++;particle(e.x,e.y,'#b0702e',8,50,0.4);snd(300,0.08,'square',0.03);const r=Math.random();
@@ -59,7 +60,7 @@ const OT=40;
 function obstAt(tx,ty){if(Math.abs(tx)<=1&&Math.abs(ty)<=1)return null;const h=hash(tx*3+7,ty*5-11);if(h<0.86)return null;
  const h2=hash(tx-91,ty+33);return {x:tx*OT+8+h2*24,y:ty*OT+8+hash(tx+5,ty+9)*24,r:6+h2*6};}
 function pushOut(o,r){const tx=Math.floor(o.x/OT),ty=Math.floor(o.y/OT);
- for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const ob=obstAt(tx+i,ty+j);if(!ob)continue;const dx=o.x-ob.x,dy=o.y-ob.y,d=Math.hypot(dx,dy)||0.01,ov=ob.r+r-d;if(ov>0){o.x+=dx/d*ov;o.y+=dy/d*ov;}}}
+ for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const ob=obstAt(tx+i,ty+j);if(!ob)continue;let dx=o.x-ob.x,dy=o.y-ob.y,d=Math.hypot(dx,dy);if(d<0.01){dx=0;dy=0.01;d=0.01;}/* v18.3 한가운데면 앞쪽(아래)으로 밀어냄: 예전엔 방향이 없어 그대로 남음 */const ov=ob.r+r-d;if(ov>0){o.x+=dx/d*ov;o.y+=dy/d*ov;}}}
 function spawnPot(){const P=G.P,a=Math.random()*TAU,d=rnd(70,130);const x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d*0.8;
  G.enemies.push({kind:'pot',prop:true,x,y,hp:1,maxHp:1,r:4,spd:0,dmg:0,kx:0,ky:0,hc:{},flash:0,slow:0,frz:0,dot:0,dotT:0,dotTick:0,vx:0,bob:0,sc:1});}
 function spawnShrine(){const P=G.P,a=Math.random()*TAU,d=rnd(120,150);G.shrine={x:P.x+Math.cos(a)*d,y:P.y+Math.sin(a)*d*0.8,prog:0,need:G.ks==='ocheon'?2.1:3.5};toast(_t("어디선가 성황당의 방울 소리가 들린다"));guideSay('shrine',G.shrine,'appear');}

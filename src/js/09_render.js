@@ -213,10 +213,11 @@ function render(){
  if(G.trace)drawTrace(G.trace);
  if(G.mode==='tale'){const tr=taleRule();if(tr&&tr.draw)tr.draw(G.tale.R);}
  if(G.dk)drawDk(G.dk);drawGuideGfx();
- for(const g of G.gems){if(g.x<cx-4||g.x>cx+W+4||g.y<cy-4||g.y>cy+H+4)continue;const c=g.v<4?'#6fd3c1':g.v<15?'#7fb0ff':'#ff7a8a';const x=R(g.x),y=R(g.y);b.fillStyle=c;b.fillRect(x-1,y,3,1);b.fillRect(x,y-1,1,3);b.fillStyle='#fff';b.fillRect(x,y-1,1,1);}
- for(const it of G.items){if(it.x<cx-10||it.x>cx+W+10||it.y<cy-12||it.y>cy+H+10)continue;const s=ICS[it.k];const bob=R(Math.sin(G.time*4+it.x));if(it.k==='chest'){b.fillStyle='rgba(224,176,72,0.25)';b.fillRect(R(it.x-7),R(it.y-9+bob),14,12);}b.drawImage(s,R(it.x-4),R(it.y-8+bob));}
  // depth-sorted: obstacles, enemies, player
  drawObstacles(cx,cy);
+ // v18.3 떨어진 물건·경험치 구슬은 장애물 위에(대나무·바위 뒤에 숨지 않게, drop_reach)
+ for(const g of G.gems){if(g.x<cx-4||g.x>cx+W+4||g.y<cy-4||g.y>cy+H+4)continue;const c=g.v<4?'#6fd3c1':g.v<15?'#7fb0ff':'#ff7a8a';const x=R(g.x),y=R(g.y);b.fillStyle=c;b.fillRect(x-1,y,3,1);b.fillRect(x,y-1,1,3);b.fillStyle='#fff';b.fillRect(x,y-1,1,1);}
+ for(const it of G.items){if(it.x<cx-10||it.x>cx+W+10||it.y<cy-12||it.y>cy+H+10)continue;const s=ICS[it.k];const bob=R(Math.sin(G.time*4+it.x));if(it.k==='chest'){b.fillStyle='rgba(224,176,72,0.25)';b.fillRect(R(it.x-7),R(it.y-9+bob),14,12);}b.drawImage(s,R(it.x-4),R(it.y-8+bob));}
  const vx0=cx-40,vx1=cx+W+40,vy0=cy-16,vy1=cy+H+60;
  if(!LOW){b.fillStyle='rgba(0,0,0,0.35)';b.beginPath();for(const e of G.enemies){if(e.hidden||e.x<vx0||e.x>vx1||e.y<vy0||e.y>vy1)continue;if(e.boss){const pk=EN[e.kind].proc;if(pk==='imugi'||pk==='eoduk'||pk==='geuseunde')continue;}const r=e.prop?4:e.r*entK(e);b.rect(R(e.x-r),R(e.y-1),R(r*2),2);}b.fill();}
  for(const e of G.enemies){if(e.hidden)continue;
