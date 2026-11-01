@@ -146,3 +146,28 @@ const IR={
 const ICS={},ICON={};
 for(const k in IR){ICS[k]=mk(IR[k]);ICON[k]=big(ICS[k],4);}
 
+
+/* --- v18.5 장수의 방패 다섯 단계 + 진화(코드 도트). 고증: 한국민족문화대백과사전 「방패」
+   죽패(대를 두세 겹 엮음) · 생우피방패(네 발 나무틀에 날소가죽, 선조 때) · 장방패(나무에 가죽·흰 베, 귀면) · 원방패(둥근 판, 쇠테, 귀면) · 등패(등나무를 감아 엮음, 가운데 귀면)
+   귀면은 기와의 도깨비 얼굴(귀면와) 꼴: 뿔·부릅뜬 눈·드러낸 이빨. 중군 빨강·좌군 파랑 */
+const SHIELD_FACE=['F.....F','FF.F.FF','FekFkeF','FFFFFFF','FwkkkwF','.wFFFw.'];
+function shieldRound(D,ring,face,fc){const rows=[],c=(D-1)/2,R=D/2;
+ for(let y=0;y<D;y++){let s='';for(let x=0;x<D;x++){const d=Math.hypot(x-c,y-c);s+=d>R-0.15?'.':ring(d,R,Math.atan2(y-c,x-c));}rows.push(s);}
+ if(face){const fx=Math.round(c-3),fy=Math.round(c-3);face.forEach((r,j)=>{const a=rows[fy+j].split('');for(let i=0;i<r.length;i++)if(r[i]!=='.')a[fx+i]=r[i]==='F'?fc:r[i];rows[fy+j]=a.join('');});}
+ return rows;}
+const SHIELD_ROWS=(()=>{
+ const face=(rows,x0,y0,fc)=>rows.map((r,j)=>{const k=j-y0;if(k<0||k>=SHIELD_FACE.length)return r;const a=r.split('');SHIELD_FACE[k].split('').forEach((ch,i)=>{if(ch!=='.')a[x0+i]=ch==='F'?fc:ch;});return a.join('');});
+ const jukpae=['.GgGgGgG.','GgGgGgGgG','GgGgGgGgG','nnnnnnnnn','GgGgGgGgG','GgGgGgGgG','GgGgGgGgG','nnnnnnnnn','GgGgGgGgG','GgGgGgGgG','.GgGgGgG.','..n...n..'];
+ const ugpi=['nnnnnnnnn','nsosoooon','nooonoson','nooooooon','nosoooson','noonooson','nooooooon','nsoooonon','noosoooon','nnnnnnnnn','.n.....n.','.n.....n.'];
+ let jang=['nnnnnnnnnnn',...Array(12).fill('nwwwwwwwwwn'),'nnnnnnnnnnn','.n.......n.'];jang=face(jang,2,3,'b');
+ const won=shieldRound(13,(d,R)=>d>R-1.4?'x':'r',SHIELD_FACE,'y');
+ const deung=shieldRound(17,d=>d<1?'o':(Math.floor(d)%2?'o':'y'),SHIELD_FACE,'r');
+ const cheol=shieldRound(17,(d,R,a)=>d>R-1.4?((Math.round(a/(Math.PI/4))*(Math.PI/4)-a)**2<0.03?'e':'X'):(Math.floor(d)%2?'o':'y'),SHIELD_FACE,'r');
+ return [jukpae,ugpi,jang,won,deung,cheol];})();
+const SHIELD_PAL={...PAL,s:'#d09858',e:'#f4e8c8'};
+const SHIELD_SPR=[];
+function shieldSpr(lv,evo){const i=evo?5:Math.max(0,Math.min(4,(Math.floor(+lv)||1)-1));return SHIELD_SPR[i]||(SHIELD_SPR[i]=mk(SHIELD_ROWS[i],SHIELD_PAL));}
+/* v18.5 가진 무기의 아이콘: 방패는 단계 그림(가운데 맞춰 2배), 다른 무기는 예전 아이콘 */
+const SHIELD_ICON={};
+function wIcon(w){const d=WD[w.id];if(!d||!d.lvName||w.id!=='deungpae')return ICON[w.id];const sp=shieldSpr(w.lv,w.evo),k=(w.evo?5:Math.max(0,Math.min(4,(Math.floor(+w.lv)||1)-1)));
+ if(SHIELD_ICON[k])return SHIELD_ICON[k];const c=document.createElement('canvas');c.width=c.height=17;const x=c.getContext('2d');x.drawImage(sp,Math.floor((17-sp.width)/2),Math.floor((17-sp.height)/2));return SHIELD_ICON[k]=big(c,2);}

@@ -121,8 +121,8 @@ function openSeal(){const done=()=>{if(G.afterSeal){const a=G.afterSeal;G.afterS
  const sh=a=>a.sort(()=>Math.random()-0.5),pool=sh(ws.slice()),cards=[],shown=new Set();
  for(let i=0;i<3;i++){const w=pool[i%pool.length],ks=sh(Object.keys(SEALS).filter(k=>sealOk(w,k)&&!cards.some(c=>c[0]===k&&c[1]===w)));if(!ks.length)continue;const k=ks.find(z=>!shown.has(z))||ks[0];shown.add(k);cards.push([k,w]);}
  openPick('ENGRAVING',_t("인장 새기기"),_t("무기에 인장을 새겨 그 무기만 강하게 합니다. 그 무기에 효과가 있는 인장만 나옵니다. 칸은 무기 1개, 진화 2개, 합공 4개입니다."),cards.map(([k,w])=>{const S=SEALS[k],d=WD[w.id],used=(w.seals||[]).length;
-  return {ic:`<span class="seal" style="background:#7a2018">${S.g}</span>`,badge:_t("인장 · {p}",{p:w.evo?d.evoName:d.name}),bc:'awk',name:_t("{n}의 인장 → {p}",{n:S.n,p:w.evo?d.evoName:d.name}),desc:_t("{d}. (인장 {used}/{p} → {p2}/{p3})",{d:S.d,used:used,p:sealSlots(w),p2:used+1,p3:sealSlots(w)}),
-   f:()=>{(w.seals=w.seals||[]).push(k);G.rs.seals=(G.rs.seals||0)+1;refreshSlots();toast(_t("{g} 인장 · {p}",{g:S.g,p:w.evo?d.evoName:d.name}));done();}};}));}
+  return {ic:`<span class="seal" style="background:#7a2018">${S.g}</span>`,badge:_t("인장 · {p}",{p:wName(w)}),bc:'awk',name:_t("{n}의 인장 → {p}",{n:S.n,p:wName(w)}),desc:_t("{d}. (인장 {used}/{p} → {p2}/{p3})",{d:S.d,used:used,p:sealSlots(w),p2:used+1,p3:sealSlots(w)}),
+   f:()=>{(w.seals=w.seals||[]).push(k);G.rs.seals=(G.rs.seals||0)+1;refreshSlots();toast(_t("{g} 인장 · {p}",{g:S.g,p:wName(w)}));done();}};}));}
 
 /* ---- 스치기 ---- */
 function graze(q){const P=G.P;G.rs.graze=(G.rs.graze||0)+1;G.grazeT=2;addCall(1.2);

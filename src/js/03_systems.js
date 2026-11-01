@@ -217,7 +217,7 @@ const WD={
   upd(w,dt,P){w.t-=dt;if(w.t>0)return;const dmg=(w.evo?44:L5(w,[20,24,24,24,30]))*P.might,rng=(w.evo?66:L5(w,[38,38,42,42,48]))*P.area;
    slash(P.x,P.y,0,rng,dmg,Math.PI,0,'#c9a06a');if(w.evo)slash(P.x,P.y,Math.PI,rng*0.8,dmg,Math.PI,0.15,'#c9a06a');
    w.t=(w.evo?1.6:L5(w,[2.4,2.3,2.3,2.0,1.9]))*P.cd;}},
- deungpae:{name:'등패',type:'w',job:'jangsu',max:5,evo:'tugu',evoName:'철갑 등패',evoDesc:'앞뒤로 철갑 방패가 서서 요괴 탄을 되받아치고 몸으로 밀어붙인다.',
+ deungpae:{name:'등패',lvName:['죽패','생우피방패','장방패','원방패','등패'],type:'w',job:'jangsu',max:5,evo:'tugu',evoName:'철갑 등패',evoDesc:'앞뒤로 철갑 방패가 서서 요괴 탄을 되받아치고 몸으로 밀어붙인다.',
   desc:['가는 방향 앞에 방패를 세운다. 요괴 탄을 막고 닿는 요괴를 밀쳐 낸다.','피해 +','방패 크기 +','밀쳐 내는 힘 +','피해 +, 크기 +'],
   upd(w,dt,P){const n=w.evo?2:1,r=(w.evo?13:L5(w,[8,8,10,10,12]))*P.area,dmg=(w.evo?20:L5(w,[8,10,10,12,15]))*P.might,kb=w.evo?120:L5(w,[60,60,60,90,90]);
    const a0=Math.atan2(P.diry,P.dirx);w.shields=[];
@@ -495,4 +495,6 @@ const WD={
    for(let i=0;i<n;i++){const tg=randomEnemy();warn({x:tg?tg.x:P.x+rnd(-W/2,W/2),y:tg?tg.y:P.y+rnd(-H/2,H/2),r:18*P.area,t:0.6+i*0.05,dmg,friendly:1,col:'#ffe3a0'});}
    w.t=L5(w,[8,8,8,6.5,6.5])*P.cd;}},
 };
+/* v18.5 가진 무기의 보이는 이름: 진화면 evoName, 레벨마다 이름이 다른 무기(lvName)는 그 레벨 이름, 아니면 name */
+function wName(w,lv){const d=WD[w.id];if(!d)return '';if(w.evo&&lv==null)return d.evoName||d.name;if(!d.lvName)return d.name;const l=Math.max(1,Math.min(d.lvName.length,(lv==null?w.lv:lv)||1));return d.lvName[l-1];}
 

@@ -36,7 +36,7 @@ function openTemper(cb){const done=cb||(()=>show(null));
  const used={},cards=[];
  for(let i=0;i<3;i++){const w=ws[i%ws.length],pool=temperFor(w).filter(t=>!(used[w.id]||[]).includes(t));if(!pool.length)continue;
   const pref=pool.filter(t=>TEMPER[t].k!=='*'),src=pref.length&&Math.random()<0.7?pref:pool,t=src[Math.random()*src.length|0];(used[w.id]=used[w.id]||[]).push(t);
-  const d=WD[w.id],nm=w.evo?d.evoName:d.name,T=TEMPER[t];
+  const d=WD[w.id],nm=wName(w),T=TEMPER[t];
   cards.push({ic:`<span class="seal" style="background:#9a4a10">${T.g}</span>`,badge:_t("담금질 · {nm}",{nm:nm}),bc:'lb',name:`${T.n} → ${nm}`,desc:T.d+_t(" 무기마다 한 번만 담글 수 있다."),
    f:()=>{w.tm=t;tmRebuild();G.rs.temper=(G.rs.temper||0)+1;refreshSlots();toast(_t("{g} 담금질 · {nm} — {n}",{g:T.g,nm:nm,n:T.n}));snd(180,0.2,'square',0.05);setTimeout(()=>snd(1200,0.15,'triangle',0.04),120);done();}});}
  openPick('FORGE',_t("명장의 담금질"),_t("대장장이 무쇠가 무기 하나를 다시 두드려 움직임을 바꿉니다. 셋 가운데 하나를 고르세요."),cards);}
@@ -199,7 +199,7 @@ const GAN0='갑을병정무기경신임계',JI0='자축인묘진사오미신유�
 function jdate(ts){const d=new Date(ts),y=d.getFullYear(),h=d.getHours(),GAN=LANG==='zh'?GANZ:GAN0,JI=LANG==='zh'?JIZ:JI0;const g=GAN[((y-4)%10+10)%10]+JI[((y-4)%12+12)%12];
  const si=JI[Math.floor(((h+1)%24)/2)]+_t("시"),pad=n=>String(n).padStart(2,'0');
  return {j:_t("{g}년 {p} {p2} {si}",{g:g,p:JMON[d.getMonth()],p2:JDAY[d.getDate()-1],si:si}),s:`${y}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(h)}:${pad(d.getMinutes())}`};}
-function srcName(s,cid){if(WD[s])return WD[s].name;if(s==='ult')return ULT[cid]?ULT[cid].n:_t("궁극 오의");if(s==='call')return _t("신내림");if(s.startsWith('pet:'))return PETS[s.slice(4)]?PETS[s.slice(4)].n:_t("펫");return s;}
+function srcName(s,cid,ws){if(WD[s]){const o=ws&&!WD[s].fuse&&ws.find(x=>x.id===s);return o?wName({id:s,lv:o.lv!=null?o.lv:o.l,evo:!!(o.evo||o.e)}):WD[s].name;}if(s==='ult')return ULT[cid]?ULT[cid].n:_t("궁극 오의");if(s==='call')return _t("신내림");if(s.startsWith('pet:'))return PETS[s.slice(4)]?PETS[s.slice(4)].n:_t("펫");return s;}
 function srcIcon(s){if(WD[s])return iconHTML(s);const g=s==='ult'?'極':s==='call'?'神':s.startsWith('pet:')?'獸':'?';return `<span class="seal" style="background:#7a2018">${g}</span>`;}
 function snapRun(win){const P=G.P,dm=G.rs.dmg||{},tot=Object.values(dm).reduce((a,v)=>a+v,0);
  return {t:Date.now(),cid:G.cid,cls:className(),tier:P.tier,mode:G.mode,diff:G.diff,curse:G.curse,card:G.card,ks:G.ks||null,win:!!win,stage:G.stage,loop:G.loop,time:Math.round(totalTime()),kills:G.kills,lvl:P.lvl,combo:G.rs.comboMax||0,
@@ -222,7 +222,7 @@ function archiveRun(win){const A=meta.arch,r=snapRun(win),R=A.rec;
 let archTab='rec';
 function openArch(from){archFrom=from||'title';archTab='rec';renderArch();show('arch');}
 let archFrom='title';
-function buildMini(r){return `<div class="mini">${r.w.map(w=>{const d=WD[w.id];if(!d)return '';return `<span class="m${d.fuse?' f':w.e?' e':''}" title="${(w.e?d.evoName:d.name)}${w.tm?_t(" · 담금질 ")+TEMPER[w.tm].n:''}">${iconHTML(w.id)}${w.tm?`<i>${TEMPER[w.tm].g}</i>`:''}</span>`;}).join('')}${Object.keys(r.p).map(id=>PD[id]?`<span class="m" title="${PD[id].name} ${r.p[id]}">${iconHTML(id)}</span>`:'').join('')}</div>`;}
+function buildMini(r){return `<div class="mini">${r.w.map(w=>{const d=WD[w.id];if(!d)return '';return `<span class="m${d.fuse?' f':w.e?' e':''}" title="${d.fuse?d.name:wName({id:w.id,lv:w.l,evo:!!w.e})}${w.tm?_t(" · 담금질 ")+TEMPER[w.tm].n:''}">${d.type==='w'&&!d.fuse?`<img src="${wIcon({id:w.id,lv:w.l,evo:!!w.e})}" alt="">`:iconHTML(w.id)}${w.tm?`<i>${TEMPER[w.tm].g}</i>`:''}</span>`;}).join('')}${Object.keys(r.p).map(id=>PD[id]?`<span class="m" title="${PD[id].name} ${r.p[id]}">${iconHTML(id)}</span>`:'').join('')}</div>`;}
 /* v18.1: 기록의 직업·장소를 지금 언어로. 아이디가 있으면 표에서 다시 만들고, 옛 기록(완성된 한국어 글)은 사전으로 옮긴다. */
 const trS=s=>LANG!=='ko'&&s&&I18N[LANG]&&I18N[LANG][s]||s;
 function runCls(r){const C=CHARS[r.cid];if(!C)return r.cls||'';
@@ -252,7 +252,7 @@ function renderArch(){for(const [k,id] of [['rec','tabRec'],['cls','tabCls'],['l
    return hcard(`<span class="seal" style="width:28px;height:28px;font-size:18px">${Ch.seal}</span>${Ch.name}`,
     _t("<p>출정 <b>{n}</b>번 · 새벽 <b>{wins}</b>번 · 모두 <b>{p}</b>마리 퇴치</p>\n     <h4>가장 좋았던 조합</h4><p><b>{cls}</b> · {res} · Lv {lvl} · {p2}마리{p3}{p4}</p>{p5}\n     {p6}\n     <p class=\"when\">{j} <small>({s})</small></p>\n     <h4>가장 효율적인 무기·기술 (분당 피해)</h4>{p7}",{n:C.n,wins:C.wins,p:C.kills.toLocaleString(),cls:runCls(B),res:res,lvl:B.lvl,p2:B.kills.toLocaleString(),p3:B.ks?_t(" · 정표 {n}",{n:KS[B.ks].n}):'',p4:B.card?_t(" · 패 {n}",{n:CARDS[B.card].n}):'',p5:buildMini(B),p6:B.dmg.length?_t("<p><small>그 판의 주력: {p}</small></p>",{p:B.dmg.slice(0,3).map(([k,v])=>`${srcName(k,cid)} ${Math.round(v/Math.max(1,B.tot)*100)}%`).join(' · ')}):'',j:J.j,s:J.s,p7:top.length?top.map(([k,v,n])=>_t("<div class=\"hrow\"><span class=\"ic\">{p}</span><div><p><b>{p2}</b> · 분당 {p3} <small>({n}판 · 상위 셋 중 {p4}%)</small></p></div></div>",{p:srcIcon(k),p2:srcName(k,cid),p3:Math.round(v).toLocaleString(),n:n,p4:Math.round(v/tot*100)})).join(''):_t("<p>피해 기록이 아직 없다.</p>")}));}).join('')+`</div>`;return;}
  body.innerHTML=A.runs.length?`<div class="logs">${A.runs.map(r=>{const {J,C,res}=runLine(r);const main=r.dmg[0];
-   return _t("<div class=\"log{p}\"><div class=\"lh\"><span class=\"seal\">{seal}</span><div><b>{name}{p2}</b><p>{res}</p></div><span class=\"tm\">{j}<br><small>{s}</small></span></div>\n    <p class=\"ls\">{p3}{p4} · {p5} · Lv {lvl} · {p6}마리 · 연격 {combo}{p7}{p8}</p>{p9}</div>",{p:r.win?' win':'',seal:C.seal,name:C.name,p2:clsT(r),res:res,j:J.j,s:J.s,p3:r.mode==='rush'?_t("퇴마 원정"):r.mode==='tale'?_t("설화 출정"):DIFFS[r.diff].n,p4:r.curse?_t(" · 액운 {curse}",{curse:r.curse}):'',p5:fmtT(r.time),lvl:r.lvl,p6:r.kills.toLocaleString(),combo:r.combo,p7:main?_t(" · 주력 {p}",{p:srcName(main[0],r.cid)}):'',p8:r.ks?_t(" · 정표 {n}",{n:KS[r.ks].n}):'',p9:buildMini(r)});}).join('')}</div>`:_t("<p class=\"lede\">아직 기록된 출정이 없다. 첫 출정을 마치면 이곳에 날짜와 함께 남는다.</p>");}
+   return _t("<div class=\"log{p}\"><div class=\"lh\"><span class=\"seal\">{seal}</span><div><b>{name}{p2}</b><p>{res}</p></div><span class=\"tm\">{j}<br><small>{s}</small></span></div>\n    <p class=\"ls\">{p3}{p4} · {p5} · Lv {lvl} · {p6}마리 · 연격 {combo}{p7}{p8}</p>{p9}</div>",{p:r.win?' win':'',seal:C.seal,name:C.name,p2:clsT(r),res:res,j:J.j,s:J.s,p3:r.mode==='rush'?_t("퇴마 원정"):r.mode==='tale'?_t("설화 출정"):DIFFS[r.diff].n,p4:r.curse?_t(" · 액운 {curse}",{curse:r.curse}):'',p5:fmtT(r.time),lvl:r.lvl,p6:r.kills.toLocaleString(),combo:r.combo,p7:main?_t(" · 주력 {p}",{p:srcName(main[0],r.cid,r.w)}):'',p8:r.ks?_t(" · 정표 {n}",{n:KS[r.ks].n}):'',p9:buildMini(r)});}).join('')}</div>`:_t("<p class=\"lede\">아직 기록된 출정이 없다. 첫 출정을 마치면 이곳에 날짜와 함께 남는다.</p>");}
 
 
 /* ---- 캐릭터 상태창 ---- */
@@ -268,10 +268,10 @@ function stWeaponRow(w){const d=WD[w.id],cls=d.type==='c',max=d.max||5;const tag
  if(d.fuse)tags.push(_t("<span class=\"tg fu\">합공 · {p}</span>",{p:(w.kids||[]).map(k=>WD[k.id].evoName).join(' + ')}));else if(w.evo)tags.push(_t("<span class=\"tg ev\">진화</span>"));
  if(w.awk)tags.push(_t("<span class=\"tg aw\">각성 · {n}</span>",{n:AWK[w.awk].n}));if(w.tm)tags.push(_t("<span class=\"tg tm\">{g} 담금질 · {n}</span>",{g:TEMPER[w.tm].g,n:TEMPER[w.tm].n}));
  if(w.lb)tags.push(_t("<span class=\"tg ev\">한계 돌파 +{lb}</span>",{lb:w.lb}));for(const k of (w.seals||[]))tags.push(`<span class="tg fu">${SEALS[k].g} ${SEALS[k].n}</span>`);
- const name=d.fuse?d.name:w.evo?d.evoName:d.name,desc=d.fuse?d.fuse.d:w.evo?d.evoDesc:d.desc[0];
+ const name=d.fuse?d.name:wName(w),desc=d.fuse?d.fuse.d:w.evo?d.evoDesc:d.desc[0];
  const next=!d.fuse&&!w.evo&&w.lv<max&&d.desc[w.lv]?_t("<p><small>다음 레벨: {p}</small></p>",{p:d.desc[w.lv]}):'';
  const evo=!cls&&!w.evo&&!d.fuse&&d.evo&&PD[d.evo]?_t("<p><small>진화: {name} {p} · 최대 레벨 {p2} · 보물 상자</small></p>",{name:PD[d.evo].name,p:G.passives[d.evo]?'✓':_t("필요"),p2:w.lv>=max?'✓':`${w.lv}/${max}`}):'';
- const ic=cls?`<span class="seal" style="background:${d.col}">${d.g}</span>`:`<img src="${ICON[w.id]}" alt="">`;
+ const ic=cls?`<span class="seal" style="background:${d.col}">${d.g}</span>`:`<img src="${wIcon(w)}" alt="">`;
  return `<div class="strow"><span class="ic">${ic}</span><div><p><b>${name}</b> <small>Lv ${d.fuse?'合':w.lv}${d.fuse?'':'/'+max}</small></p><p>${tags.join('')}</p><p>${desc}</p>${next}${evo}</div>${stDmgBox(w.id)}</div>`;}
 function renderStatus(){const P=G.P,C=CHARS[G.cid],t=curTier();
  for(const [k,id] of [['w','tabStW'],['p','tabStP'],['s','tabStS']])$('#'+id).setAttribute('aria-selected',stTab===k);
