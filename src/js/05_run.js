@@ -92,7 +92,7 @@ const FUSE=[
  {id:'f_hanjim',a:'doe',b:'jige',job:'sangin',n:'한 짐 장사',cd:6,d:'6초마다 쌀 한 짐을 쿵 내려놓아 둘레를 크게 부수고, 쌀알 장판 넷을 펼친다.',
   fx(P){const D=FDMG();pulseRing(P.x,P.y,80*P.area,D*1.8,'#c9a06a',160);for(let i=0;i<4;i++){const a=i/4*TAU+0.4;zone({x:P.x+Math.cos(a)*50,y:P.y+Math.sin(a)*40,r:26*P.area,dmg:D*0.35,tick:0.35,life:3,col:'#efe6d2',slow:1,hold:1,kind:'rice'});}}}];
 for(const f of FUSE){
- WD[f.id]={name:f.n,type:'w',job:f.job,max:5,fuse:f,evoName:f.n,evoDesc:f.d,desc:[`${WD[f.a].evoName}과(와) ${WD[f.b].evoName}이(가) 하나로 합쳐졌다. ${f.dm?'':'두 무기 피해 +20%. '}${f.d}`,'','','',''],
+ WD[f.id]={name:f.n,type:'w',job:f.job,max:5,fuse:f,evoName:f.n,evoDesc:f.d,desc:[`${WD[f.a].evoName}과(와) ${WD[f.b].evoName}이(가) 하나로 합쳐졌다. ${(p=>p?`두 무기 피해 ${p>0?'+':'−'}${Math.abs(p)}%. `:'')(Math.round((1.2*(f.dm||1)-1)*100))}${f.d}`,'','','',''],
   upd(w,dt,P){const m=P.might;P.might*=1.2*(f.dm||1);try{for(const k of (w.kids||[]))WD[k.id].upd(k,dt,P);}finally{P.might=m;}
    w.t-=dt;if(w.t<=0){w.t=f.cd*P.cd;f.fx(P);}}};
  const c=document.createElement('canvas');c.width=c.height=8;const x=c.getContext('2d');x.drawImage(ICS[f.a],0,0);x.save();x.beginPath();x.moveTo(8,0);x.lineTo(8,8);x.lineTo(0,8);x.closePath();x.clip();x.drawImage(ICS[f.b],0,0);x.restore();
