@@ -70,3 +70,62 @@ Object.assign(WD,{
   who:'임진왜란 때 수군을 이끌고 명량의 거센 물살 울돌목에서 크게 이긴 장수.',src:'https://encykorea.aks.ac.kr/Article/E0044900'});
  S[1].tiers.push({name:'홍의장군 곽재우',skill:'uibyeong',bonus:'투사체 +1 · 이동 속도 +10%',apply:B=>{B.amount+=1;B.spd+=0.1;},look:lk('jeonrip','#c23b2a',{T:'#c23b2a',L:'#7a2018',item:'sword'}),
   who:'임진왜란 때 붉은 옷을 입고 의병을 일으켜 「홍의장군」이라 불린 의병장.',src:'https://encykorea.aks.ac.kr/Article/E0004695'});}
+
+/* ======================= v19.1 무당·기생·상인 ======================= */
+ITEMS.yundo=[[10,8,'y'],[11,8,'y'],[10,9,'y'],[11,9,'r'],[10,10,'y'],[11,10,'y']];   // 윤도(나침반, 남사고)
+ITEMS.geomungo=[[10,5,'n'],...col(11,5,11,'o'),[10,6,'o'],[10,7,'w'],[10,8,'o'],[10,9,'w'],[10,10,'o'],[10,11,'n']];   // 거문고(황진이)
+ITEMS.ring=[[10,8,'y'],[11,8,'w'],[10,9,'s']];   // 가락지 빛(논개)
+ITEMS.insamPack=[[10,8,'o'],[11,8,'g'],[10,9,'o'],[11,9,'o'],[10,10,'n'],[11,10,'o']];   // 인삼 꾸러미(임상옥)
+ITEMS.jigeItem=[...col(11,2,12,'n'),...col(10,4,10,'o'),[10,3,'n'],[10,11,'n']];   // 지게(백달원)
+Object.assign(WD,{
+ /* ---- 무당 ---- */
+ tojeong:{name:'토정비결',type:'c',g:'卦',col:'#7a5a2a',max:5,desc:['괘를 뽑는다. 길하면 금빛 기운이 요괴를 치고, 흉하면 화면의 요괴가 모두 느려지며 조금 다친다. 대길이면 둘 다.','피해 +','대길이 더 자주 나온다','피해 +','대길이 더 자주, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const pDg=L5(w,[0.2,0.2,0.3,0.3,0.4]),r=Math.random(),k=r<pDg?'daegil':r<pDg+(1-pDg)/2?'gil':'hyung',dmg=L5(w,[40,55,55,70,90])*P.might;w.last=k;
+   G.fx.push({t:'num',x:P.x,y:P.y-24,v:k==='daegil'?'大吉':k==='gil'?'吉':'凶',life:0.9,max:0.9,big:true});
+   if(k!=='hyung')for(let i=0;i<5;i++){const tg=randomEnemy();warn({x:tg?tg.x:P.x+rnd(-80,80),y:tg?tg.y:P.y+rnd(-60,60),r:24*P.area,t:0.4+i*0.08,dmg,friendly:1,col:'#e0b048',fx:'gold'});}
+   if(k!=='gil')for(const e of G.enemies)if(!e.dead&&!e.prop&&inView(e)){if(!e.boss)e.slow=Math.max(e.slow||0,2.5);hurt(e,dmg*0.3,0);}
+   w.t=L5(w,[5,5,5,4.5,4.5])*P.cd;}},
+ cheongi:{name:'천기누설',type:'c',g:'星',col:'#1a2b4a',max:5,desc:['앞날을 내다봐 보스 경고 장판과 요괴 탄이 몰린 곳에 먼저 별빛을 떨어뜨린다. 별빛은 탄을 지우고 요괴를 친다.','별 +1','탄 지우는 범위 +','별 +1, 피해 +','별 +2, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=L5(w,[3,4,4,5,7]),r=L5(w,[20,20,26,26,28])*P.area,dmg=L5(w,[30,30,30,40,52])*P.might,pts=[];
+   const lt=i=>0.3+i*0.06;   /* 별이 떨어지는 때. 움직이는 탄은 그때 있을 자리를 노린다(검토 지적) */
+   for(const z of G.warns)if(!z.friendly&&pts.length<n)pts.push([z.x,z.y]);
+   const qs=G.ebul.filter(q=>q.life>0&&Math.abs(q.x-P.x)<W/2&&Math.abs(q.y-P.y)<H/2);for(let i=0;i<qs.length&&pts.length<n;i+=Math.max(1,Math.floor(qs.length/n))){const q=qs[i],t=lt(pts.length);pts.push([q.x+(q.vx||0)*t,q.y+(q.vy||0)*t]);}
+   while(pts.length<n){const tg=randomEnemy();pts.push(tg?[tg.x,tg.y]:[P.x+rnd(-80,80),P.y+rnd(-60,60)]);}
+   pts.forEach(([x,y],i)=>warn({x,y,r,t:lt(i),dmg,friendly:1,col:'#8fd3ff',on:z=>{for(const q of G.ebul)if(q.life>0&&(q.x-z.x)**2+(q.y-z.y)**2<(z.r*1.3)**2)q.life=0;}}));
+   w.t=L5(w,[4,4,4,3.6,3.4])*P.cd;}},
+ /* ---- 기생 ---- */
+ byeokgye:{name:'청산리 벽계수',type:'c',g:'詩',col:'#3f7a8a',max:5,desc:['시조 한 수를 읊으면 물결 고리가 크게 퍼지며 요괴를 밀어내고 친다. 보스는 밀리지 않는다.','피해 +','물결 +1','밀어내는 힘 +, 범위 +','물결 +1, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const k=L5(w,[1,1,2,2,3]),R0=L5(w,[60,60,60,72,78])*P.area,dmg=L5(w,[20,26,26,32,40])*P.might,kb=L5(w,[50,50,50,80,80]);
+   for(let i=0;i<k;i++)qpush({t:i*0.45,f:()=>{pulseRing(P.x,P.y,R0,dmg,'#9ad0e0',kb);}});w.t=L5(w,[4.5,4.5,4.5,4,4])*P.cd;}},
+ namgang:{name:'남강의 물결',type:'c',g:'江',col:'#2a5a7a',max:5,desc:['남강의 물결이 앞으로 휩쓸며 지나간다. 엘리트와 보스처럼 강한 요괴일수록 더 크게 친다.','피해 +','물결 폭 +','강한 요괴 추가 피해 +','물결 폭 +, 피해 +30%'],
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const a=Math.atan2(P.diry||0,P.dirx||1),len=190,wd=L5(w,[18,18,24,24,30])*P.area,dmg=L5(w,[40,52,52,60,78])*P.might,xm=L5(w,[1.6,1.6,1.6,2.1,2.1]);
+   beam(P.x,P.y-3,a,len,wd,dmg,'#5a9ac0');const ca=Math.cos(a),sa=Math.sin(a);
+   for(const e of G.enemies){if(e.dead||e.prop||!(e.boss||e.elite))continue;const dx=e.x-P.x,dy=e.y-P.y,t=dx*ca+dy*sa,o=Math.abs(-dx*sa+dy*ca);if(t>0&&t<len&&o<wd/2+e.r)hurt(e,dmg*(xm-1),0);}
+   w.t=L5(w,[5,5,4.6,4.6,4.2])*P.cd;}},
+ /* ---- 상인 ---- */
+ insamgyo:{name:'인삼 교역',type:'c',g:'蔘',col:'#9a6a10',max:5,desc:['엽전을 얻을수록 인삼 꾸러미가 쌓인다(엽전이 없어도 조금씩). 가득 차면 교역이 터지며 둘레에 금빛 폭발을 일으킨다.','쌓이는 속도 +','폭발 피해 +','폭발 범위 +','쌓이는 속도 +, 피해 +30%'],
+  upd(w,dt,P){if(w.c0===undefined)w.c0=G.coins;const got=Math.max(0,G.coins-w.c0);w.c0=G.coins;w.fill=(w.fill||0)+got*L5(w,[1,1.3,1.3,1.3,1.6])+dt*L5(w,[3.2,3.8,3.8,3.8,4.6]);
+   if(w.fill<30)return;w.fill=0;w.pops=(w.pops||0)+1;const R0=L5(w,[70,70,70,90,96])*P.area,dmg=L5(w,[120,120,150,150,195])*P.might;
+   pulseRing(P.x,P.y,R0,dmg,'#e0b048',30);particle(P.x,P.y-6,'#e0b048',18,90,0.6);}},
+ jigehaeng:{name:'지게 행렬',type:'c',g:'負',col:'#6a4a2a',max:5,desc:['보부상 동료들이 지게를 지고 따라다니며 물미장으로 요괴를 친다. 체력이 낮을 때 요괴가 붙으면 동료가 지게로 업고 몸을 피한다(15초마다).','동료 +1','피해 +','동료 +1, 피하는 거리 +','동료 +1, 피해 +30%'],
+  upd(w,dt,P){summon(w,Math.min(8,L5(w,[2,3,3,4,5])+P.amount),L5(w,[16,16,20,20,26])*P.might,'peddler',120);
+   w.esc=(w.esc||0)-dt;if(w.esc>0||P.hp>P.maxHp*0.25||G.pull)return;const e=nearest(P.x,P.y,60);if(!e)return;   /* 가까운 요괴가 있을 때만, 보스가 끌어당기는 동안은 안 함(검토 지적) */
+   const a=Math.atan2(P.y-e.y,P.x-e.x),d=L5(w,[50,50,50,70,70]);
+   P.x+=Math.cos(a)*d;P.y+=Math.sin(a)*d*0.8;pushOut(P,5);P.iframe=Math.max(P.iframe||0,0.8);particle(P.x,P.y,'#c9a06a',10,60,0.4);toast(_t("지게에 업혀 몸을 피한다"));w.esc=15;}}});
+{const M=CHARS.mudang.branches;
+ M[0].tiers.push({name:'토정 이지함',skill:'tojeong',bonus:'치명타 +8% · 재사용 −8%',apply:B=>{B.crit+=0.08;B.cd*=0.92;},look:lk('gat','#c9b48a',{T:'#a89c8a',item:'staff'}),
+  who:'마포 강변 흙담 움막에서 청빈하게 살았고, 『토정비결』을 지었다고 알려진 학자.',src:'https://encykorea.aks.ac.kr/Article/E0046084'});
+ M[1].tiers.push({name:'격암 남사고',skill:'cheongi',bonus:'범위 +15% · 재사용 −8%',apply:B=>{B.area+=0.15;B.cd*=0.92;},look:lk('gat','#1a2b4a',{T:'#efe6d2',item:'yundo'}),
+  who:'역학·풍수·천문에 밝아 앞날을 내다보았다는 이야기가 전하는 명종 때의 학자.',src:'https://encykorea.aks.ac.kr/Article/E0011938'});}
+{const K=CHARS.gisaeng.branches;
+ K[0].tiers.push({name:'명월 황진이',skill:'byeokgye',bonus:'공격력 +20% · 범위 +15%',apply:B=>{B.might+=0.2;B.area+=0.15;},look:lk('gache','#9ad0c0',{T:'#efe6d2',item:'geomungo'}),
+  who:'송도삼절로 꼽히는 시인이자 기생. 시조 「청산리 벽계수야」로 이름났다.',src:'https://encykorea.aks.ac.kr/Article/E0065346'});
+ K[1].tiers.push({name:'의기 논개',skill:'namgang',bonus:'공격력 +25% · 치명타 피해 +20%',apply:B=>{B.might+=0.25;B.critDmg+=0.2;},look:lk('gache','#c23b2a',{T:'#efe6d2',item:'ring'}),
+  who:'임진왜란 진주성 싸움 뒤 의로운 죽음으로 「의기」라 불리며, 남강의 의암에 이름이 남은 인물.',src:'https://encykorea.aks.ac.kr/Article/E0013009'});}
+{const S=CHARS.sangin.branches;
+ S[0].tiers.push({name:'거상 임상옥',skill:'insamgyo',bonus:'공격력 +20% · 구슬 끌어오기 +30%',apply:B=>{B.might+=0.2;B.magnet+=0.3;},look:lk('gat','#6a3a8a',{T:'#e0b048',item:'insamPack'}),
+  who:'의주의 거상. 국경 인삼 무역으로 큰 부를 쌓고, 굶주린 백성과 수재민을 구했다.',src:'https://encykorea.aks.ac.kr/Contents/Index?contents_id=E0047469'});
+ S[1].tiers.push({name:'도반수 백달원',skill:'jigehaeng',bonus:'최대 체력 +60 · 이동 속도 +10%',apply:B=>{B.maxHp+=60;B.spd+=0.1;},look:lk('paraengi','#efe6d2',{T:'#a89c8a',item:'jigeItem'}),
+  who:'조선 초 보부상 단체의 첫 우두머리(5도도반수)로 전하는 인물. 이성계를 지게에 싣고 구했다는 이야기가 전한다(전설).',src:'https://encykorea.aks.ac.kr/Article/E0022033'});}
+/* 늘 켜져 있는 기술(쌓기·동료)은 오의 각성에서 극의만(연환·신속이 효과가 없어서) */
+AWK_STATIC.add('insamgyo');AWK_STATIC.add('jigehaeng');

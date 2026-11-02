@@ -178,6 +178,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_mudang_03.png" alt=""> | 나라무당 | <img src="docs/img/s_daedong.png" width="24" alt=""> 대동굿 | 마을 전체의 굿판이 열린다. 수많은 신이 잠시 내려와 날뛰고 화면이 정화된다. | 재사용 대기 −8% |
 | 4차 (Lv 40) | <img src="docs/img/char_mudang_04.png" alt=""> | 신어머니 | <img src="docs/img/s_jinogwi.png" width="24" alt=""> 진오귀굿 | 넋을 달래는 굿. 요괴가 쓰러질 때 일정 확률로 그 넋이 내 편이 되어 잠시 싸운다. | 지속시간 +15% |
 | 5차 (Lv 50) | <img src="docs/img/char_mudang_05.png" alt=""> | 무조 | <img src="docs/img/s_gil.png" width="24" alt=""> 길닦음 | 저승 가는 길을 닦는 흰 무명천이 길게 펼쳐져 돌며 요괴를 쓸어 낸다. | 공격력 +20% · 범위 +10% |
+| 6차 (Lv 60) | <img src="docs/img/char_mudang_06.png" alt=""> | **토정 이지함** | <img src="docs/img/s_tojeong.png" width="24" alt=""> 토정비결 | 괘를 뽑는다. 길하면 금빛 기운이 요괴를 치고, 흉하면 화면의 요괴가 모두 느려진다. 대길이면 둘 다. 마포 강변 흙담 움막에서 청빈하게 살았고, 『토정비결』을 지었다고 알려진 학자. ([고증](https://encykorea.aks.ac.kr/Article/E0046084)) | 치명타 +8% · 재사용 −8% |
 
 **신내림의 길**
 
@@ -188,6 +189,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_mudang_13.png" alt=""> | 천왕 만신 | <img src="docs/img/s_chilseong.png" width="24" alt=""> 칠성 낙성 | 북두칠성의 일곱 별이 떨어져 크게 터진다. | 공격력 +15% |
 | 4차 (Lv 40) | <img src="docs/img/char_mudang_14.png" alt=""> | 일월성신 만신 | <img src="docs/img/s_ilwol.png" width="24" alt=""> 일월성신 | 해와 달이 몸 둘레를 크게 돌며 닿는 요괴를 태우고 얼린다. | 치명타 +8% |
 | 5차 (Lv 50) | <img src="docs/img/char_mudang_15.png" alt=""> | 하늘 만신 | <img src="docs/img/s_noegong.png" width="24" alt=""> 뇌공강림 | 우레의 신이 내려와 몇 초 동안 쉬지 않고 벼락을 내리꽂는다. | 공격력 +20% · 범위 +10% |
+| 6차 (Lv 60) | <img src="docs/img/char_mudang_16.png" alt=""> | **격암 남사고** | <img src="docs/img/s_cheongi.png" width="24" alt=""> 천기누설 | 앞날을 내다봐 보스 경고 장판과 요괴 탄이 몰린 곳에 먼저 별빛을 떨어뜨린다. 별빛은 탄을 지우고 요괴를 친다. 역학·풍수·천문에 밝아 앞날을 내다보았다는 이야기가 전하는 명종 때의 학자. ([고증](https://encykorea.aks.ac.kr/Article/E0011938)) | 범위 +15% · 재사용 −8% |
 
 ### <img src="docs/img/charS_jangsu.png" alt=""> 장수
 
@@ -238,6 +240,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_gisaeng_03.png" alt=""> | 명기 | <img src="docs/img/s_jinyang.png" width="24" alt=""> 진양조 장단 | 가장 느린 장단이 흐르는 동안 화면의 요괴가 모두 느려지고 계속 피해를 입는다. | 재사용 대기 −8% |
 | 4차 (Lv 40) | <img src="docs/img/char_gisaeng_04.png" alt=""> | 대명창 | <img src="docs/img/s_pansori.png" width="24" alt=""> 판소리 완창 | 소리꾼의 소리가 두 줄기 물결이 되어 주위를 길게 훑는다. | 공격력 +15% |
 | 5차 (Lv 50) | <img src="docs/img/char_gisaeng_05.png" alt=""> | 국창 | <img src="docs/img/s_deugeum.png" width="24" alt=""> 득음 | 소리가 경지에 이르러 화면 안 모든 요괴를 크게 치고, 내 체력을 20% 되찾는다. | 공격력 +20% · 최대 체력 +50 |
+| 6차 (Lv 60) | <img src="docs/img/char_gisaeng_06.png" alt=""> | **명월 황진이** | <img src="docs/img/s_byeokgye.png" width="24" alt=""> 청산리 벽계수 | 시조 한 수를 읊으면 물결 고리가 크게 퍼지며 요괴를 밀어내고 친다. 보스는 밀리지 않는다. 송도삼절로 꼽히는 시인이자 기생. 시조 「청산리 벽계수야」로 이름났다. ([고증](https://encykorea.aks.ac.kr/Article/E0065346)) | 공격력 +20% · 범위 +15% |
 
 **검무의 길**
 
@@ -248,6 +251,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_gisaeng_13.png" alt=""> | 의기 | <img src="docs/img/s_kalbaram.png" width="24" alt=""> 칼바람 | 몸을 세 번 돌려 둘레를 칼바람으로 벤다. | 공격력 +15% |
 | 4차 (Lv 40) | <img src="docs/img/char_gisaeng_14.png" alt=""> | 검무 대가 | <img src="docs/img/s_geomgi.png" width="24" alt=""> 검기 | 칼끝에서 뻗은 검기가 사방으로 날아가 길게 꿰뚫는다. | 치명 피해 +30% |
 | 5차 (Lv 50) | <img src="docs/img/char_gisaeng_15.png" alt=""> | 검선 | <img src="docs/img/s_geomseon.png" width="24" alt=""> 검선 강림 | 떠도는 신검들이 내려와 요괴를 쫓아다니며 벤다. | 공격력 +20% · 치명타 +8% |
+| 6차 (Lv 60) | <img src="docs/img/char_gisaeng_16.png" alt=""> | **의기 논개** | <img src="docs/img/s_namgang.png" width="24" alt=""> 남강의 물결 | 남강의 물결이 앞으로 휩쓸며 지나간다. 엘리트와 보스처럼 강한 요괴일수록 더 크게 친다. 임진왜란 진주성 싸움 뒤 의로운 죽음으로 「의기」라 불리며, 남강의 의암에 이름이 남은 인물. ([고증](https://encykorea.aks.ac.kr/Article/E0013009)) | 공격력 +25% · 치명타 피해 +20% |
 
 ### <img src="docs/img/charS_sangin.png" alt=""> 상인
 
@@ -267,6 +271,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_sangin_03.png" alt=""> | 대행수 | <img src="docs/img/s_gaekju.png" width="24" alt=""> 객주 짐꾼 | 객주에 묵던 짐꾼들이 달려 나와 지겟작대기로 요괴를 친다. | 최대 체력 +40 |
 | 4차 (Lv 40) | <img src="docs/img/char_sangin_04.png" alt=""> | 도방 | <img src="docs/img/s_eoeum.png" width="24" alt=""> 어음 | 도장 찍힌 어음이 날아가 요괴를 끝까지 쫓아 꿰뚫고, 닿은 자리에서 터진다. | 공격력 +15% |
 | 5차 (Lv 50) | <img src="docs/img/char_sangin_05.png" alt=""> | 대방 | <img src="docs/img/s_mangeum.png" width="24" alt=""> 만금 거래 | 만금이 오가는 큰 거래. 요괴 무리 위로 금덩이가 쏟아져 크게 터지고 엽전이 흩어진다. | 공격력 +20% · 최대 체력 +50 |
+| 6차 (Lv 60) | <img src="docs/img/char_sangin_06.png" alt=""> | **거상 임상옥** | <img src="docs/img/s_insamgyo.png" width="24" alt=""> 인삼 교역 | 엽전을 주울수록 인삼 꾸러미가 쌓인다(엽전이 없어도 조금씩). 가득 차면 교역이 터지며 둘레에 금빛 폭발을 일으킨다. 의주의 거상. 국경 인삼 무역으로 큰 부를 쌓고, 굶주린 백성과 수재민을 구했다. ([고증](https://encykorea.aks.ac.kr/Contents/Index?contents_id=E0047469)) | 공격력 +20% · 구슬 끌어오기 +30% |
 
 **보부상의 길**
 
@@ -277,6 +282,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_sangin_13.png" alt=""> | 공원 | <img src="docs/img/s_tongmun.png" width="24" alt=""> 통문 | 통문을 돌려 팔도의 보부상 동무를 부른다. 동무들이 요괴를 쫓아다니며 친다. | 공격력 +10% |
 | 4차 (Lv 40) | <img src="docs/img/char_sangin_14.png" alt=""> | 반수 | <img src="docs/img/s_jangdol.png" width="24" alt=""> 장돌림 | 닷새장을 도는 장돌뱅이 수레가 화면을 가로질러 달리며 앞을 막는 요괴를 들이받는다. | 재사용 대기 −8% |
 | 5차 (Lv 50) | <img src="docs/img/char_sangin_15.png" alt=""> | 도반수 | <img src="docs/img/s_paldo.png" width="24" alt=""> 팔도 행상 | 팔도의 장터가 한꺼번에 열린다. 여덟 방위에서 짐이 터지고 주판알이 사방으로 흩어진다. | 공격력 +20% · 최대 체력 +50 |
+| 6차 (Lv 60) | <img src="docs/img/char_sangin_16.png" alt=""> | **도반수 백달원** | <img src="docs/img/s_jigehaeng.png" width="24" alt=""> 지게 행렬 | 보부상 동료들이 지게를 지고 따라다니며 물미장으로 요괴를 친다. 체력이 낮아지면 동료가 지게로 업고 몸을 피한다(15초마다). 조선 초 보부상 단체의 첫 우두머리(5도도반수)로 전하는 인물. 이성계를 지게에 싣고 구했다는 이야기가 전한다(전설). ([고증](https://encykorea.aks.ac.kr/Article/E0022033)) | 최대 체력 +60 · 이동 속도 +10% |
 
 ---
 
@@ -1142,6 +1148,7 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 | v18.6.2 | 버그 고침: 무당 등 직업 기술 레벨업 카드 아이콘이 「?」로 나오던 것(v18.5에서 생김) · 퇴마사가 오방신장기 깃발 표지 밑에 서면 표지가 퇴마사를 가리던 것(이제 옅어짐) · 보스가 받는 피해 숫자에 소수점이 나오던 것(초당 피해 상한을 정수로) |
 | v18.6.3 | 버그 고침: 휴대폰에서 손을 뗐는데도 이동이 「눌린 채」 남아 퇴마사가 저절로 움직이고, 그 뒤로는 새 터치도 먹지 않던 문제. 손을 뗀 알림을 놓쳐도 화면에 손가락이 없으면 이동을 풀고, 새로 누르면 그 손가락이 이동을 맡음. 앱 전환·제어 센터 등으로 화면이 가려져도 풀림 |
 | v19.0 | **6차 전직(1부)**: 5차를 마친 퇴마사가 Lv 60에 조선의 실존 인물로 전직. 선비(다산 정약용 「거중기」 · 어사 박문수 「봉고파직」)·의원(구암 허준 「백 첩 탕약」 · 신의 백광현 「대침 발근」)·장수(충무공 이순신 「울돌목 회오리」 · 홍의장군 곽재우 「홍의 의병」). 고유 기술·전직 보너스·새 차림·발밑 금빛 고리·과업 6. 무당·기생·상인은 다음 판. 고증: 한국민족문화대백과사전<br><img src="docs/img/tier6_looks.png" width="600" alt="5차와 6차 차림"> |
+| v19.1 | **6차 전직(2부)**: 무당(토정 이지함 「토정비결」 · 격암 남사고 「천기누설」)·기생(명월 황진이 「청산리 벽계수」 · 의기 논개 「남강의 물결」)·상인(거상 임상옥 「인삼 교역」 · 도반수 백달원 「지게 행렬」). 이제 12갈래 모두 Lv 60에 6차 전직 |
 
 ### 소스 구조 (v18.0~)
 

@@ -3,7 +3,7 @@
  ① 선비 학문 5차 Lv 60 전직 창: 제목 「성현에서 다산 정약용(으)로」, 기술 「거중기」, 인물 소개 한 줄, 수련 셋
  ② 고르면 상태창 줄기에 6단계(… → 성현 → 다산 정약용)
  ③ 1차 갈래 고르기 카드의 줄기 끝에 6차 인물
- ④ 도움말 「직업과 전직」: 6차 인물·소개·고증 출처, 6차가 아직 없는 갈래는 「곧」
+ ④ 도움말 「직업과 전직」: 6차 인물·소개·고증 출처(v19.1부터 12갈래 모두, 「곧」 없음)
  모든 화면 가로 넘침 0 · 화면 오류 0"""
 import sys, pathlib
 from playwright.sync_api import sync_playwright
@@ -32,8 +32,9 @@ with sync_playwright() as p:
         if '다산 정약용' not in t1 or '어사 박문수' not in t1: fails.append(f'{vname} ③ 갈래 줄기 끝 6차 {t1[:200]}')
         pg.evaluate("()=>{show(null);openHelp('title');helpTab='class';renderHelp();}"); pg.wait_for_timeout(300); pg.screenshot(path=str(OUT / f'{vname}_help.png'), full_page=True)
         hp = pg.evaluate("()=>document.querySelector('#overlay')?document.querySelector('#overlay').innerText:document.body.innerText")
-        for w in ('다산 정약용', '수원 화성을 설계하고', '한국민족문화대백과사전', '홍의장군 곽재우', '곧'):
+        for w in ('다산 정약용', '수원 화성을 설계하고', '한국민족문화대백과사전', '홍의장군 곽재우', '의기 논개', '도반수 백달원', '토정 이지함'):
             if w not in hp: fails.append(f'{vname} ④ 도움말에 「{w}」 없음')
+        if 'Lv 60 6차 · 곧' in hp: fails.append(f'{vname} ④ v19.1: 「곧」이 남음')
         o = pg.evaluate(OVER)
         if o: fails.append(f'{vname} ④ 넘침 {o}')
         ctx.close()

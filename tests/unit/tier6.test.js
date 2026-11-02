@@ -21,10 +21,12 @@ if(typeof tierMax==='function'){
  // Lv 63에 5차를 마침 → 바로 대기열
  st6('seonbi',0,4,63);openAdv();advPick[0]();ok(G.P.tier===5&&G.queue.includes('adv'),'Lv 63에 5차 → 6차 전직 대기 '+JSON.stringify(G.queue));
  // 칸 없는 갈래(무당은 v19.0에 6차 없음)
- const noB=['mudang','gisaeng','sangin'].find(c=>tierMax(c,0)===5);
+ /* v19.1부터 모든 갈래에 6차가 있으므로 무당 굿의 길의 6차 칸을 잠시 빼고 「칸 없는 갈래」를 검사한다 */
+ const MB=CHARS.mudang.branches[0].tiers,held=MB.length>5?MB.pop():null;const noB=['mudang','gisaeng','sangin'].find(c=>tierMax(c,0)===5);
  if(noB){st6(noB,0,5,59);let err='';try{lvUp(11);for(let i=0;i<20&&G.queue.length;i++){const q=takeQueued();if(q==='adv')err+='adv 꺼냄 ';}}catch(e){err+=e.message;}
   ok(!err&&!G.queue.includes('adv')&&G.P.tier===5,`칸 없는 갈래(${noB}) Lv 70: 전직 없음 ${err}`);}
- else ok(false,'6차 칸 없는 갈래가 있어야 함(v19.0)');
+ else ok(false,'6차 칸 없는 갈래를 만들지 못함');
+ if(held)MB.push(held);
  // 각성(58·62)과 함께: 셋 다 꺼내짐, 전직이 먼저
  st6('seonbi',0,5,57);lvUp(6);const order=[];while(G.queue.length){const q=takeQueued();if(q!=='lvl')order.push(q);}
  ok(order.join(',')==='adv,awk,awk','Lv 57→63: 전직이 먼저, 각성 둘도 빠짐없이: '+order.join(','));
@@ -38,7 +40,8 @@ if(typeof tierMax==='function'){
  // 검토 지적: 6차 과업 휘장은 6차 차림 · 도움말 소개 줄은 <li> 안
  if(t6.length){const sp=taskSpec(t6.find(t=>t.id.startsWith('j_6b0_')));ok(sp&&sp[0]==='tier'&&sp[3]===5,'6차 과업 휘장은 6차 차림(칸 5) '+JSON.stringify(sp));}
  openHelp('title');helpTab='class';renderHelp();const hh=$('#helpBody').innerHTML;ok(/다산 정약용/.test(hh),'도움말 직업 탭이 그려짐');ok(!/<\/li><p class="who"/.test(hh),'도움말: 소개 줄이 <ol> 바로 아래가 아니라 <li> 안');
- ok(/레벨 10·20·30·40·50·60/.test(helpBodyText()),'처음이라면: 전직 레벨에 60');
+ ok(/레벨 10·20·30·40·50·60/.test(helpBodyText()),'처음이라면: 전직 레벨에 60');ok(!/선비·의원·장수부터/.test(helpBodyText()),'v19.1: 「선비·의원·장수부터」 글 없음');
+ ok(Object.keys(CHARS).every(c=>[0,1].every(b=>tierMax(c,b)===6)),'v19.1: 12갈래 모두 6차');
  // 발밑 고리
  let n=0;const dr=drawTier6Ring;drawTier6Ring=function(){n++;return dr.apply(this,arguments);};
  st6('seonbi',0,6,61);render();const n6=n;st6('seonbi',0,5,61);n=0;render();drawTier6Ring=dr;ok(n6===1&&n===0,`발밑 고리: 6차 ${n6}번, 5차 ${n}번`);
