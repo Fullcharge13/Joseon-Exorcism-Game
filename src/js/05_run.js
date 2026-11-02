@@ -1,12 +1,16 @@
 /* ======================= run state ======================= */
-let G=null,modal='title',selChar=null,prevScreen='title',prep={card:null,curse:0,diff:meta.diff||'normal',mode:meta.mode||'normal'};
+/* v19.3 점괘 패는 세 장까지: 글자 한 장(옛 기록·옛 호출)이나 배열을 받아 없는 패·같은 패를 거르고 세 장으로 자름 */
+const CARD_MAX=3;
+function cardList(c){return (Array.isArray(c)?c:(c?[c]:[])).filter((v,i,a)=>CARDS[v]&&a.indexOf(v)===i).slice(0,CARD_MAX);}
+function cardNames(c){return cardList(c).map(id=>CARDS[id].n).join('·');}
+let G=null,modal='title',selChar=null,prevScreen='title',prep={cards:[],curse:0,diff:meta.diff||'normal',mode:meta.mode||'normal'};
 const TMP=[],TMP2=[];
 const keys={};let joy=null;
 
-function newGame(cid,card,curse,diff='normal',mode='normal'){VFXS.debris.length=0;diagSeen.clear();diagStuck=0;diagNoScr=0;diagLastT=null;   // 멈춤 기록: 같은 종류는 한 판에 한 번
+function newGame(cid,card,curse,diff='normal',mode='normal'){const cards=cardList(card);VFXS.debris.length=0;diagSeen.clear();diagStuck=0;diagNoScr=0;diagLastT=null;   // 멈춤 기록: 같은 종류는 한 판에 한 번
 
  const C=CHARS[cid],m=meta.up;
- G={cid,card,curse,diff,stage:0,st:0,time:0,dtNow:0,kills:0,coins:0,over:false,
+ G={cid,cards,curse,diff,stage:0,st:0,time:0,dtNow:0,kills:0,coins:0,over:false,
    base:{maxHp:100,spd:1,might:1,area:1,cd:1,amount:0,magnet:1,armor:0,regen:0,xpGain:1,dur:1,luck:0,crit:0.05,critDmg:1.5,healM:1,pspd:1},
    P:{x:0,y:0,r:5,hp:1,maxHp:0,face:1,dirx:1,diry:0,lvl:1,xp:0,next:xpNeed(1),iframe:0,moving:false,revive:meta.upB.revive?0:(m.revive||0),branch:null,tier:0,healAcc:0,slowT:0,shieldT:0},
    weapons:[],passives:{},bless:{},gfx:[],guideLog:[],enemies:[],projs:[],ebul:[],gems:[],items:[],fx:[],zones:[],ezones:[],spirits:[],warns:[],movers:[],
@@ -18,7 +22,7 @@ function newGame(cid,card,curse,diff='normal',mode='normal'){VFXS.debris.length=
  C.base(G.base);if(cid==='sangin')G.mods.coin*=1.3;
  const B=G.base,M=G.mods;
  {const u=meta.upB;if(u.hp)B.regen+=(m.hp||0)*0.1;else B.maxHp+=(m.hp||0)*10;if(u.might)B.crit+=(m.might||0)*0.03;else B.might+=(m.might||0)*0.05;if(u.spd)B.magnet+=(m.spd||0)*0.12;else B.spd+=(m.spd||0)*0.04;if(u.xp)M.coinShop=1+(m.xp||0)*0.08;else B.xpGain+=(m.xp||0)*0.1;if(u.revive&&m.revive)M.dmgIn*=0.9;}
- switch(card){
+ for(const card of cards)switch(card){
   case 'gilil':B.xpGain+=0.2;M.eCnt*=1.15;break; case 'hyungnyeon':M.noTteok=true;M.coin*=2;break;
   case 'yeokma':B.spd+=0.25;B.maxHp*=0.8;break; case 'dohwa':B.magnet*=2;M.eSpd*=1.1;break;
   case 'hongsu':B.area+=0.25;B.pspd-=0.2;break; case 'baekhosal':B.crit+=0.15;M.dmgIn*=1.2;break;

@@ -7,7 +7,7 @@ ok(G.mode==='tale'&&G.tale&&G.tale.id==='woochi'&&G.tale.act===0,'설화 출정 
 ok(G.cid==='seonbi'&&G.P.branch===1&&G.P.tier===1&&G.P.lvl===12,`선비 · 감찰의 길 1차 · Lv12 (지금 ${G.cid} ${G.P.branch} ${G.P.tier} ${G.P.lvl})`);
 const wl=id=>{const w=G.weapons.find(w=>w.id===id);return w?w.lv:0;};
 ok(wl('meok')===3&&wl('buchae')===2&&wl('mapae')===1,`먹탄 3 · 합죽선 2 · 전직 기술 1 (지금 ${G.weapons.map(w=>w.id+w.lv).join(',')})`);
-ok(G.diff==='normal'&&!G.curse&&!G.card&&!G.ks,'난이도 보통 · 액운·패·정표 없음');
+ok(G.diff==='normal'&&!G.curse&&!(G.cards||[]).length&&!G.ks,'난이도 보통 · 액운·패·정표 없음');
 ok(!G.pet&&modal==='scene','펫 고르기 없이 시작 장면');
 step(5);ok(modal===null||modal==='levelup','시작 장면을 넘기면 싸움 시작');
 god();

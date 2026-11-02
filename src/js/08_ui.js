@@ -274,7 +274,7 @@ function nextStage(){G.gfx=[];G.dawnT=null;VFXS.debris.length=0;G.stage++;G.st=0
  G.zones=G.zones.filter(z=>z.follow);G.items=G.items.filter(i=>i.k==='chest');G.rs.maxStage=Math.max(G.rs.maxStage,G.stage+1);
  G.P.hp=Math.min(G.P.maxHp,G.P.hp+G.P.maxHp*0.3);show(null);stageToast();checkTasks();}
 function statHTML(){const P=G.P;
- return [[G.mode==='rush'?_t("원정"):_t("막"),G.mode==='rush'?`${G.stage+1} / ${STAGES.length}`:stageLabel()],[_t("버틴 시간"),fmtT(totalTime())],[_t("레벨"),P.lvl],[_t("처치"),G.kills],[_t("엽전"),G.coins],[_t("직업"),className(),1],[_t("펫"),G.pet?`${PETS[G.pet.type].n} Lv ${G.pet.lv}`:_t("없음|칸"),1],[_t("난이도"),DIFFS[G.diff].n,1],[_t("액운"),G.curse],[_t("점괘 패"),G.card?CARDS[G.card].n:_t("없음"),1],[_t("공격력"),Math.round(P.might*100)+'%'],[_t("치명타"),Math.round(P.crit*100)+'%']].map(([a,v,k])=>`<div><span>${a}</span><strong${k?' class="k"':''}>${v}</strong></div>`).join('');}
+ return [[G.mode==='rush'?_t("원정"):_t("막"),G.mode==='rush'?`${G.stage+1} / ${STAGES.length}`:stageLabel()],[_t("버틴 시간"),fmtT(totalTime())],[_t("레벨"),P.lvl],[_t("처치"),G.kills],[_t("엽전"),G.coins],[_t("직업"),className(),1],[_t("펫"),G.pet?`${PETS[G.pet.type].n} Lv ${G.pet.lv}`:_t("없음|칸"),1],[_t("난이도"),DIFFS[G.diff].n,1],[_t("액운"),G.curse],[_t("점괘 패"),G.cards.length?cardNames(G.cards):_t("없음"),1],[_t("공격력"),Math.round(P.might*100)+'%'],[_t("치명타"),Math.round(P.crit*100)+'%']].map(([a,v,k])=>`<div><span>${a}</span><strong${k?' class="k"':''}>${v}</strong></div>`).join('');}
 function buildHTML(){return (G.pet?`<div class="slot pet" title="${PETS[G.pet.type].n}"><img src="${big(PSPR[G.pet.type].n,2)}" alt="${PETS[G.pet.type].n}"><b>${G.pet.lv}</b></div>`:'')+G.weapons.map(w=>{const d=WD[w.id];return d.type==='c'?`<div class="slot cls${w.awk?' awk':''}" title="${w.awk?AWK[w.awk].n+_t("의 "):''}${d.name}"><span class="si" style="background:${d.col}">${d.g}</span><b>${w.lv}${w.lb?'+'+w.lb:''}</b></div>`:`<div class="slot ${d.fuse?'fuse':w.evo?'evo':''}" title="${wName(w)}${w.tm?_t(" · 담금질 ")+TEMPER[w.tm].n:''}${(w.seals||[]).length?_t(" · 인장 ")+w.seals.map(k=>SEALS[k].g).join(''):''}"><img src="${wIcon(w)}" alt="${wName(w)}">${(w.seals||[]).length?`<i class="sl">${'•'.repeat(w.seals.length)}</i>`:''}${w.tm?`<i class="tm">${TEMPER[w.tm].g}</i>`:''}<b>${d.fuse?'合':w.evo?'★':w.lv}${w.lb?'+'+w.lb:''}</b></div>`;}).join('')
  +Object.keys(G.passives).map(id=>`<div class="slot" title="${PD[id].name}"><img src="${ICON[id]}" alt="${PD[id].name}"><b>${G.passives[id]}</b></div>`).join('')
  +(G.ult?`<div class="slot ult" title="${ULT[G.cid].n}"><span class="si" style="background:#7a2018">${ULT[G.cid].g}</span></div>`:'')
@@ -315,7 +315,7 @@ function renderTitle(){checkTasks();{const mn=$('#migNote');if(mn)mn.hidden=!met
  diffChips($('#titleDiffChips'),$('#titleDiffDesc'),renderTitle);
  const bst=meta.best?_t(" · 최고 기록 {sub}{p}, 처치 {kills}",{sub:STAGES[Math.min(meta.best.stage,9)].sub,p:meta.best.win?_t(" 완주"):'',kills:meta.best.kills}):'';
  $('#titleCoins').textContent=_t("보유 엽전 {coins}닢 · 과업 {length}/{length2}{bst}",{coins:meta.coins,length:meta.done.length,length2:TASKS.length,bst:bst});}
-function openPrep(){if(!selChar)return;prep.curse=Math.min(prep.curse,meta.curseMax);if(prep.card&&!unlocked('card:'+prep.card))prep.card=null;$('#prepTitle').textContent=_t("{name} · 출정 준비",{name:CHARS[selChar].name});renderPrep();show('prep');}
+function openPrep(){if(!selChar)return;prep.curse=Math.min(prep.curse,meta.curseMax);prep.cards=cardList(prep.cards).filter(id=>unlocked('card:'+id));$('#prepTitle').textContent=_t("{name} · 출정 준비",{name:CHARS[selChar].name});renderPrep();show('prep');}
 function diffChips(box,desc,after){box.innerHTML='';
  for(const k of ['easy','normal','hard']){const bt=document.createElement('button');bt.textContent=DIFFS[k].n;bt.setAttribute('aria-pressed',prep.diff===k);bt.onclick=()=>{prep.diff=k;meta.diff=k;saveMeta();after();};box.appendChild(bt);}
  desc.textContent=DIFFS[prep.diff].d;}
@@ -341,6 +341,13 @@ function renderTalePrep(){const tale=prep.mode==='tale';
   $('#skinDesc').textContent=_t("설화 출정에서 얻은 옷 빛깔. 모든 전직 차림의 옷 색이 바뀐다. 지금: {n}",{n:(sk.find(c=>c.id===cur)||sk[0]).n});}
  const go=$('#goBtn');go.textContent=tale?_t("설화 출정"):_t("출정");go.disabled=tale&&!prep.tale;
  $('#prepTitle').textContent=tale?_t("설화 출정 준비"):_t("{name} · 출정 준비",{name:CHARS[selChar].name});}
+/* v19.3 점괘 패 세 장: 준비 화면 단추가 부르는 함수(시험이 화면 없이 부름) */
+function prepCardOk(id){return unlocked('card:'+id)&&(prep.cards.includes(id)||prep.cards.length<CARD_MAX);}
+function prepCardToggle(id){if(!prepCardOk(id))return;const i=prep.cards.indexOf(id);if(i>=0)prep.cards.splice(i,1);else prep.cards.push(id);}
+function prepCardClear(){prep.cards.length=0;}
+function prepRandOk(){return prep.cards.length<CARD_MAX&&Object.keys(CARDS).some(id=>unlocked('card:'+id)&&!prep.cards.includes(id));}
+function prepCardRand(){if(!prepRandOk())return;const c=Object.keys(CARDS).filter(id=>unlocked('card:'+id)&&!prep.cards.includes(id));prep.cards.push(c[Math.random()*c.length|0]);}
+function prepCardHead(){return _t("점괘 패 {n}/{max}",{n:prep.cards.length,max:CARD_MAX});}
 function renderPrep(){diffChips($('#diffChips'),$('#diffDesc'),renderPrep);
  {const mc=$('#modeChips');mc.innerHTML='';for(const k in MODES){const bt=document.createElement('button');bt.textContent=MODES[k].n;bt.setAttribute('aria-pressed',(prep.mode||'normal')===k);bt.onclick=()=>{prep.mode=k;meta.mode=k;saveMeta();renderPrep();};mc.appendChild(bt);}$('#modeDesc').textContent=MODES[prep.mode||'normal'].d;}
  const cc=$('#curseChips');cc.innerHTML='';
@@ -350,9 +357,10 @@ function renderPrep(){diffChips($('#diffChips'),$('#diffDesc'),renderPrep);
   for(const id of [null,...own]){const bt=document.createElement('button');bt.id='ks-'+(id||'none');bt.textContent=id?KS[id].n:_t("없음|정표");bt.setAttribute('aria-pressed',meta.hub.ks===id);bt.onclick=()=>{meta.hub.ks=id;saveMeta();renderPrep();};kc.appendChild(bt);}
   $('#ksDesc').textContent=meta.hub.ks?_t("{n}의 정표 · {d}",{n:NPCS[KS[meta.hub.ks].npc].n,d:KS[meta.hub.ks].d}):own.length?_t("정표를 하나 차고 나가면 이번 출정 내내 효과가 이어진다. 주막에서 바꿀 수 있다."):_t("퇴마사 본부의 식구에게 막걸리를 건네면 정표를 받는다.");}
  const pl=$('#paeList');pl.innerHTML='';
- const none=document.createElement('button');none.innerHTML=_t("<b>패 없음</b><span>규칙을 바꾸지 않는다.</span>");none.setAttribute('aria-pressed',!prep.card);none.onclick=()=>{prep.card=null;renderPrep();};pl.appendChild(none);
- for(const id in CARDS){const ok=unlocked('card:'+id),c=CARDS[id];const bt=document.createElement('button');bt.disabled=!ok;bt.setAttribute('aria-pressed',prep.card===id);
-  bt.innerHTML=`<b>${ok?c.n:'???'}</b><span>${ok?c.d:_t("과업으로 해금")}</span>`;bt.onclick=()=>{prep.card=id;renderPrep();};pl.appendChild(bt);}
+ $('#paeHead').textContent=prepCardHead();$('#paeRand').disabled=!prepRandOk();
+ const none=document.createElement('button');none.innerHTML=_t("<b>패 없음</b><span>규칙을 바꾸지 않는다.</span>");none.setAttribute('aria-pressed',!prep.cards.length);none.onclick=()=>{prepCardClear();renderPrep();};pl.appendChild(none);
+ for(const id in CARDS){const ok=unlocked('card:'+id),c=CARDS[id];const bt=document.createElement('button');bt.disabled=!prepCardOk(id);bt.setAttribute('aria-pressed',prep.cards.includes(id));
+  bt.innerHTML=`<b>${ok?c.n:'???'}</b><span>${ok?c.d:_t("과업으로 해금")}</span>`;bt.onclick=()=>{prepCardToggle(id);renderPrep();};pl.appendChild(bt);}
  renderTalePrep();}
 let codexTab='task';
 let codexFrom='title';
@@ -496,7 +504,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
   h+=hcard(_t("갈림길"),_t("<p>주막을 나서면 다음 막으로 가는 길 셋이 나온다. 길마다 끝에 기다리는 보상이 미리 보이고, 보상은 그 막을 평정한 뒤 보물 상자보다 먼저 받는다. <b>험로</b>는 요괴 체력 +30%·수 +15%지만 보상이 두 배다. 마지막 막으로 가는 길에는 갈림길이 없다.</p>")+Object.keys(PATHS).map(id=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#2f6b5a">${PATHS[id].g}</span></span><div><p><b>${PATHS[id].n}</b> — ${PATHS[id].d}</p></div></div>`).join(''));
   h+=hcard(_t("하늘 신령의 강림"),_t("<p>환웅을 따라 내려온 풍백·우사·운사 가운데 한 분이 막마다 한 번, 30~95초 사이 아무 때나 구름을 타고 내려온다. 셋 가운데 한 가지 가호를 무작위로 내리며 {SKY_T}초 동안 이어진다. 남은 시간은 오른쪽 위 정보창에 나온다.</p>",{SKY_T:SKY_T})+Object.keys(SKY).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#2a2228;color:${SKY[k].col}">${SKY[k].n[0]}</span></span><div><p><b>${SKY[k].n}</b> · ${SKY[k].t}</p><p>${SKY[k].fx.map(f=>`<b>${f.n}</b> ${f.d}`).join(' / ')}</p></div></div>`).join(''));
   h+=hcard(_t("난이도"),Object.keys(DIFFS).map(k=>`<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:${k==='easy'?'#2f6b5a':k==='hard'?'#7a2018':'#3a5f9e'}">${DIFFS[k].n[0]}</span></span><div><p><b>${DIFFS[k].n}</b> · ${DIFFS[k].d}</p></div></div>`).join('')+_t("<p>모든 난이도에서 막 보스는 중간 보스를 토벌한 뒤에 나타난다.</p>"));
-  h+=hcard(_t("점괘 패"),_t("<p>출정 준비 화면에서 한 장을 고른다. 이번 출정의 규칙을 바꾼다.</p>")+Object.keys(CARDS).map(id=>{const ok=unlocked('card:'+id),lt=lockText('card:'+id);return `<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:15px;background:#2a2228">${CARDS[id].n[0]}</span></span><div><p><b>${CARDS[id].n}</b>${ok?'':_t(" <span class=\"tag\">잠김</span>")} · ${CARDS[id].d}</p>${!ok&&lt?`<p><small>${lt}</small></p>`:''}</div></div>`;}).join(''));
+  h+=hcard(_t("점괘 패"),_t("<p>출정 준비 화면에서 세 장까지 고른다. 고른 패의 효과가 모두 함께 이번 출정의 규칙을 바꾼다.</p>")+Object.keys(CARDS).map(id=>{const ok=unlocked('card:'+id),lt=lockText('card:'+id);return `<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:15px;background:#2a2228">${CARDS[id].n[0]}</span></span><div><p><b>${CARDS[id].n}</b>${ok?'':_t(" <span class=\"tag\">잠김</span>")} · ${CARDS[id].d}</p>${!ok&&lt?`<p><small>${lt}</small></p>`:''}</div></div>`;}).join(''));
   h+=hcard(_t("액운 단계"),_t("<p>제10막을 완주하면 다음 단계가 열린다. 단계는 앞 단계의 효과를 모두 안고 간다. 단계마다 출정 뒤 엽전 +15%.</p><ol>{p}</ol>",{p:CURSES.slice(1).map(c=>`<li>${c}</li>`).join('')})); }
  if(helpTab==='foe'){
   const cat={n:_t("일반"),e:_t("엘리트"),m:_t("중간 보스"),b:_t("막 보스")};
@@ -508,13 +516,13 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
  $('#helpBody').innerHTML=h;}
 {const _u=castUlt;castUlt=function(){const f0=G.fx.length,m0=G.movers.length;_u();tagNew(f0,m0,'ult');};const _c=castCall;castCall=function(){if(!G)return;const f0=G.fx.length,m0=G.movers.length;_c();tagNew(f0,m0,'call');};}
 function begin(){if(!selChar)return;if(meta.migNote){meta.migNote=false;saveMeta();}initAudio();
- if(prep.mode==='tale'){const c=taleCards().find(c=>c.id===prep.tale);if(c&&c.state!=='lock')taleStart(prep.tale);return;}newGame(selChar,prep.card,prep.curse,prep.diff,prep.mode||'normal');}
+ if(prep.mode==='tale'){const c=taleCards().find(c=>c.id===prep.tale);if(c&&c.state!=='lock')taleStart(prep.tale);return;}newGame(selChar,prep.cards.slice(),prep.curse,prep.diff,prep.mode||'normal');}
 function goHome(){G=null;$('#hud').hidden=true;$('#hudbtns').hidden=true;renderTitle();show('title');}
 
 $('#startBtn').onclick=openPrep;
 $('#goBtn').onclick=begin;
 $('#prepBack').onclick=()=>{renderTitle();show('title');};
-$('#paeRand').onclick=()=>{const ok=Object.keys(CARDS).filter(id=>unlocked('card:'+id));prep.card=ok[Math.random()*ok.length|0]||null;renderPrep();snd(500,0.15,'square',0.03);};
+$('#paeRand').onclick=()=>{prepCardRand();renderPrep();snd(500,0.15,'square',0.03);};
 $('#codexBtn').onclick=()=>openCodex('title');$('#helpBtn').onclick=()=>openHelp('title');$('#pauseHelp').onclick=()=>openHelp('pause');
 $('#helpBack').onclick=()=>{if(helpFrom==='pause')show('pause');else{renderTitle();show('title');}};$('#codexBack').onclick=()=>{if(codexFrom==='over'&&G)show('over');else if(codexFrom==='hub')openHub();else{renderTitle();show('title');}};
 $('#tabTask').onclick=()=>{codexTab='task';renderCodex();};$('#tabTale').onclick=()=>{codexTab='tale';renderCodex();};$('#tabAnom').onclick=()=>{codexTab='anom';renderCodex();};$('#tabDogam').onclick=()=>{codexTab='dogam';renderCodex();};
@@ -527,7 +535,7 @@ $('#chestOk').onclick=()=>{const cb=chestCb;chestCb=null;show(null);if(cb)cb();}
 $('#tavGo').onclick=openPath;
 $('#resumeBtn').onclick=()=>show(null);
 $('#quitBtn').onclick=()=>{show(null);endGame(false);};
-$('#againBtn').onclick=()=>{if(G.mode==='tale'){taleStart(G.tale.id);return;}newGame(G.cid,G.card,G.curse,G.diff,G.mode);};
+$('#againBtn').onclick=()=>{if(G.mode==='tale'){taleStart(G.tale.id);return;}newGame(G.cid,G.cards.slice(),G.curse,G.diff,G.mode);};
 $('#homeBtn').onclick=()=>{$('#toast').innerHTML='';G=null;$('#hud').hidden=true;$('#hudbtns').hidden=true;openHub();};
 $('#hubBtn').onclick=openHub;$('#hubGo').onclick=()=>{renderTitle();show('title');};$('#hubArch').onclick=()=>openArch('hub');$('#archBtn').onclick=()=>openArch('title');
 $('#archBack').onclick=()=>{if(archFrom==='hub')openHub();else{renderTitle();show('title');}};
