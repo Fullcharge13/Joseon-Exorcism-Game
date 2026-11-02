@@ -22,17 +22,18 @@ const rec=[];const di0=b.drawImage;b.drawImage=function(...a){rec.push(a);};
 let __sd=1;const __mr=Math.random;Math.random=()=>{__sd=(__sd*1103515245+12345)%2147483648;return __sd/2147483648;};
 function frameAt(k,setup){__sd=7;setEnt(k);newGame('seonbi','gilil',0,'normal');G.queue.length=0;show(null);god();G.enemies.length=0;G.items.length=0;G.projs&&(G.projs.length=0);setup();rec.length=0;render();return rec.slice();}
 const ps=()=>charSpr(playerLook());
+// v18.6: 그림 다듬기를 켜면 그림 둘레에 테두리 1칸(pad)이 붙어 그리는 폭이 (w+2pad)×배율. 몸 크기 w는 그대로
 const wOf=(calls,imgs)=>{const c=calls.find(a=>imgs.includes(a[0])&&a.length>=5);return c?c[3]:null;};
 const heroImgs=()=>{const s=ps();return [s.n,s.f,s.h,s.hf];};
 // 플레이어
-for(const k of [1,2]){const c=frameAt(k,()=>{});const w=wOf(c,heroImgs());ok(Math.abs(w-ps().w*k)<1e-6,`플레이어 그림 폭 ×${k} (지금 ${w} / 기본 ${ps().w})`);}
+for(const k of [1,2]){const c=frameAt(k,()=>{});const w=wOf(c,heroImgs());ok(Math.abs(w-(ps().w+2*(ps().pad||0))*k)<1e-6,`플레이어 그림 폭 ×${k} (지금 ${w} / 기본 ${ps().w})`);}
 // 일반 요괴·보스·이무기
 const nid=Object.keys(EN).find(id=>EN[id].c==='n'&&ESPR[id]);
 const eImgs=id=>{const s=ESPR[id];return [s.n,s.f,s.h,s.hf];};
 for(const k of [1,2]){const c=frameAt(k,()=>{spawnEnemy(nid,G.P.x+30,G.P.y);});const e=G.enemies[0];const w=wOf(c,eImgs(e.spr||nid));
- ok(Math.abs(w-ESPR[e.spr||nid].w*e.sc*k)<1e-6,`요괴 그림 폭 ×${k} (지금 ${w})`);}
+ ok(Math.abs(w-(ESPR[e.spr||nid].w+2*(ESPR[e.spr||nid].pad||0))*e.sc*k)<1e-6,`요괴 그림 폭 ×${k} (지금 ${w})`);}
 const bid='gumiho';for(const k of [1,2]){const c=frameAt(k,()=>{G.st=STAGE_T+1;G.midDone=true;spawnBoss(bid,false);G.boss.x=G.P.x+40;G.boss.y=G.P.y;});const e=G.boss;const w=wOf(c,eImgs(e.spr||e.kind));
- ok(Math.abs(w-ESPR[e.spr||e.kind].w*e.sc*(k===2?1.5:1))<1e-6,`보스는 2배를 골라도 1.5배 (k ${k}, 지금 ${w})`);}
+ ok(Math.abs(w-(ESPR[e.spr||e.kind].w+2*(ESPR[e.spr||e.kind].pad||0))*e.sc*(k===2?1.5:1))<1e-6,`보스는 2배를 골라도 1.5배 (k ${k}, 지금 ${w})`);}
 {let inI=false;const dI=drawImugi;drawImugi=e=>{inI=true;try{return dI(e);}finally{inI=false;}};const fr0=b.fillRect;b.fillRect=function(...a){if(inI)rec.push(['fr',...a]);};const pick=k=>frameAt(k,()=>{G.stage=3;spawnBoss('imugi',false);G.boss.x=G.P.x+40;G.boss.y=G.P.y;}).filter(a=>a[0]==='fr').map(a=>a.slice(1).join(',')).join('|');
  const p1=pick(1);ok(p1===pick(2)&&p1.length>200,'이무기 보스는 그대로');b.fillRect=fr0;drawImugi=dI;}
 // 보스의 분신(천년 환영)도 보스처럼 1.5배까지: 보스와 분신의 크기 비율이 기본과 2배에서 같다

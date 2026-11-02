@@ -29,7 +29,7 @@ function drawOb(k,x,y,r){const rr=R(r);b.fillStyle='rgba(0,0,0,0.35)';b.fillRect
   case 'pine':b.fillStyle='#4a3a30';b.fillRect(x-1,y-6,2,6);b.fillStyle='#2a4a3a';for(let i=0;i<3;i++){b.beginPath();b.moveTo(x,y-26+i*6);b.lineTo(x-rr+i,y-12+i*4);b.lineTo(x+rr-i,y-12+i*4);b.fill();}b.fillStyle='#e8ecf4';b.fillRect(x-3,y-24,6,1);b.fillRect(x-5,y-17,4,1);break;
   case 'stele':b.fillStyle='#3a3540';b.fillRect(x-4,y-16,8,16);b.fillStyle='#4a4552';b.fillRect(x-5,y-18,10,3);b.fillStyle='#8a8494';for(let i=0;i<4;i++)b.fillRect(x-2,y-13+i*3,4,1);break;
   default:b.fillStyle='#8a8494';b.fillRect(x-3,y-10,6,10);b.fillStyle='#5a5664';b.fillRect(x-4,y-1,8,1);b.fillStyle='#4a4552';b.fillRect(x-1,y-8,2,5);}}
-function drawSpr(s,x,y,flip,fl,sc=1,alpha=1){const img=fl?(flip?s.hf:s.h):(flip?s.f:s.n);const w=s.w*sc,h=s.hgt*sc;if(alpha<1)b.globalAlpha=alpha;b.drawImage(img,R(x-w/2),R(y-h),w,h);if(alpha<1)b.globalAlpha=1;}
+function drawSpr(s,x,y,flip,fl,sc=1,alpha=1){const img=fl?(flip?s.hf:s.h):(flip?s.f:s.n);const pd=(s.pad||0)*sc,w=s.w*sc,h=s.hgt*sc;if(alpha<1)b.globalAlpha=alpha;b.drawImage(img,R(x-w/2-pd),R(y-h-pd),w+pd*2,h+pd*2);if(alpha<1)b.globalAlpha=1;}
 function shadow(x,y,r){b.fillStyle='rgba(0,0,0,0.35)';b.fillRect(R(x-r),R(y-1),R(r*2),2);}
 const DITH={},EMB={},LITE={};
 function mixHex(c,t,k){const h=x=>parseInt(x,16),a=[1,3,5].map(i=>h(c.substr(i,2))),bb=[1,3,5].map(i=>h(t.substr(i,2)));return '#'+a.map((v,i)=>Math.round(v+(bb[i]-v)*k).toString(16).padStart(2,'0')).join('');}

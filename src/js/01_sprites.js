@@ -1,9 +1,35 @@
 /* ======================= pixel sprite toolkit ======================= */
 const PAL={k:'#1a1418',w:'#efe6d2',s:'#e8b98f',r:'#c23b2a',R:'#7a2018',g:'#3f9a5a',G:'#1d4d42',b:'#3a5f9e',B:'#1a2b4a',y:'#e0b048',o:'#b0702e',n:'#4a3a30',x:'#8a8494',X:'#4a4552',c:'#8fd3ff',p:'#b07fd0'};
 function mk(rows,pal=PAL){const h=rows.length,w=Math.max(...rows.map(r=>r.length));const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');rows.forEach((r,j)=>{for(let i=0;i<r.length;i++){const ch=r[i];if(ch!=='.'&&pal[ch]){x.fillStyle=pal[ch];x.fillRect(i,j,1,1);}}});return c;}
-function variants(c){const f=document.createElement('canvas');f.width=c.width;f.height=c.height;const fx=f.getContext('2d');fx.translate(c.width,0);fx.scale(-1,1);fx.drawImage(c,0,0);
-  const wh=c2=>{const h=document.createElement('canvas');h.width=c.width;h.height=c.height;const hx=h.getContext('2d');hx.drawImage(c2,0,0);hx.globalCompositeOperation='source-atop';hx.fillStyle='#fff';hx.fillRect(0,0,c.width,c.height);return h;};
-  return {n:c,f,h:wh(c),hf:wh(f),w:c.width,hgt:c.height};}
+/* v18.6 그림 다듬기(설계 docs/specs/2026-11-02-그림-다듬기.md): 둘레 1칸 여백 · 바깥 빈칸에만 테두리(맞닿은 색 × 0.45) ·
+   안에 갇힌 빈칸과 1칸 골목은 비움 · 바깥에 닿은 맨 위 칸은 밝게(짙은 색 제외) · 맨 아래·오른쪽 칸은 × 0.8 */
+function refinePix(src,w,h){const W=w+2,H=h+2,d=new Uint8ClampedArray(W*H*4),A=new Uint8Array(W*H),out=new Uint8Array(W*H);
+ for(let j=0;j<h;j++)for(let i=0;i<w;i++){const p=(j*w+i)*4;if(src[p+3]>0){const q=((j+1)*W+i+1);A[q]=1;d.set([src[p],src[p+1],src[p+2],src[p+3]],q*4);}}
+ const st=[];for(let i=0;i<W;i++){st.push(i,(H-1)*W+i);}for(let j=0;j<H;j++){st.push(j*W,j*W+W-1);}
+ while(st.length){const q=st.pop();if(out[q]||A[q])continue;out[q]=1;const x=q%W,y=(q-x)/W;if(x>0)st.push(q-1);if(x<W-1)st.push(q+1);if(y>0)st.push(q-W);if(y<H-1)st.push(q+W);}
+ const isA=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&A[y*W+x]===1,isO=(x,y)=>x<0||y<0||x>=W||y>=H||out[y*W+x]===1;
+ const res=new Uint8ClampedArray(d);
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const q=y*W+x,p=q*4;
+  if(out[q]){const L=isA(x-1,y),Rr=isA(x+1,y),U=isA(x,y-1),D=isA(x,y+1);if(!(L||Rr||U||D)||(L&&Rr)||(U&&D))continue;
+   let r=0,g=0,bb=0,n=0;for(const [a,b2] of [[x-1,y],[x+1,y],[x,y-1],[x,y+1]])if(isA(a,b2)){const k=(b2*W+a)*4;if(0.2126*d[k]+0.7152*d[k+1]+0.0722*d[k+2]<60)continue;r+=d[k];g+=d[k+1];bb+=d[k+2];n++;}
+   if(!n)continue;   // 짙은 색에만 닿으면 테두리 없음(갓·눈처럼 이미 짙은 가장자리가 두꺼워져 뭉개지지 않게)
+   res[p]=r/n*0.45;res[p+1]=g/n*0.45;res[p+2]=bb/n*0.45;res[p+3]=255;continue;}
+  if(!A[q])continue;const lum=0.2126*d[p]+0.7152*d[p+1]+0.0722*d[p+2];
+  if(isO(x,y-1)){if(lum>=60)for(let k=0;k<3;k++)res[p+k]=d[p+k]+(255-d[p+k])*0.18;}
+  else if(isO(x,y+1)||isO(x+1,y)){for(let k=0;k<3;k++)res[p+k]=d[p+k]*0.8;}}
+ return {data:res,w:W,h:H};}
+const REFINE_ERR=[];   // 실제 브라우저에서 다듬기가 실패하면 숨기지 않고 모아 둔다(브라우저 시험이 비어 있는지 본다)
+function refineCanvas(c){const o=document.createElement('canvas');o.width=c.width+2;o.height=c.height+2;const x=o.getContext('2d'),cx=c.getContext('2d');
+ if(typeof cx.getImageData!=='function'||typeof x.createImageData!=='function'){x.drawImage(c,1,1);return o;}   // 점 읽기가 없는 곳(시험용 가짜 화면)만 여백만 둔 그림
+ try{const s=cx.getImageData(0,0,c.width,c.height),r=refinePix(s.data,c.width,c.height),im=x.createImageData(r.w,r.h);im.data.set(r.data);x.putImageData(im,0,0);}
+ catch(e){REFINE_ERR.push(String(e&&e.message||e));x.clearRect(0,0,o.width,o.height);x.drawImage(c,1,1);}return o;}
+function refineOn(){return !(typeof meta!=='undefined'&&meta.set&&meta.set.refine==='off');}
+function variants(c){const flip=c0=>{const f=document.createElement('canvas');f.width=c0.width;f.height=c0.height;const fx=f.getContext('2d');fx.translate(c0.width,0);fx.scale(-1,1);fx.drawImage(c0,0,0);return f;};
+  const wh=c2=>{const h=document.createElement('canvas');h.width=c2.width;h.height=c2.height;const hx=h.getContext('2d');hx.drawImage(c2,0,0);hx.globalCompositeOperation='source-atop';hx.fillStyle='#fff';hx.fillRect(0,0,c2.width,c2.height);return h;};
+  const f=flip(c),R0={n:c,f,h:wh(c),hf:wh(f)};let R1=null;
+  /* 다듬은 네 장은 처음 쓸 때 만든다(끔이면 만들지 않음). 뒤집힌 그림은 뒤집은 뒤에 다듬어, 어느 쪽을 보든 아래·오른쪽이 어둡다(빛이 늘 왼쪽 위) */
+  const ref=()=>{if(!R1){const rc=refineCanvas(c),rf=refineCanvas(f);R1={n:rc,f:rf,h:wh(rc),hf:wh(rf)};}return R1;},pick=k=>()=>(refineOn()?ref():R0)[k];
+  return Object.defineProperties({w:c.width,hgt:c.height,raw:R0},{ref:{get:ref},n:{get:pick('n'),enumerable:true},f:{get:pick('f'),enumerable:true},h:{get:pick('h'),enumerable:true},hf:{get:pick('hf'),enumerable:true},pad:{get:()=>refineOn()?1:0,enumerable:true}});}
 function big(c,s){const o=document.createElement('canvas');o.width=c.width*s;o.height=c.height*s;const x=o.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(c,0,0,o.width,o.height);return o.toDataURL();}
 
 /* --- character composer: hat + face + robe + held item, so every class tier has its own look --- */

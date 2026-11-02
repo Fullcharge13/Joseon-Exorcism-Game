@@ -29,7 +29,7 @@ def run(path, rich):
         out['_pageerrors'] = errs; br.close()
     return out
 import re
-LANGLN = re.compile(r'(한국어|中文|언어 · Language|분위기 효과|켬|약하게|끔)(\s*(한국어|中文|켬|약하게|끔))*\s*')   # v18.1 언어 단추·설정 줄, v18.2 설정 「분위기 효과」(켬·약하게·끔)는 옛 판에 없는 것이 맞음
+LANGLN = re.compile(r'(한국어|中文|언어 · Language|분위기 효과|그림 다듬기|켬|약하게|끔)(\s*(한국어|中文|켬|약하게|끔))*\s*')   # v18.1 언어 단추·설정 줄, v18.2 설정 「분위기 효과」(켬·약하게·끔), v18.6 「그림 다듬기」(켬·끔)는 옛 판에 없는 것이 맞음
 VER0 = lambda x, k='': '\n'.join(l for l in re.sub(r'v\d+(\.\d+)+', 'vX', x.replace(NEWTXT.get(k, '\0'), '')).split('\n') if not (k in NEWROW and LANGLN.fullmatch(l))) if isinstance(x, str) else [VER0(y, k) for y in x] if isinstance(x, list) else x   # 판 번호는 다르게 보이는 것이 맞음
 NEWROW = ('title', 'settings')   # 새 줄을 거르는 화면은 언어 단추·설정이 있는 두 곳뿐(다른 화면의 회귀를 가리지 않게)
 NEWTXT = {'help_weapon': '\n\n단계: 죽패 → 생우피방패 → 장방패 → 원방패 → 등패'}   # v18.5 도감 무기 줄에 방패 단계가 새로 붙는 것이 맞음(그 화면·그 글만)
