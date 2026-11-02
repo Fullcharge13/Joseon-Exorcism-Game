@@ -116,6 +116,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_seonbi_03.png" alt=""> | 대제학 | <img src="docs/img/s_hunmin.png" width="24" alt=""> 훈민정음 | 스물여덟 글자가 화면 가득 쏟아져 모든 요괴를 내리친다. | 공격력 +15% |
 | 4차 (Lv 40) | <img src="docs/img/char_seonbi_04.png" alt=""> | 영의정 | <img src="docs/img/s_gyeongguk.png" width="24" alt=""> 경국대전 | 법전의 조문이 몸 둘레를 넓게 돌며 닿는 요괴를 다스린다. | 범위 +15% |
 | 5차 (Lv 50) | <img src="docs/img/char_seonbi_05.png" alt=""> | 성현 | <img src="docs/img/s_ilpil.png" width="24" alt=""> 대일필 | 커다란 붓이 화면을 가로질러 한 획을 긋는다. 먹이 지나간 자리는 요괴를 늦춘다. | 공격력 +20% · 재사용 −8% |
+| 6차 (Lv 60) | <img src="docs/img/char_seonbi_06.png" alt=""> | **다산 정약용** | <img src="docs/img/s_geojung.png" width="24" alt=""> 거중기 | 도르래로 큰 돌을 들어 올려 요괴가 가장 많이 몰린 곳에 떨어뜨린다. 맞은 요괴는 잠깐 굳는다. 수원 화성을 설계하고 거중기를 고안한 실학자. ([고증](https://encykorea.aks.ac.kr/Article/E0050549)) | 공격력 +25% · 재사용 −10% |
 
 **감찰의 길**
 
@@ -126,6 +127,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_seonbi_13.png" alt=""> | 판의금부사 | <img src="docs/img/s_orat.png" width="24" alt=""> 오랏줄 | 붉은 오랏줄이 요괴에서 요괴로 옮겨 가며 묶고 친다. | 치명타 +8% |
 | 4차 (Lv 40) | <img src="docs/img/char_seonbi_14.png" alt=""> | 대사헌 | <img src="docs/img/s_tanhaek.png" width="24" alt=""> 탄핵 상소 | 화면에서 가장 강한 요괴를 탄핵한다. 큰 피해를 주고, 5초 동안 그 요괴가 받는 피해가 50% 늘어난다. | 공격력 +15% |
 | 5차 (Lv 50) | <img src="docs/img/char_seonbi_15.png" alt=""> | 도체찰사 | <img src="docs/img/s_eomyeong.png" width="24" alt=""> 어명 | 어명이 떨어지면 화면 안 요괴가 최대 체력의 40%를 잃는다. 보스는 3%. | 치명 피해 +30% |
+| 6차 (Lv 60) | <img src="docs/img/char_seonbi_16.png" alt=""> | **어사 박문수** | <img src="docs/img/s_bonggo.png" width="24" alt=""> 봉고파직 | 화면에서 가장 센 요괴 셋에 「封」 도장을 찍어 잠시 묶은 뒤 크게 친다. 보스는 묶이지 않고, 받는 피해가 늘어난다. 영조 때 어사로 이름을 떨쳐 「암행어사 박문수」 이야기의 주인공이 되었다. ([고증](https://encykorea.aks.ac.kr/Article/E0020693)) | 이동 속도 +15% · 최대 체력 +40 |
 
 ### <img src="docs/img/charS_uiwon.png" alt=""> 의원
 
@@ -145,6 +147,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_uiwon_03.png" alt=""> | 어의 | <img src="docs/img/s_bogam.png" width="24" alt=""> 동의보감 | 의서의 지혜로 체력의 25%를 되찾고 잠시 무적이 되며, 큰 약기운이 퍼진다. | 최대 체력 +50 · 방어 +1 |
 | 4차 (Lv 40) | <img src="docs/img/char_uiwon_04.png" alt=""> | 혜민서 제조 | <img src="docs/img/s_yakcho.png" width="24" alt=""> 약초밭 | 둘레에 약초밭 세 곳을 일군다. 밭 위에 서면 체력이 차오르고, 밭에 든 요괴는 시든다. | 초당 회복 +1 |
 | 5차 (Lv 50) | <img src="docs/img/char_uiwon_05.png" alt=""> | 의성 | <img src="docs/img/s_hoesaeng.png" width="24" alt=""> 회생 | 쓰러질 때 한 번 체력의 60%로 되살아난다. 다시 쓰려면 120초를 기다려야 한다. 평소에도 초당 1.5씩 회복한다. | 최대 체력 +80 |
+| 6차 (Lv 60) | <img src="docs/img/char_uiwon_06.png" alt=""> | **구암 허준** | <img src="docs/img/s_tangyak.png" width="24" alt=""> 백 첩 탕약 | 약 달이는 김이 몸 둘레에 퍼진다. 김 속의 요괴는 느려지고 피해를 입으며, 퇴마사는 조금씩 회복한다. 『동의보감』을 지은 선조·광해군 때의 어의. ([고증](https://encykorea.aks.ac.kr/Article/E0063152)) | 최대 체력 +50 · 회복 +20% |
 
 **독술의 길**
 
@@ -155,6 +158,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_uiwon_13.png" alt=""> | 독선 | <img src="docs/img/s_mandok.png" width="24" alt=""> 만독불침 | 온갖 독을 한꺼번에 퍼뜨려 화면 안 모든 요괴를 중독시킨다. | 공격력 +20% |
 | 4차 (Lv 40) | <img src="docs/img/char_uiwon_14.png" alt=""> | 고독술사 | <img src="docs/img/s_godok.png" width="24" alt=""> 고독 | 독벌레 떼를 풀어 요괴를 물게 한다. 물린 요괴는 중독된다. | 투사체 +1 |
 | 5차 (Lv 50) | <img src="docs/img/char_uiwon_15.png" alt=""> | 독왕 | <img src="docs/img/s_cheondok.png" width="24" alt=""> 천독지 | 발밑에 독의 못을 연다. 못 안의 요괴는 보스까지 느려지고 녹아내린다. | 공격력 +25% |
+| 6차 (Lv 60) | <img src="docs/img/char_uiwon_16.png" alt=""> | **신의 백광현** | <img src="docs/img/s_daechim.png" width="24" alt=""> 대침 발근 | 체력이 가장 많은 요괴에 큰 침을 꽂아 3초 동안 독을 뽑는다. 다 뽑으면 그 독이 둘레로 터진다. 말을 고치던 마의에서 어의가 되어, 큰 침으로 종기를 터뜨려 뿌리를 뽑던 명의. ([고증](https://encykorea.aks.ac.kr/Article/E0021998)) | 공격력 +20% · 범위 +10% |
 
 ### <img src="docs/img/charS_mudang.png" alt=""> 무당
 
@@ -203,6 +207,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_jangsu_03.png" alt=""> | 도원수 | <img src="docs/img/s_geobuk.png" width="24" alt=""> 거북선 돌격 | 거북선이 화면을 가로질러 돌격하며 앞을 막는 요괴를 모두 들이받는다. | 최대 체력 +50 |
 | 4차 (Lv 40) | <img src="docs/img/char_jangsu_04.png" alt=""> | 삼도수군통제사 | <img src="docs/img/s_sugun.png" width="24" alt=""> 수군 소환 | 창을 든 수군을 불러 함께 싸운다. | 방어 +2 |
 | 5차 (Lv 50) | <img src="docs/img/char_jangsu_05.png" alt=""> | 대원수 | <img src="docs/img/s_jindong.png" width="24" alt=""> 천지진동 | 땅을 세 번 내리쳐 큰 진동을 일으킨다. 진동에 맞은 요괴는 잠시 굳는다. | 공격력 +20% · 최대 체력 +60 |
+| 6차 (Lv 60) | <img src="docs/img/char_jangsu_06.png" alt=""> | **충무공 이순신** | <img src="docs/img/s_uldolmok.png" width="24" alt=""> 울돌목 회오리 | 요괴가 몰린 곳에 바다 소용돌이를 일으킨다. 소용돌이는 둘레 요괴를 가운데로 끌어당기며 친다. 보스는 끌려오지 않는다. 임진왜란 때 수군을 이끌고 명량의 거센 물살 울돌목에서 크게 이긴 장수. ([고증](https://encykorea.aks.ac.kr/Article/E0044900)) | 공격력 +20% · 범위 +15% |
 
 **궁술의 길**
 
@@ -213,6 +218,7 @@
 | 3차 (Lv 30) | <img src="docs/img/char_jangsu_13.png" alt=""> | 천궁 | <img src="docs/img/s_ilsi.png" width="24" alt=""> 천궁 일시 | 온 힘을 실은 한 발이 화면 끝까지 일직선으로 꿰뚫는다. | 치명타 +10% |
 | 4차 (Lv 40) | <img src="docs/img/char_jangsu_14.png" alt=""> | 어영대장 | <img src="docs/img/s_pyeonjeon.png" width="24" alt=""> 편전 일제사격 | 통아에 넣은 애기살을 세 번 연달아 부채꼴로 쏟아붓는다. | 재사용 대기 −8% |
 | 5차 (Lv 50) | <img src="docs/img/char_jangsu_15.png" alt=""> | 궁성 | <img src="docs/img/s_yuseong.png" width="24" alt=""> 유성시 | 하늘 높이 쏘아 올린 화살이 유성처럼 떨어져 요괴 무리를 터뜨린다. | 치명 피해 +40% |
+| 6차 (Lv 60) | <img src="docs/img/char_jangsu_16.png" alt=""> | **홍의장군 곽재우** | <img src="docs/img/s_uibyeong.png" width="24" alt=""> 홍의 의병 | 붉은 옷의 의병들이 따라 싸운다. 때때로 홍의장군이 말을 달려 앞을 꿰뚫는다. 임진왜란 때 붉은 옷을 입고 의병을 일으켜 「홍의장군」이라 불린 의병장. ([고증](https://encykorea.aks.ac.kr/Article/E0004695)) | 투사체 +1 · 이동 속도 +10% |
 
 ### <img src="docs/img/charS_gisaeng.png" alt=""> 기생
 
@@ -1135,6 +1141,7 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 | v18.6.1 | 그림 다듬기 보탬: 몸 대부분이 검은 요괴(어둑시니·그슨대·흑호 등)는 붉은 기 도는 밝은 회색 테두리를 둘러 밤 바닥에서도 보이게. 퇴마사의 검은 갓처럼 일부만 검은 그림은 그대로<br><img src="docs/img/refine_dark.png" width="390" alt="검은 요괴 다듬기 끔(위)과 켬(아래)"> |
 | v18.6.2 | 버그 고침: 무당 등 직업 기술 레벨업 카드 아이콘이 「?」로 나오던 것(v18.5에서 생김) · 퇴마사가 오방신장기 깃발 표지 밑에 서면 표지가 퇴마사를 가리던 것(이제 옅어짐) · 보스가 받는 피해 숫자에 소수점이 나오던 것(초당 피해 상한을 정수로) |
 | v18.6.3 | 버그 고침: 휴대폰에서 손을 뗐는데도 이동이 「눌린 채」 남아 퇴마사가 저절로 움직이고, 그 뒤로는 새 터치도 먹지 않던 문제. 손을 뗀 알림을 놓쳐도 화면에 손가락이 없으면 이동을 풀고, 새로 누르면 그 손가락이 이동을 맡음. 앱 전환·제어 센터 등으로 화면이 가려져도 풀림 |
+| v19.0 | **6차 전직(1부)**: 5차를 마친 퇴마사가 Lv 60에 조선의 실존 인물로 전직. 선비(다산 정약용 「거중기」 · 어사 박문수 「봉고파직」)·의원(구암 허준 「백 첩 탕약」 · 신의 백광현 「대침 발근」)·장수(충무공 이순신 「울돌목 회오리」 · 홍의장군 곽재우 「홍의 의병」). 고유 기술·전직 보너스·새 차림·발밑 금빛 고리·과업 6. 무당·기생·상인은 다음 판. 고증: 한국민족문화대백과사전<br><img src="docs/img/tier6_looks.png" width="600" alt="5차와 6차 차림"> |
 
 ### 소스 구조 (v18.0~)
 

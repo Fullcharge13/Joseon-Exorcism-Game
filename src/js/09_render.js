@@ -81,18 +81,21 @@ function heroGlow(hk){if(glowCache[hk])return glowCache[hk];const w=52*hk,h=32*h
  g.fillStyle=lg;g.beginPath();g.ellipse(w/2,h/2,26*hk,16*hk,0,0,TAU);g.fill();return glowCache[hk]=c;}
 function drawHero(){drawHeroBody();drawHpBar();}
 function drawHeroBody(){const P=G.P,ps=charSpr(playerLook()),pb=P.moving&&Math.sin(G.time*14)>0?-1:0;
+ if(P.tier>=6)drawTier6Ring(P.x,P.y);   // v19.0 6차 발밑 고리
  if(!(P.iframe>0&&Math.floor(G.time*20)%2))drawSpr(ps,P.x,P.y+pb,P.face<0,P.iframe>0.3,entK());}   // v17.2 걸을 때 돌려 그리기(도트가 깨짐)는 뺌
 function drawHpBar(){const P=G.P;
  const w=14,x=R(P.x-w/2),y=R(P.y+2);b.fillStyle='#000';b.fillRect(x-1,y-1,w+2,4);b.fillStyle='#5a1a14';b.fillRect(x,y,w,2);b.fillStyle='#d24a34';b.fillRect(x,y,R(w*clamp(P.hp/P.maxHp,0,1)),2);}
 function drawSpirit(s){const x=R(s.x),y=R(s.y+Math.sin(s.ph)*2);
  if(s.look==='kite'){const t=G.time*3+s.id*7;b.save();b.translate(x,y-8);b.rotate(Math.sin(t)*0.3);b.fillStyle='#efe6d2';b.fillRect(-4,-5,8,10);b.fillStyle='#c23b2a';b.fillRect(-1,-1,2,2);b.fillStyle='#3a5f9e';b.fillRect(-4,-5,8,1);b.fillRect(-4,4,8,1);b.restore();b.strokeStyle='rgba(239,230,210,0.5)';b.lineWidth=1;b.beginPath();b.moveTo(x,y-3);b.lineTo(x+Math.sin(t)*4,y+6);b.stroke();return;}
  if(s.look==='porter'||s.look==='peddler'){drawSpr(s.look==='porter'?SPR_PT:SPR_BS,x,y+4,s.fx<0,false);b.fillStyle='#4a3a30';b.fillRect(x+(s.fx>0?3:-5),y-8+(Math.sin(s.ph*3)>0?0:2),1,9);if(s.look==='peddler'){b.fillStyle='#8a8494';b.fillRect(x+(s.fx>0?3:-5),y+1,1,1);}return;}
+ if(s.look==='uibyeong'){drawSpr(SPR_UB,x,y+4,s.fx<0,false);b.fillStyle='#dfe6f0';b.fillRect(x+(s.fx>0?3:-4),y-9+(Math.sin(s.ph*3)>0?0:2),1,8);return;}   // v19.0 홍의 의병
  if(s.look==='yeokjol'||s.look==='navy'){drawSpr(s.look==='navy'?NAVY:SPR_YJ,x,y+4,s.fx<0,false);b.fillStyle=s.look==='navy'?'#8a8494':'#8a5a2b';if(s.look==='navy')b.fillRect(x+(s.fx>0?3:-4),y-10,1,12);else b.fillRect(x+(s.fx>0?3:-5),y-6+(Math.sin(s.ph*3)>0?0:2),2,6);return;}
  if(s.look==='sword'){b.save();b.translate(x,y-6);b.rotate(Math.sin(s.ph)*0.5+(s.fx>0?0.6:-0.6));b.fillStyle='#ffd0e0';b.globalAlpha=0.5;b.fillRect(-2,-7,4,12);b.globalAlpha=1;b.fillStyle='#dfe6f0';b.fillRect(-1,-7,2,9);b.fillStyle='#e0b048';b.fillRect(-2,2,4,1);b.fillStyle='#c23b2a';b.fillRect(-1,3,2,2);b.restore();return;}
  if(s.look==='bug'){b.fillStyle='#7a3aa0';b.fillRect(x-2,y-2,4,3);b.fillStyle='#c080ff';b.fillRect(x-3,y-3+(Math.sin(s.ph*6)>0?0:1),1,1);b.fillRect(x+2,y-3+(Math.sin(s.ph*6)>0?1:0),1,1);return;}
  const temp=s.life!==undefined;b.globalAlpha=temp?0.7:0.85;b.fillStyle=s.look==='soul'?'#e0e8ff':(temp?'#ffd0a0':'#8fd3ff');b.fillRect(x-3,y-6,6,5);b.fillRect(x-2,y-7,4,1);b.fillRect(x-3,y-1,1,2);b.fillRect(x,y-1,1,2);b.fillRect(x+2,y-1,1,2);b.fillStyle='#1a2b4a';b.fillRect(x-2,y-5,1,1);b.fillRect(x+1,y-5,1,1);if(s.look!=='soul'){b.fillStyle='#e0b048';b.fillRect(x-3,y-8,6,1);}b.globalAlpha=1;}
 const SPR_PT=variants(mk(['.o....o.','.oooooo.','.oSSSSo.','.oskkso.','..ssss..','.nnnnnn.','snwwwwns','.nnnnnn.','.nn..nn.','.kk..kk.'],{...PAL,S:'#c9a06a'}));
 const SPR_BS=variants(mk(['w.kkkk.w','.kkkkkk.','..ssss..','..skks..','..ssss..','.oooooo.','soyyyyos','.oooooo.','.oo..oo.','.kk..kk.']));
+const SPR_UB=variants(mk(['..kkkk..','.kkkkkk.','..ssss..','..skks..','..ssss..','.rrrrrr.','srrRRrrs','.rrrrrr.','.rr..rr.','.kk..kk.']));   // v19.0 붉은 옷 의병
 const SPR_YJ=variants(mk(['..kkkk..','.kkkkkk.','..ssss..','..skks..','..ssss..','.kkkkkk.','skrrrrks','.kkkkkk.','.kk..kk.','.kk..kk.']));
 const NAVY=variants(mk(['...rr...','..xxxx..','..ssss..','..skks..','..ssss..','.BBBBBB.','sByyyyBs','.BBBBBB.','.BB..BB.','.kk..kk.']));
 function drawJW(){const h=G.helper;if(!h)return;const s=charSpr(JW_LOOK),fade=Math.min(1,h.t*2),jk=entK();
@@ -338,7 +341,7 @@ function toastUlt(who,name){const d=document.createElement('div');d.className='u
 
 /* v16.3 보상 창 순서: 전직이 대기 중이면 쌓인 레벨업 카드보다 먼저 연다.
    (늦게 열리면 「10레벨인데 전직 창이 안 뜬다」로 보이고, 5차 전직이 레벨 54를 넘기면 오의 각성이 일반 레벨업으로 바뀌어 사라졌다) */
-function takeQueued(){const i=G.P.tier<5?G.queue.indexOf('adv'):-1;return i>=0?G.queue.splice(i,1)[0]:G.queue.shift();}
+function takeQueued(){const i=G.P.tier<tierMax(G.cid,G.P.branch)?G.queue.indexOf('adv'):-1;return i>=0?G.queue.splice(i,1)[0]:G.queue.shift();}
 let last=performance.now(),hudT=0;
 let pm={acc:0,n:0,slow:0},fpsV=60,errN=0;
 function perfWatch(raw){fpsV+=((raw>0?1000/raw:60)-fpsV)*0.05;
@@ -350,7 +353,7 @@ function drawFps(){if(!meta.set.fps)return;ctx.save();ctx.setTransform(DPR,0,0,D
 function frame(now){const raw=now-last;const dt=Math.min(0.05,raw/1000);last=now;
  try{
   if(G&&!G.over&&!modal){update(dt);
-   if(!modal&&G.queue.length&&!G.over&&G.clearT===undefined){const q=takeQueued();if(q==='adv'&&G.P.tier<5)openAdv();else if(q==='bless')openBless();else if(q==='awk'&&G.P.tier>=5&&G.awkN<5)openAwk();else if(q==='ult'&&G.P.tier>=5&&G.awkN>=4&&!G.ult)openUlt();else if(q==='seal')openSeal();else if(q==='temper')openTemper();else openLevel();}}
+   if(!modal&&G.queue.length&&!G.over&&G.clearT===undefined){const q=takeQueued();if(q==='adv'&&G.P.tier<tierMax(G.cid,G.P.branch))openAdv();else if(q==='bless')openBless();else if(q==='awk'&&G.P.tier>=5&&G.awkN<5)openAwk();else if(q==='ult'&&G.P.tier>=5&&G.awkN>=4&&!G.ult)openUlt();else if(q==='seal')openSeal();else if(q==='temper')openTemper();else openLevel();}}
   if(!document.hidden){render();drawFps();}
   if(G){hudT-=dt;if(hudT<=0){hudT=0.1;hud();}}
   perfWatch(raw);

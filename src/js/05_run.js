@@ -295,7 +295,7 @@ const TALE_RULE_FN={
  well:{start(R){R.well=placeNear(70,110);G.taleMight=0;},tick(R,dt){const P=G.P,d=Math.hypot(P.x-R.well.x,P.y-R.well.y);
    G.taleMight=d<30?Math.min(0.6,G.taleMight+0.06*dt):Math.max(0,G.taleMight-0.1*dt);if(d<30&&Math.random()<0.2)particle(R.well.x+rnd(-6,6),R.well.y-8,'#8fd3ff',1,20,0.5);},
   hud:()=>_t("물의 힘 +{p}%",{p:Math.round(G.taleMight*100)}),draw(R){drawProp('well',R.well.x,R.well.y+4,G.taleMight<0.6);},goal:R=>R.well},
- noHeal:{start(){G.mods.noTteok=true;}},
+ noHeal:{start(){G.mods.noTteok=true;G.mods.noHeal=true;}},   // v19.0 noHeal: 6차 기술 회복도 막음(떡만 막는 다른 규칙과 구분)
  plague:{tick(R,dt){const P=G.P;if(P.hp>1)P.hp=Math.max(1,P.hp-P.maxHp*0.004*dt);}},
  wells3:{start(R){R.wells=[];for(let k=0;k<3;k++)R.wells.push(placeNear(120+k*40,180+k*50,R.wells,70));R.wi=0;R.wp=0;},
   tick(R,dt){if(R.wi>=3)return;const P=G.P,w=R.wells[R.wi],d=Math.hypot(P.x-w.x,P.y-w.y);

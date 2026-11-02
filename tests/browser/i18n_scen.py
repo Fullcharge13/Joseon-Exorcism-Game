@@ -4,7 +4,7 @@ INIT = """(()=>{const T=1792800000000;const D=Date;class FD extends D{constructo
  let s=1;window.__seed=n=>{s=n;};Math.random=()=>{s=(s*16807)%2147483647;return (s-1)/2147483646;};
  window.__txt=[];const wrap=p=>{const f=p.fillText;p.fillText=function(x,...r){window.__txt.push(String(x));return f.call(this,x,...r);};};wrap(CanvasRenderingContext2D.prototype);})();"""
 RICH = """()=>{meta.coins=5000;meta.unl=[...new Set([...(meta.unl||[]),...Object.keys(CHARS).map(c=>'char:'+c),...Object.keys(WD).filter(i=>WD[i].lock).map(i=>'w:'+i)])];
- meta.done=TASKS.filter((t,i)=>i%2===0).map(t=>t.id);meta.anom={};for(const a of ANOM.slice(0,6))meta.anom[a.id]=1;meta.hub.runs=12;meta.stats.dkIn=2;meta.hub.mak=3;
+ meta.done=TASKS.filter(t=>!/^j_6b/.test(t.id)).filter((t,i)=>i%2===0).map(t=>t.id);   /* v19.0: 6차 과업이 끼어도 같은 과업이 「이룸」이 되게 */meta.anom={};for(const a of ANOM.slice(0,6))meta.anom[a.id]=1;meta.hub.runs=12;meta.stats.dkIn=2;meta.hub.mak=3;
  for(const id in NPCS)meta.hub.aff[id]=2;meta.tale=meta.tale||{};meta.tale.frag={woochi:3,jiha:3,bari:1};meta.curseMax=3;saveMeta();}"""
 SNAP = """(name)=>{const vis=[...document.querySelectorAll('.screen')].filter(s=>!s.hidden).map(s=>s.id);
  const pick=sel=>{const e=document.querySelector(sel);return e&&!e.hidden?e.innerText:'';};

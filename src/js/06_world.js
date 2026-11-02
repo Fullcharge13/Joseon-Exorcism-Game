@@ -245,7 +245,7 @@ function update(dt){
  HSRC=null;G.movers=G.movers.filter(m=>m.life>0);
  updProjs(dt,P);
  for(const z of G.zones){z.life-=dt;z.tt-=dt;if(z.follow){z.x=P.x;z.y=P.y;}
-  if(z.tt<=0){z.tt=z.tick;HSRC=z.src||null;for(const e of near(z.x,z.y,z.r,TMP).slice()){hurt(e,z.dmg,0,0,0,true);if(z.slow)e.slow=0.45;if(z.hold&&!e.boss)e.frz=Math.max(e.frz,0.35);if(z.vtx&&!e.boss){const dx=z.x-e.x,dy=z.y-e.y,d=Math.hypot(dx,dy)||1;if(d>4){e.kx+=dx/d*70;e.ky+=dy/d*70;}}}HSRC=null;}
+  if(z.tt<=0){z.tt=z.tick;HSRC=z.src||null;for(const e of near(z.x,z.y,z.r,TMP).slice()){hurt(e,z.dmg,0,0,0,true);if(z.slow)e.slow=0.45;if(z.hold&&!e.boss)e.frz=Math.max(e.frz,0.35);if(z.vtx&&!e.boss){const dx=z.x-e.x,dy=z.y-e.y,d=Math.hypot(dx,dy)||1;if(d>4){e.kx+=dx/d*70*(z.vtxK||1);e.ky+=dy/d*70;}}}HSRC=null;}
   if(z.heal&&(P.x-z.x)**2+(P.y-z.y)**2<z.r*z.r)heal(z.heal*dt);}
  G.zones=G.zones.filter(z=>z.life>0);
  for(const z of G.ezones){z.life-=dt;if((P.x-z.x)**2+(P.y-z.y)**2<z.r*z.r&&P.iframe<=0)damagePlayer(z.dmg);}
@@ -280,7 +280,7 @@ function update(dt){
  G.taskT=(G.taskT||0)-dt;if(G.taskT<=0){G.taskT=1;checkTasks();}
 }
 function resolveWarn(w){const P=G.P;
- if(w.friendly){HSRC=w.src||null;aoe(w.x,w.y,w.r,w.dmg,60);HSRC=null;G.fx.push({t:'ring',x:w.x,y:w.y,r:4,maxR:w.r,col:w.col,life:0.3,max:0.3});particle(w.x,w.y,w.col,12,80,0.5);G.shake=Math.max(G.shake,2);snd(90,0.2,'sawtooth',0.04);return;}
+ if(w.friendly){HSRC=w.src||null;aoe(w.x,w.y,w.r,w.dmg,60);if(w.on)w.on(w);HSRC=null;G.fx.push({t:'ring',x:w.x,y:w.y,r:4,maxR:w.r,col:w.col,life:0.3,max:0.3});particle(w.x,w.y,w.col,12,80,0.5);G.shake=Math.max(G.shake,2);snd(90,0.2,'sawtooth',0.04);return;}
  let hit=false;
  if(w.kind==='line')hit=segDist(P.x,P.y-3,w.x,w.y,w.x+Math.cos(w.a)*w.len,w.y+Math.sin(w.a)*w.len)<w.w/2+P.r;
  else hit=(P.x-w.x)**2+(P.y-w.y)**2<(w.r+P.r)**2;
@@ -465,6 +465,6 @@ function damagePlayer(dmg){const P=G.P;if(G.over)return;if(G.guardT>0){P.iframe=
   if(P.revive>0){P.revive--;P.hp=P.maxHp*0.5;P.iframe=2;toast(_t("혼백 부적이 타오른다 · 부활"),'big');for(const e of G.enemies)if(!e.boss){const a=Math.atan2(e.y-P.y,e.x-P.x);e.kx+=Math.cos(a)*300;e.ky+=Math.sin(a)*300;}G.ebul.length=0;G.warns=G.warns.filter(w=>w.friendly);return;}
   endGame(false);}}
 function gainXp(v){const P=G.P;P.xp+=v*P.xpGain*(1+0.1*cbTier());snd(900+Math.random()*300,0.03,'triangle',0.012);
- while(P.xp>=P.next){P.xp-=P.next;P.lvl++;P.next=xpNeed(P.lvl);G.rs.maxLevel=Math.max(G.rs.maxLevel,P.lvl);petGrow();G.queue.push(P.lvl%10===0&&P.lvl<=50?'adv':AWK_LV.includes(P.lvl)?'awk':P.lvl===ULT_LV?'ult':'lvl');
+ while(P.xp>=P.next){P.xp-=P.next;P.lvl++;P.next=xpNeed(P.lvl);G.rs.maxLevel=Math.max(G.rs.maxLevel,P.lvl);petGrow();G.queue.push(P.lvl%10===0&&P.lvl<=50?'adv':AWK_LV.includes(P.lvl)?'awk':P.lvl===ULT_LV?'ult':'lvl');queueTier6();
   if(duoOn('gataek')){G.base.maxHp+=2;recompute();heal(15);}}}
 

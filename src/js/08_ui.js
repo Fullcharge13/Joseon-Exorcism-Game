@@ -60,7 +60,7 @@ function taskSpec(t){if(TASK_IC[t.id])return TASK_IC[t.id];if(TALE_TASK_IC[t.id]
  if(t.rw.unlock&&t.rw.unlock.startsWith('w:'))return ['icon',t.rw.unlock.slice(2)];
  if(k.startsWith('boss_'))return ['enemy',k.slice(5)];
  if(k.startsWith('tier_'))return ['tier',k.slice(5),0,t.need-1];
- if(/^br[01]_/.test(k))return ['tier',k.slice(4),+k[2],4];
+ if(/^br[01]_/.test(k))return ['tier',k.slice(4),+k[2],t.need-1];   // v19.0 6차 과업은 6차 차림
  if(k.startsWith('evo:'))return ['icon',k.slice(4)];
  if(k.startsWith('kills_'))return ['char',k.slice(6)];
  if(k.startsWith('clear_'))return ['char',k.slice(6),'dawn'];
@@ -76,7 +76,7 @@ function taskBadge(t){if(badgeCache[t.id])return badgeCache[t.id];const sp=taskS
  const ix=4,iy=4,iw=S-8;x.fillStyle=sp[0]==='seal'?sp[2]:BADGE_BG[sp[0]];x.fillRect(ix,iy,iw,iw);x.fillStyle='rgba(0,0,0,0.25)';x.fillRect(ix,iy+iw-2,iw,2);
  let spr=null;
  if(sp[0]==='char'){spr=charSpr(CHARS[sp[1]].look).n;if(sp[2]==='dawn'){x.fillStyle='#e0b048';x.fillRect(ix+2,iy+2,6,6);x.fillStyle='#ffd880';x.fillRect(ix+3,iy+3,4,4);}}
- else if(sp[0]==='tier'){const C=CHARS[sp[1]],tr=C.branches[sp[2]].tiers[Math.max(0,Math.min(4,sp[3]))];spr=charSpr(tr.look).n;}
+ else if(sp[0]==='tier'){const C=CHARS[sp[1]],tr=C.branches[sp[2]].tiers[Math.max(0,Math.min(C.branches[sp[2]].tiers.length-1,sp[3]))];spr=charSpr(tr.look).n;}
  else if(sp[0]==='enemy'){spr=ESPR[sp[1]]?ESPR[sp[1]].n:null;}
  else if(sp[0]==='icon'){spr=ICS[sp[1]]||null;}
  else if(sp[0]==='pet'){spr=PSPR[sp[1]]?PSPR[sp[1]].n:null;}
@@ -185,7 +185,7 @@ function reroll(){if(G.rr<=0)return;G.rr--;curOpts=genOptions();banMode=false;re
 function skipLevel(){if(G.sk<=0)return;G.sk--;G.coins+=5;show(null);}
 let advPick=[];
 function grantTier(bi,bonus){const P=G.P,C=CHARS[G.cid];P.branch=bi;const t=C.branches[bi].tiers[P.tier];P.tier++;
- t.apply(G.base);if(bonus)bonus.f(G.base);addWeapon(t.skill);recompute();refreshSlots();show(null);
+ t.apply(G.base);if(bonus)bonus.f(G.base);addWeapon(t.skill);recompute();refreshSlots();show(null);queueTier6();
  toast(_t("{p} 전직 · {name}",{p:TIER_NAME[P.tier],name:t.name}),'big');flash('255,230,160',0.3);particle(P.x,P.y-6,'#e0b048',24,70,0.7);
  if(P.tier===1&&!G.pet&&G.mode!=='tale')openPet();}
 function openAdv(){const P=G.P,C=CHARS[G.cid],box=$('#advCards');box.innerHTML='';advPick=[];
@@ -200,7 +200,7 @@ function openAdv(){const P=G.P,C=CHARS[G.cid],box=$('#advCards');box.innerHTML='
   $('#advTitle').textContent=_t("{name}에서 {name2}(으)로",{name:br.tiers[P.tier-1].name,name2:t.name});$('#advLede').textContent=_t("새 직업과 기술, 새 차림이 주어진다. 함께 받을 수련 하나를 고르면 전직이 끝난다.");
   const card=document.createElement('div');card.className='adv advinfo';
   const bonus=TIER_BONUS.slice().sort(()=>Math.random()-0.5).slice(0,3);
-  card.innerHTML=_t("<span class=\"badge cls\">{name} · {p}차</span><div class=\"top\"><img src=\"{p2}\" alt=\"\"><b>{name2}</b></div><div class=\"sk\">{p3}고유 기술 · {name3}</div><p>{p4}</p><div class=\"bn\">전직 보너스 · {bonus}</div><div class=\"tree\">{p5}</div>",{name:br.name,p:P.tier+1,p2:big(charSpr(t.look).n,5),name2:t.name,p3:iconHTML(t.skill),name3:sk.name,p4:sk.desc[0],bonus:t.bonus,p5:br.tiers.map((x,i)=>i===P.tier?`<span>${x.name}</span>`:x.name).join(' → ')});
+  card.innerHTML=_t("<span class=\"badge cls\">{name} · {p}차</span><div class=\"top\"><img src=\"{p2}\" alt=\"\"><b>{name2}</b></div><div class=\"sk\">{p3}고유 기술 · {name3}</div><p>{p4}</p><div class=\"bn\">전직 보너스 · {bonus}</div><div class=\"tree\">{p5}</div>",{name:br.name,p:P.tier+1,p2:big(charSpr(t.look).n,5),name2:t.name,p3:iconHTML(t.skill),name3:sk.name,p4:sk.desc[0]+(t.who?`<br><small class="who">${t.who}</small>`:''),bonus:t.bonus,p5:br.tiers.map((x,i)=>i===P.tier?`<span>${x.name}</span>`:x.name).join(' → ')});
   box.appendChild(card);
   /* v16.3 고르는 칸: 레벨업 카드처럼 칸 전체가 버튼 (전에는 큰 카드의 대부분이 눌리지 않고 아래 작은 버튼만 반응했다) */
   const picks=document.createElement('div');picks.className='cards advpicks';
@@ -430,7 +430,7 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
   h+=hcard(_t("한 판의 흐름"),r(I.boss,_t("막은 모두 10개. 막마다 {p}분을 버틴다. {MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.",{p:STAGE_T/60,MID_T:MID_T}))
    +r(I.chest,_t("막 보스를 쓰러뜨리면 보물상자를 열고 <b>주막</b>에 들른 뒤 다음 막으로 간다."))
    +r(I.gem,_t("요괴가 떨군 구슬로 레벨이 오른다. 레벨이 오를 때마다 무기나 보패 하나를 고른다."))
-   +r(I.tier,_t("레벨 10·20·30·40·50에 <b>전직</b>한다.")));
+   +r(I.tier,_t("레벨 10·20·30·40·50·60에 <b>전직</b>한다. 60의 6차는 선비·의원·장수부터.")));
   h+=hcard(_t("막 안에서 만나는 것"),r(I.elite,_t("<b>엘리트</b>: 금빛 체력 막대가 달린 큰 요괴. 쓰러뜨리면 보물상자를 떨군다."))
    +r(I.chest,_t("<b>보물상자</b>: 진화 조건을 갖춘 무기가 있으면 진화시키고, 없으면 가진 것 하나를 강화한다."))
    +r(I.shrine,_t("<b>성황당</b>: 막마다 두 번 나타난다. 화면 가장자리의 금빛 화살표를 따라가 그 안에 3.5초 머물면 신령의 축복을 받는다."))
@@ -460,9 +460,9 @@ function renderHelp(){const tb=$('#helpTabs');tb.innerHTML='';
    const jw=Object.keys(WD).filter(k=>WD[k].job===id&&WD[k].type==='w'&&!WD[k].fuse).map(k=>WD[k].name).join(', '),jp=Object.keys(PD).filter(k=>jobHas(PD[k],id)).map(k=>PD[k].name).join(', ');
    let body=_t("<p>{desc}</p><p><b>특성</b> {trait} · <b>시작 무기</b> {name}</p><p><b>전용 무기</b> {jw} · <b>전용 보패</b> {jp}</p>{p}",{desc:C.desc,trait:C.trait,name:WD[C.start].name,jw:jw,jp:jp,p:ok?'':_t("<p><span class=\"tag\">잠김</span> {p}</p>",{p:charLock(id)})});
    for(const br of C.branches){body+=`<h4>${br.name}</h4><div class="looks"><figure><img src="${big(charSpr(C.look).n,3)}" alt=""><figcaption>${C.name}</figcaption></figure>${br.tiers.map(t=>`<figure><img src="${big(charSpr(t.look).n,3)}" alt=""><figcaption>${t.name}</figcaption></figure>`).join('')}</div>`;
-    body+=`<ol>${br.tiers.map((t,i)=>_t("<li><b>Lv {p} {name}</b> · 기술 「{name2}」 {p2} <small>보너스: {bonus}</small></li>",{p:(i+1)*10,name:t.name,name2:WD[t.skill].name,p2:WD[t.skill].desc[0],bonus:t.bonus})).join('')}</ol>`;}
+    body+=`<ol>${br.tiers.map((t,i)=>_t("<li><b>Lv {p} {name}</b> · 기술 「{name2}」 {p2} <small>보너스: {bonus}</small></li>",{p:(i+1)*10,name:t.name,name2:WD[t.skill].name,p2:WD[t.skill].desc[0],bonus:t.bonus}).replace(/<\/li>$/,t.who?`<br><small class="who">${t.who} · <a href="${t.src}" target="_blank" rel="noopener">${_t("한국민족문화대백과사전")}</a></small></li>`:'</li>')).join('')}${br.tiers.length<6?_t("<li><b>Lv 60 6차</b> · 곧</li>"):''}</ol>`;}   // v19.0 6차 인물 소개·출처
    h+=hcard(`<span class="seal" style="width:28px;height:28px;font-size:18px">${C.seal}</span>${C.name}`,body);}
-  h+=hcard(_t("전직 규칙"),ul([_t("레벨 10에 두 갈래 중 하나를 고른다. 이후 레벨 20·30·40·50에는 같은 갈래의 다음 직업으로 오른다."),_t("전직할 때마다 그 직업의 고유 기술을 얻고, 차림(쓰개·옷·손에 든 것)이 바뀐다. 5차 전직에는 후광이 생긴다."),_t("2차부터는 공격력·체력·재사용 대기·범위·치명타 등 수련 보너스 셋 가운데 하나를 골라 함께 받는다."),_t("전직 기술은 레벨업에서 다른 카드보다 자주 나오며 5레벨까지 오른다.")])); }
+  h+=hcard(_t("전직 규칙"),ul([_t("레벨 10에 두 갈래 중 하나를 고른다. 이후 레벨 20·30·40·50에는 같은 갈래의 다음 직업으로 오른다."),_t("전직할 때마다 그 직업의 고유 기술을 얻고, 차림(쓰개·옷·손에 든 것)이 바뀐다. 5차 전직에는 후광이 생긴다."),_t("2차부터는 공격력·체력·재사용 대기·범위·치명타 등 수련 보너스 셋 가운데 하나를 골라 함께 받는다."),_t("5차를 마친 뒤 레벨 60에 6차 전직을 한다. 6차는 그 갈래를 대표하는 조선의 실존 인물이며, 발밑에 금빛 고리가 생긴다."),_t("전직 기술은 레벨업에서 다른 카드보다 자주 나오며 5레벨까지 오른다.")])); }
  if(helpTab==='pet'){
   h+=hcard(_t("펫 규칙"),ul([_t("레벨 10에서 1차 전직을 고르면 바로 펫을 고른다. 한 번 고르면 그 출정 동안 바뀌지 않는다."),_t("펫은 죽지 않고 요괴에게 맞지도 않는다. 곁을 따라다니며 기술을 스스로 쓴다."),_t("펫 레벨은 레벨 10에서 1로 시작해 네 레벨마다 하나씩 오른다(최대 10). 오를 때마다 기술 피해 +30%, 범위 +7%."),_t("기술은 셋이다. <b>일반 공격</b> {a}초 · <b>홀딩 기술</b> {h}초 · <b>궁극기</b> {u}초마다 쓴다.",{a:PET_CD.a,h:PET_CD.h,u:PET_CD.u}),_t("홀딩 기술은 펫 레벨 2, 궁극기는 4에 익힌다. 레벨 5·6·8에는 세 기술이 차례로 강해진 기술로 바뀐다."),_t("펫 기술은 공격력 보정을 받고, 막이 깊어질수록 피해가 함께 커진다.")]));
   for(const id in PETS){const p=PETS[id];h+=hcard(`<img src="${big(PSPR[id].n,3)}" alt="" style="image-rendering:pixelated">${p.n} <small>${p.kind}</small>`,`<p>${p.d}</p>`+[['a',_t("일반 공격")],['h',_t("홀딩 기술")],['u',_t("궁극기")]].map(([k,lab])=>_t("<h4>{lab} · {p}초</h4><ul>{p2}</ul>",{lab:lab,p:PET_CD[k],p2:p.sk[k].map(s=>_t("<li><b>펫 Lv {lv} 「{n}」</b> {d}</li>",{lv:s.lv,n:s.n,d:s.d})).join('')})).join(''));} }

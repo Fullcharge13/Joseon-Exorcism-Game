@@ -18,6 +18,7 @@ for(const cid in JOBTASK){const C=CHARS[cid],N=JOBTASK[cid],sw=WD[C.start];
  TASKS.push(T('j_k_'+cid,N[0],`${euro(C.name)} 요괴 3,000마리 퇴치`,'kills_'+cid,3000,{coins:120},'엽전 120'),
   T('j_b0_'+cid,N[1],`${C.branches[0].name}에서 5차 전직(${C.branches[0].tiers[4].name})`,'br0_'+cid,5,{coins:200},'엽전 200'),
   T('j_b1_'+cid,N[2],`${C.branches[1].name}에서 5차 전직(${C.branches[1].tiers[4].name})`,'br1_'+cid,5,{coins:200},'엽전 200'),
+  ...[0,1].filter(b=>C.branches[b].tiers.length>5).map(b=>T('j_6b'+b+'_'+cid,C.branches[b].tiers[5].name,`${C.branches[b].name}에서 6차 전직(${C.branches[b].tiers[5].name})`,'br'+b+'_'+cid,6,{coins:300},'엽전 300')),   // v19.0 6차
   T('j_e_'+cid,N[3],`${eul(sw.name)} ${euro(sw.evoName)} 진화`,'evo:'+C.start,1,{coins:100},'엽전 100'),
   T('j_c_'+cid,N[4],`${euro(C.name)} 제10막 평정`,'clear_'+cid,1,{coins:300},'엽전 300'));}
 /* ======================= 설화 출정 (v17) ======================= */
@@ -117,7 +118,7 @@ function saveMeta(){if(LAB)return;try{localStorage.setItem(SAVE_KEY,JSON.stringi
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER='v18.6.3',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
+const GAME_VER='v19.0',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
 let DIAG={log:[],hb:null};try{const d=JSON.parse(localStorage.getItem(DIAG_KEY)||'null');if(d&&typeof d==='object'&&!Array.isArray(d)){DIAG.log=Array.isArray(d.log)?d.log.filter(e=>e&&typeof e==='object').slice(-DIAG_MAX):[];DIAG.hb=d.hb&&typeof d.hb==='object'?d.hb:null;}}catch(e){}
 const diagSeen=new Set();let diagStuck=0,diagNoScr=0,diagLastT=null,diagHbT=0;
 function diagSave(){try{localStorage.setItem(DIAG_KEY,JSON.stringify(DIAG));}catch(e){}}
