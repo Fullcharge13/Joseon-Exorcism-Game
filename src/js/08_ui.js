@@ -109,6 +109,8 @@ function genOptions(){const pool=[],B=G.banned;
  while(picks.length<n&&pool.length){const tot=pool.reduce((s,o)=>s+o.wt,0);let r=Math.random()*tot,i=0;for(;i<pool.length-1;i++){r-=pool[i].wt;if(r<=0)break;}picks.push(pool.splice(i,1)[0]);}
  if(!picks.length)return [{k:'heal'},{k:'cash'}].map(decorate);
  return picks.map(decorate);}
+/* v18.6.2 가진 무기·기술의 아이콘 칸: 단계 그림이 있는 무기(방패)만 단계 그림, 직업 기술·다른 무기는 예전 iconHTML(직업 기술은 도장) */
+function wIconHTML(w){const d=WD[w.id];return d&&d.lvName?`<img src="${wIcon(w)}" alt="">`:iconHTML(w.id);}
 function iconHTML(id){const d=WD[id];if(d&&d.type==='c')return `<span class="seal" style="background:${d.col}">${d.g}</span>`;if(BLESS[id])return `<span class="seal" style="background:${BLESS[id].col}">${BLESS[id].g}</span>`;return `<img src="${ICON[id]}" alt="">`;}
 /* v17.4 진화 짝 강조: 무기 카드는 짝 보패를 가졌는지, 보패 카드는 그 보패와 짝인 무기를 가졌는지 보여 준다.
    evoState → {kind:'w'|'p', pair(강조할지), ready(상자를 열면 진화), rows:[{wid,pid,own,lv,evoName}]} · 진화했거나 짝이 없으면 null */
@@ -134,8 +136,8 @@ function decorate(o){
  if(o.k==='cash')return {...o,ic:iconHTML('coin'),name:_t("엽전 꾸러미"),desc:_t("엽전 25닢을 얻는다."),badge:_t("보급"),bc:''};
  if(o.k==='lb'){const d=WD[o.id],w=G.weapons.find(w=>w.id===o.id),l=w.lb||0;return {...o,ic:iconHTML(o.id),name:wName(w)+_t(" 한계 돌파"),desc:_t("피해 +5%{p}. 끝없이 쌓을 수 있다.",{p:(l+1)%5===0?_t(" · 범위 +10%"):''}),badge:_t("돌파 {l} → {p}",{l:l,p:l+1}),bc:'lb'};}
  if(o.k==='wnew'||o.k==='wup'){const d=WD[o.id],w=G.weapons.find(w=>w.id===o.id);
-  if(o.k==='wnew')return {...o,ic:`<img src="${wIcon({id:o.id,lv:1})}" alt="">`,name:wName({id:o.id,lv:1}),desc:d.desc[0]+evoHTML(o),badge:d.job?_t("전용 무기"):_t("신규 무기"),bc:d.job?'job':'new',pair:!!(evoState(o)||{}).pair};
-  return {...o,ic:`<img src="${wIcon(w)}" alt="">`,name:!w.evo&&d.lvName&&wName(w)!==wName(w,w.lv+1)?`${wName(w)} → ${wName(w,w.lv+1)}`:wName(w),desc:d.desc[w.lv]+evoHTML(o),badge:`LV ${w.lv} → ${w.lv+1}`,bc:d.type==='c'?'cls':'',pair:!!(evoState(o)||{}).pair};}
+  if(o.k==='wnew')return {...o,ic:wIconHTML({id:o.id,lv:1}),name:wName({id:o.id,lv:1}),desc:d.desc[0]+evoHTML(o),badge:d.job?_t("전용 무기"):_t("신규 무기"),bc:d.job?'job':'new',pair:!!(evoState(o)||{}).pair};
+  return {...o,ic:wIconHTML(w),name:!w.evo&&d.lvName&&wName(w)!==wName(w,w.lv+1)?`${wName(w)} → ${wName(w,w.lv+1)}`:wName(w),desc:d.desc[w.lv]+evoHTML(o),badge:`LV ${w.lv} → ${w.lv+1}`,bc:d.type==='c'?'cls':'',pair:!!(evoState(o)||{}).pair};}
  const d=PD[o.id],l=G.passives[o.id]||0;
  return {...o,ic:iconHTML(o.id),name:d.name,desc:d.desc+evoHTML(o),badge:l?`LV ${l} → ${l+1}`:(d.job?_t("전용 보패"):_t("신규 보패")),bc:l?'':(d.job?'job':'new'),pair:!!(evoState(o)||{}).pair};}
 function applyOpt(o){

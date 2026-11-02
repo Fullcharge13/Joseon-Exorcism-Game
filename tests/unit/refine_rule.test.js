@@ -18,4 +18,12 @@ if(typeof refinePix==='function'){
  ok(JSON.stringify(px(3,2))===JSON.stringify([...C.g,255]),'안쪽 초록 칸은 그대로 '+px(3,2));
  ok(px(6,2)[3]===255,'오른쪽 바깥 테두리');ok(px(3,4)[3]===255,'아래 바깥 테두리');
 }
+// v18.6.1 검은 요괴: 몸의 60% 넘게 짙은 그림은 짙은 칸 둘레에 붉은 기 도는 밝은 회색 테두리(밤 바닥에서 보이게). 대부분 밝은 그림(위 시험 그림·퇴마사의 검은 갓)은 그대로 비움
+if(typeof refinePix==='function'){const w=4,h=3,src=new Uint8ClampedArray(w*h*4);const rows=['kkkk','kokk','kkkk'];
+ rows.forEach((r,j)=>[...r].forEach((ch,i)=>{const p=(j*w+i)*4;src.set(ch==='k'?[24,18,22,255]:[200,80,60,255],p);}));
+ const o=refinePix(src,w,h),px=(x,y)=>Array.from(o.data.slice((y*o.w+x)*4,(y*o.w+x)*4+4));
+ ok(typeof REFINE_RIM!=='undefined'&&JSON.stringify(px(0,2))===JSON.stringify([...REFINE_RIM,255]),'검은 요괴 왼쪽 테두리는 밝은 테두리색 '+px(0,2));
+ ok(JSON.stringify(px(2,0))===JSON.stringify([...(typeof REFINE_RIM!=='undefined'?REFINE_RIM:[0,0,0]),255]),'검은 요괴 위 테두리도 '+px(2,0));
+ ok(typeof REFINE_RIM!=='undefined'&&REFINE_RIM[0]>REFINE_RIM[2]&&REFINE_RIM[0]+REFINE_RIM[1]+REFINE_RIM[2]>240,'테두리색은 밝고 붉은 기 '+(typeof REFINE_RIM!=='undefined'?REFINE_RIM:''));
+ ok(px(0,0)[3]===0,'모서리는 그대로 비움');}
 if(fails.length){console.log('FAIL refine_rule\n  '+fails.join('\n  '));process.exitCode=1;}else console.log('PASS refine_rule');

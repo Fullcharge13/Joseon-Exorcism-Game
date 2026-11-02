@@ -47,8 +47,9 @@ function embInfo(src){if(src==='boss')return {bg:'#7a2018',bd:'#ff5a3a',bang:1};
  if(src==='ult')return {bg:'#7a2018',bd:'#e0b048',g:ULT[G.cid].g};
  if(src.startsWith('pet:')){const t=src.slice(4);return {bg:{tiger:'#b0702e',bear:'#5a3e2a',falcon:'#3a5f9e'}[t]||'#2a2228',bd:'#efe6d2',g:{tiger:'虎',bear:'熊',falcon:'鷹'}[t]||'獸'};}
  const d=WD[src];if(!d)return null;if(d.type==='c')return {bg:d.col||'#2a2228',bd:'#e0b048',g:d.g||d.name[0]};return {bg:'#2a2228',bd:'#e0b048',ic:ICS[src]};}
-function drawEmblems(){if(!EMQ.length)return;const k=S*DPR,sz=12*k;ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.textAlign='center';ctx.textBaseline='middle';
- for(let i=0;i<EMQ.length;i+=4){const inf=embInfo(EMQ[i]);if(!inf)continue;const x=Math.round(EMQ[i+1]*k-sz/2),y=Math.round(EMQ[i+2]*k-sz/2);ctx.globalAlpha=EMQ[i+3];
+function drawEmblems(){if(!EMQ.length)return;const k=S*DPR,sz=12*k,hb=G&&G.P?heroBox():null;ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.textAlign='center';ctx.textBaseline='middle';
+ for(let i=0;i<EMQ.length;i+=4){const inf=embInfo(EMQ[i]);if(!inf)continue;const x=Math.round(EMQ[i+1]*k-sz/2),y=Math.round(EMQ[i+2]*k-sz/2);   /* v18.6.2 퇴마사가 표지 밑에 있으면 표지를 옅게(퇴마사를 가리지 않게) */
+  const wx=EMQ[i+1]+RCX,wy=EMQ[i+2]+RCY,over=hb&&wx+6>hb.x0&&wx-6<hb.x1&&wy+6>hb.y0&&wy-6<hb.y1;ctx.globalAlpha=EMQ[i+3]*(over?0.25:1);
   ctx.fillStyle='#0a080c';ctx.fillRect(x,y,sz,sz);ctx.fillStyle=inf.bd;ctx.fillRect(x+k,y+k,sz-2*k,sz-2*k);ctx.fillStyle=inf.bg;ctx.fillRect(x+2*k,y+2*k,sz-4*k,sz-4*k);
   if(inf.ic)ctx.drawImage(inf.ic,x+2*k,y+2*k,8*k,8*k);
   else if(inf.bang){ctx.fillStyle='#fff6d0';ctx.fillRect(x+5*k,y+3*k,2*k,4*k);ctx.fillRect(x+5*k,y+8*k,2*k,k);}

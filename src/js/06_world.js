@@ -19,7 +19,7 @@ function hurt(e,dmg,kb=0,fx=0,fy=0,noCrit){
  if(duoOn('sancheon')&&P.hp>=P.maxHp*0.8)dmg*=1.25;
  if(!noCrit&&(Math.random()<P.crit||(e.frz>0&&duoOn('chilyong')))){dmg*=P.critDmg;crit=true;}
  if(e.mark>G.time)dmg*=1.5;
- dmg=Math.max(1,Math.round(dmg*rnd(0.9,1.1)));if(e.boss&&!e.prop){const cap=e.maxHp*(e.mid?MID_CAP:BOSS_CAP);if(G.time-(e.capT??-9)>=1){e.capT=G.time;e.capD=0;}dmg=Math.max(0,Math.min(dmg,cap-e.capD));e.capD+=dmg;if(dmg<=0){e.flash=0.04;return;}}
+ dmg=Math.max(1,Math.round(dmg*rnd(0.9,1.1)));if(e.boss&&!e.prop){const cap=e.maxHp*(e.mid?MID_CAP:BOSS_CAP);if(G.time-(e.capT??-9)>=1){e.capT=G.time;e.capD=0;}dmg=Math.max(0,Math.min(dmg,Math.floor(cap-e.capD)));e.capD+=dmg;if(dmg<=0){e.flash=0.04;return;}}
  if(!e.boss)G.dpsAcc=(G.dpsAcc||0)+Math.min(dmg,Math.max(0,e.hp));{const hs=HSRC||CUR_SRC;if(hs&&G.rs){const D=G.rs.dmg||(G.rs.dmg={});D[hs]=(D[hs]||0)+Math.min(dmg,Math.max(0,e.hp));const tm=G.tmOf&&G.tmOf[hs];if(tm&&!noCrit&&!G._dg)temperHit(tm,e,dmg);}}e.hp-=dmg;e.flash=0.08;
  if(kb&&!e.boss){const dx=e.x-fx,dy=e.y-fy,d=Math.hypot(dx,dy)||1,m=e.heavy?0.25:(e.elite?0.15:1);e.kx+=dx/d*kb*m;e.ky+=dy/d*kb*m;}
  if(!noCrit){if(P.frzCh&&!e.boss&&Math.random()<P.frzCh)e.frz=Math.max(e.frz,0.7);if(P.burnCh&&Math.random()<P.burnCh){e.dotSrc=HSRC||CUR_SRC||e.dotSrc,e.dot=Math.max(e.dot||0,8*P.might);e.dotT=2.5;}}

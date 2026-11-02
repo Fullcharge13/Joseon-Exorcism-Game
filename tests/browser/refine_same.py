@@ -58,8 +58,8 @@ with sync_playwright() as p:
       if(outl)ring0++;   /* 여기서는 테두리가 있는 그림 수(규칙의 세부는 단위 refine_rule이 본다) */
       const e=refineCanvas(s.raw.f),a=px(s.ref.f),q=px(e);if(a.length!==q.length||a.some((v,i)=>v!==q[i]))flipBad++;}
      return {n:L.length,ring0,flipBad,err:REFINE_ERR.slice(0,3),dark:L.filter(s=>{const r=px(s.raw.n);let t=0,k=0;for(let i=0;i<r.length;i+=4)if(r[i+3]){t++;if(0.2126*r[i]+0.7152*r[i+1]+0.0722*r[i+2]<60)k++;}return k>t*0.8;}).length};}""")
-    # 실제 브라우저에서 다듬기가 돌았는지: 거의 검은 그림(80% 넘게 짙은 색, 테두리를 덧대도 안 보여 규칙상 칠하지 않음)을 뺀 그림은 모두 테두리 칸이 있어야 함(1칸 골목·갇힌 틈만 닿은 경우 몇 장 허용)
-    if chk['ring0'] < chk['n'] - chk['dark'] - 2 or chk['flipBad'] or chk['err']: fails.append(f'다듬기 확인: 그림 {chk["n"]}장(거의 검은 그림 {chk["dark"]}) 중 테두리 있는 그림 {chk["ring0"]} · 뒤집힌 그림이 다른 것 {chk["flipBad"]} · 오류 {chk["err"]}')
+    # 실제 브라우저에서 다듬기가 돌았는지: v18.6.1부터 검은 요괴도 밝은 테두리를 받으므로 거의 모든 그림에 테두리 칸이 있어야 함(1칸 골목·갇힌 틈만 닿은 경우 두 장까지 허용)
+    if chk['ring0'] < chk['n'] - 2 or chk['flipBad'] or chk['err']: fails.append(f'다듬기 확인: 그림 {chk["n"]}장(거의 검은 그림 {chk["dark"]}) 중 테두리 있는 그림 {chk["ring0"]} · 뒤집힌 그림이 다른 것 {chk["flipBad"]} · 오류 {chk["err"]}')
     print(f'다듬은 그림 {chk["n"]}장 · 테두리 있음 {chk["ring0"]} · 거의 검은 그림 {chk["dark"]} · 오류 {len(chk["err"])}')
     for st in (0, 4, 8):
         pg.evaluate(SCENE, {'st': st, 'v': 'on', 'n': 40, 'warm': 40})

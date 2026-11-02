@@ -3,8 +3,10 @@ const PAL={k:'#1a1418',w:'#efe6d2',s:'#e8b98f',r:'#c23b2a',R:'#7a2018',g:'#3f9a5
 function mk(rows,pal=PAL){const h=rows.length,w=Math.max(...rows.map(r=>r.length));const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');rows.forEach((r,j)=>{for(let i=0;i<r.length;i++){const ch=r[i];if(ch!=='.'&&pal[ch]){x.fillStyle=pal[ch];x.fillRect(i,j,1,1);}}});return c;}
 /* v18.6 그림 다듬기(설계 docs/specs/2026-11-02-그림-다듬기.md): 둘레 1칸 여백 · 바깥 빈칸에만 테두리(맞닿은 색 × 0.45) ·
    안에 갇힌 빈칸과 1칸 골목은 비움 · 바깥에 닿은 맨 위 칸은 밝게(짙은 색 제외) · 맨 아래·오른쪽 칸은 × 0.8 */
+const REFINE_RIM=[122,100,108];   // v18.6.1 검은 요괴 테두리: 붉은 기 도는 밝은 회색(밤 바닥 위에서 보이게)
 function refinePix(src,w,h){const W=w+2,H=h+2,d=new Uint8ClampedArray(W*H*4),A=new Uint8Array(W*H),out=new Uint8Array(W*H);
  for(let j=0;j<h;j++)for(let i=0;i<w;i++){const p=(j*w+i)*4;if(src[p+3]>0){const q=((j+1)*W+i+1);A[q]=1;d.set([src[p],src[p+1],src[p+2],src[p+3]],q*4);}}
+ let nOp=0,nDk=0;for(let i=0;i<w*h;i++)if(src[i*4+3]>0){nOp++;if(0.2126*src[i*4]+0.7152*src[i*4+1]+0.0722*src[i*4+2]<60)nDk++;}const darkSpr=nOp>0&&nDk>nOp*0.6;   // 몸의 60% 넘게 짙으면 검은 요괴
  const st=[];for(let i=0;i<W;i++){st.push(i,(H-1)*W+i);}for(let j=0;j<H;j++){st.push(j*W,j*W+W-1);}
  while(st.length){const q=st.pop();if(out[q]||A[q])continue;out[q]=1;const x=q%W,y=(q-x)/W;if(x>0)st.push(q-1);if(x<W-1)st.push(q+1);if(y>0)st.push(q-W);if(y<H-1)st.push(q+W);}
  const isA=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&A[y*W+x]===1,isO=(x,y)=>x<0||y<0||x>=W||y>=H||out[y*W+x]===1;
@@ -12,7 +14,7 @@ function refinePix(src,w,h){const W=w+2,H=h+2,d=new Uint8ClampedArray(W*H*4),A=n
  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const q=y*W+x,p=q*4;
   if(out[q]){const L=isA(x-1,y),Rr=isA(x+1,y),U=isA(x,y-1),D=isA(x,y+1);if(!(L||Rr||U||D)||(L&&Rr)||(U&&D))continue;
    let r=0,g=0,bb=0,n=0;for(const [a,b2] of [[x-1,y],[x+1,y],[x,y-1],[x,y+1]])if(isA(a,b2)){const k=(b2*W+a)*4;if(0.2126*d[k]+0.7152*d[k+1]+0.0722*d[k+2]<60)continue;r+=d[k];g+=d[k+1];bb+=d[k+2];n++;}
-   if(!n)continue;   // 짙은 색에만 닿으면 테두리 없음(갓·눈처럼 이미 짙은 가장자리가 두꺼워져 뭉개지지 않게)
+   if(!n){if(darkSpr){res[p]=REFINE_RIM[0];res[p+1]=REFINE_RIM[1];res[p+2]=REFINE_RIM[2];res[p+3]=255;}continue;}   // 짙은 색에만 닿으면 테두리 없음(갓·눈처럼 이미 짙은 가장자리가 두꺼워져 뭉개지지 않게). 단 검은 요괴는 밝은 테두리
    res[p]=r/n*0.45;res[p+1]=g/n*0.45;res[p+2]=bb/n*0.45;res[p+3]=255;continue;}
   if(!A[q])continue;const lum=0.2126*d[p]+0.7152*d[p+1]+0.0722*d[p+2];
   if(isO(x,y-1)){if(lum>=60)for(let k=0;k<3;k++)res[p+k]=d[p+k]+(255-d[p+k])*0.18;}
