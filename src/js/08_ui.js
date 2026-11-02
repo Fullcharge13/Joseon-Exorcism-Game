@@ -557,7 +557,17 @@ addEventListener('keydown',e=>{keys[e.code]=true;
  if(e.code.startsWith('Arrow')||e.code==='Space')e.preventDefault();});
 addEventListener('keyup',e=>{keys[e.code]=false;});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;if(G&&!G.over&&!modal)openPause();});
-cvs.addEventListener('pointerdown',e=>{if(modal||joy)return;initAudio();joy={id:e.pointerId,ox:e.clientX,oy:e.clientY,x:e.clientX,y:e.clientY,active:true};try{cvs.setPointerCapture(e.pointerId);}catch(_){}});
+/* v18.6.3 이동 손가락이 「눌린 채」 남지 않게: 손을 뗀 알림을 놓치면(휴대폰 제어 센터·알림·창 전환 등) 예전에는 이동이 끝없이 남고 새 터치도 막혔다.
+   ① 새로 누를 때 남은 이동의 손가락이 이미 화면에 없으면(붙잡기 풀림 · 켜진 손가락 목록에 없음) 버리고 새 손가락이 맡는다
+   ② 화면의 손가락이 하나도 없다는 터치 알림(touches 0)이 오면 이동을 푼다 ③ 창이 초점을 잃거나 가려지면 푼다 ④ 어느 요소에서 떼든 같은 손가락이면 푼다 */
+const PTR=new Set();addEventListener('pointerdown',e=>PTR.add(e.pointerId),true);
+const ptrEnd=e=>{PTR.delete(e.pointerId);if(joy&&joy.id===e.pointerId){try{cvs.releasePointerCapture(e.pointerId);}catch(_){}joy=null;}};
+addEventListener('pointerup',ptrEnd,true);addEventListener('pointercancel',ptrEnd,true);
+const dropJoy=()=>{if(joy){try{cvs.releasePointerCapture(joy.id);}catch(_){}joy=null;}PTR.clear();};
+addEventListener('touchend',e=>{if(!e.touches||e.touches.length===0)dropJoy();},true);addEventListener('touchcancel',e=>{if(!e.touches||e.touches.length===0)dropJoy();},true);
+addEventListener('blur',dropJoy);addEventListener('pagehide',dropJoy);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')dropJoy();});
+const joyStale=()=>{if(!joy)return false;let cap=true;try{cap=cvs.hasPointerCapture(joy.id);}catch(_){}return !cap||!PTR.has(joy.id);};
+cvs.addEventListener('pointerdown',e=>{if(joy&&joy.id!==e.pointerId&&joyStale())dropJoy(),PTR.add(e.pointerId);if(modal||joy)return;initAudio();joy={id:e.pointerId,ox:e.clientX,oy:e.clientY,x:e.clientX,y:e.clientY,active:true};try{cvs.setPointerCapture(e.pointerId);}catch(_){}});
 cvs.addEventListener('pointermove',e=>{if(joy&&joy.id===e.pointerId){joy.x=e.clientX;joy.y=e.clientY;}});
 const endJoy=e=>{if(joy&&joy.id===e.pointerId){try{cvs.releasePointerCapture(e.pointerId);}catch(_){}joy=null;}};
 cvs.addEventListener('pointerup',endJoy);cvs.addEventListener('pointercancel',endJoy);cvs.addEventListener('lostpointercapture',endJoy);   // 붙잡기를 잃어도 이동 손가락이 남아 다음 터치를 막지 않게

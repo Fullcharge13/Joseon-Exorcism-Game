@@ -397,7 +397,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button class="btn ghost" id="labBtn" hidden>조합 시험장</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v18.6.2</p>
+    <p class="ver" id="verTag">v18.6.3</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -1882,7 +1882,7 @@ function saveMeta(){if(LAB)return;try{localStorage.setItem(SAVE_KEY,JSON.stringi
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER='v18.6.2',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
+const GAME_VER='v18.6.3',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
 let DIAG={log:[],hb:null};try{const d=JSON.parse(localStorage.getItem(DIAG_KEY)||'null');if(d&&typeof d==='object'&&!Array.isArray(d)){DIAG.log=Array.isArray(d.log)?d.log.filter(e=>e&&typeof e==='object').slice(-DIAG_MAX):[];DIAG.hb=d.hb&&typeof d.hb==='object'?d.hb:null;}}catch(e){}
 const diagSeen=new Set();let diagStuck=0,diagNoScr=0,diagLastT=null,diagHbT=0;
 function diagSave(){try{localStorage.setItem(DIAG_KEY,JSON.stringify(DIAG));}catch(e){}}
@@ -3639,7 +3639,17 @@ addEventListener('keydown',e=>{keys[e.code]=true;
  if(e.code.startsWith('Arrow')||e.code==='Space')e.preventDefault();});
 addEventListener('keyup',e=>{keys[e.code]=false;});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;if(G&&!G.over&&!modal)openPause();});
-cvs.addEventListener('pointerdown',e=>{if(modal||joy)return;initAudio();joy={id:e.pointerId,ox:e.clientX,oy:e.clientY,x:e.clientX,y:e.clientY,active:true};try{cvs.setPointerCapture(e.pointerId);}catch(_){}});
+/* v18.6.3 이동 손가락이 「눌린 채」 남지 않게: 손을 뗀 알림을 놓치면(휴대폰 제어 센터·알림·창 전환 등) 예전에는 이동이 끝없이 남고 새 터치도 막혔다.
+   ① 새로 누를 때 남은 이동의 손가락이 이미 화면에 없으면(붙잡기 풀림 · 켜진 손가락 목록에 없음) 버리고 새 손가락이 맡는다
+   ② 화면의 손가락이 하나도 없다는 터치 알림(touches 0)이 오면 이동을 푼다 ③ 창이 초점을 잃거나 가려지면 푼다 ④ 어느 요소에서 떼든 같은 손가락이면 푼다 */
+const PTR=new Set();addEventListener('pointerdown',e=>PTR.add(e.pointerId),true);
+const ptrEnd=e=>{PTR.delete(e.pointerId);if(joy&&joy.id===e.pointerId){try{cvs.releasePointerCapture(e.pointerId);}catch(_){}joy=null;}};
+addEventListener('pointerup',ptrEnd,true);addEventListener('pointercancel',ptrEnd,true);
+const dropJoy=()=>{if(joy){try{cvs.releasePointerCapture(joy.id);}catch(_){}joy=null;}PTR.clear();};
+addEventListener('touchend',e=>{if(!e.touches||e.touches.length===0)dropJoy();},true);addEventListener('touchcancel',e=>{if(!e.touches||e.touches.length===0)dropJoy();},true);
+addEventListener('blur',dropJoy);addEventListener('pagehide',dropJoy);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')dropJoy();});
+const joyStale=()=>{if(!joy)return false;let cap=true;try{cap=cvs.hasPointerCapture(joy.id);}catch(_){}return !cap||!PTR.has(joy.id);};
+cvs.addEventListener('pointerdown',e=>{if(joy&&joy.id!==e.pointerId&&joyStale())dropJoy(),PTR.add(e.pointerId);if(modal||joy)return;initAudio();joy={id:e.pointerId,ox:e.clientX,oy:e.clientY,x:e.clientX,y:e.clientY,active:true};try{cvs.setPointerCapture(e.pointerId);}catch(_){}});
 cvs.addEventListener('pointermove',e=>{if(joy&&joy.id===e.pointerId){joy.x=e.clientX;joy.y=e.clientY;}});
 const endJoy=e=>{if(joy&&joy.id===e.pointerId){try{cvs.releasePointerCapture(e.pointerId);}catch(_){}joy=null;}};
 cvs.addEventListener('pointerup',endJoy);cvs.addEventListener('pointercancel',endJoy);cvs.addEventListener('lostpointercapture',endJoy);   // 붙잡기를 잃어도 이동 손가락이 남아 다음 터치를 막지 않게
