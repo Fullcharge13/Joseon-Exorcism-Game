@@ -24,7 +24,7 @@ Object.assign(WD,{
     warn({x,y,r,t:0.6+i*0.25,dmg,friendly:1,col:'#a89c8a',on:z=>{for(const e of near(z.x,z.y,z.r,TMP2))if(!e.boss&&!e.dead)e.frz=Math.max(e.frz,0.6);particle(z.x,z.y,'#8a8494',10,70,0.5);}});}
    w.t=L5(w,[6,6,5.5,5,5])*P.cd;}},
  bonggo:{name:'봉고파직',type:'c',g:'封',col:'#7a2018',max:5,desc:['화면에서 가장 센 요괴 셋에 「封」 도장을 찍어 잠시 묶은 뒤 크게 친다. 보스는 묶이지 않고, 받는 피해가 늘어난다.','도장 +1','묶는 시간 +','피해 +','도장 +1, 피해 +25%'],
-  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=L5(w,[3,4,4,4,5]),hold=L5(w,[2,2,2.5,2.5,2.5]),dmg=L5(w,[80,90,100,125,160])*P.might;
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const n=L5(w,[3,4,4,4,5]),hold=L5(w,[2,2,2.5,2.5,2.5]),dmg=L5(w,[144,162,180,225,288])*P.might;   /* v19.2 ×1.8(자동 플레이 피해 비중 1%) */
    for(const e of t6Strong(n,false)){G.fx.push({t:'bolt',x:e.x,y:e.y,life:0.2,max:0.2,seed:Math.random()*99,col:'#e0b048'});
     if(e.boss){e.mark=G.time+4;hurt(e,dmg*0.5,0);continue;}e.frz=Math.max(e.frz,hold);qpush({t:hold,f:()=>{if(!e.dead){hurt(e,dmg,0);particle(e.x,e.y,'#c23b2a',6,50,0.4);}}});}
    w.t=L5(w,[5,5,4.5,4.5,4])*P.cd;}}});
@@ -40,7 +40,7 @@ function t6CanHeal(){return !G.mods.noHeal;}   // 검토 지적: noTteok(떡 막
 ITEMS.bigchim=[[11,1,'y'],...col(11,2,10,'x'),[10,10,'n']];   // 큰 침(백광현)
 Object.assign(WD,{
  tangyak:{name:'백 첩 탕약',type:'c',g:'湯',col:'#3f9a5a',max:5,desc:['약 달이는 김이 몸 둘레에 퍼진다. 김 속의 요괴는 느려지고 피해를 입으며, 퇴마사는 조금씩 회복한다.','범위 +','회복 +','느려짐 +, 피해 +','피해 +30%, 회복 +'],
-  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const r=L5(w,[40,48,48,52,56])*P.area,dmg=L5(w,[10,12,12,16,20])*P.might,hv=L5(w,[1.5,1.5,2.2,2.2,3]);
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const r=L5(w,[40,48,48,52,56])*P.area,dmg=L5(w,[18,22,22,29,36])*P.might,hv=L5(w,[1.5,1.5,2.2,2.2,3]);
    for(const e of near(P.x,P.y,r,TMP2).slice()){if(e.dead)continue;if(!e.boss)e.slow=Math.max(e.slow||0,L5(w,[0.8,0.8,0.8,1.2,1.2]));hurt(e,dmg,0);}
    if(t6CanHeal())heal(hv);G.fx.push({t:'ring',x:P.x,y:P.y,r:4,maxR:r,col:'#9af0b0',life:0.5,max:0.5});w.t=1*P.cd;}},
  daechim:{name:'대침 발근',type:'c',g:'針',col:'#8a8494',max:5,desc:['체력이 가장 많은 요괴에 큰 침을 꽂아 3초 동안 독을 뽑는다. 다 뽑으면 그 독이 둘레로 터진다.','피해 +','침 +1','터지는 범위 +','침 +1, 피해 +30%'],
@@ -98,9 +98,11 @@ Object.assign(WD,{
   upd(w,dt,P){w.t-=dt;if(w.t>0)return;const k=L5(w,[1,1,2,2,3]),R0=L5(w,[60,60,60,72,78])*P.area,dmg=L5(w,[20,26,26,32,40])*P.might,kb=L5(w,[50,50,50,80,80]);
    for(let i=0;i<k;i++)qpush({t:i*0.45,f:()=>{pulseRing(P.x,P.y,R0,dmg,'#9ad0e0',kb);}});w.t=L5(w,[4.5,4.5,4.5,4,4])*P.cd;}},
  namgang:{name:'남강의 물결',type:'c',g:'江',col:'#2a5a7a',max:5,desc:['남강의 물결이 앞으로 휩쓸며 지나간다. 엘리트와 보스처럼 강한 요괴일수록 더 크게 친다.','피해 +','물결 폭 +','강한 요괴 추가 피해 +','물결 폭 +, 피해 +30%'],
-  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const a=Math.atan2(P.diry||0,P.dirx||1),len=190,wd=L5(w,[18,18,24,24,30])*P.area,dmg=L5(w,[40,52,52,60,78])*P.might,xm=L5(w,[1.6,1.6,1.6,2.1,2.1]);
-   beam(P.x,P.y-3,a,len,wd,dmg,'#5a9ac0');const ca=Math.cos(a),sa=Math.sin(a);
-   for(const e of G.enemies){if(e.dead||e.prop||!(e.boss||e.elite))continue;const dx=e.x-P.x,dy=e.y-P.y,t=dx*ca+dy*sa,o=Math.abs(-dx*sa+dy*ca);if(t>0&&t<len&&o<wd/2+e.r)hurt(e,dmg*(xm-1),0);}
+  upd(w,dt,P){w.t-=dt;if(w.t>0)return;const a=Math.atan2(P.diry||0,P.dirx||1),len=190,wd=L5(w,[18,18,24,24,30])*P.area,dmg=L5(w,[72,94,94,108,140])*P.might,xm=L5(w,[1.6,1.6,1.6,2.1,2.1]);
+   /* v19.2: 강한 요괴 추가 피해를 두 번째 타격이 아니라 한 번의 배율로(피해 숫자·치명타가 한 번) */
+   const x0=P.x,y0=P.y-3,ex=x0+Math.cos(a)*len,ey=y0+Math.sin(a)*len;
+   for(const e of G.enemies.slice()){if(e.dead||e.inv)continue;if(segDist(e.x,e.y,x0,y0,ex,ey)<wd/2+e.r)hurt(e,dmg*(e.boss||e.elite?xm:1),30,x0,y0);}
+   G.fx.push({t:'beam',x:x0,y:y0,a,len,w:wd,col:'#5a9ac0',life:0.3,max:0.3});
    w.t=L5(w,[5,5,4.6,4.6,4.2])*P.cd;}},
  /* ---- 상인 ---- */
  insamgyo:{name:'인삼 교역',type:'c',g:'蔘',col:'#9a6a10',max:5,desc:['엽전을 얻을수록 인삼 꾸러미가 쌓인다(엽전이 없어도 조금씩). 가득 차면 교역이 터지며 둘레에 금빛 폭발을 일으킨다.','쌓이는 속도 +','폭발 피해 +','폭발 범위 +','쌓이는 속도 +, 피해 +30%'],

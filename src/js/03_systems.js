@@ -5,7 +5,7 @@ const AWK={echo:{n:'연환',d:'시전하고 0.4초 뒤 한 번 더 시전한다 
 const AWK_STATIC=new Set(['gaekju','tongmun','pansori','ssanggeom','geomseon','mukhyang','gyeongguk','yeokjol','godok','gut','jakduchum','jinogwi','gil','ilwol','sugun']);
 const AWK_NONE=new Set(['hoesaeng']);
 function awkTypes(id){return AWK_NONE.has(id)?[]:AWK_STATIC.has(id)?['geuk']:['echo','geuk','sin'];}
-function runW(w,dt,P){const d=WD[w.id],ak=w.awk,lb=w.lb||0,se=w.seals,gz=G.grazeT>0,sb=w.id===CHARS[G.cid].start&&G.P.tier?1+START_TIER_B*G.P.tier:1;
+function runW(w,dt,P){const d=WD[w.id],ak=w.awk,lb=w.lb||0,se=w.seals,gz=G.grazeT>0,sb=w.id===CHARS[G.cid].start&&G.P.tier?1+START_TIER_B*Math.min(5,G.P.tier):1;   /* v19.2 시작 무기 보너스는 5차까지 */
  if(!ak&&!lb&&!(se&&se.length)&&!gz&&sb===1){d.upd(w,dt,P);return;}
  const m=P.might,a=P.area,c=P.cd,am=P.amount,du=P.dur,ps=P.pspd;P.might*=sb*(1+LB_STEP*lb)*(ak==='geuk'?1.5:1);P.area*=(1+0.1*Math.floor(lb/5))*(ak==='geuk'?1.25:1);if(ak==='sin')P.cd*=0.65;if(gz)P.cd*=0.85;
  if(se)for(const k of se)SEALS[k].f(P);
@@ -278,7 +278,7 @@ const WD={
  jupan:{name:'주판',type:'w',job:'sangin',max:5,evo:'jangbu',evoName:'천금 주판',evoDesc:'천금을 셈하는 주판이 쉼 없이 튕겨 주판알 열둘을 사방으로 꿰뚫어 보낸다.',
   desc:['주판알을 튕겨 가까운 요괴에게 부채꼴로 날린다.','알 +1','피해 +20%','관통 +1, 빨라짐','알 +1, 피해 +15%'],
   upd(w,dt,P){w.t-=dt;if(w.t>0)return;
-   if(w.evo){w.spin=(w.spin||0)+0.4;const n=12+P.amount;for(let i=0;i<n;i++)shoot(P.x,P.y-4,w.spin+i/n*TAU,230*P.pspd,'bead',16*P.might,3,0.8,2);w.t=0.85*P.cd;return;}
+   if(w.evo){w.spin=(w.spin||0)+0.4;const n=12+P.amount;for(let i=0;i<n;i++)shoot(P.x,P.y-4,w.spin+i/n*TAU,230*P.pspd,'bead',12*P.might,3,0.8,2);   /* v19.2 16→12(피해 비중 57~60%) */w.t=0.85*P.cd;return;}
    const n=L5(w,[3,4,4,4,5])+P.amount,dmg=L5(w,[9,9,11,11,13])*P.might,pr=L5(w,[1,1,1,2,2]);const tg=nearest(P.x,P.y,220);const a=tg?Math.atan2(tg.y-P.y,tg.x-P.x):Math.atan2(P.diry,P.dirx);
    for(let i=0;i<n;i++)shoot(P.x,P.y-4,a+(i-(n-1)/2)*0.16,230*P.pspd,'bead',dmg,pr,0.8,2);w.t=L5(w,[1.1,1.1,1.05,0.95,0.9])*P.cd;}},
  yeopjeon:{name:'엽전 꾸러미',type:'w',job:'sangin',max:5,evo:'jeondae',evoName:'상평통보 비',evoDesc:'상평통보 여섯 닢이 요괴와 요괴 사이를 여섯 번씩 튕겨 다닌다.',

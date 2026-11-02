@@ -40,6 +40,7 @@ def drop6(x):
     # 줄기 끝 「→ 6차 인물」은 떼고, 6차 글이 든 줄과 그 바로 뒤의 빈 줄·「엽전 300」(과업 보상 줄)은 거른다
     out, skip = [], False
     x = x.replace('레벨 10·20·30·40·50·60에 전직한다.', '레벨 10·20·30·40·50에 전직한다.')   # v19.0 「처음이라면」 전직 레벨 줄
+    x = x.replace('피해 +20%(약방울은 +20% 없음)로', '피해 +20%로')   # v19.2 도움말: 약방울은 합공 +20%가 없음
     for l in T6SUF.sub('', x).split('\n'):
         if T6.search(l): skip = True; continue
         if skip and l.strip() in ('', '엽전 300', '0/6'): continue

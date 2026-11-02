@@ -454,7 +454,7 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 | <img src="docs/img/w_f_sanjo.png" width="32" alt=""> | **산조 장단** | <img src="docs/img/w_gayageum.png" width="16" alt=""> 취흥 산조 + <img src="docs/img/w_janggu.png" width="16" alt=""> 신명 장단 | 기생 | 5초마다 장단이 둘레를 울리고 가락 열두 줄기가 사방으로 퍼진다. |
 | <img src="docs/img/w_f_hwagwanmu.png" width="32" alt=""> | **검무 화관** | <img src="docs/img/w_geommu.png" width="16" alt=""> 진주 검무 + <img src="docs/img/w_buchaechum.png" width="16" alt=""> 화관무 | 기생 | 5초마다 꽃비 세 곳을 뿌리고 칼춤으로 한 바퀴 크게 벤다. |
 | <img src="docs/img/w_f_singihwa.png" width="32" alt=""> | **신기 화살비** | <img src="docs/img/w_hwasal.png" width="16" alt=""> 편전 + <img src="docs/img/w_singijeon.png" width="16" alt=""> 화차 | 공용 | 5초마다 불화살 여섯 발이 하늘에서 요괴 위로 떨어진다. |
-| <img src="docs/img/w_f_yakbang.png" width="32" alt=""> | **약방울** | <img src="docs/img/w_bangul.png" width="16" alt=""> 대신방울 + <img src="docs/img/w_yaktang.png" width="16" alt=""> 십전대보탕 | 공용 | 6초마다 약 기운 실린 방울 소리가 퍼져 요괴를 늦추고 체력 3%를 되찾는다. |
+| <img src="docs/img/w_f_yakbang.png" width="32" alt=""> | **약방울** | <img src="docs/img/w_bangul.png" width="16" alt=""> 대신방울 + <img src="docs/img/w_yaktang.png" width="16" alt=""> 십전대보탕 | 공용 | 6초마다 약 기운 실린 방울 소리가 퍼져 요괴를 늦추고 체력 3%를 되찾는다. (v19.2부터 다른 합공과 달리 「두 무기 피해 +20%」가 없음) |
 | <img src="docs/img/w_f_cheonnyang.png" width="32" alt=""> | **천냥 셈판** | <img src="docs/img/w_jupan.png" width="16" alt=""> 천금 주판 + <img src="docs/img/w_yeopjeon.png" width="16" alt=""> 상평통보 비 | 상인 | 5초마다 주판알 열여섯 알과 튕기는 엽전 여섯 닢이 한꺼번에 사방으로 쏟아진다. |
 | <img src="docs/img/w_f_hanjim.png" width="32" alt=""> | **한 짐 장사** | <img src="docs/img/w_doe.png" width="16" alt=""> 만석 곳간 + <img src="docs/img/w_jige.png" width="16" alt=""> 천근 지게 | 상인 | 6초마다 쌀 한 짐을 쿵 내려놓아 둘레를 크게 부수고, 쌀알 장판 넷을 펼친다. |
 
@@ -1149,6 +1149,7 @@ Lv 50부터, 또는 더 올릴 무기·보패가 없을 때 만렙 무기·기�
 | v18.6.3 | 버그 고침: 휴대폰에서 손을 뗐는데도 이동이 「눌린 채」 남아 퇴마사가 저절로 움직이고, 그 뒤로는 새 터치도 먹지 않던 문제. 손을 뗀 알림을 놓쳐도 화면에 손가락이 없으면 이동을 풀고, 새로 누르면 그 손가락이 이동을 맡음. 앱 전환·제어 센터 등으로 화면이 가려져도 풀림 |
 | v19.0 | **6차 전직(1부)**: 5차를 마친 퇴마사가 Lv 60에 조선의 실존 인물로 전직. 선비(다산 정약용 「거중기」 · 어사 박문수 「봉고파직」)·의원(구암 허준 「백 첩 탕약」 · 신의 백광현 「대침 발근」)·장수(충무공 이순신 「울돌목 회오리」 · 홍의장군 곽재우 「홍의 의병」). 고유 기술·전직 보너스·새 차림·발밑 금빛 고리·과업 6. 무당·기생·상인은 다음 판. 고증: 한국민족문화대백과사전<br><img src="docs/img/tier6_looks.png" width="600" alt="5차와 6차 차림"> |
 | v19.1 | **6차 전직(2부)**: 무당(토정 이지함 「토정비결」 · 격암 남사고 「천기누설」)·기생(명월 황진이 「청산리 벽계수」 · 의기 논개 「남강의 물결」)·상인(거상 임상옥 「인삼 교역」 · 도반수 백달원 「지게 행렬」). 이제 12갈래 모두 Lv 60에 6차 전직 |
+| v19.2 | **밸런스 검수**: 약했던 6차 기술 셋(봉고파직·백 첩 탕약·남강의 물결) 피해 약 1.8배 · 「천금 주판」 구슬 피해 16→12 · 합공 「약방울」의 피해 +20% 없앰 · 남강의 물결은 엘리트·보스에게도 피해 숫자 하나 · 시작 무기 보너스는 5차까지만 커짐 |
 
 ### 소스 구조 (v18.0~)
 

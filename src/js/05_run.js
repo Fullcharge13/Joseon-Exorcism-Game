@@ -85,15 +85,15 @@ const FUSE=[
   fx(P){const D=FDMG();for(let i=0;i<3;i++){const tg=randomEnemy(140);if(tg)zone({x:tg.x,y:tg.y,r:24*P.area,dmg:D*0.4,tick:0.3,life:2.5,col:'#ff9ac0',slow:1,hold:1,kind:'petal'});}slash(P.x,P.y,0,56*P.area,D*1.4,Math.PI,0,'#ffb0d0');}},
  {id:'f_singihwa',a:'hwasal',b:'singijeon',n:'신기 화살비',cd:5,d:'5초마다 불화살 여섯 발이 하늘에서 요괴 위로 떨어진다.',
   fx(P){const D=FDMG()*2;for(let i=0;i<6;i++){const tg=randomEnemy();warn({x:tg?tg.x:P.x+rnd(-W/2,W/2),y:tg?tg.y:P.y+rnd(-H/2,H/2),r:22*P.area,t:0.5+i*0.07,dmg:D,friendly:1,col:'#ff9a4a'});}}},
- {id:'f_yakbang',a:'bangul',b:'yaktang',n:'약방울',cd:6,d:'6초마다 약 기운 실린 방울 소리가 퍼져 요괴를 늦추고 체력 3%를 되찾는다.',
+ {id:'f_yakbang',a:'bangul',b:'yaktang',n:'약방울',cd:6,dm:1/1.2,   /* v19.2 두 무기 피해 +20%를 빼서 그대로(×0.83, 피해 비중 55~58%) */d:'6초마다 약 기운 실린 방울 소리가 퍼져 요괴를 늦추고 체력 3%를 되찾는다.',
   fx(P){G.fx.push({t:'wave',x:P.x,y:P.y,r:4,maxR:110*P.area,dmg:FDMG(),hit:new Set(),life:9,col:'#7fd07f',kb:40,slow:1});heal(P.maxHp*0.03);}},
  {id:'f_cheonnyang',a:'jupan',b:'yeopjeon',job:'sangin',n:'천냥 셈판',cd:5,d:'5초마다 주판알 열여섯 알과 튕기는 엽전 여섯 닢이 한꺼번에 사방으로 쏟아진다.',
   fx(P){const D=FDMG();for(let i=0;i<16;i++)shoot(P.x,P.y-4,i/16*TAU,240*P.pspd,'bead',D,3,0.9,2);for(let i=0;i<6;i++)shoot(P.x,P.y-4,i/6*TAU+0.3,210*P.pspd,'coin',D*1.2,1,1.6,2.5,{bounces:5});}},
  {id:'f_hanjim',a:'doe',b:'jige',job:'sangin',n:'한 짐 장사',cd:6,d:'6초마다 쌀 한 짐을 쿵 내려놓아 둘레를 크게 부수고, 쌀알 장판 넷을 펼친다.',
   fx(P){const D=FDMG();pulseRing(P.x,P.y,80*P.area,D*1.8,'#c9a06a',160);for(let i=0;i<4;i++){const a=i/4*TAU+0.4;zone({x:P.x+Math.cos(a)*50,y:P.y+Math.sin(a)*40,r:26*P.area,dmg:D*0.35,tick:0.35,life:3,col:'#efe6d2',slow:1,hold:1,kind:'rice'});}}}];
 for(const f of FUSE){
- WD[f.id]={name:f.n,type:'w',job:f.job,max:5,fuse:f,evoName:f.n,evoDesc:f.d,desc:[`${WD[f.a].evoName}과(와) ${WD[f.b].evoName}이(가) 하나로 합쳐졌다. 두 무기 피해 +20%. ${f.d}`,'','','',''],
-  upd(w,dt,P){const m=P.might;P.might*=1.2;try{for(const k of (w.kids||[]))WD[k.id].upd(k,dt,P);}finally{P.might=m;}
+ WD[f.id]={name:f.n,type:'w',job:f.job,max:5,fuse:f,evoName:f.n,evoDesc:f.d,desc:[`${WD[f.a].evoName}과(와) ${WD[f.b].evoName}이(가) 하나로 합쳐졌다. ${f.dm?'':'두 무기 피해 +20%. '}${f.d}`,'','','',''],
+  upd(w,dt,P){const m=P.might;P.might*=1.2*(f.dm||1);try{for(const k of (w.kids||[]))WD[k.id].upd(k,dt,P);}finally{P.might=m;}
    w.t-=dt;if(w.t<=0){w.t=f.cd*P.cd;f.fx(P);}}};
  const c=document.createElement('canvas');c.width=c.height=8;const x=c.getContext('2d');x.drawImage(ICS[f.a],0,0);x.save();x.beginPath();x.moveTo(8,0);x.lineTo(8,8);x.lineTo(0,8);x.closePath();x.clip();x.drawImage(ICS[f.b],0,0);x.restore();
  ICS[f.id]=c;ICON[f.id]=big(c,4);}
