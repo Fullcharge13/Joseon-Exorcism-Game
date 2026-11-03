@@ -3,7 +3,8 @@
   python3 build.py           # index.html 을 새로 만든다
   python3 build.py --check   # 만들 결과가 지금 index.html·sw.js 와 같은지만 본다(다르면 실패)
 src/shell.html 의 <!--JS--> 자리에 src/i18n/*.js 와 src/js/*.js 를 이름 순서대로 이어 붙인다.
-판 번호는 src/js/05_meta_save.js 의 GAME_VER 한 곳에만 쓴다. sw.js 의 캐시 이름(joseon-<판>)은 빌드가 맞춘다(v20.0.1).
+판 번호는 src/js/05_meta_save.js 의 GAME_VER 한 곳에만 쓴다. sw.js 의 캐시 이름(joseon-<판>)(v20.0.1)과
+시작 화면 판 표시(shell.html 의 verTag)(v20.2.1)는 빌드가 맞춘다.
 """
 import sys, pathlib, hashlib, json, re
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -13,6 +14,7 @@ SW = ROOT / 'sw.js'
 MARK = '<!--JS-->\n'
 VER_RE = re.compile(r"^const GAME_VER = '(v[\w.]+)'", re.M)
 CACHE_RE = re.compile(r"^const CACHE='joseon-[^']*';", re.M)
+VERTAG_RE = re.compile(r'(<p class="ver" id="verTag">).*?(</p>)')   # v20.2.1 시작 화면 판 표시
 
 def game_ver():
     m = VER_RE.findall((SRC / 'js' / '05_meta_save.js').read_text(encoding='utf8'))
@@ -41,6 +43,9 @@ def build_text():
         raise SystemExit('src/js 안에 </script 글자가 있으면 페이지가 깨집니다(문자열이면 <\\/script 로)')
     for p in parts + i18n:
         if not p.read_text(encoding='utf8').endswith('\n'): raise SystemExit(f'{p.name} 이 줄바꿈으로 끝나지 않습니다')
+    if len(VERTAG_RE.findall(shell)) != 1:
+        raise SystemExit('src/shell.html 에 <p class="ver" id="verTag">…</p> 줄이 정확히 한 번 있어야 합니다')
+    shell = VERTAG_RE.sub(lambda m: m.group(1) + game_ver() + m.group(2), shell)
     return shell.replace(MARK, js)
 
 def syntax_check(js):
