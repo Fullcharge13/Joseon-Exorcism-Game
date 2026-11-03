@@ -90,9 +90,17 @@ function taleNorm(){const T0=meta.tale=plainObj(meta.tale);T0.frag=plainObj(T0.f
  for(const id of TALE_IDS){const v=Math.round(+T0.frag[id]||0);T0.frag[id]=Math.max(0,Math.min(3,v));}
  for(const cid in T0.skin){const k=T0.skin[cid];const t=TALE_IDS.map(i=>TALES[i]).find(t=>t.cid===cid&&t.skin.id===k);if(!t||!T0.done[TALE_IDS.find(i=>TALES[i]===t)])T0.skin[cid]=null;}
  const E=meta.ending=plainObj(meta.ending);E.seen=!!E.seen;E.epi=Array.isArray(E.epi)?E.epi.filter(c=>CHARS[c]):[];}
-const SAVE_KEY='joseon-toema-v1';
-let meta={coins:0,up:{},best:null};
-try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s)meta=Object.assign(meta,s);}catch(e){}
+const SAVE_KEY='joseon-toema-v1',SAVE_BAK=SAVE_KEY+'-bak',SAVE_BROKEN=SAVE_KEY+'-broken';
+/* v19.8 저장 지키기: 제대로 읽힌 저장은 -bak 칸에 한 벌 더 둔다. 읽을 수 없는 저장은 지우지 않고 -broken 칸에 옮긴 뒤 -bak으로 시작한다
+   (예전에는 깨진 저장을 만나면 새 저장으로 시작해 곧바로 덮어써, 진행이 영영 사라졌다) */
+function saveParse(raw){try{const s=JSON.parse(raw);return plainObj(s)===s?s:null;}catch(e){return null;}}
+let meta={coins:0,up:{},best:null},saveRescue=null;   // saveRescue: 'bak'(백업으로 살림)·'none'(백업도 없음) → 시작 화면 안내
+{let raw=null;try{raw=localStorage.getItem(SAVE_KEY);}catch(e){}
+ const s=raw==null?null:saveParse(raw);
+ if(s){meta=Object.assign(meta,s);try{localStorage.setItem(SAVE_BAK,raw);}catch(e){}}
+ else if(raw!=null){try{localStorage.setItem(SAVE_BROKEN,raw);}catch(e){}
+  let bkRaw=null;try{bkRaw=localStorage.getItem(SAVE_BAK);}catch(e){}const bk=bkRaw==null?null:saveParse(bkRaw);
+  if(bk){meta=Object.assign(meta,bk);try{localStorage.setItem(SAVE_KEY,bkRaw);}catch(e){}}saveRescue=bk?'bak':'none';}}   // 본 칸도 백업으로 바로 되돌림
 meta.up=meta.up||{};meta.stats=meta.stats||{};meta.seen=meta.seen||{};meta.done=meta.done||[];meta.curseMax=meta.curseMax||0;
 meta.set=Object.assign({vol:70,shake:true,nums:true,flash:true,scale:'mid',joy:true,perf:'auto',fps:false,fxA:1,vfx:'on',refine:'on'},meta.set||{});
 /* 설정 값 바로잡기: 고를 수 있는 값이 아니면 기본으로 */
@@ -115,10 +123,18 @@ meta.upB=meta.upB||{};
 /* v17.4 조합 시험장: 주소에 ?combo를 붙였을 때만 열린다. 이때는 저장을 하지 않는다(진행·엽전·과업이 남지 않음). */
 let LAB=false;try{LAB=/[?&]combo\b/.test(location.search);}catch(e){}
 function saveMeta(){if(LAB)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify(meta));}catch(e){}}
+/* v19.8 저장 코드: 진행 전체를 「JTM1:」+base64(UTF-8 JSON) 글자로. 브라우저 저장이 지워져도, 다른 기기에서도 붙여넣어 이어 한다 */
+const SAVE_CODE_HEAD='JTM1:';
+function saveCode(){const u=new TextEncoder().encode(JSON.stringify(meta));let s='';for(const c of u)s+=String.fromCharCode(c);return SAVE_CODE_HEAD+btoa(s);}
+function saveDecode(code){const t=String(code||'').replace(/\s+/g,'');if(!t.startsWith(SAVE_CODE_HEAD)||t.length===SAVE_CODE_HEAD.length)return null;
+ try{const bin=atob(t.slice(SAVE_CODE_HEAD.length));return saveParse(new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(bin,c=>c.charCodeAt(0))));}catch(e){return null;}}
+/* 맞는 코드면 본 칸에 넣는다(다시 불러오면 바로잡기·옮기기를 그대로 거친다). 틀린 코드는 아무것도 건드리지 않는다 */
+function saveImport(code){const s=saveDecode(code);if(!s||LAB)return false;
+ try{localStorage.setItem(SAVE_KEY,JSON.stringify(s));return true;}catch(e){return false;}}
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER='v19.7',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
+const GAME_VER='v19.8',DIAG_KEY='joseon-toema-diag',DIAG_MAX=20;
 let DIAG={log:[],hb:null};try{const d=JSON.parse(localStorage.getItem(DIAG_KEY)||'null');if(d&&typeof d==='object'&&!Array.isArray(d)){DIAG.log=Array.isArray(d.log)?d.log.filter(e=>e&&typeof e==='object').slice(-DIAG_MAX):[];DIAG.hb=d.hb&&typeof d.hb==='object'?d.hb:null;}}catch(e){}
 const diagSeen=new Set();let diagStuck=0,diagNoScr=0,diagLastT=null,diagHbT=0;
 function diagSave(){try{localStorage.setItem(DIAG_KEY,JSON.stringify(DIAG));}catch(e){}}
@@ -143,6 +159,7 @@ function diagWatch(raw){if(document.hidden)return;
  diagHbT+=raw;if(diagHbT>5000){diagHbT=0;DIAG.hb={at:diagNow(),playing:!!(G&&!G.over),hidden:false,clean:false,st:diagState()};diagSave();}}
 /* 지난 실행이 게임 중에 갑자기 끝났는지(앱 전환으로 숨긴 뒤 끝난 것은 뺀다) */
 {const hb=DIAG.hb;if(hb&&hb.playing&&!hb.hidden&&!hb.clean)diagNote('게임 중 끊김','지난 실행이 게임 중에 끝남(멈춤·강제 종료 가능성)',{st:hb.st,last:hb.at});DIAG.hb=null;diagSave();}
+if(saveRescue)diagNote('저장 복구',saveRescue==='bak'?'읽을 수 없는 저장 → 지난번 백업으로 시작 (원본은 '+SAVE_BROKEN+')':'읽을 수 없는 저장 · 백업 없음 → 새로 시작 (원본은 '+SAVE_BROKEN+')');   // v19.8
 addEventListener('error',e=>diagErr(_t("페이지 오류"),e&&e.error?e.error:(e&&e.message?e.message+(e.filename?' ('+e.filename+':'+e.lineno+')':''):e)));
 addEventListener('unhandledrejection',e=>diagErr(_t("처리되지 않은 오류"),e&&e.reason!==undefined?e.reason:e));
 addEventListener('pagehide',()=>{if(DIAG.hb){DIAG.hb.clean=true;diagSave();}});

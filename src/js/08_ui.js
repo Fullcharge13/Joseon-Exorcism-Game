@@ -305,7 +305,7 @@ function fmtT(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).pa
 
 /* --- title, prep, codex, shop, settings --- */
 function charLock(id){const t=TASKS.find(t=>t.rw.unlock==='char:'+id);return t?_t("과업 「{n}」: {d}",{n:t.n,d:t.d}):'';}
-function renderTitle(){checkTasks();{const mn=$('#migNote');if(mn)mn.hidden=!meta.migNote;}const box=$('#chars');box.innerHTML='';
+function renderTitle(){checkTasks();{const mn=$('#migNote');if(mn)mn.hidden=!meta.migNote;const rb=$('#rescueBak'),rn=$('#rescueNone');if(rb)rb.hidden=saveRescue!=='bak';if(rn)rn.hidden=saveRescue!=='none';}const box=$('#chars');box.innerHTML='';
  for(const id in CHARS){const C=CHARS[id],ok=unlocked('char:'+id);const bt=document.createElement('button');bt.className='ch'+(ok?'':' locked');bt.id='ch-'+id;bt.setAttribute('aria-pressed',selChar===id);
   bt.innerHTML=`<span class="seal">${C.seal}</span><img src="${big(charSpr(C.look).n,6)}" alt=""><b>${C.name}</b><span class="trait">${ok?C.trait:_t("잠김")}</span><p>${ok?C.desc:charLock(id)}</p>${ok?`<div class="path">${C.branches.map(br=>br.tiers.map(t=>t.name).join(' → ')).join('<br>')}</div>`:''}`;
   bt.onclick=()=>{if(!ok)return;selChar=id;renderTitle();};bt.ondblclick=()=>{if(ok){selChar=id;openPrep();}};box.appendChild(bt);}
@@ -547,6 +547,14 @@ $('#rrBtn').onclick=reroll;$('#skBtn').onclick=skipLevel;$('#bnBtn').onclick=()=
 bindSettings();
 /* 홈 화면 앱: 오프라인 캐시 (https 배포에서만) */
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+/* v19.8 저장 코드: 복사는 지금 진행을 글상자에 채워 클립보드로(안 되면 글상자를 골라 둠), 불러오기는 글상자의 코드를 확인한 뒤 다시 시작 */
+$('#saveCodeCopy').onclick=()=>{const a=$('#saveCodeText'),n=$('#saveCodeN'),code=saveCode();a.value=code;
+ const pick=()=>{try{a.focus();a.select();a.setSelectionRange(0,code.length);}catch(e){}n.textContent=_t("글상자를 길게 눌러 복사하세요");};
+ try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(code).then(()=>{n.textContent=_t("복사했습니다. 메모 앱 같은 곳에 붙여 두세요");},pick);return;}}catch(e){}pick();};
+$('#saveCodeLoad').onclick=()=>{const n=$('#saveCodeN'),s=saveDecode($('#saveCodeText').value);
+ if(!s){n.textContent=_t("저장 코드가 맞지 않습니다 (JTM1: 로 시작하는 글 전체를 붙여넣으세요)");return;}
+ if(!confirm(_t("이 코드의 진행(엽전 {coins}닢)으로 바꾸고 다시 시작합니다. 지금 진행은 이 코드로 대신됩니다. 바꿀까요?",{coins:Math.floor(+s.coins||0)})))return;
+ if(saveImport($('#saveCodeText').value))location.reload();else n.textContent=_t("불러오지 못했습니다");};
 $('#resetBtn').onclick=()=>{if(!confirm(_t("엽전·과업·해금·본부·기록관을 모두 지우고 처음(선비만)부터 다시 시작합니다. 되돌릴 수 없습니다. 지울까요?")))return;try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.reload();};
 
 addEventListener('keydown',e=>{keys[e.code]=true;
