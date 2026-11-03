@@ -119,7 +119,7 @@
 "만난 요괴 {seen} / {length}": "已遇见妖怪 {seen} / {length}",
 "일반": "普通",
 "엘리트": "精英",
-"<div class=\"dogam\">{p}</div><p class=\"credit\">요괴 이름은 고성배 『한국 요괴 도감』(위즈덤하우스, 2019) 수록 요괴를 따랐고, 게임 속 행동은 놀이에 맞게 지어냈습니다.</p>": "<div class=\"dogam\">{p}</div><p class=\"credit\">妖怪名称依据高成培《韩国妖怪图鉴》（Wisdom House，2019）所收录的妖怪，游戏中的行为则为配合玩法而创作。</p>",
+"<div class=\"dogam\">{p}</div><p class=\"credit\">요괴 이름은 고성배 『한국 요괴 도감』(위즈덤하우스, 2019) 수록 요괴를 따랐고, 막별 새 엘리트(v19.4~)는 한국민족문화대백과사전을 따랐습니다. 게임 속 행동은 놀이에 맞게 지어냈습니다.</p>": "<div class=\"dogam\">{p}</div><p class=\"credit\">妖怪名称依据高成培《韩国妖怪图鉴》（Wisdom House，2019）所收录的妖怪，各幕新增精英（v19.4起）依据《韩国民族文化大百科事典》，游戏中的行为则为配合玩法而创作。</p>",
 " · 퇴치 {k}": " · 讨伐 {k}",
 "보유 엽전 {coins}닢": "持有铜钱 {coins} 枚",
 "<div class=\"cm\"><b>{nm}</b> <span class=\"pips\">{p}{p2}</span><p>{ds} (단계마다)</p><div class=\"upg2\"><button id=\"upa-{id}\" aria-pressed=\"{p3}\">갑 · {name}</button><button id=\"upb-{id2}\" aria-pressed=\"{B}\">을 · {name2}</button></div></div><button id=\"buy-{id3}\" {p4}>{p5}</button>": "<div class=\"cm\"><b>{nm}</b> <span class=\"pips\">{p}{p2}</span><p>{ds}（每阶）</p><div class=\"upg2\"><button id=\"upa-{id}\" aria-pressed=\"{p3}\">甲 · {name}</button><button id=\"upb-{id2}\" aria-pressed=\"{B}\">乙 · {name2}</button></div></div><button id=\"buy-{id3}\" {p4}>{p5}</button>",

@@ -42,6 +42,8 @@ def drop6(x):
     x = x.replace('레벨 10·20·30·40·50·60에 전직한다.', '레벨 10·20·30·40·50에 전직한다.')   # v19.0 「처음이라면」 전직 레벨 줄
     x = x.replace('패를 세 장까지 뽑습니다.', '패 한 장을 뽑습니다.').replace('세 장까지 고른다. 고른 패의 효과가 모두 함께 이번 출정의', '한 장을 고른다. 이번 출정의')   # v19.3 점괘 패 세 장
     x = re.sub(r'점괘 패 \d/3', '점괘 패', x)
+    x = re.sub(r' 막별 새 엘리트\((?:v19\.4|vX)~\)는 한국민족문화대백과사전을 따랐습니다\.', '', x)   # v19.4 도감 안내 글(판 번호는 먼저 vX로 바뀜)
+    x = re.sub(r'만난 요괴 (\d+) / 6\d', r'만난 요괴 \1 / 58', x)   # v19.4 도감 수
     x = x.replace('피해 +20%(약방울은 +20% 없음)로', '피해 +20%로')   # v19.2 도움말: 약방울은 합공 +20%가 없음
     for l in T6SUF.sub('', x).split('\n'):
         if T6.search(l): skip = True; continue
@@ -50,12 +52,25 @@ def drop6(x):
     return '\n'.join(out)
 NEWTXT = {'help_weapon': '\n\n단계: 죽패 → 생우피방패 → 장방패 → 원방패 → 등패'}   # v18.5 도감 무기 줄에 방패 단계가 새로 붙는 것이 맞음(그 화면·그 글만)
 fails = []; total = 0
+E2N = ('객귀', '죽통 나그네', '범이 된 남편', '곰나루 암곰', '길달')   # v19.4 막별 새 엘리트(도감 카드·도움말 막 표에 새로 붙는 것이 맞음)
+def e2_only_added(x, y):
+    """옛 글 줄이 새 글 안에 차례대로 다 있고, 더 붙은 줄은 새 엘리트 카드(이름·???·엘리트·설명·아직 못 만남·빈 줄)뿐인지"""
+    if not (isinstance(x, str) and isinstance(y, str)): return False
+    xs, ys, i, extra = x.split('\n'), y.split('\n'), 0, []
+    for l in ys:
+        if i < len(xs) and l == xs[i]: i += 1
+        else: extra.append(l)
+    ok = lambda l: l in ('', '???', '엘리트', '아직 만나지 못했다.') or l in E2N or '게임 속 각색' in l or l.isdigit() or '마리' in l
+    return i == len(xs) and all(ok(l) for l in extra)
+E2HELP = re.compile(r'(엘리트 (?:\?\?\?|[^·\n]+?)) · (?:\?\?\?|' + '|'.join(E2N) + r')')
 for rich in (False, True):
     a, b = run(old, rich), run(new, rich); tag = '넉넉한 저장' if rich else '처음 저장'
     for k in a:
         if k == '_pageerrors': continue
         total += 1
         for f in ('screens', 'overlay', 'hud', 'toast', 'canvas', 'err'):
+            if k == 'help_foe' and isinstance(b[k][f], str): b[k][f] = E2HELP.sub(r'\1', b[k][f])
+            if k == 'codex_dogam' and e2_only_added(VER0(a[k][f], k), VER0(b[k][f], k)): continue
             if VER0(a[k][f], k) != VER0(b[k][f], k):
                 x = VER0(a[k][f], k); y = VER0(b[k][f], k); x = x if isinstance(x, str) else '\n'.join(map(str, x)); y = y if isinstance(y, str) else '\n'.join(map(str, y))   # 거른 뒤의 차이를 보여 줌
                 d = [l for l in difflib.unified_diff(x.split('\n'), y.split('\n'), lineterm='', n=0) if l[:1] in '+-' and l[:3] not in ('+++', '---')][:6]

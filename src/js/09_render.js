@@ -230,7 +230,7 @@ function render(){
   if(e.prop){b.drawImage(e.flash>0?ICS.pot:ICS.pot,R(e.x-4),R(e.y-8));continue;}
   const pk=EN[e.kind].proc;
   if(pk==='imugi'&&e.boss){drawImugi(e);continue;}if(pk==='eoduk'&&e.boss){drawEoduk(e);continue;}if(pk==='geuseunde'&&e.boss){drawGeuseunde(e);continue;}
-  const s=ESPR[e.spr]||ESPR[e.kind],esc=e.sc*entK(e);const flip=e.left?(e.vx>0):(e.vx<0);
+  const s=ESPR2[e.kind]?ESPR2[e.kind][eliteFrame(e)]:(ESPR[e.spr]||ESPR[e.kind]),esc=e.sc*entK(e);const flip=e.left?(e.vx>0):(e.vx<0);
   const bob=e.fly?Math.sin(e.bob)*1.5-2:(Math.sin(e.bob)>0?-1:0);
   if(e.boss&&e.act&&BSK[e.act].mv===0&&Math.floor(G.time*10)%2){b.fillStyle='rgba(255,60,40,0.35)';b.beginPath();b.ellipse(e.x,e.y,(e.r+4)*entK(e),(e.r+4)*0.5*entK(e),0,0,TAU);b.fill();}
   if(e.cs==='wind'&&Math.floor(G.time*12)%2){b.fillStyle='rgba(255,90,60,0.5)';b.fillRect(R(e.x-1),R(e.y-e.r*2*esc-5),2,3);}

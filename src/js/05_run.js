@@ -12,7 +12,7 @@ function newGame(cid,card,curse,diff='normal',mode='normal'){const cards=cardLis
  const C=CHARS[cid],m=meta.up;
  G={cid,cards,curse,diff,stage:0,st:0,time:0,dtNow:0,kills:0,coins:0,over:false,
    base:{maxHp:100,spd:1,might:1,area:1,cd:1,amount:0,magnet:1,armor:0,regen:0,xpGain:1,dur:1,luck:0,crit:0.05,critDmg:1.5,healM:1,pspd:1},
-   P:{x:0,y:0,r:5,hp:1,maxHp:0,face:1,dirx:1,diry:0,lvl:1,xp:0,next:xpNeed(1),iframe:0,moving:false,revive:meta.upB.revive?0:(m.revive||0),branch:null,tier:0,healAcc:0,slowT:0,shieldT:0},
+   P:{x:0,y:0,r:5,hp:1,maxHp:0,face:1,dirx:1,diry:0,lvl:1,xp:0,next:xpNeed(1),iframe:0,moving:false,revive:meta.upB.revive?0:(m.revive||0),branch:null,tier:0,healAcc:0,slowT:0,clingT:0,shieldT:0},
    weapons:[],passives:{},bless:{},gfx:[],guideLog:[],enemies:[],projs:[],ebul:[],gems:[],items:[],fx:[],zones:[],ezones:[],spirits:[],warns:[],movers:[],
    spawnT:0,eliteT:40,swarmDone:false,boss:null,mid:null,midDone:false,bossDone:false,queue:[],flash:null,shake:0,pull:null,wind:null,dark:0,helper:null,jwBuff:0,pet:null,petQ:[],petGuard:0,jw:{cd50:0,cd20:0},gateMsg:false,sky:null,skyGod:null,skyAt:rnd(32,95),loop:0,clearRec:false,grazeT:0,mode,rushG:null,anom:null,anomAt:rnd(20,90),awkN:0,ult:null,call:0,wk:{},tmOf:{},cb:{n:0,t:0},cbStage:0,q:null,dk:null,dkAt:undefined,dkC:null,dkBoon:false,ks:(mode!=='tale'&&meta.hub.ks&&ksOwned().includes(meta.hub.ks))?meta.hub.ks:null,ksGot:{},tmAt:undefined,callBuff:0,guardT:0,seongT:0,blessOrder:[],duo:{},path:null,
    shrine:null,shrineN:0,potT:3,banned:new Set(),stageMight:0,jinogwi:null,

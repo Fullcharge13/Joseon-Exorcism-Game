@@ -14,7 +14,7 @@ for(const id of TALE_IDS){const t=TALES[id];
 ok(ENDING.common.length===4,'공통 결말 4장');
 for(const cid in CHARS)ok(ENDING.epi[cid],`맺음말 ${cid}`);
 // 설화 전용 요괴는 도감 수에 들지 않는다
-ok(DOGAM_IDS.length===Object.keys(EN).filter(i=>!EN[i].tale).length&&DOGAM_IDS.every(i=>!EN[i].tale),'도감은 설화 전용 요괴를 빼고 센다');
+ok(DOGAM_IDS.length===Object.keys(EN).filter(i=>!EN[i].tale&&!EN[i].helper).length&&DOGAM_IDS.every(i=>!EN[i].tale&&!EN[i].helper),'도감은 설화 전용 요괴·보조물(v19.4)을 빼고 센다');
 ok(EN.jwclone&&EN.jwclone.tale&&ESPR.jwclone,'전우치 분신 보스');
 // 옷 빛깔
 meta.tale.done.woochi={best:300,n:1};meta.tale.skin.seonbi='jjok';
