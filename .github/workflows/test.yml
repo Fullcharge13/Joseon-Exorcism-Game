@@ -1,0 +1,20 @@
+# 단위 시험 (v19.8): 올릴 때마다 build --check(index.html이 src/와 같은지)와 tests/unit 전부를 돌린다.
+# tests/browser(실제 브라우저 확인)는 여기서 돌리지 않는다.
+name: test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 단위 시험
+        run: bash tests/run_unit.sh

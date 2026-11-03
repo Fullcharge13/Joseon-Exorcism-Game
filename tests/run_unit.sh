@@ -2,7 +2,11 @@
 # 단위 시험 전부 실행: bash tests/run_unit.sh [게임.html]
 cd "$(dirname "$0")/.." || exit 1
 G=${1:-index.html}; fail=0
-if [ -z "$1" ]; then python3 build.py --check || fail=1; fi   # v18.0: src/ 를 고친 뒤 index.html 을 다시 만들었는지
+# 실제로 도는 파이썬을 고른다(윈도에서는 python3가 마이크로소프트 스토어 바로가기라 있어도 돌지 않음)
+PY=; for p in python3 python; do "$p" -c '' 2>/dev/null && { PY=$p; break; }; done
+if [ -z "$1" ]; then
+  if [ -n "$PY" ]; then "$PY" build.py --check || fail=1; else echo "FAIL build --check: 파이썬(python3·python)을 찾지 못함"; fail=1; fi
+fi   # v18.0: src/ 를 고친 뒤 index.html 을 다시 만들었는지
 for t in tests/unit/*.test.js; do
   case "$t" in *fx_alpha_save*|*tale_save*|*save_guard*) continue;; esac
   node tests/harness.js "$G" "$t" || fail=1
