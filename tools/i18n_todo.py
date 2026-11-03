@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""번역 진행 보기: python3 tools/i18n_todo.py [영역] [--n 개수]  → 아직 간체가 없는 원문을 영역별로 보여 준다(영역: WD, TASKS, 08_ui.js, shell …)."""
+"""번역 진행 보기: python3 tools/i18n_todo.py [영역] [--n 개수]  → 아직 간체가 없는 원문을 영역별로 보여 준다(영역: WD, TASKS, 10_ui.js, shell …)."""
 import json, sys, pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 src = json.load(open(ROOT / 'docs/i18n/원문.json', encoding='utf8'))

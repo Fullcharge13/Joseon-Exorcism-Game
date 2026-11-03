@@ -6,153 +6,778 @@
    - 엔진이 부르는 곳: 바닥 뒤 vfxGround(cx,cy) · 피해 숫자·요괴 탄 직전 vfxLight(cx,cy) · kill 안 vfxDebris(e) · bossDown 10막 G.dawnT
    - 무거운 그림은 미리 굽는다: 어둠(화면 크기·밤 단계가 바뀔 때만), 빛 번짐(색마다 한 장), 새벽빛 */
 // night: 어둠 세기(0~1) · tint: 어둠 색(막의 색감) · lamp: 빛나는 물건 · dawn: 막 보스 뒤 새벽
-const STAGE_VFX=[
- {night:0.20,tint:'#2a1428',lamp:'chorong',weather:'glow',ground:{k:'road',c:['#4e3e30','#62503e','#2c231e']},grass:['#3d4528','#55603a','#76844a']},     // 1 한양 저잣거리 · 해 질 녘 · 저녁놀
- {night:0.28,tint:'#0e1c18',lamp:'firefly',weather:'leaf',ground:{k:'leaf',c:['#24301f','#8a5a2a','#6a7a2a']},grass:['#1f3a28','#2f5a3a','#4a7a50']},     // 2 대숲 오솔길 · 초저녁 · 날리는 댓잎
- {night:0.32,tint:'#1e1610',lamp:'torch',weather:'dust',ground:{k:'gravel',c:['#3e382c','#5e5646','#22201a']},grass:['#4a4428','#6a6236','#8a8248']},       // 3 범 나오는 고개 · 흙바람
- {night:0.40,tint:'#0c1622',lamp:'boat',weather:'mist',ground:{k:'puddle',c:['#0c141c','#6a9ab0','#16222c']},grass:['#26383a','#3a5258','#5a7a7a']},        // 4 안개 낀 나루 · 밤 · 물안개
- {night:0.48,tint:'#14121e',lamp:'seokdeung',weather:'ash',ground:{k:'crack',c:['#1c1c24','#3a3a46']},grass:null},                               // 5 폐허가 된 산사 · 한밤 · 떨어지는 재(돌바닥)
- {night:0.50,tint:'#1c1a0c',lamp:'candle',weather:'mote',ground:{k:'dry',c:['#24200f','#4a4230']},grass:['#4a4224','#625a30','#7e7440']},      // 6 역병 도는 마을 · 누런 먼지
- {night:0.50,tint:'#0e1426',lamp:'snow',weather:'snow',ground:{k:'drift',c:['#8a94a8','#a8b2c6']},grass:null},                                   // 7 백두산 골짜기 · 눈발(눈 덮인 땅)
- {night:0.52,tint:'#0a1418',lamp:'fishfire',weather:'spray',ground:{k:'sand',c:['#4a4636','#d8d0b8','#8a8270']},grass:['#3a4a3a','#4e6450','#6e8466']},  // 8 동해 바닷가 · 물보라
- {night:0.60,tint:'#120a1e',lamp:'neokbul',weather:'soul',ground:{k:'rift',c:['#08060c','#8a5ab0']},grass:['#2e2a34','#423c4a','#5a5266']},     // 9 저승길 · 가장 깊음 · 넋 안개
- {night:0.56,tint:'#1a0c12',lamp:'palace',dawn:true,weather:'none',ground:{k:'bakseok',c:['#3e2e32','#2a1e22']},grass:null}];                       // 10 근정전 앞뜰 · 보스 뒤 새벽(박석)
+const STAGE_VFX = [
+  {
+    night: 0.2,
+    tint: '#2a1428',
+    lamp: 'chorong',
+    weather: 'glow',
+    ground: {k: 'road', c: ['#4e3e30', '#62503e', '#2c231e']},
+    grass: ['#3d4528', '#55603a', '#76844a']
+  }, // 1 한양 저잣거리 · 해 질 녘 · 저녁놀
+  {
+    night: 0.28,
+    tint: '#0e1c18',
+    lamp: 'firefly',
+    weather: 'leaf',
+    ground: {k: 'leaf', c: ['#24301f', '#8a5a2a', '#6a7a2a']},
+    grass: ['#1f3a28', '#2f5a3a', '#4a7a50']
+  }, // 2 대숲 오솔길 · 초저녁 · 날리는 댓잎
+  {
+    night: 0.32,
+    tint: '#1e1610',
+    lamp: 'torch',
+    weather: 'dust',
+    ground: {k: 'gravel', c: ['#3e382c', '#5e5646', '#22201a']},
+    grass: ['#4a4428', '#6a6236', '#8a8248']
+  }, // 3 범 나오는 고개 · 흙바람
+  {
+    night: 0.4,
+    tint: '#0c1622',
+    lamp: 'boat',
+    weather: 'mist',
+    ground: {k: 'puddle', c: ['#0c141c', '#6a9ab0', '#16222c']},
+    grass: ['#26383a', '#3a5258', '#5a7a7a']
+  }, // 4 안개 낀 나루 · 밤 · 물안개
+  {
+    night: 0.48,
+    tint: '#14121e',
+    lamp: 'seokdeung',
+    weather: 'ash',
+    ground: {k: 'crack', c: ['#1c1c24', '#3a3a46']},
+    grass: null
+  }, // 5 폐허가 된 산사 · 한밤 · 떨어지는 재(돌바닥)
+  {
+    night: 0.5,
+    tint: '#1c1a0c',
+    lamp: 'candle',
+    weather: 'mote',
+    ground: {k: 'dry', c: ['#24200f', '#4a4230']},
+    grass: ['#4a4224', '#625a30', '#7e7440']
+  }, // 6 역병 도는 마을 · 누런 먼지
+  {
+    night: 0.5,
+    tint: '#0e1426',
+    lamp: 'snow',
+    weather: 'snow',
+    ground: {k: 'drift', c: ['#8a94a8', '#a8b2c6']},
+    grass: null
+  }, // 7 백두산 골짜기 · 눈발(눈 덮인 땅)
+  {
+    night: 0.52,
+    tint: '#0a1418',
+    lamp: 'fishfire',
+    weather: 'spray',
+    ground: {k: 'sand', c: ['#4a4636', '#d8d0b8', '#8a8270']},
+    grass: ['#3a4a3a', '#4e6450', '#6e8466']
+  }, // 8 동해 바닷가 · 물보라
+  {
+    night: 0.6,
+    tint: '#120a1e',
+    lamp: 'neokbul',
+    weather: 'soul',
+    ground: {k: 'rift', c: ['#08060c', '#8a5ab0']},
+    grass: ['#2e2a34', '#423c4a', '#5a5266']
+  }, // 9 저승길 · 가장 깊음 · 넋 안개
+  {
+    night: 0.56,
+    tint: '#1a0c12',
+    lamp: 'palace',
+    dawn: true,
+    weather: 'none',
+    ground: {k: 'bakseok', c: ['#3e2e32', '#2a1e22']},
+    grass: null
+  }
+]; // 10 근정전 앞뜰 · 보스 뒤 새벽(박석)
 // v18.3 날씨(보기만): n=입자 수(켬) · c=색 · vx,vy=흐름(px/초) · sw=흔들림 · w,h=입자 크기 · a=불투명도 · fog=[색,덩어리 수,불투명도] · sky=위쪽 빛
-const VFX_WX={none:{n:0},glow:{n:0,sky:'255,150,90'},
- leaf:{n:36,c:'#9ab85a',vx:22,vy:26,sw:10,w:2,h:1,a:0.85},dust:{n:60,c:'#9a8058',vx:70,vy:5,sw:3,w:3,h:1,a:0.35},
- mist:{n:0,fog:['200,215,230',4,0.13]},ash:{n:70,c:'#a0a0a8',vx:5,vy:12,sw:6,w:1,h:1,a:0.6},
- mote:{n:50,c:'#c8b060',vx:6,vy:-3,sw:8,w:1,h:1,a:0.55,fog:['190,170,90',2,0.08]},snow:{n:110,c:'#eef4ff',vx:-10,vy:30,sw:8,w:1,h:1,a:0.85},
- spray:{n:50,c:'#bfe0ff',vx:12,vy:-20,sw:4,w:1,h:1,a:0.6},soul:{n:20,c:'#b08ad8',vx:4,vy:-6,sw:12,w:1,h:1,a:0.6,fog:['150,110,200',3,0.11]}};
+const VFX_WX = {
+  none: {n: 0},
+  glow: {n: 0, sky: '255,150,90'},
+  leaf: {n: 36, c: '#9ab85a', vx: 22, vy: 26, sw: 10, w: 2, h: 1, a: 0.85},
+  dust: {n: 60, c: '#9a8058', vx: 70, vy: 5, sw: 3, w: 3, h: 1, a: 0.35},
+  mist: {n: 0, fog: ['200,215,230', 4, 0.13]},
+  ash: {n: 70, c: '#a0a0a8', vx: 5, vy: 12, sw: 6, w: 1, h: 1, a: 0.6},
+  mote: {n: 50, c: '#c8b060', vx: 6, vy: -3, sw: 8, w: 1, h: 1, a: 0.55, fog: ['190,170,90', 2, 0.08]},
+  snow: {n: 110, c: '#eef4ff', vx: -10, vy: 30, sw: 8, w: 1, h: 1, a: 0.85},
+  spray: {n: 50, c: '#bfe0ff', vx: 12, vy: -20, sw: 4, w: 1, h: 1, a: 0.6},
+  soul: {n: 20, c: '#b08ad8', vx: 4, vy: -6, sw: 12, w: 1, h: 1, a: 0.6, fog: ['150,110,200', 3, 0.11]}
+};
 // 빛나는 물건: post=땅에 선 것(몸체를 그림), float=떠다니는 빛 · c=빛 색 · r=빛 반지름 · d=격자 칸(96px)마다 나올 확률
-const VFX_LAMP={
- chorong:{post:1,c:'255,170,80',r:52,d:0.22},torch:{post:1,c:'255,140,60',r:50,d:0.16},boat:{post:1,c:'255,190,110',r:46,d:0.14},
- seokdeung:{post:1,c:'255,200,120',r:48,d:0.18},candle:{post:1,c:'255,180,90',r:40,d:0.18},fishfire:{post:1,c:'255,150,70',r:46,d:0.12},
- palace:{post:1,c:'255,120,80',r:46,d:0.1},
- firefly:{float:14,c:'210,255,140',r:10},snow:{float:10,c:'220,235,255',r:12},neokbul:{float:12,c:'140,200,255',r:16}};
-let VFX_WARN_UP=false;   // 밤이면 보스 경고 장판을 어둠 위(요괴 위)에 그린다: 어둠에 묻히지 않게
-const VFXS={chunks:new Map(),chunkSi:-1,rs:12345,debris:[],lastT:0,dk:{key:''},glow:{},dawn:null,fog:{},sky:null,tuft:{}};
-function vfxRnd(){VFXS.rs=(VFXS.rs*1103515245+12345)%2147483648;return VFXS.rs/2147483648;}   // 보기만 하는 효과는 게임 난수를 쓰지 않는다: 효과를 켜도 게임 진행이 같게
-function vfxLevel(){const v=meta.set.vfx;return v==='off'?'off':v==='soft'?'soft':'on';}
-function vfxSi(){const s=curStg();const i=STAGES.indexOf(s);return i<0?0:i;}
-function vfxNightBase(){const lv=vfxLevel();if(lv==='off'||!G)return 0;return STAGE_VFX[vfxSi()].night*(lv==='soft'?0.5:1);}
-function vfxNight(){return vfxNightBase()*(1-vfxDawn());}
-function vfxDawn(){if(!G)return 0;const V=STAGE_VFX[vfxSi()];return V.dawn&&G.dawnT!=null?clamp((G.time-G.dawnT)/3,0,1):0;}
-const vfxCanvas=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');if(x)f(x,w,h);return c;};
-function vfxGlowImg(c){return VFXS.glow[c]||(VFXS.glow[c]=vfxCanvas(32,32,x=>{const g=x.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,`rgba(${c},1)`);g.addColorStop(1,`rgba(${c},0)`);x.fillStyle=g;x.fillRect(0,0,32,32);}));}
-const vfxHex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)).join(',');
-function vfxWeatherN(){const lv=vfxLevel();if(lv==='off'||!G||LOW)return 0;const X=VFX_WX[STAGE_VFX[vfxSi()].weather]||VFX_WX.none;return Math.min(120,Math.round(X.n*Math.max(1,W*H/(400*225))*(lv==='soft'?0.5:1)));}   // 넓은 화면(휴대폰 세로)은 넓이만큼 늘리되 120까지
-function vfxFogImg(c){return VFXS.fog[c]||(VFXS.fog[c]=vfxCanvas(128,128,x=>{const g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,`rgba(${c},1)`);g.addColorStop(1,`rgba(${c},0)`);x.fillStyle=g;x.fillRect(0,0,128,128);}));}
+const VFX_LAMP = {
+  chorong: {post: 1, c: '255,170,80', r: 52, d: 0.22},
+  torch: {post: 1, c: '255,140,60', r: 50, d: 0.16},
+  boat: {post: 1, c: '255,190,110', r: 46, d: 0.14},
+  seokdeung: {post: 1, c: '255,200,120', r: 48, d: 0.18},
+  candle: {post: 1, c: '255,180,90', r: 40, d: 0.18},
+  fishfire: {post: 1, c: '255,150,70', r: 46, d: 0.12},
+  palace: {post: 1, c: '255,120,80', r: 46, d: 0.1},
+  firefly: {float: 14, c: '210,255,140', r: 10},
+  snow: {float: 10, c: '220,235,255', r: 12},
+  neokbul: {float: 12, c: '140,200,255', r: 16}
+};
+let VFX_WARN_UP = false; // 밤이면 보스 경고 장판을 어둠 위(요괴 위)에 그린다: 어둠에 묻히지 않게
+const VFXS = {
+  chunks: new Map(),
+  chunkSi: -1,
+  rs: 12345,
+  debris: [],
+  lastT: 0,
+  dk: {key: ''},
+  glow: {},
+  dawn: null,
+  fog: {},
+  sky: null,
+  tuft: {}
+};
+function vfxRnd() {
+  VFXS.rs = (VFXS.rs * 1103515245 + 12345) % 2147483648;
+  return VFXS.rs / 2147483648;
+} // 보기만 하는 효과는 게임 난수를 쓰지 않는다: 효과를 켜도 게임 진행이 같게
+function vfxLevel() {
+  const v = meta.set.vfx;
+  return v === 'off' ? 'off' : v === 'soft' ? 'soft' : 'on';
+}
+function vfxSi() {
+  const s = curStg();
+  const i = STAGES.indexOf(s);
+  return i < 0 ? 0 : i;
+}
+function vfxNightBase() {
+  const lv = vfxLevel();
+  if (lv === 'off' || !G) return 0;
+  return STAGE_VFX[vfxSi()].night * (lv === 'soft' ? 0.5 : 1);
+}
+function vfxNight() {
+  return vfxNightBase() * (1 - vfxDawn());
+}
+function vfxDawn() {
+  if (!G) return 0;
+  const V = STAGE_VFX[vfxSi()];
+  return V.dawn && G.dawnT != null ? clamp((G.time - G.dawnT) / 3, 0, 1) : 0;
+}
+const vfxCanvas = (w, h, f) => {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const x = c.getContext('2d');
+  if (x) f(x, w, h);
+  return c;
+};
+function vfxGlowImg(c) {
+  return (
+    VFXS.glow[c] ||
+    (VFXS.glow[c] = vfxCanvas(32, 32, x => {
+      const g = x.createRadialGradient(16, 16, 0, 16, 16, 16);
+      g.addColorStop(0, `rgba(${c},1)`);
+      g.addColorStop(1, `rgba(${c},0)`);
+      x.fillStyle = g;
+      x.fillRect(0, 0, 32, 32);
+    }))
+  );
+}
+const vfxHex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).join(',');
+function vfxWeatherN() {
+  const lv = vfxLevel();
+  if (lv === 'off' || !G || LOW) return 0;
+  const X = VFX_WX[STAGE_VFX[vfxSi()].weather] || VFX_WX.none;
+  return Math.min(120, Math.round(X.n * Math.max(1, (W * H) / (400 * 225)) * (lv === 'soft' ? 0.5 : 1)));
+} // 넓은 화면(휴대폰 세로)은 넓이만큼 늘리되 120까지
+function vfxFogImg(c) {
+  return (
+    VFXS.fog[c] ||
+    (VFXS.fog[c] = vfxCanvas(128, 128, x => {
+      const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+      g.addColorStop(0, `rgba(${c},1)`);
+      g.addColorStop(1, `rgba(${c},0)`);
+      x.fillStyle = g;
+      x.fillRect(0, 0, 128, 128);
+    }))
+  );
+}
 // 날씨: 입자는 상태 없이 번호와 시각으로 자리를 계산한다(저장·할당 없음). 카메라를 조금 따라가 세상에 붙어 보이게
-function vfxWeather(cx,cy,soft){const X=VFX_WX[STAGE_VFX[vfxSi()].weather]||VFX_WX.none,t=G.time;
- if(X.sky){if(!VFXS.sky||VFXS.sky.width!==W||VFXS.sky.height!==H||VFXS.sky.c!==X.sky){VFXS.sky=vfxCanvas(W,H,x=>{const g=x.createLinearGradient(0,0,0,H*0.7);g.addColorStop(0,`rgba(${X.sky},0.22)`);g.addColorStop(1,`rgba(${X.sky},0)`);x.fillStyle=g;x.fillRect(0,0,W,H);});VFXS.sky.c=X.sky;}
-  b.globalAlpha=soft;b.drawImage(VFXS.sky,0,0);}
- if(X.fog){const [c,k,a]=X.fog,img=vfxFogImg(c);for(let i=0;i<k;i++){const r=110+i*24,fx=((i*137+t*(6+i*2)-cx*0.5)%(W+2*r)+W+2*r)%(W+2*r)-r,fy=((i*89+Math.sin(t*0.2+i)*20-cy*0.5)%(H+2*r)+H+2*r)%(H+2*r)-r;b.globalAlpha=a*soft;b.drawImage(img,fx-r,fy-r,r*2,r*2);}}
- const n=vfxWeatherN();if(n){b.fillStyle=X.c;const WW=W+20,HH=H+20;for(let i=0;i<n;i++){const ph=hash(i,13)*TAU,sp=0.6+hash(i,14)*0.8;
-   const x=((hash(i,11)*WW*3+X.vx*sp*t+Math.sin(t*1.3*sp+ph)*X.sw-cx*0.35)%WW+WW)%WW-10,y=((hash(i,12)*HH*3+X.vy*sp*t-cy*0.35)%HH+HH)%HH-10;
-   b.globalAlpha=X.a*(0.6+0.4*Math.sin(t*2+ph));   /* 약하게는 개수만 절반(진하기는 그대로) */b.fillRect(R(x),R(y),X.w,X.h);}}
- b.globalAlpha=1;}
+function vfxWeather(cx, cy, soft) {
+  const X = VFX_WX[STAGE_VFX[vfxSi()].weather] || VFX_WX.none,
+    t = G.time;
+  if (X.sky) {
+    if (!VFXS.sky || VFXS.sky.width !== W || VFXS.sky.height !== H || VFXS.sky.c !== X.sky) {
+      VFXS.sky = vfxCanvas(W, H, x => {
+        const g = x.createLinearGradient(0, 0, 0, H * 0.7);
+        g.addColorStop(0, `rgba(${X.sky},0.22)`);
+        g.addColorStop(1, `rgba(${X.sky},0)`);
+        x.fillStyle = g;
+        x.fillRect(0, 0, W, H);
+      });
+      VFXS.sky.c = X.sky;
+    }
+    b.globalAlpha = soft;
+    b.drawImage(VFXS.sky, 0, 0);
+  }
+  if (X.fog) {
+    const [c, k, a] = X.fog,
+      img = vfxFogImg(c);
+    for (let i = 0; i < k; i++) {
+      const r = 110 + i * 24,
+        fx = ((((i * 137 + t * (6 + i * 2) - cx * 0.5) % (W + 2 * r)) + W + 2 * r) % (W + 2 * r)) - r,
+        fy = ((((i * 89 + Math.sin(t * 0.2 + i) * 20 - cy * 0.5) % (H + 2 * r)) + H + 2 * r) % (H + 2 * r)) - r;
+      b.globalAlpha = a * soft;
+      b.drawImage(img, fx - r, fy - r, r * 2, r * 2);
+    }
+  }
+  const n = vfxWeatherN();
+  if (n) {
+    b.fillStyle = X.c;
+    const WW = W + 20,
+      HH = H + 20;
+    for (let i = 0; i < n; i++) {
+      const ph = hash(i, 13) * TAU,
+        sp = 0.6 + hash(i, 14) * 0.8;
+      const x =
+          ((((hash(i, 11) * WW * 3 + X.vx * sp * t + Math.sin(t * 1.3 * sp + ph) * X.sw - cx * 0.35) % WW) + WW) % WW) -
+          10,
+        y = ((((hash(i, 12) * HH * 3 + X.vy * sp * t - cy * 0.35) % HH) + HH) % HH) - 10;
+      b.globalAlpha = X.a * (0.6 + 0.4 * Math.sin(t * 2 + ph));
+      /* 약하게는 개수만 절반(진하기는 그대로) */ b.fillRect(R(x), R(y), X.w, X.h);
+    }
+  }
+  b.globalAlpha = 1;
+}
 // 흔들리는 풀: 흔들림 5단계를 미리 그려 두고 고른다. 퇴마사 둘레(14px)는 밀려 눕는다(그때만 점으로 그림)
-function vfxTuft(gp,v,ph){const k=vfxSi()*100+v*10+ph;   // 숫자 번호표(매 프레임 글자를 만들지 않음, 막마다 따로)
-return VFXS.tuft[k]||(VFXS.tuft[k]=vfxCanvas(16,8,x=>{const n=4+(v%3),sway=(ph-2)*0.6;for(let i=0;i<n;i++){const hgt=3+((v*7+i*3)%4);for(let q=0;q<hgt;q++){const ox=Math.round(sway*q/hgt);x.fillStyle=q===hgt-1?gp[2]:q>hgt/2?gp[1]:gp[0];x.fillRect(4+i*2+ox,7-q,1,1);}}}));}
-function vfxGrass(cx,cy,soft){const gp=STAGE_VFX[vfxSi()].grass;if(!gp)return;const T=16,t=G.time,P=G.P,gust=Math.sin(t*0.6)*0.8,dens=soft<1?0.1:0.2;
- const tx0=Math.floor(cx/T)-1,ty0=Math.floor(cy/T)-1,tx1=Math.floor((cx+W)/T)+1,ty1=Math.floor((cy+H)/T)+1;
- for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++){if(hash(tx*3+7,ty*5+1)>dens)continue;const v=Math.floor(hash(tx,ty*9)*6),n=4+(v%3),bx=tx*T+hash(tx+1,ty)*12+2,by=ty*T+hash(tx,ty+2)*12+4;
-  const dx=bx-P.x,dy=by-(P.y+2),d=Math.hypot(dx,dy),push=d<14?(14-d)/14:0;
-  if(push>0.05){for(let i=0;i<n;i++){const x=R(bx-n-4+4+i*2-cx),hgt=Math.max(1,Math.round((3+((v*7+i*3)%4))*(1-push*0.6))),sw=Math.sign(dx||1)*push*3+gust;
-    for(let q=0;q<hgt;q++){b.fillStyle=q===hgt-1?gp[2]:q>hgt/2?gp[1]:gp[0];b.fillRect(x+Math.round(sw*q/hgt),R(by-cy)-q,1,1);}}continue;}
-  const ph=Math.max(0,Math.min(4,Math.round(2+Math.sin(t*2.4+bx*0.09+by*0.05)*1.4+gust)));b.drawImage(vfxTuft(gp,v,ph),R(bx-n-4-cx),R(by-7-cy));}}
+function vfxTuft(gp, v, ph) {
+  const k = vfxSi() * 100 + v * 10 + ph; // 숫자 번호표(매 프레임 글자를 만들지 않음, 막마다 따로)
+  return (
+    VFXS.tuft[k] ||
+    (VFXS.tuft[k] = vfxCanvas(16, 8, x => {
+      const n = 4 + (v % 3),
+        sway = (ph - 2) * 0.6;
+      for (let i = 0; i < n; i++) {
+        const hgt = 3 + ((v * 7 + i * 3) % 4);
+        for (let q = 0; q < hgt; q++) {
+          const ox = Math.round((sway * q) / hgt);
+          x.fillStyle = q === hgt - 1 ? gp[2] : q > hgt / 2 ? gp[1] : gp[0];
+          x.fillRect(4 + i * 2 + ox, 7 - q, 1, 1);
+        }
+      }
+    }))
+  );
+}
+function vfxGrass(cx, cy, soft) {
+  const gp = STAGE_VFX[vfxSi()].grass;
+  if (!gp) return;
+  const T = 16,
+    t = G.time,
+    P = G.P,
+    gust = Math.sin(t * 0.6) * 0.8,
+    dens = soft < 1 ? 0.1 : 0.2;
+  const tx0 = Math.floor(cx / T) - 1,
+    ty0 = Math.floor(cy / T) - 1,
+    tx1 = Math.floor((cx + W) / T) + 1,
+    ty1 = Math.floor((cy + H) / T) + 1;
+  for (let ty = ty0; ty <= ty1; ty++)
+    for (let tx = tx0; tx <= tx1; tx++) {
+      if (hash(tx * 3 + 7, ty * 5 + 1) > dens) continue;
+      const v = Math.floor(hash(tx, ty * 9) * 6),
+        n = 4 + (v % 3),
+        bx = tx * T + hash(tx + 1, ty) * 12 + 2,
+        by = ty * T + hash(tx, ty + 2) * 12 + 4;
+      const dx = bx - P.x,
+        dy = by - (P.y + 2),
+        d = Math.hypot(dx, dy),
+        push = d < 14 ? (14 - d) / 14 : 0;
+      if (push > 0.05) {
+        for (let i = 0; i < n; i++) {
+          const x = R(bx - n - 4 + 4 + i * 2 - cx),
+            hgt = Math.max(1, Math.round((3 + ((v * 7 + i * 3) % 4)) * (1 - push * 0.6))),
+            sw = Math.sign(dx || 1) * push * 3 + gust;
+          for (let q = 0; q < hgt; q++) {
+            b.fillStyle = q === hgt - 1 ? gp[2] : q > hgt / 2 ? gp[1] : gp[0];
+            b.fillRect(x + Math.round((sw * q) / hgt), R(by - cy) - q, 1, 1);
+          }
+        }
+        continue;
+      }
+      const ph = Math.max(0, Math.min(4, Math.round(2 + Math.sin(t * 2.4 + bx * 0.09 + by * 0.05) * 1.4 + gust)));
+      b.drawImage(vfxTuft(gp, v, ph), R(bx - n - 4 - cx), R(by - 7 - cy));
+    }
+}
 // v18.4 바닥 무늬: 128px 바닥 조각을 미리 구워(원래 바닥 칸 + 막별 무늬) 덮는다. 매 프레임 칸을 하나씩 칠하던 것보다 가볍다.
 // 무늬는 세상 좌표의 함수라 조각 경계에서도 이어진다. 보기만 하는 것이고 길을 막지 않는다. 끔·절약 모드는 예전 그리기 그대로.
-const VFX_CH=128;
-function vfxGroundTiles(g,st,ox,oy,x0,y0,x1,y1){const gr=st.gr,T=16;   // 09_render drawGround의 칸 그리기와 같은 규칙(g 위에, ox,oy만큼 옮겨)
- for(let ty=Math.floor(y0/T);ty<=Math.floor((y1-1)/T);ty++)for(let tx=Math.floor(x0/T);tx<=Math.floor((x1-1)/T);tx++){const h=hash(tx,ty),sx=tx*T-ox,sy=ty*T-oy;
-  if(st.paved){g.fillStyle=h<0.4?gr[1]:gr[0];g.fillRect(sx,sy,T,T);g.fillStyle=gr[2];g.fillRect(sx,sy+T-1,T,1);g.fillRect(sx+((ty&1)?8:0),sy,1,T);
-   if(h>0.85){g.fillRect(sx+4,sy+5,5,1);g.fillRect(sx+8,sy+6,1,3);}}
-  else{if(h<0.3){g.fillStyle=gr[1];g.fillRect(sx,sy,T,T);}
-   if(h>0.82){g.fillStyle=gr[3];g.fillRect(sx+3,sy+5,2,1);g.fillRect(sx+10,sy+11,1,1);}
-   if(h>0.6&&h<0.66){g.fillStyle=gr[3];g.fillRect(sx+6,sy+8,1,3);g.fillRect(sx+8,sy+7,1,4);}}}}
+const VFX_CH = 128;
+function vfxGroundTiles(g, st, ox, oy, x0, y0, x1, y1) {
+  const gr = st.gr,
+    T = 16; // 09_render drawGround의 칸 그리기와 같은 규칙(g 위에, ox,oy만큼 옮겨)
+  for (let ty = Math.floor(y0 / T); ty <= Math.floor((y1 - 1) / T); ty++)
+    for (let tx = Math.floor(x0 / T); tx <= Math.floor((x1 - 1) / T); tx++) {
+      const h = hash(tx, ty),
+        sx = tx * T - ox,
+        sy = ty * T - oy;
+      if (st.paved) {
+        g.fillStyle = h < 0.4 ? gr[1] : gr[0];
+        g.fillRect(sx, sy, T, T);
+        g.fillStyle = gr[2];
+        g.fillRect(sx, sy + T - 1, T, 1);
+        g.fillRect(sx + (ty & 1 ? 8 : 0), sy, 1, T);
+        if (h > 0.85) {
+          g.fillRect(sx + 4, sy + 5, 5, 1);
+          g.fillRect(sx + 8, sy + 6, 1, 3);
+        }
+      } else {
+        if (h < 0.3) {
+          g.fillStyle = gr[1];
+          g.fillRect(sx, sy, T, T);
+        }
+        if (h > 0.82) {
+          g.fillStyle = gr[3];
+          g.fillRect(sx + 3, sy + 5, 2, 1);
+          g.fillRect(sx + 10, sy + 11, 1, 1);
+        }
+        if (h > 0.6 && h < 0.66) {
+          g.fillStyle = gr[3];
+          g.fillRect(sx + 6, sy + 8, 1, 3);
+          g.fillRect(sx + 8, sy + 7, 1, 4);
+        }
+      }
+    }
+}
 // 길(띠): 가로 길은 420px마다, 세로 길은 520px마다 굽이친다. 반환: 길 가운데로부터의 거리(작을수록 길 안)
-function vfxRoadD(x,y){const k=Math.round((y-60*Math.sin(x/140))/420),dy=Math.abs(y-(k*420+60*Math.sin(x/140+k))),
- m=Math.round((x-70*Math.sin(y/160))/520),dx=Math.abs(x-(m*520+70*Math.sin(y/160+m)));return Math.min(dy,dx);}
-function vfxDeco(g,V,ox,oy){const D=V.ground,c=D.c,k=D.k,S=2;
- const band=(w,f)=>{for(let y=0;y<VFX_CH;y+=S)for(let x=0;x<VFX_CH;x+=S){const wx=ox+x,wy=oy+y,d=vfxRoadD(wx,wy),ww=w+3*Math.sin(wx/37+wy/53);if(d<ww-1||(d<ww+1&&hash(wx>>1,wy>>1)<0.5))f(x,y,wx,wy,d<ww*0.5);}};
- const blobs=(cell,p,rmin,rmax,f)=>{for(let gy=Math.floor((oy-rmax)/cell);gy<=Math.floor((oy+VFX_CH+rmax)/cell);gy++)for(let gx=Math.floor((ox-rmax)/cell);gx<=Math.floor((ox+VFX_CH+rmax)/cell);gx++){
-   if(hash(gx*7+1,gy*13+5)>p)continue;const bx=gx*cell+hash(gx,gy+3)*cell,by=gy*cell+hash(gx+3,gy)*cell,r=rmin+hash(gx+9,gy+9)*(rmax-rmin);f(bx-ox,by-oy,r,gx,gy);}};
- if(k==='road'){const stones=[];band(11,(x,y,wx,wy,mid)=>{g.fillStyle=c[0];g.fillRect(x,y,S,S);if(mid&&x<=VFX_CH-S*2&&(wx>>3)%3===0&&(wy>>2)%2===0&&hash(wx>>3,wy>>2)<0.5)stones.push(x,y);   /* 조각 경계를 넘는 돌은 놓지 않음(반쪽 돌 없게) */});   // 거리 계산은 한 번만
-  for(let i=0;i<stones.length;i+=2){g.fillStyle=c[1];g.fillRect(stones[i],stones[i+1],S*2,S);g.fillStyle=c[2];g.fillRect(stones[i],stones[i+1]+S,S*2,1);}}
- else if(k==='leaf'){band(10,(x,y,wx,wy)=>{g.fillStyle=c[0];g.fillRect(x,y,S,S);const h=hash(wx,wy);if(h<0.08){g.fillStyle=h<0.04?c[1]:c[2];g.fillRect(x,y,2,1);}});}
- else if(k==='gravel'){band(9,(x,y,wx,wy)=>{g.fillStyle=c[0];g.fillRect(x,y,S,S);const h=hash(wx,wy);if(h<0.12){g.fillStyle=h<0.06?c[1]:c[2];g.fillRect(x,y,1,1);}});}
- else if(k==='puddle'){blobs(72,0.35,7,16,(bx,by,r)=>{g.fillStyle=c[0];g.beginPath();g.ellipse(bx,by,r,r*0.55,0,0,TAU);g.fill();g.fillStyle=c[2];g.fillRect(Math.round(bx-r*0.6),Math.round(by+r*0.4),Math.round(r*1.2),1);g.fillStyle=c[1];g.fillRect(Math.round(bx-r*0.3),Math.round(by-r*0.25),Math.max(2,Math.round(r*0.4)),1);});}
- else if(k==='crack'||k==='rift'||k==='dry'){blobs(k==='dry'?56:64,k==='dry'?0.45:0.3,8,18,(bx,by,r,gx,gy)=>{g.fillStyle=c[0];let x=bx,y=by;
-   for(let i=0;i<(k==='dry'?3:2);i++){let a=hash(gx+i,gy*3)*TAU;x=bx;y=by;for(let s2=0;s2<r;s2++){a+=(hash(gx+s2,gy+i)-0.5)*0.9;x+=Math.cos(a);y+=Math.sin(a)*0.7;g.fillRect(Math.round(x),Math.round(y),1,1);
-    if(k==='rift'&&s2%2===0){g.fillStyle=c[1];g.globalAlpha=0.8;g.fillRect(Math.round(x),Math.round(y)-1,1,1);g.globalAlpha=1;g.fillStyle=c[0];}}}
-   if(k==='dry'){g.fillStyle=c[1];g.globalAlpha=0.35;g.beginPath();g.ellipse(bx,by,r,r*0.6,0,0,TAU);g.fill();g.globalAlpha=1;}});}
- else if(k==='drift'){blobs(80,0.4,12,26,(bx,by,r)=>{g.fillStyle=c[1];g.globalAlpha=0.55;g.beginPath();g.ellipse(bx,by,r,r*0.45,0,0,TAU);g.fill();g.globalAlpha=1;g.fillStyle=c[0];g.fillRect(Math.round(bx-r*0.5),Math.round(by+r*0.42),Math.round(r),1);});}
- else if(k==='sand'){blobs(76,0.4,12,24,(bx,by,r,gx,gy)=>{g.fillStyle=c[0];g.beginPath();g.ellipse(bx,by,r,r*0.5,0,0,TAU);g.fill();
-   for(let i=0;i<3;i++)if(hash(gx+i,gy+7)<0.6){g.fillStyle=i===0?c[1]:c[2];g.fillRect(Math.round(bx+(hash(gx,i)-0.5)*r),Math.round(by+(hash(i,gy)-0.5)*r*0.4),2,1);}});}
- else if(k==='bakseok'){band(12,(x,y,wx,wy,mid)=>{if(((wx>>3)&1)===((wy>>3)&1)){   /* &1: 음수 좌표에서도 같은 바둑판 */g.fillStyle=c[1];g.globalAlpha=0.5;g.fillRect(x,y,S,S);g.globalAlpha=1;}});}}
-function vfxChunk(si,ix,iy){const key=si+':'+ix+':'+iy;let c=VFXS.chunks.get(key);if(c)return c;
- const st=STAGES[si],V=STAGE_VFX[si],ox=ix*VFX_CH,oy=iy*VFX_CH;
- c=vfxCanvas(VFX_CH,VFX_CH,g=>{g.fillStyle=st.gr[0];g.fillRect(0,0,VFX_CH,VFX_CH);vfxGroundTiles(g,st,ox,oy,ox,oy,ox+VFX_CH,oy+VFX_CH);vfxDeco(g,V,ox,oy);});
- VFXS.chunks.set(key,c);VFXS.made=(VFXS.made||0)+1;return c;}   // 버리는 것은 vfxGroundChunks가(보이는 조각은 버리지 않음)
+function vfxRoadD(x, y) {
+  const k = Math.round((y - 60 * Math.sin(x / 140)) / 420),
+    dy = Math.abs(y - (k * 420 + 60 * Math.sin(x / 140 + k))),
+    m = Math.round((x - 70 * Math.sin(y / 160)) / 520),
+    dx = Math.abs(x - (m * 520 + 70 * Math.sin(y / 160 + m)));
+  return Math.min(dy, dx);
+}
+function vfxDeco(g, V, ox, oy) {
+  const D = V.ground,
+    c = D.c,
+    k = D.k,
+    S = 2;
+  const band = (w, f) => {
+    for (let y = 0; y < VFX_CH; y += S)
+      for (let x = 0; x < VFX_CH; x += S) {
+        const wx = ox + x,
+          wy = oy + y,
+          d = vfxRoadD(wx, wy),
+          ww = w + 3 * Math.sin(wx / 37 + wy / 53);
+        if (d < ww - 1 || (d < ww + 1 && hash(wx >> 1, wy >> 1) < 0.5)) f(x, y, wx, wy, d < ww * 0.5);
+      }
+  };
+  const blobs = (cell, p, rmin, rmax, f) => {
+    for (let gy = Math.floor((oy - rmax) / cell); gy <= Math.floor((oy + VFX_CH + rmax) / cell); gy++)
+      for (let gx = Math.floor((ox - rmax) / cell); gx <= Math.floor((ox + VFX_CH + rmax) / cell); gx++) {
+        if (hash(gx * 7 + 1, gy * 13 + 5) > p) continue;
+        const bx = gx * cell + hash(gx, gy + 3) * cell,
+          by = gy * cell + hash(gx + 3, gy) * cell,
+          r = rmin + hash(gx + 9, gy + 9) * (rmax - rmin);
+        f(bx - ox, by - oy, r, gx, gy);
+      }
+  };
+  if (k === 'road') {
+    const stones = [];
+    band(11, (x, y, wx, wy, mid) => {
+      g.fillStyle = c[0];
+      g.fillRect(x, y, S, S);
+      if (mid && x <= VFX_CH - S * 2 && (wx >> 3) % 3 === 0 && (wy >> 2) % 2 === 0 && hash(wx >> 3, wy >> 2) < 0.5)
+        stones.push(x, y); /* 조각 경계를 넘는 돌은 놓지 않음(반쪽 돌 없게) */
+    }); // 거리 계산은 한 번만
+    for (let i = 0; i < stones.length; i += 2) {
+      g.fillStyle = c[1];
+      g.fillRect(stones[i], stones[i + 1], S * 2, S);
+      g.fillStyle = c[2];
+      g.fillRect(stones[i], stones[i + 1] + S, S * 2, 1);
+    }
+  } else if (k === 'leaf') {
+    band(10, (x, y, wx, wy) => {
+      g.fillStyle = c[0];
+      g.fillRect(x, y, S, S);
+      const h = hash(wx, wy);
+      if (h < 0.08) {
+        g.fillStyle = h < 0.04 ? c[1] : c[2];
+        g.fillRect(x, y, 2, 1);
+      }
+    });
+  } else if (k === 'gravel') {
+    band(9, (x, y, wx, wy) => {
+      g.fillStyle = c[0];
+      g.fillRect(x, y, S, S);
+      const h = hash(wx, wy);
+      if (h < 0.12) {
+        g.fillStyle = h < 0.06 ? c[1] : c[2];
+        g.fillRect(x, y, 1, 1);
+      }
+    });
+  } else if (k === 'puddle') {
+    blobs(72, 0.35, 7, 16, (bx, by, r) => {
+      g.fillStyle = c[0];
+      g.beginPath();
+      g.ellipse(bx, by, r, r * 0.55, 0, 0, TAU);
+      g.fill();
+      g.fillStyle = c[2];
+      g.fillRect(Math.round(bx - r * 0.6), Math.round(by + r * 0.4), Math.round(r * 1.2), 1);
+      g.fillStyle = c[1];
+      g.fillRect(Math.round(bx - r * 0.3), Math.round(by - r * 0.25), Math.max(2, Math.round(r * 0.4)), 1);
+    });
+  } else if (k === 'crack' || k === 'rift' || k === 'dry') {
+    blobs(k === 'dry' ? 56 : 64, k === 'dry' ? 0.45 : 0.3, 8, 18, (bx, by, r, gx, gy) => {
+      g.fillStyle = c[0];
+      let x = bx,
+        y = by;
+      for (let i = 0; i < (k === 'dry' ? 3 : 2); i++) {
+        let a = hash(gx + i, gy * 3) * TAU;
+        x = bx;
+        y = by;
+        for (let s2 = 0; s2 < r; s2++) {
+          a += (hash(gx + s2, gy + i) - 0.5) * 0.9;
+          x += Math.cos(a);
+          y += Math.sin(a) * 0.7;
+          g.fillRect(Math.round(x), Math.round(y), 1, 1);
+          if (k === 'rift' && s2 % 2 === 0) {
+            g.fillStyle = c[1];
+            g.globalAlpha = 0.8;
+            g.fillRect(Math.round(x), Math.round(y) - 1, 1, 1);
+            g.globalAlpha = 1;
+            g.fillStyle = c[0];
+          }
+        }
+      }
+      if (k === 'dry') {
+        g.fillStyle = c[1];
+        g.globalAlpha = 0.35;
+        g.beginPath();
+        g.ellipse(bx, by, r, r * 0.6, 0, 0, TAU);
+        g.fill();
+        g.globalAlpha = 1;
+      }
+    });
+  } else if (k === 'drift') {
+    blobs(80, 0.4, 12, 26, (bx, by, r) => {
+      g.fillStyle = c[1];
+      g.globalAlpha = 0.55;
+      g.beginPath();
+      g.ellipse(bx, by, r, r * 0.45, 0, 0, TAU);
+      g.fill();
+      g.globalAlpha = 1;
+      g.fillStyle = c[0];
+      g.fillRect(Math.round(bx - r * 0.5), Math.round(by + r * 0.42), Math.round(r), 1);
+    });
+  } else if (k === 'sand') {
+    blobs(76, 0.4, 12, 24, (bx, by, r, gx, gy) => {
+      g.fillStyle = c[0];
+      g.beginPath();
+      g.ellipse(bx, by, r, r * 0.5, 0, 0, TAU);
+      g.fill();
+      for (let i = 0; i < 3; i++)
+        if (hash(gx + i, gy + 7) < 0.6) {
+          g.fillStyle = i === 0 ? c[1] : c[2];
+          g.fillRect(Math.round(bx + (hash(gx, i) - 0.5) * r), Math.round(by + (hash(i, gy) - 0.5) * r * 0.4), 2, 1);
+        }
+    });
+  } else if (k === 'bakseok') {
+    band(12, (x, y, wx, wy, mid) => {
+      if (((wx >> 3) & 1) === ((wy >> 3) & 1)) {
+        /* &1: 음수 좌표에서도 같은 바둑판 */ g.fillStyle = c[1];
+        g.globalAlpha = 0.5;
+        g.fillRect(x, y, S, S);
+        g.globalAlpha = 1;
+      }
+    });
+  }
+}
+function vfxChunk(si, ix, iy) {
+  const key = si + ':' + ix + ':' + iy;
+  let c = VFXS.chunks.get(key);
+  if (c) return c;
+  const st = STAGES[si],
+    V = STAGE_VFX[si],
+    ox = ix * VFX_CH,
+    oy = iy * VFX_CH;
+  c = vfxCanvas(VFX_CH, VFX_CH, g => {
+    g.fillStyle = st.gr[0];
+    g.fillRect(0, 0, VFX_CH, VFX_CH);
+    vfxGroundTiles(g, st, ox, oy, ox, oy, ox + VFX_CH, oy + VFX_CH);
+    vfxDeco(g, V, ox, oy);
+  });
+  VFXS.chunks.set(key, c);
+  VFXS.made = (VFXS.made || 0) + 1;
+  return c;
+} // 버리는 것은 vfxGroundChunks가(보이는 조각은 버리지 않음)
 // drawGround가 부른다(켬·고화질일 때 true). 보이는 조각은 버리지 않는다. 새 조각은 한 프레임에 2장까지 굽고,
 // 아직 없는 조각 자리는 그 자리만 예전 칸 그리기로 채운다(무늬 전체가 깜빡이지 않게). 남은 몫으로 화면 바로 바깥 조각을 미리 굽는다.
-function vfxGroundChunks(cx,cy){if(vfxLevel()==='off'||LOW||!G)return false;const si=vfxSi(),st=STAGES[si],M=VFXS.chunks;if(VFXS.chunkSi!==si){M.clear();VFXS.chunkSi=si;}
- const x0=Math.floor(cx/VFX_CH),y0=Math.floor(cy/VFX_CH),x1=Math.floor((cx+W-1)/VFX_CH),y1=Math.floor((cy+H-1)/VFX_CH);let budget=2;
- for(let iy=y0;iy<=y1;iy++)for(let ix=x0;ix<=x1;ix++){const key=si+':'+ix+':'+iy;let c=M.get(key);if(!c&&budget>0){c=vfxChunk(si,ix,iy);budget--;}
-  const ox=ix*VFX_CH,oy=iy*VFX_CH;
-  if(c){M.delete(key);M.set(key,c);b.drawImage(c,ox-cx,oy-cy);}   // 쓴 조각은 맨 뒤로(오래 안 쓴 것부터 버림)
-  else{b.fillStyle=st.gr[0];b.fillRect(ox-cx,oy-cy,VFX_CH,VFX_CH);vfxGroundTiles(b,st,cx,cy,ox,oy,ox+VFX_CH,oy+VFX_CH);}}
- for(let iy=y0-1;iy<=y1+1&&budget>0;iy++)for(let ix=x0-1;ix<=x1+1&&budget>0;ix++){if(iy>=y0&&iy<=y1&&ix>=x0&&ix<=x1)continue;if(!M.has(si+':'+ix+':'+iy)){vfxChunk(si,ix,iy);budget--;}}
- const cap=Math.max(64,(x1-x0+3)*(y1-y0+3)+8);while(M.size>cap)M.delete(M.keys().next().value);   // 보이는 조각은 방금 맨 뒤로 옮겼으니 앞쪽(오래된 것)만 버린다
- return true;}
+function vfxGroundChunks(cx, cy) {
+  if (vfxLevel() === 'off' || LOW || !G) return false;
+  const si = vfxSi(),
+    st = STAGES[si],
+    M = VFXS.chunks;
+  if (VFXS.chunkSi !== si) {
+    M.clear();
+    VFXS.chunkSi = si;
+  }
+  const x0 = Math.floor(cx / VFX_CH),
+    y0 = Math.floor(cy / VFX_CH),
+    x1 = Math.floor((cx + W - 1) / VFX_CH),
+    y1 = Math.floor((cy + H - 1) / VFX_CH);
+  let budget = 2;
+  for (let iy = y0; iy <= y1; iy++)
+    for (let ix = x0; ix <= x1; ix++) {
+      const key = si + ':' + ix + ':' + iy;
+      let c = M.get(key);
+      if (!c && budget > 0) {
+        c = vfxChunk(si, ix, iy);
+        budget--;
+      }
+      const ox = ix * VFX_CH,
+        oy = iy * VFX_CH;
+      if (c) {
+        M.delete(key);
+        M.set(key, c);
+        b.drawImage(c, ox - cx, oy - cy);
+      } // 쓴 조각은 맨 뒤로(오래 안 쓴 것부터 버림)
+      else {
+        b.fillStyle = st.gr[0];
+        b.fillRect(ox - cx, oy - cy, VFX_CH, VFX_CH);
+        vfxGroundTiles(b, st, cx, cy, ox, oy, ox + VFX_CH, oy + VFX_CH);
+      }
+    }
+  for (let iy = y0 - 1; iy <= y1 + 1 && budget > 0; iy++)
+    for (let ix = x0 - 1; ix <= x1 + 1 && budget > 0; ix++) {
+      if (iy >= y0 && iy <= y1 && ix >= x0 && ix <= x1) continue;
+      if (!M.has(si + ':' + ix + ':' + iy)) {
+        vfxChunk(si, ix, iy);
+        budget--;
+      }
+    }
+  const cap = Math.max(64, (x1 - x0 + 3) * (y1 - y0 + 3) + 8);
+  while (M.size > cap) M.delete(M.keys().next().value); // 보이는 조각은 방금 맨 뒤로 옮겼으니 앞쪽(오래된 것)만 버린다
+  return true;
+}
 // 잔해: 요괴·옹기를 쓰러뜨리면 조각이 튀었다가 바닥에 몇 초 남는다(밟으면 밀림)
-function vfxDebris(e){const lv=vfxLevel();if(lv==='off'||!e)return;const cap=(LOW?60:260)*(lv==='soft'?0.5:1),D=VFXS.debris;
- const E=EN[e.kind]||{},cols=e.prop?['#8a5a2e','#b0702e','#5a3a1e']:[E.A||'#6a5a50',E.B||'#3a3030','#2a2220'],n=e.prop?9:LOW?2:4;
- for(let i=0;i<n;i++){const a=vfxRnd()*TAU,s=20+vfxRnd()*50;
-  D.push({x:e.x,y:e.y,z:2,vx:Math.cos(a)*s,vy:Math.sin(a)*s*0.7,vz:40+vfxRnd()*60,c:cols[i%3],s:e.prop&&i%3===0?2:1,life:e.prop?9:5});}
- if(D.length>cap)D.splice(0,D.length-cap);}
-function vfxLampAt(tx,ty){const L=VFX_LAMP[STAGE_VFX[vfxSi()].lamp];return L&&L.post&&hash(tx*11+3,ty*7+5)<L.d;}
-function vfxEachLamp(cx,cy,f){const T=96;for(let ty=Math.floor(cy/T)-1;ty<=Math.floor((cy+H)/T)+1;ty++)for(let tx=Math.floor(cx/T)-1;tx<=Math.floor((cx+W)/T)+1;tx++)if(vfxLampAt(tx,ty))f(tx*T+40,ty*T+50,tx);}
+function vfxDebris(e) {
+  const lv = vfxLevel();
+  if (lv === 'off' || !e) return;
+  const cap = (LOW ? 60 : 260) * (lv === 'soft' ? 0.5 : 1),
+    D = VFXS.debris;
+  const E = EN[e.kind] || {},
+    cols = e.prop ? ['#8a5a2e', '#b0702e', '#5a3a1e'] : [E.A || '#6a5a50', E.B || '#3a3030', '#2a2220'],
+    n = e.prop ? 9 : LOW ? 2 : 4;
+  for (let i = 0; i < n; i++) {
+    const a = vfxRnd() * TAU,
+      s = 20 + vfxRnd() * 50;
+    D.push({
+      x: e.x,
+      y: e.y,
+      z: 2,
+      vx: Math.cos(a) * s,
+      vy: Math.sin(a) * s * 0.7,
+      vz: 40 + vfxRnd() * 60,
+      c: cols[i % 3],
+      s: e.prop && i % 3 === 0 ? 2 : 1,
+      life: e.prop ? 9 : 5
+    });
+  }
+  if (D.length > cap) D.splice(0, D.length - cap);
+}
+function vfxLampAt(tx, ty) {
+  const L = VFX_LAMP[STAGE_VFX[vfxSi()].lamp];
+  return L && L.post && hash(tx * 11 + 3, ty * 7 + 5) < L.d;
+}
+function vfxEachLamp(cx, cy, f) {
+  const T = 96;
+  for (let ty = Math.floor(cy / T) - 1; ty <= Math.floor((cy + H) / T) + 1; ty++)
+    for (let tx = Math.floor(cx / T) - 1; tx <= Math.floor((cx + W) / T) + 1; tx++)
+      if (vfxLampAt(tx, ty)) f(tx * T + 40, ty * T + 50, tx);
+}
 // 빛 목록(화면 좌표). 퇴마사가 맨 앞이라 상한에 잘리지 않는다. 요괴 탄·경고 장판은 어둠 속에서 스스로 빛난다
-function vfxLights(cx,cy){const P=G.P,out=[],cap=LOW?15:45,add=(x,y,r,c,a,kind)=>{if(out.length>=cap)return;const sx=x-cx,sy=y-cy;if(sx<-r||sy<-r||sx>W+r||sy>H+r)return;out.push({x:sx,y:sy,r,c,a,kind});};
- add(P.x,P.y-6,78,'255,200,130',0.16,'hero');
- {const nn=vfxNight();for(const w of G.warns)if(!w.friendly)add(w.x,w.y,(w.r||14)*1.25+14,'255,80,60',0.3+nn*1.1,'warn');}   // 경고 장판은 밤이 깊을수록 세게 빛난다(vfx_read)
- for(const e of G.enemies)if(!e.dead&&(e.boss||e.mid||e.elite))add(e.x,e.y-8,30,'255,120,90',0.2,'foe');
- for(const q of G.ebul)add(q.x,q.y,12,'255,90,120',0.35,'ebul');
- if(G.shrine)add(G.shrine.x,G.shrine.y-20,80,'255,215,130',0.25,'shrine');
- const L=VFX_LAMP[STAGE_VFX[vfxSi()].lamp];if(L&&L.post)vfxEachLamp(cx,cy,(x,y,tx)=>add(x+5,y-14,L.r+Math.sin(G.time*3+tx)*3,L.c,0.32,'lamp'));
- for(const p of G.projs)add(p.x,p.y,13,'170,220,255',0.22,'proj');
- for(const g of G.gems)add(g.x,g.y,7,'140,220,255',0.3,'gem');
- return out;}
+function vfxLights(cx, cy) {
+  const P = G.P,
+    out = [],
+    cap = LOW ? 15 : 45,
+    add = (x, y, r, c, a, kind) => {
+      if (out.length >= cap) return;
+      const sx = x - cx,
+        sy = y - cy;
+      if (sx < -r || sy < -r || sx > W + r || sy > H + r) return;
+      out.push({x: sx, y: sy, r, c, a, kind});
+    };
+  add(P.x, P.y - 6, 78, '255,200,130', 0.16, 'hero');
+  {
+    const nn = vfxNight();
+    for (const w of G.warns)
+      if (!w.friendly) add(w.x, w.y, (w.r || 14) * 1.25 + 14, '255,80,60', 0.3 + nn * 1.1, 'warn');
+  } // 경고 장판은 밤이 깊을수록 세게 빛난다(vfx_read)
+  for (const e of G.enemies)
+    if (!e.dead && (e.boss || e.mid || e.elite)) add(e.x, e.y - 8, 30, '255,120,90', 0.2, 'foe');
+  for (const q of G.ebul) add(q.x, q.y, 12, '255,90,120', 0.35, 'ebul');
+  if (G.shrine) add(G.shrine.x, G.shrine.y - 20, 80, '255,215,130', 0.25, 'shrine');
+  const L = VFX_LAMP[STAGE_VFX[vfxSi()].lamp];
+  if (L && L.post)
+    vfxEachLamp(cx, cy, (x, y, tx) => add(x + 5, y - 14, L.r + Math.sin(G.time * 3 + tx) * 3, L.c, 0.32, 'lamp'));
+  for (const p of G.projs) add(p.x, p.y, 13, '170,220,255', 0.22, 'proj');
+  for (const g of G.gems) add(g.x, g.y, 7, '140,220,255', 0.3, 'gem');
+  return out;
+}
 // 땅에 선 빛나는 물건의 몸체(작은 도트)
-function vfxLampBody(k,x,y,t,tx){const sw=Math.round(Math.sin(t*1.6+tx)*0.6),fl=Math.sin(t*14+tx)>0;b.fillStyle='rgba(0,0,0,0.35)';b.fillRect(x-3,y,8,2);
- if(k==='chorong'||k==='palace'){b.fillStyle='#3a2a20';b.fillRect(x,y-18,1,18);b.fillRect(x,y-18,5,1);b.fillStyle=k==='palace'?'#8a1e1a':'#1d3f8a';b.fillRect(x+3+sw,y-17,4,2);b.fillStyle='#c8402c';b.fillRect(x+3+sw,y-15,4,3);b.fillStyle='#ffd27a';b.fillRect(x+4+sw,y-15,2,2);}
- else if(k==='torch'||k==='fishfire'||k==='boat'){b.fillStyle='#4a3424';b.fillRect(x+4,y-12,1,12);b.fillStyle=fl?'#ffb040':'#ff7a30';b.fillRect(x+3,y-15,3,3);b.fillStyle='#ffe08a';b.fillRect(x+4,y-14,1,1);}
- else if(k==='seokdeung'){b.fillStyle='#6a6a72';b.fillRect(x+2,y-4,5,4);b.fillRect(x+3,y-9,3,5);b.fillStyle='#4a4a52';b.fillRect(x+1,y-12,7,2);b.fillStyle=fl?'#ffd27a':'#ffb84a';b.fillRect(x+4,y-8,1,2);}
- else if(k==='candle'){for(const o of [0,4]){b.fillStyle='#e8dcc0';b.fillRect(x+o+1,y-4,2,4);b.fillStyle=fl?'#ffd040':'#ff9a30';b.fillRect(x+o+1,y-6,1,2);}}}
+function vfxLampBody(k, x, y, t, tx) {
+  const sw = Math.round(Math.sin(t * 1.6 + tx) * 0.6),
+    fl = Math.sin(t * 14 + tx) > 0;
+  b.fillStyle = 'rgba(0,0,0,0.35)';
+  b.fillRect(x - 3, y, 8, 2);
+  if (k === 'chorong' || k === 'palace') {
+    b.fillStyle = '#3a2a20';
+    b.fillRect(x, y - 18, 1, 18);
+    b.fillRect(x, y - 18, 5, 1);
+    b.fillStyle = k === 'palace' ? '#8a1e1a' : '#1d3f8a';
+    b.fillRect(x + 3 + sw, y - 17, 4, 2);
+    b.fillStyle = '#c8402c';
+    b.fillRect(x + 3 + sw, y - 15, 4, 3);
+    b.fillStyle = '#ffd27a';
+    b.fillRect(x + 4 + sw, y - 15, 2, 2);
+  } else if (k === 'torch' || k === 'fishfire' || k === 'boat') {
+    b.fillStyle = '#4a3424';
+    b.fillRect(x + 4, y - 12, 1, 12);
+    b.fillStyle = fl ? '#ffb040' : '#ff7a30';
+    b.fillRect(x + 3, y - 15, 3, 3);
+    b.fillStyle = '#ffe08a';
+    b.fillRect(x + 4, y - 14, 1, 1);
+  } else if (k === 'seokdeung') {
+    b.fillStyle = '#6a6a72';
+    b.fillRect(x + 2, y - 4, 5, 4);
+    b.fillRect(x + 3, y - 9, 3, 5);
+    b.fillStyle = '#4a4a52';
+    b.fillRect(x + 1, y - 12, 7, 2);
+    b.fillStyle = fl ? '#ffd27a' : '#ffb84a';
+    b.fillRect(x + 4, y - 8, 1, 2);
+  } else if (k === 'candle') {
+    for (const o of [0, 4]) {
+      b.fillStyle = '#e8dcc0';
+      b.fillRect(x + o + 1, y - 4, 2, 4);
+      b.fillStyle = fl ? '#ffd040' : '#ff9a30';
+      b.fillRect(x + o + 1, y - 6, 1, 2);
+    }
+  }
+}
 // 바닥 뒤: 빛나는 물건 몸체와 잔해(화면 좌표)
-function vfxGround(cx,cy){if(vfxLevel()==='off'||!G)return;const t=G.time,P=G.P,dt=Math.min(0.05,Math.max(0,t-VFXS.lastT));VFXS.lastT=t;
- if(!LOW)vfxGrass(cx,cy,vfxLevel()==='soft'?0.5:1);   // v18.3
- const k=STAGE_VFX[vfxSi()].lamp;if(!LOW&&VFX_LAMP[k]&&VFX_LAMP[k].post)vfxEachLamp(cx,cy,(x,y,tx)=>vfxLampBody(k,R(x-cx),R(y-cy),t,tx));
- const D=VFXS.debris;for(let i=D.length-1;i>=0;i--){const q=D[i];q.life-=dt;if(q.life<=0){D.splice(i,1);continue;}
-  if(q.z>0||q.vz>0){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vz-=260*dt;q.z+=q.vz*dt;if(q.z<0){q.z=0;q.vz=-q.vz*0.3;q.vx*=0.5;q.vy*=0.5;if(q.vz<12)q.vz=0;}}
-  const dx=q.x-P.x,dy=q.y-(P.y+2),d=Math.hypot(dx,dy);if(d<5&&P.moving){q.x+=dx/(d||1)*1.2;q.y+=dy/(d||1)*1.2;}
-  const sx=R(q.x-cx),sy=R(q.y-q.z-cy);if(sx<-2||sy<-2||sx>W+2||sy>H+2)continue;b.globalAlpha=Math.min(1,q.life);b.fillStyle=q.c;b.fillRect(sx,sy,q.s,1);}
- b.globalAlpha=1;}
+function vfxGround(cx, cy) {
+  if (vfxLevel() === 'off' || !G) return;
+  const t = G.time,
+    P = G.P,
+    dt = Math.min(0.05, Math.max(0, t - VFXS.lastT));
+  VFXS.lastT = t;
+  if (!LOW) vfxGrass(cx, cy, vfxLevel() === 'soft' ? 0.5 : 1); // v18.3
+  const k = STAGE_VFX[vfxSi()].lamp;
+  if (!LOW && VFX_LAMP[k] && VFX_LAMP[k].post)
+    vfxEachLamp(cx, cy, (x, y, tx) => vfxLampBody(k, R(x - cx), R(y - cy), t, tx));
+  const D = VFXS.debris;
+  for (let i = D.length - 1; i >= 0; i--) {
+    const q = D[i];
+    q.life -= dt;
+    if (q.life <= 0) {
+      D.splice(i, 1);
+      continue;
+    }
+    if (q.z > 0 || q.vz > 0) {
+      q.x += q.vx * dt;
+      q.y += q.vy * dt;
+      q.vz -= 260 * dt;
+      q.z += q.vz * dt;
+      if (q.z < 0) {
+        q.z = 0;
+        q.vz = -q.vz * 0.3;
+        q.vx *= 0.5;
+        q.vy *= 0.5;
+        if (q.vz < 12) q.vz = 0;
+      }
+    }
+    const dx = q.x - P.x,
+      dy = q.y - (P.y + 2),
+      d = Math.hypot(dx, dy);
+    if (d < 5 && P.moving) {
+      q.x += (dx / (d || 1)) * 1.2;
+      q.y += (dy / (d || 1)) * 1.2;
+    }
+    const sx = R(q.x - cx),
+      sy = R(q.y - q.z - cy);
+    if (sx < -2 || sy < -2 || sx > W + 2 || sy > H + 2) continue;
+    b.globalAlpha = Math.min(1, q.life);
+    b.fillStyle = q.c;
+    b.fillRect(sx, sy, q.s, 1);
+  }
+  b.globalAlpha = 1;
+}
 // 세상 그림 뒤, 피해 숫자·요괴 탄·체력 막대 전: 어둠(미리 구운 한 장) → 빛 번짐 → 떠다니는 빛 → 새벽빛
-function vfxLight(cx,cy){const lv=vfxLevel();if(lv==='off'||!G)return;const n=vfxNight(),V=STAGE_VFX[vfxSi()],t=G.time;
- b.save();const hk=buf.width>W?2:1;b.setTransform(hk,0,0,hk,0,0);
- const nb=vfxNightBase();if(n>0.01){const key=W+'x'+H+'_'+V.tint+'_'+Math.round(nb*40);if(VFXS.dk.key!==key){const c=vfxHex(V.tint);VFXS.dk={key,img:vfxCanvas(W,H,(x)=>{const px=W/2,py=H/2-6,g=x.createRadialGradient(px,py,40,px,py,Math.max(W,H)*0.7);
-   g.addColorStop(0,`rgba(${c},0)`);g.addColorStop(0.35,`rgba(${c},${(nb*0.55).toFixed(3)})`);g.addColorStop(1,`rgba(${c},${nb.toFixed(3)})`);x.fillStyle=g;x.fillRect(0,0,W,H);})};}
-  b.globalAlpha=nb>0?n/nb:1;b.drawImage(VFXS.dk.img,0,0);b.globalAlpha=1;}   // 새벽에는 구운 한 장을 옅게(다시 굽지 않음)
- const dw=vfxDawn();if(dw>0){if(!VFXS.dawn||VFXS.dawn.width!==W||VFXS.dawn.height!==H)VFXS.dawn=vfxCanvas(W,H,(x)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(255,200,140,0.35)');g.addColorStop(1,'rgba(255,200,140,0)');x.fillStyle=g;x.fillRect(0,0,W,H);});
-  b.globalAlpha=Math.sin(dw*Math.PI)*0.6+dw*0.3;b.drawImage(VFXS.dawn,0,0);b.globalAlpha=1;}
- if(LOW){b.restore();return;}   // 절약 모드: 미리 구운 어둠 한 장만(요괴 탄·경고·숫자는 어둠 위에 그리므로 그대로 잘 보임)
- vfxWeather(cx,cy,lv==='soft'?0.5:1);   // v18.3 날씨: 어둠 위, 빛 번짐·요괴 탄·경고·숫자 아래
- b.globalCompositeOperation='lighter';const soft=lv==='soft'?0.6:1;
- for(const l of vfxLights(cx,cy)){if(l.kind==='hero')continue;   // 퇴마사 둘레는 어둠 그림이 이미 밝게 비워 둠. 그림 위에 더하면 도트 색이 번진다(ent_size)
-  const rr=l.r*(l.kind==='warn'?0.95:0.6);b.globalAlpha=l.a*soft*(0.4+n*1.2);b.drawImage(vfxGlowImg(l.c),l.x-rr,l.y-rr,rr*2,rr*2);}
- const L=VFX_LAMP[V.lamp];if(L&&L.float&&!LOW){for(let i=0;i<L.float;i++){const x=((hash(i,4)*W*2+Math.sin(t*0.7+i)*30-cx*0.2)%W+W)%W,y=((hash(i,5)*H*2+(V.lamp==='snow'?t*8:Math.cos(t*0.5+i*2)*20)-cy*0.2)%H+H)%H,a=0.5+0.5*Math.sin(t*3+i*1.7);
-  b.globalAlpha=0.5*a*soft;b.fillStyle=`rgb(${L.c})`;b.fillRect(R(x),R(y),1,1);b.globalAlpha=0.35*a*soft;b.drawImage(vfxGlowImg(L.c),R(x)-L.r/2,R(y)-L.r/2,L.r,L.r);}}
- b.globalAlpha=1;b.globalCompositeOperation='source-over';b.restore();}
+function vfxLight(cx, cy) {
+  const lv = vfxLevel();
+  if (lv === 'off' || !G) return;
+  const n = vfxNight(),
+    V = STAGE_VFX[vfxSi()],
+    t = G.time;
+  b.save();
+  const hk = buf.width > W ? 2 : 1;
+  b.setTransform(hk, 0, 0, hk, 0, 0);
+  const nb = vfxNightBase();
+  if (n > 0.01) {
+    const key = W + 'x' + H + '_' + V.tint + '_' + Math.round(nb * 40);
+    if (VFXS.dk.key !== key) {
+      const c = vfxHex(V.tint);
+      VFXS.dk = {
+        key,
+        img: vfxCanvas(W, H, x => {
+          const px = W / 2,
+            py = H / 2 - 6,
+            g = x.createRadialGradient(px, py, 40, px, py, Math.max(W, H) * 0.7);
+          g.addColorStop(0, `rgba(${c},0)`);
+          g.addColorStop(0.35, `rgba(${c},${(nb * 0.55).toFixed(3)})`);
+          g.addColorStop(1, `rgba(${c},${nb.toFixed(3)})`);
+          x.fillStyle = g;
+          x.fillRect(0, 0, W, H);
+        })
+      };
+    }
+    b.globalAlpha = nb > 0 ? n / nb : 1;
+    b.drawImage(VFXS.dk.img, 0, 0);
+    b.globalAlpha = 1;
+  } // 새벽에는 구운 한 장을 옅게(다시 굽지 않음)
+  const dw = vfxDawn();
+  if (dw > 0) {
+    if (!VFXS.dawn || VFXS.dawn.width !== W || VFXS.dawn.height !== H)
+      VFXS.dawn = vfxCanvas(W, H, x => {
+        const g = x.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, 'rgba(255,200,140,0.35)');
+        g.addColorStop(1, 'rgba(255,200,140,0)');
+        x.fillStyle = g;
+        x.fillRect(0, 0, W, H);
+      });
+    b.globalAlpha = Math.sin(dw * Math.PI) * 0.6 + dw * 0.3;
+    b.drawImage(VFXS.dawn, 0, 0);
+    b.globalAlpha = 1;
+  }
+  if (LOW) {
+    b.restore();
+    return;
+  } // 절약 모드: 미리 구운 어둠 한 장만(요괴 탄·경고·숫자는 어둠 위에 그리므로 그대로 잘 보임)
+  vfxWeather(cx, cy, lv === 'soft' ? 0.5 : 1); // v18.3 날씨: 어둠 위, 빛 번짐·요괴 탄·경고·숫자 아래
+  b.globalCompositeOperation = 'lighter';
+  const soft = lv === 'soft' ? 0.6 : 1;
+  for (const l of vfxLights(cx, cy)) {
+    if (l.kind === 'hero') continue; // 퇴마사 둘레는 어둠 그림이 이미 밝게 비워 둠. 그림 위에 더하면 도트 색이 번진다(ent_size)
+    const rr = l.r * (l.kind === 'warn' ? 0.95 : 0.6);
+    b.globalAlpha = l.a * soft * (0.4 + n * 1.2);
+    b.drawImage(vfxGlowImg(l.c), l.x - rr, l.y - rr, rr * 2, rr * 2);
+  }
+  const L = VFX_LAMP[V.lamp];
+  if (L && L.float && !LOW) {
+    for (let i = 0; i < L.float; i++) {
+      const x = (((hash(i, 4) * W * 2 + Math.sin(t * 0.7 + i) * 30 - cx * 0.2) % W) + W) % W,
+        y =
+          (((hash(i, 5) * H * 2 + (V.lamp === 'snow' ? t * 8 : Math.cos(t * 0.5 + i * 2) * 20) - cy * 0.2) % H) + H) %
+          H,
+        a = 0.5 + 0.5 * Math.sin(t * 3 + i * 1.7);
+      b.globalAlpha = 0.5 * a * soft;
+      b.fillStyle = `rgb(${L.c})`;
+      b.fillRect(R(x), R(y), 1, 1);
+      b.globalAlpha = 0.35 * a * soft;
+      b.drawImage(vfxGlowImg(L.c), R(x) - L.r / 2, R(y) - L.r / 2, L.r, L.r);
+    }
+  }
+  b.globalAlpha = 1;
+  b.globalCompositeOperation = 'source-over';
+  b.restore();
+}

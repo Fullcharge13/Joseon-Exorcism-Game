@@ -11,7 +11,9 @@
 | `python3 tools/i18n_keys.py` | 번역할 원문 전체(데이터 표·`_t` 열쇠·화면 틀 글)를 `docs/i18n/원문.json`으로(v18.1). `NODE_PATH`는 `i18n_wrap.js`와 같음 |
 | `python3 tools/i18n_todo.py [영역] [--n N]` | 간체 사전(`src/i18n/zh/*.json`)에 아직 없는 원문을 영역별로 보인다 |
 | `tools/split_once.py` | v18.0에서 한 번 쓴 나누기 도구(기록용, 다시 쓰지 않음) |
+| `npx prettier@3.3.3 --write "src/js/*.js"` | 코드 모양 맞추기(v20.0, 설정 `.prettierrc.json`). 고친 뒤 `python3 build.py`. 문법 나무는 바뀌지 않는다 |
 
 - `i18n_wrap.js`는 `@babel/parser`·`@babel/traverse` 7.25.6이 필요하다(배포물에는 들어가지 않음): `npm i --prefix /tmp/i18n @babel/parser@7.25.6 @babel/traverse@7.25.6` 뒤 `NODE_PATH=/tmp/i18n/node_modules node tools/i18n_wrap.js`.
 - 번역 함수 이름이 `_t`인 까닭: 코드 곳곳에 `t`라는 지역 변수(시간·과업)가 있어 `t`로 하면 가려진다(v18.0에서 실제로 겪음).
 - 문구 규칙: `_t('원문 {이름}', {이름: 값})`, 한국어 조사는 `{이름:을}`·`{이름:으로}`·`{이름:이}`·`{이름:은}`·`{이름:과}`. 데이터 표(대문자 이름의 표)는 감싸지 않는다(언어를 바꾸면 `applyLang()`이 사전으로 덧씌움). 자세한 설계는 `docs/specs/2026-10-24-다국어.md`.
+- 코드 모양(v20.0): Prettier가 한 줄을 여러 줄로 나누면 같은 줄에 붙인 `//i18n-skip`이 문구에서 떨어질 수 있다. 정렬 뒤 `node tools/i18n_wrap.js`의 「감쌀 곳」 수가 그대로인지 보고, 늘었으면 그 문구가 있는 줄에 `//i18n-skip`을 붙이거나 그 문장 앞에 `// prettier-ignore`를 둔다.
