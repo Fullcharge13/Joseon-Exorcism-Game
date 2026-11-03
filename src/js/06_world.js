@@ -272,7 +272,7 @@ function update(dt){
    else if(it.k==='tteok'){heal(30*P.tteokM);G.rs.tteok++;particle(P.x,P.y,'#7fe0a0',8,40);snd(660,0.1,'triangle');}
    else if(it.k==='grain'){if(G.tale&&G.tale.R.grain!==undefined){G.tale.R.grain++;particle(P.x,P.y-4,'#e0b048',6,30,0.4);snd(700,0.08,'triangle',0.03);}}
    else if(it.k==='pouch'){for(const g of G.gems)g.mag=true;snd(880,0.2,'triangle');toast(_t("복주머니: 구슬을 모두 끌어온다"));}
-   else if(it.k==='chest'){openChest(1+(G.mods.chestPlus||0));}}}
+   else if(it.k==='chest'){openChest(1);}   /* v19.6: 삼재의 강화 +1은 막 끝 상자에만 */}}
  G.items=G.items.filter(i=>!i.dead);
  for(const f of G.fx){f.life-=dt;HSRC=f.src||null;
   if(f.t==='p'){f.x+=f.vx*dt;f.y+=f.vy*dt;f.vx*=0.9;f.vy*=0.9;}

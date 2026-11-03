@@ -81,6 +81,7 @@ for rich in (False, True):
         total += 1
         for f in ('screens', 'overlay', 'hud', 'toast', 'canvas', 'err'):
             if k == 'help_foe' and isinstance(b[k][f], str): b[k][f] = E2HELP.sub(r'\1', b[k][f])
+            if isinstance(b[k][f], str): b[k][f] = b[k][f].replace('막을 끝낼 때 받는 보물상자에서 강화를 하나 더', '보물상자에서 강화를 하나 더')   # v19.6 삼재 설명을 일부러 바꿈
             if k == 'codex_dogam' and e2_only_added(VER0(a[k][f], k), VER0(b[k][f], k)): continue
             if k == 'codex_task' and f == 'overlay' and e2_task_added(VER0(a[k][f], k), VER0(b[k][f], k)): continue
             if k.startswith('codex_') and f == 'canvas' and isinstance(b[k][f], list):   # 캔버스 글은 앞 80개만 모음 → 새 과업 휘장 「精」이 끼면 뒤가 밀려남
