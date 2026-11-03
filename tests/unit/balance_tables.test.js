@@ -2,7 +2,7 @@
 // 표의 값 하나가 설명의 숫자 하나를 차지한다(같은 숫자가 두 번이면 설명에도 두 번). 두 배(×2)·절반(×0.5)은 글로 쓴다.
 // 설명에 없는 효과는 UNDESCRIBED에 적어 둔다(바꾸면 이 목록도 함께 고칠 것).
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
-const UNDESCRIBED=['diff:easy *M.elite','diff:hard *M.elite'];   // 엘리트 −30%·+20%: 설명에 아직 없음
+const UNDESCRIBED=[];   // 예: 'diff:easy *M.elite' (v19.9.1에서 난이도 설명에 엘리트 −30%·+20%를 써서 비움)
 const r1=v=>Math.round(v*1000)/10;
 // 효과 하나 → 설명에서 찾을 글자. null이면 숫자로 쓰지 않는 효과(규칙 켜기·횟수)
 function fxToken(k,v){const op=k[0],f=k.slice(3);
