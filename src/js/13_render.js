@@ -2167,13 +2167,19 @@ function drawFps() {
   ctx.fillText(`${Math.round(fpsV)} FPS${LOW ? _t(' · 절약') : ''}`, 8, innerHeight - 9);
   ctx.restore();
 }
+/* v20.2 시간 나누기: 한 장면이 1/30초보다 길면(느린 기기) 1/30초 이하 조각으로 나눠 update를 여러 번 부른다.
+   예전에는 한 장면을 0.05초로 잘라 20fps 아래에서 게임이 느리게 흘렀다. 멈췄다 돌아온 장면은 0.25초까지만 따라잡는다 */
+const STEP_MAX = 1 / 30,
+  FRAME_MAX = 0.25;
 function frame(now) {
   const raw = now - last;
-  const dt = Math.min(0.05, raw / 1000);
+  const dt = Math.min(FRAME_MAX, raw / 1000);
   last = now;
   try {
-    if (G && !G.over && !modal) {
-      update(dt);
+    const n = Math.max(1, Math.ceil(dt / STEP_MAX - 1e-9)),
+      step = dt / n;
+    for (let k = 0; k < n && G && !G.over && !modal; k++) {
+      update(step);
       if (!modal && G.queue.length && !G.over && G.clearT === undefined) {
         const q = takeQueued();
         if (q === 'adv' && G.P.tier < tierMax(G.cid, G.P.branch)) openAdv();

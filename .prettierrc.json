@@ -4,6 +4,6 @@
   "trailingComma": "none",
   "arrowParens": "avoid",
   "bracketSpacing": false,
-  "endOfLine": "lf",
+  "endOfLine": "auto",
   "quoteProps": "preserve"
 }
