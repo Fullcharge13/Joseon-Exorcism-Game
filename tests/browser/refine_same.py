@@ -31,6 +31,7 @@ def shots(path, refine):
         for vname, vopt in (('pc', dict(viewport={'width': 1280, 'height': 720})), ('phone', dict(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True, device_scale_factor=2))):
             ctx = br.new_context(**vopt); ctx.add_init_script(INIT + SEED); ctx.route('**/fonts.g*/**', lambda r: r.abort())
             pg = ctx.new_page(); pg.on('pageerror', lambda e: errs.append(str(e))); pg.goto('file://' + str(pathlib.Path(path).resolve())); pg.wait_for_timeout(400)
+            pg.evaluate("()=>{if(typeof EN!=='undefined'&&EN.songaksi)delete EN.songaksi.ai;}")   # v19.7 손각시가 쏘게 되어 장면 속 자리·탄이 달라짐 → 그림 비교만 하도록 옛 행동으로(옛 판에는 원래 없음)
             for st in range(10):
                 pg.evaluate(f"()=>{{meta.set.refine='{refine}';}}"); pg.evaluate(SCENE, {'st': st, 'v': 'on', 'n': 40, 'warm': 40}); pg.evaluate(HIDE)
                 f = OUT / f'{pathlib.Path(path).stem}_{refine}_{vname}_{st+1:02d}.png'; pg.screenshot(path=str(f)); res[(vname, st)] = f

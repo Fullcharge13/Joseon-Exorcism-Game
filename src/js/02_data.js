@@ -12,7 +12,7 @@ const EN={
  ieoin:{n:'이어인',c:'n',st:4,t:'fishman',A:'#4f8f8a',B:'#2f6b6a',hp:30,spd:28,dmg:9,r:5,xp:3,ai:'leap',d:'물고기 얼굴의 사람. 뛰어오르며 다가온다.'},
  geumhyeol:{n:'금혈어',c:'n',st:4,t:'fish',A:'#e0b048',B:'#c23b2a',hp:18,spd:48,dmg:8,r:4,xp:2,ai:'zig',fly:1,d:'허공을 헤엄치는 금빛 물고기.'},
  ineo:{n:'인어',c:'n',st:4,t:'fishman',A:'#e8b98f',B:'#3a6fd0',hp:26,spd:30,dmg:9,r:5,xp:3,ai:'shoot',d:'물빛 꼬리의 인어. 물방울을 쏜다.'},
- songaksi:{n:'손각시',c:'n',st:5,t:'ghost',A:'#efe6d2',B:'#c23b2a',hp:30,spd:26,dmg:10,r:5,xp:3,fly:1,d:'처녀의 넋. 벽을 지나 떠다닌다.'},
+ songaksi:{n:'손각시',c:'n',st:5,t:'ghost',A:'#efe6d2',B:'#c23b2a',hp:30,spd:26,dmg:10,r:5,xp:3,ai:'shoot',fly:1,d:'시집을 가지 못하고 죽은 처녀의 넋. 떠다니며 한 맺힌 기운을 던진다. 출처: 한국민족문화대백과사전 「손각시」 · 던지는 행동은 게임 속 각색'},
  dalgyal:{n:'달걀귀',c:'n',st:5,t:'egg',A:'#f2efe8',B:'#6a6a7a',hp:34,spd:30,dmg:10,r:5,xp:3,ai:'charge',d:'얼굴이 달걀처럼 밋밋한 귀신.'},
  mongdal:{n:'몽달귀',c:'n',st:5,t:'ghostHat',A:'#dfe6f0',B:'#8a9aaa',hp:32,spd:30,dmg:10,r:5,xp:3,fly:1,d:'총각의 넋. 갓을 쓰고 떠돈다.'},
  hwangchung:{n:'황충',c:'n',st:6,t:'worm',A:'#b0a040',B:'#7a7020',hp:10,spd:60,dmg:6,r:3,xp:1,ai:'swarm',d:'메뚜기 떼. 작고 빠르다.'},
