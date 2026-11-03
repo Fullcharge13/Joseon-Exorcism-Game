@@ -1,5 +1,5 @@
 /* ======================= tasks & codex ======================= */
-function V(key){if(key==='anomKinds')return anomFound();
+function V(key){if(key==='anomKinds')return anomFound();if(key==='elite2Kinds')return STAGES.filter(s=>{const id=s.elite2;return id&&(((meta.seen[id]||{}).k||0)+((G&&G.rs.seen[id]||{}).k||0))>0;}).length;   // 이번 판에 잡은 것도 셈
  if(key==='fragN')return TALE_IDS.reduce((a,id)=>a+meta.tale.frag[id],0);if(key==='taleN')return TALE_IDS.filter(id=>meta.tale.done[id]).length;if(key==='ending')return meta.ending.seen?1:0;if(key==='charN')return Object.keys(CHARS).filter(id=>unlocked('char:'+id)).length;if(key==='runs')return meta.hub.runs||0;
  if(key.startsWith('evo:')){const id=key.slice(4);return ((meta.stats.evoList||[]).includes(id)||(G&&G.rs.evo.has(id)))?1:0;}
  if(key.startsWith('kills_')){const c=key.slice(6);return (meta.stats[key]||0)+(G&&!G.merged&&G.cid===c?G.rs.kills:0);}
@@ -47,7 +47,7 @@ function hubGoalsHTML(){const g=nextGoals(3);if(!g.length)return '';
 
 /* ---- 과업 휘장 (도트 로고) ---- */
 const TASK_IC={k100:['enemy','dokkaebi'],k1000:['char','uiwon'],k5000:['enemy','dokchief'],k20000:['enemy','gumiho'],k50000:['seal','百','#7a2018'],
- s2:['seal','二','#2f6b5a'],s5:['seal','五','#2f6b5a'],s8:['seal','八','#2f6b5a'],clear:['seal','曉','#9a6a10'],curse5:['seal','厄','#7a2018'],curse10:['seal','厄','#1a1418'],
+ s2:['seal','二','#2f6b5a'],s5:['seal','五','#2f6b5a'],s8:['seal','八','#2f6b5a'],clear:['seal','曉','#9a6a10'],curse5:['seal','厄','#7a2018'],elite2_all:['seal','精','#5a3a6a'],curse10:['seal','厄','#1a1418'],
  elite10:['icon','chest'],mid10:['seal','中','#7a2018'],tteok20:['icon','tteok'],pot30:['seal','甕','#8a5a2b'],shrine5:['seal','神','#2f6b5a'],shrine20:['seal','神','#9a6a10'],tav100:['icon','makgeolli'],
  evo1:['icon','meok'],evo6:['seal','進','#3a5f9e'],evo12:['seal','進','#9a6a10'],lv30:['seal','卅','#3a5f9e'],lv100:['seal','百','#3a5f9e'],pet10:['pet','tiger'],dogam30:['seal','鑑','#4a3a30'],dogam58:['seal','鑑','#9a6a10'],
  awk1:['seal','覺','#7a2018'],ult1:['seal','極','#7a2018'],duo1:['seal','雙','#3a1a4a'],call30:['seal','降','#9a6a10'],fuse1:['seal','合','#7a2018'],seal10:['seal','印','#7a2018'],graze100:['seal','掠','#3a5f9e'],graze1000:['seal','風','#3a5f9e'],
@@ -269,7 +269,7 @@ function renderTavern(){$('#tavCoins').textContent=_t("가진 엽전 {coins}닢"
   d.querySelector('button').onclick=()=>{if(G.coins<p)return;G.coins-=p;G.rs.tavern+=p;G.tavBuy[it.id]=(G.tavBuy[it.id]||0)+1;it.f();snd(1000,0.1,'triangle');
    if(G.tavBless){G.tavBless=false;G.afterBless=()=>{renderTavern();show('tavern');};openBless(_t("정화수를 올리다"));return;}
    if(G.tavSeal){G.tavSeal=false;G.afterSeal=()=>{renderTavern();show('tavern');};openSeal();return;}renderTavern();};box.appendChild(d);}}
-function nextStage(){G.gfx=[];if(G.P)G.P.clingT=0;G.dawnT=null;VFXS.debris.length=0;G.stage++;G.st=0;G.bossDone=false;G.boss=null;G.mid=null;G.midDone=false;G.swarmDone=false;G.eliteT=40;G.shrine=null;G.shrineN=0;G.gateMsg=false;G.skyAt=rnd(32,95);G.skyGod=null;G.anom=null;G.anomAt=rnd(20,90);G.dkC=null;dkPlan();questPlan();tracePlan();
+function nextStage(){G.gfx=[];if(G.P)G.P.clingT=0;G.eclipse=0;G.eclOwner=null;G.tide=null;G.deumeu=[];G.dawnT=null;VFXS.debris.length=0;G.stage++;G.st=0;G.bossDone=false;G.boss=null;G.mid=null;G.midDone=false;G.swarmDone=false;G.eliteT=40;G.shrine=null;G.shrineN=0;G.gateMsg=false;G.skyAt=rnd(32,95);G.skyGod=null;G.anom=null;G.anomAt=rnd(20,90);G.dkC=null;dkPlan();questPlan();tracePlan();
  G.enemies.length=0;G.ebul.length=0;G.warns=[];G.ezones=[];G.pull=null;G.wind=null;G.dark=0;
  G.zones=G.zones.filter(z=>z.follow);G.items=G.items.filter(i=>i.k==='chest');G.rs.maxStage=Math.max(G.rs.maxStage,G.stage+1);
  G.P.hp=Math.min(G.P.maxHp,G.P.hp+G.P.maxHp*0.3);show(null);stageToast();checkTasks();}

@@ -37,7 +37,7 @@ if(TALE.startsWith('main:')){const cid=TALE.slice(5);let t=performance.now();con
     if(G.stage!==st){st=G.stage;lv.push(G.P.lvl+'@'+Math.round(G.time));}if(G.stage>=MAXST)break;}
    spawnBoss=sb2;bossDown=bd2;const dm=G.rs.dmg||{},tot=Object.values(dm).reduce((a,v)=>a+v,0)||1,share=Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+Math.round(v/tot*100));
    const t6=CHARS[cid].branches[G.P.branch||0].tiers[5],t6s=t6&&dm[t6.skill]?Math.round(dm[t6.skill]/tot*100):null;
-   out.push({run,stage:G.stage+1,lvAtStage:lv,weapons:G.weapons.length,pass:Object.keys(G.passives).length,over:G.over,br:G.P.branch,tier:G.P.tier,lv60At:lv60,t6share:t6s,share,taken:Object.fromEntries(Object.entries(taken).map(([k,v])=>[k,Math.round(v)])),bossT:bt});console.log(JSON.stringify(out[out.length-1]));if(!G.over)endGame(false);}
+   out.push({run,stage:G.stage+1,lvAtStage:lv,weapons:G.weapons.length,pass:Object.keys(G.passives).length,over:G.over,br:G.P.branch,tier:G.P.tier,lv60At:lv60,t6share:t6s,share,taken:Object.fromEntries(Object.entries(taken).map(([k,v])=>[k,Math.round(v)])),bossT:bt,elites:(G.rs.eliteLog||[]).map(l=>[l.id,l.st+1,l.t1===null?null:+(l.t1-l.t0).toFixed(1)]),eTake:Object.fromEntries(Object.entries(G.rs.eTake||{}).map(([k,v])=>[k,Math.round(v)]))});console.log(JSON.stringify(out[out.length-1]));if(!G.over)endGame(false);}
   throw 'done';}
 let bdT=0,lastEv='';{const tc=taleCleared,ta=taleAct,os=openScene,sh=show;taleCleared=()=>{lastEv+='|cleared@'+G.time.toFixed(1)+' modal='+modal;return tc();};taleAct=(i,h)=>{lastEv+='|act'+i;return ta(i,h);};openScene=(p,d)=>{lastEv+='|scene';return os(p,d);};show=id=>{if(G&&G.mode==='tale')lastEv+='|show:'+id;return sh(id);};}
 const res=[];let t=performance.now();   // 판이 바뀌어도 시각은 앞으로만 간다

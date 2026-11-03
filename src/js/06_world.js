@@ -14,7 +14,7 @@ function slash(x,y,a,rng,dmg,half,delay,c){G.fx.push({t:'slash',x,y,a,r:rng,life
  for(const e of near(x,y,rng,TMP2).slice()){let da=Math.atan2(e.y-y,e.x-x)-a;da=Math.atan2(Math.sin(da),Math.cos(da));if(Math.abs(da)<half+0.2)hurt(e,dmg,40,x,y);}
  snd(320,0.05,'triangle',0.03);}
 function hurt(e,dmg,kb=0,fx=0,fy=0,noCrit){
- if(e.dead||e.inv)return;const P=G.P;let crit=false;
+ if(e.dead||e.inv)return;const P=G.P;let crit=false;if(e.wetT>0&&e.kind==='hwama')dmg*=1.5;   // v19.5 드므 곁의 화마
  if(e.prop){kill(e);return;}
  if(duoOn('sancheon')&&P.hp>=P.maxHp*0.8)dmg*=1.25;
  if(!noCrit&&(Math.random()<P.crit||(e.frz>0&&duoOn('chilyong')))){dmg*=P.critDmg;crit=true;}
@@ -31,7 +31,7 @@ const ITEM_CAP=300;
 function dropItem(k,x,y){if(k==='tteok'&&G.mods.noTteok)return;   // 떡이 없는 설화 막: 처치·신내림·쌍신 어느 길로도 떡을 떨어뜨리지 않는다
  const it={k,x,y};pushOut(it,G.P.r);pushOut(it,G.P.r);G.items.push(it);   // v18.2.1 장애물 안에 떨어지면 밖으로 밀어 퇴마사가 닿게(drop_reach)
  if(G.items.length>ITEM_CAP){const i=G.items.findIndex(it=>it.k!=='chest');if(i>=0)G.items.splice(i,1);}}
-function kill(e){vfxDebris(e);e.dead=true;if(e.clT>0)G.P.clingT=0;if(e.w)G.warns=G.warns.filter(w=>w!==e.w);   // v19.4 새 엘리트가 행동 중에 쓰러지면 느려짐·경고를 거둠   // v18.2 잔해(보기만)
+function kill(e){if(e.dead)return;if(typeof eliteRevive==='function'&&eliteRevive(e))return;vfxDebris(e);e.dead=true;if(G.tide&&G.tide.src===e)G.tide=null;if(G.deumeu)G.deumeu=G.deumeu.filter(d=>d.owner!==e);if(e.clT>0)G.P.clingT=0;if(e.w)G.warns=G.warns.filter(w=>w!==e.w);if(G.eclOwner===e){G.eclipse=0;G.eclOwner=null;}   // v19.4 새 엘리트가 행동 중에 쓰러지면 느려짐·경고를 거둠   // v18.2 잔해(보기만)
 
  if(e.prop){G.rs.pots++;particle(e.x,e.y,'#b0702e',8,50,0.4);snd(300,0.08,'square',0.03);const r=Math.random();
   if(r<0.35&&!G.mods.noTteok)dropItem('tteok',e.x,e.y);else if(r<0.7){for(let i=0;i<3;i++)dropItem('coin',e.x+rnd(-4,4),e.y+rnd(-3,3));}else if(r<0.82)dropItem('pouch',e.x,e.y);else G.gems.push({x:e.x,y:e.y,v:10+G.stage*6,mag:false});return;}
@@ -45,7 +45,7 @@ function kill(e){vfxDebris(e);e.dead=true;if(e.clT>0)G.P.clingT=0;if(e.w)G.warns
   if(e.vr==='split'){for(let i=0;i<2;i++){const c=spawnEnemy(e.kind,e.x+rnd(-6,6),e.y+rnd(-6,6),{novr:1});c.hp=c.maxHp=e.maxHp*0.35;c.sc=(c.sc||1)*0.8;}}
   if(e.vr==='venom')G.ezones.push({x:e.x,y:e.y,r:14,life:3,max:3,dmg:4+G.stage*2,col:'#7fe07f'});}
  if(e.boss){bossDown(e);return;}
- if(e.elite){G.rs.elites++;dropItem('chest',e.x,e.y);}
+ if(e.elite){G.rs.elites++;dropItem('chest',e.x,e.y);if(e.elog)e.elog.t1=G.time;}
  if(e.ai==='split'){for(let i=0;i<2;i++)spawnEnemy('hwangchung',e.x+rnd(-6,6),e.y+rnd(-6,6));}
  if(e.ai==='explode'){const nb=G.stage===8?4:6;for(let i=0;i<nb;i++)ebul(e.x,e.y,i/nb*TAU+Math.random(),45,{dmg:e.dmg*(G.stage===8?0.5:0.7),col:'#c080ff'});}
  if(G.jinogwi&&Math.random()<G.jinogwi.ch)G.spirits.push({own:'temp',src:'jinogwi',look:'soul',x:e.x,y:e.y,ph:0,id:Math.random(),dmg:G.jinogwi.dmg,sp:130,life:G.jinogwi.life});
@@ -81,7 +81,7 @@ function spawnEnemy(id,x,y,opt={}){
  Object.assign(e,opt);G.enemies.push(e);
  if(d.c==='n'&&!d.helper&&!e.boss&&!e.prop&&!e.clone&&!opt.novr)maybeVariant(e);
  if(!G.rs.seen[id]&&!EN[id].tale&&!EN[id].helper)G.rs.seen[id]={s:1,k:0};return e;}
-function spawnElite(){const id=pickEliteId();const e=spawnEnemy(id);e.elite=true;e.hp=e.maxHp=e.maxHp*10;e.et=2;toast(_t("엘리트 {n} 출현",{n:EN[id].n}),'red');}
+function spawnElite(){const id=pickEliteId();const e=spawnEnemy(id);e.elite=true;(G.rs.eliteLog||(G.rs.eliteLog=[])).push(e.elog={id,st:G.stage,t0:G.time,t1:null});e.hp=e.maxHp=e.maxHp*10;e.et=2;toast(_t("엘리트 {n} 출현",{n:EN[id].n}),'red');}
 
 /* ======================= bosses ======================= */
 const BOSS={
@@ -109,8 +109,11 @@ const BOSS={
 };
 const BORROW=['slam','ring','charge','foxOrbs','dash3','tailFan','spiral','pillars','fog','ledger','blink','ring2','hail','stormTrail','plague','fireTrail','maskSpin','spikes','heads','feather','shadowWall','shoeSteal','charm'];
 const bdmg=()=>(14+G.stage*6)*G.mods.eBul;
-function ebul(x,y,a,sp,extra){G.ebul.push(Object.assign({x,y,vx:Math.cos(a)*sp*G.mods.eBul,vy:Math.sin(a)*sp*G.mods.eBul,r:3,life:5,dmg:(8+G.stage*3.5)*G.mods.eBul},extra||{}));}
-function ringB(e,n,sp,off=0,gap){for(let i=0;i<n;i++){const a=i/n*TAU+off;if(gap!==undefined&&Math.abs(Math.atan2(Math.sin(a-gap),Math.cos(a-gap)))<0.55)continue;ebul(e.x,e.y-6,a,sp);}}
+function ebul(x,y,a,sp,extra){G.ebul.push(Object.assign({own:EBUL_OWN,x,y,vx:Math.cos(a)*sp*G.mods.eBul,vy:Math.sin(a)*sp*G.mods.eBul,r:3,life:5,dmg:(8+G.stage*3.5)*G.mods.eBul},extra||{}));}
+function ringB(e,n,sp,off=0,gap){EBUL_OWN=e.elite?e.kind:null;try{for(let i=0;i<n;i++){const a=i/n*TAU+off;if(gap!==undefined&&Math.abs(Math.atan2(Math.sin(a-gap),Math.cos(a-gap)))<0.55)continue;ebul(e.x,e.y-6,a,sp);}}finally{EBUL_OWN=null;}}
+/* v19.5 균형 재기: 엘리트에게 받은 피해를 종류별로 센다(G.rs.eTake) · 나온 때·쓰러진 때(G.rs.eliteLog) */
+let EBUL_OWN=null,DMG_FROM=null;
+function damageFrom(src,dmg){DMG_FROM=src;try{damagePlayer(dmg);}finally{DMG_FROM=null;}}
 const angTo=(a,b2)=>Math.atan2(b2.y-a.y,b2.x-a.x);
 function summonRing(c,kind,n,R0=26){for(let i=0;i<n;i++){const a=i/n*TAU;spawnEnemy(kind,c.x+Math.cos(a)*R0,c.y+Math.sin(a)*R0*0.8);}}
 function eatProj(e,R0){for(const p of G.projs){if((p.x-e.x)**2+(p.y-e.y)**2<R0*R0){p.dead=true;particle(p.x,p.y,'#8a8494',1,20);}}}
@@ -211,6 +214,7 @@ function update(dt){
  const ml=Math.hypot(mx,my);if(ml>1){mx/=ml;my/=ml;}
  P.moving=ml>0.05;if(P.moving){P.dirx=mx/(ml||1);P.diry=my/(ml||1);if(Math.abs(mx)>0.1)P.face=mx>0?1:-1;}
  P.slowT-=dt;P.clingT=Math.max(0,(P.clingT||0)-dt);const sp=62*P.spd*playerMoveMul()*(1+0.05*cbTier());P.x+=mx*sp*dt;P.y+=my*sp*dt;
+ if(!G.pull&&G.tide){const s=G.tide.src;if(s.dead||s.frz>0){if(s.dead)G.tide=null;}else{const dx=s.x-P.x,dy=s.y-P.y,d=Math.hypot(dx,dy)||1;if(G.tide.dir<0||d>16){const st=Math.min(3,G.tide.spd*dt);P.x+=dx/d*st*G.tide.dir;P.y+=dy/d*st*G.tide.dir;pushOut(P,P.r);}}}   // v19.5 큰 메기 밀물·썰물(보스가 끌어당기는 동안은 쉼)
  if(G.pull&&G.pull.src&&!G.pull.src.dead){const s=G.pull.src,dx=s.x-P.x,dy=s.y-P.y,d=Math.hypot(dx,dy)||1;if(d>14){P.x+=dx/d*G.pull.spd*dt;P.y+=dy/d*G.pull.spd*dt;}}
  if(G.wind){G.wind.t-=dt;P.x+=G.wind.x*dt;P.y+=G.wind.y*dt;if(G.wind.t<=0)G.wind=null;}
  pushOut(P,P.r);
@@ -248,13 +252,14 @@ function update(dt){
   if(z.tt<=0){z.tt=z.tick;HSRC=z.src||null;for(const e of near(z.x,z.y,z.r,TMP).slice()){hurt(e,z.dmg,0,0,0,true);if(z.slow)e.slow=0.45;if(z.hold&&!e.boss)e.frz=Math.max(e.frz,0.35);if(z.vtx&&!e.boss){const dx=z.x-e.x,dy=z.y-e.y,d=Math.hypot(dx,dy)||1;if(d>4){e.kx+=dx/d*70*(z.vtxK||1);e.ky+=dy/d*70;}}}HSRC=null;}
   if(z.heal&&(P.x-z.x)**2+(P.y-z.y)**2<z.r*z.r)heal(z.heal*dt);}
  G.zones=G.zones.filter(z=>z.life>0);
- for(const z of G.ezones){z.life-=dt;if((P.x-z.x)**2+(P.y-z.y)**2<z.r*z.r&&P.iframe<=0)damagePlayer(z.dmg);}
+ if(G.eclipse>0)G.eclipse=Math.max(0,G.eclipse-dt);   // v19.5 흑룡의 어둠(얼어도 시간은 흐름)
+ for(const z of G.ezones){z.life-=dt;if((P.x-z.x)**2+(P.y-z.y)**2<z.r*z.r&&P.iframe<=0)damageFrom(z.owner&&z.owner.elite?z.owner.kind:null,z.dmg);}
  G.ezones=G.ezones.filter(z=>z.life>0);
  for(const w of G.warns){w.t-=dt;if(w.t<=0)resolveWarn(w);}
  G.warns=G.warns.filter(w=>w.t>0);
  updEnemies(dt,P);
  for(const q of G.ebul){if(q.hom){const ta=Math.atan2(P.y-q.y,P.x-q.x),ca=Math.atan2(q.vy,q.vx);let da=Math.atan2(Math.sin(ta-ca),Math.cos(ta-ca));const na=ca+clamp(da,-1.6*dt,1.6*dt),s=Math.hypot(q.vx,q.vy);q.vx=Math.cos(na)*s;q.vy=Math.sin(na)*s;}
-  q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;if(q.life>0){const dd=(q.x-P.x)**2+(q.y-P.y+3)**2,hr=q.r+P.r-1;if(dd<hr*hr){q.hz=1;if(P.iframe<=0){damagePlayer(q.dmg);q.life=0;}}else if(dd<(hr+7)**2)q.nr=1;else if(q.nr&&!q.gz&&!q.hz){q.gz=1;graze(q);}}}
+  q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;if(q.life>0){const dd=(q.x-P.x)**2+(q.y-P.y+3)**2,hr=q.r+P.r-1;if(dd<hr*hr){q.hz=1;if(P.iframe<=0){damageFrom(q.own,q.dmg);q.life=0;}}else if(dd<(hr+7)**2)q.nr=1;else if(q.nr&&!q.gz&&!q.hz){q.gz=1;graze(q);}}}
  G.ebul=G.ebul.filter(q=>q.life>0);
  const mg=P.magnet;
  for(const g of G.gems){const dx=P.x-g.x,dy=P.y-g.y,d=Math.hypot(dx,dy)||1;if(d<mg)g.mag=true;if(g.mag){const s=Math.max(160,d*3);g.x+=dx/d*s*dt;g.y+=dy/d*s*dt;}if(d<6){gainXp(g.v);g.dead=true;}}
@@ -344,12 +349,13 @@ function updEnemies(dt,P){
     else if(e.ct<=0&&d<130){e.cs='wind';e.ct=0.45;e.cdx=dx/d;e.cdy=dy/d;}break;
    case 'shoot':if(d<70){vx*=-0.6;vy*=-0.6;}if(e.ct===undefined)e.ct=rnd(1,2.6);e.ct-=dt;if(e.ct<=0&&d<170){e.ct=2.8;ebul(e.x,e.y-4,Math.atan2(dy,dx),70,{dmg:e.dmg*0.8,r:2.5,col:'#ffb0d8'});}break;
    case 'leap':if(e.ct===undefined)e.ct=Math.random();e.ct-=dt;if(e.ct<=0)e.ct=1.1;if(e.ct>0.35){vx*=0.15;vy*=0.15;}else{vx*=2.6;vy*=2.6;}break;}
-  if(e.elite){const ai=EN[e.kind].eai;if(ai&&ELITE_AI[ai]){if(e.frz>0){if(e.clT>0){e.clT=0;e.eact=null;P.clingT=0;e.cd=6;}}else{const r=ELITE_AI[ai](e,dt,P,vx,vy);if(e.dead)continue;if(r){vx=r[0];vy=r[1];}}}else{e.et-=dt;if(e.et<=0){e.et=3.5;ringB(e,8,55,Math.random());}}}
+  if(e.elite&&e.invT>0){e.invT-=dt;if(e.invT<=0){e.inv=false;if(e.eact==='rise')e.eact=null;}}   // v19.5 다시 일어난 삼두구미의 무적(얼어도 흐름)
+  if(e.elite){const ai=EN[e.kind].eai;if(ai&&ELITE_AI[ai]){if(e.frz>0){if(e.kind==='hwama')hwamaWetFrozen(e,dt);if(e.clT>0){e.clT=0;e.eact=null;P.clingT=0;e.cd=6;}}else{const r=ELITE_AI[ai](e,dt,P,vx,vy);if(e.dead)continue;if(r){vx=r[0];vy=r[1];}}}else{e.et-=dt;if(e.et<=0){e.et=3.5;ringB(e,8,55,Math.random());}}}
   e.vx=vx;e.x+=(vx+e.kx)*dt;e.y+=(vy+e.ky)*dt;const kd=Math.max(0,1-9*dt);e.kx*=kd;e.ky*=kd;
   if(e.boss&&e.segs){let px=e.x,py=e.y;for(const s of e.segs){const sx=px-s.x,sy=py-s.y,sd=Math.hypot(sx,sy);if(sd>7){s.x+=sx/sd*(sd-7);s.y+=sy/sd*(sd-7);}px=s.x;py=s.y;}}
   if(!e.boss){for(const o of near(e.x,e.y,e.r,TMP)){if(o===e||o.boss||o.prop)continue;const ox=e.x-o.x,oy=e.y-o.y,od=Math.hypot(ox,oy)||0.01,ov=e.r+o.r-od;if(ov>0){const push=ov*0.35/od;e.x+=ox*push;e.y+=oy*push;}}
    if(!e.fly)pushOut(e,e.r);}
-  if(d<e.r+P.r&&P.iframe<=0&&e.frz<=0&&!e.inv&&!(e.clT>0)&&!(e.prepT>0)){damagePlayer(e.dmg);if(e.vr==='hex')P.slowT=1.5;}
+  if(d<e.r+P.r&&P.iframe<=0&&e.frz<=0&&!e.inv&&!(e.clT>0)&&!(e.prepT>0)){damageFrom(e.elite?e.kind:(e.ek||null),e.dmg);if(e.vr==='hex')P.slowT=1.5;}
   if(!e.boss&&(Math.abs(e.x-P.x)>farX+40||Math.abs(e.y-P.y)>farY+40)){const a=Math.atan2(P.diry,P.dirx)+rnd(-1,1),R0=Math.hypot(W/2,H/2)+12;e.x=P.x+Math.cos(a)*R0;e.y=P.y+Math.sin(a)*R0;}
   if(e.boss&&!e.act&&(Math.abs(e.x-P.x)>W||Math.abs(e.y-P.y)>H)){const a=Math.random()*TAU;e.x=P.x+Math.cos(a)*W*0.6;e.y=P.y+Math.sin(a)*H*0.6;}
  }
@@ -458,7 +464,7 @@ function drawPet(){const pt=G.pet;if(!pt)return;const s=PSPR[pt.type],fy=pt.type
 function damagePlayer(dmg){const P=G.P;if(G.over)return;if(G.guardT>0){P.iframe=0.3;return;}
  if(P.shieldCd&&P.shieldT<=0){P.shieldT=P.shieldCd;P.iframe=0.5;particle(P.x,P.y-6,'#8fd3ff',10,40);snd(500,0.1,'triangle',0.04);
   if(duoOn('suhwa')){G._dg=1;aoe(P.x,P.y,50*P.area,(30+20*G.stage)*P.might,140);for(const e of near(P.x,P.y,50*P.area,TMP2)){e.dotSrc=HSRC||CUR_SRC||e.dotSrc,e.dot=Math.max(e.dot||0,6*P.might);e.dotT=2.5;}G.fx.push({t:'ring',x:P.x,y:P.y,r:3,maxR:50*P.area,col:'#ff7a3a',life:0.3,max:0.3});G._dg=0;}return;}
- const jb=G.jwBuff>0;const d=Math.max(1,Math.round((dmg-P.armor-(jb?5:0))*G.mods.dmgIn*(G.dkC==='frail'?1.25:1)*(1-P.dmgRed)*(jb?0.7:1)*(G.petGuard>0?0.7:1)*(G.seongT>0?0.3:1)));P.hp-=d;addCall(2);P.iframe=0.4+P.iframeB;if(meta.set.shake)G.shake=2;snd(160,0.08,'sawtooth',0.04);
+ const jb=G.jwBuff>0;const d=Math.max(1,Math.round((dmg-P.armor-(jb?5:0))*G.mods.dmgIn*(G.dkC==='frail'?1.25:1)*(1-P.dmgRed)*(jb?0.7:1)*(G.petGuard>0?0.7:1)*(G.seongT>0?0.3:1)));P.hp-=d;if(DMG_FROM&&G.rs){const T=G.rs.eTake||(G.rs.eTake={});T[DMG_FROM]=(T[DMG_FROM]||0)+d;}addCall(2);P.iframe=0.4+P.iframeB;if(meta.set.shake)G.shake=2;snd(160,0.08,'sawtooth',0.04);
  if(P.hp<=0){
   const hs=G.weapons.find(w=>w.id==='hoesaeng'&&w.t<=0);
   if(hs){hs.t=L5(hs,[120,105,90,80,70]);P.hp=P.maxHp*0.6;P.iframe=2;toast(_t("회생"),'big');flash('150,255,180',0.4);if(hs.lv>=5)G.fx.push({t:'wave',x:P.x,y:P.y,r:4,maxR:150,dmg:120*P.might,hit:new Set(),life:9,col:'#9af0b0',kb:160});return;}

@@ -2,7 +2,7 @@
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
 const set=(st)=>{newGame('seonbi',null,0,'normal');G.queue.length=0;show(null);G.stage=st;G.midDone=true;G.mid=null;G.enemies.length=0;G.P.hp=G.P.maxHp=1e9;};
 const run=(sec,each)=>{for(let i=0;i<Math.round(sec*60);i++){G.P.hp=G.P.maxHp;G.P.xp=0;G.queue.length=0;if(modal)show(null);G.eliteT=999;G.spawnT=999;if(each)each(i);update(1/60);}};
-ok(STAGES[0].elite2==='gaekgwi'&&STAGES[1].elite2==='juktong','1·2막 elite2');
+ok(STAGES[0].elite2==='gaekgwi'&&STAGES[1].elite2==='juktong','1·2막 elite2');ok(EN.gaekgwi.hp===115,'객귀 체력 115(v19.5 균형: 기존 엘리트보다 너무 빨리 잡힘)');
 ok(typeof playerMoveMul==='function','playerMoveMul');
 for(const id of ['gaekgwi','juktong'])ok(ESPR2[id]&&ESPR2[id].length===3&&ESPR2[id].every(v=>v.w===12&&v.hgt===16),id+' 세 장 12×16');
 ok(EN.juknyeo&&EN.juknyeo.helper&&ESPR.juknyeo&&!DOGAM_IDS.includes('juknyeo'),'대통 여인 = 보조물');

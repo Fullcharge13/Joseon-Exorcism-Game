@@ -210,9 +210,10 @@ function render(){
  drawGround(cx,cy);vfxGround(cx,cy);b.save();b.translate(-cx,-cy);
  fxLayer(()=>{for(const z of G.zones)drawZone(z);
  for(const w of wAll())if(w.id==='bangul'&&w.R){w.pulse=(w.pulse||0)-0.016;b.globalAlpha=w.evo?0.85:0.55;pxRing(P.x,P.y-3,w.R,w.R*0.8,'#e0b048',G.time*8,5,3);if(w.pulse>0){b.globalAlpha=w.pulse*2*0.6;b.fillStyle=dith('#e0b048',true);b.beginPath();b.ellipse(P.x,P.y-3,w.R,w.R*0.8,0,0,TAU);b.fill();}b.globalAlpha=1;emblem('bangul',P.x+w.R*0.71,P.y-3-w.R*0.57,0.7);}});
+ drawDeumeu(b);
  for(const z of G.ezones){const a=Math.min(1,z.life),c=z.col||'#7a3aa0',ry=z.r*0.75;b.globalAlpha=0.12*a;b.fillStyle=c;b.beginPath();b.ellipse(z.x,z.y,z.r,ry,0,0,TAU);b.fill();b.globalAlpha=0.75*a;b.fillStyle=dith(c,true);b.fill();
   b.globalAlpha=a;pxRing(z.x,z.y,z.r,ry,c,G.time*6,3,2);if(z.r>=12){for(let i=0;i<3;i++){const t=(G.time*0.9+i/3+z.x*0.01)%1;b.fillStyle=lite(c);b.fillRect(R(z.x+Math.cos(i*2.1+z.y)*z.r*0.5),R(z.y+Math.sin(i*2.1)*ry*0.5-t*5),1,1);}}if(z.r>=18)emblem('boss',z.x,z.y,a*0.8);b.globalAlpha=1;}
- VFX_WARN_UP=vfxNight()>0.05;if(!VFX_WARN_UP)for(const w of G.warns)drawWarn(w);
+ VFX_WARN_UP=vfxNight()>0.05||G.eclipse>0;if(!VFX_WARN_UP)for(const w of G.warns)drawWarn(w);
  if(G.shrine)drawShrine(G.shrine);
  if(G.anom)drawAnom(G.anom);
  if(G.trace)drawTrace(G.trace);
@@ -230,7 +231,7 @@ function render(){
   if(e.prop){b.drawImage(e.flash>0?ICS.pot:ICS.pot,R(e.x-4),R(e.y-8));continue;}
   const pk=EN[e.kind].proc;
   if(pk==='imugi'&&e.boss){drawImugi(e);continue;}if(pk==='eoduk'&&e.boss){drawEoduk(e);continue;}if(pk==='geuseunde'&&e.boss){drawGeuseunde(e);continue;}
-  const s=ESPR2[e.kind]?ESPR2[e.kind][eliteFrame(e)]:(ESPR[e.spr]||ESPR[e.kind]),esc=e.sc*entK(e);const flip=e.left?(e.vx>0):(e.vx<0);
+  const s=ESPR2[e.spr2||e.kind]?ESPR2[e.spr2||e.kind][eliteFrame(e)]:(ESPR[e.spr]||ESPR[e.kind]),esc=e.sc*entK(e);const flip=e.left?(e.vx>0):(e.vx<0);
   const bob=e.fly?Math.sin(e.bob)*1.5-2:(Math.sin(e.bob)>0?-1:0);
   if(e.boss&&e.act&&BSK[e.act].mv===0&&Math.floor(G.time*10)%2){b.fillStyle='rgba(255,60,40,0.35)';b.beginPath();b.ellipse(e.x,e.y,(e.r+4)*entK(e),(e.r+4)*0.5*entK(e),0,0,TAU);b.fill();}
   if(e.cs==='wind'&&Math.floor(G.time*12)%2){b.fillStyle='rgba(255,90,60,0.5)';b.fillRect(R(e.x-1),R(e.y-e.r*2*esc-5),2,3);}
@@ -297,7 +298,8 @@ function render(){
   else if(f.t==='chain'){b.globalAlpha=clamp(k,0,1);b.strokeStyle=f.col;b.lineWidth=2;b.beginPath();f.pts.forEach((p,i)=>i?b.lineTo(p[0],p[1]):b.moveTo(p[0],p[1]));b.stroke();b.strokeStyle='#ffd0c0';b.lineWidth=1;b.stroke();b.globalAlpha=1;}
   else if(f.t==='beam'){b.save();b.translate(f.x,f.y);b.rotate(f.a);b.globalAlpha=clamp(k,0,1)*0.6;b.fillStyle=f.col;b.fillRect(0,-f.w/2,f.len,f.w);b.globalAlpha=clamp(k,0,1);b.fillStyle=f.col==='#1a1418'?'#3a3540':'#fff';b.fillRect(0,-1,f.len,2);b.restore();b.globalAlpha=1;}
   else if(f.t==='glyph'){b.font=(f.big?'bold 16px ':'bold 13px ')+FD();b.textAlign='center';b.fillStyle='rgba(0,0,0,0.3)';b.fillRect(R(f.x-3),R(f.y),6,2);b.fillStyle='#0a080c';b.fillText(f.ch,R(f.x)+1,R(f.y-f.h)+1);b.fillStyle=f.big?'#ffd76a':'#efe6d2';b.fillText(f.ch,R(f.x),R(f.y-f.h));}}});
- vfxLight(cx,cy);   // v18.2 분위기 층: 이 아래(피해 숫자·요괴 탄·체력 막대)는 어둠 위에 또렷하게
+ vfxLight(cx,cy);if(G.eclipse>0)drawEclipse(b,cx,cy);   // v19.5 흑룡 어둠은 밤 어둠 위, 경고·피해 숫자·요괴 탄 아래
+ //  v18.2 분위기 층: 이 아래(피해 숫자·요괴 탄·체력 막대)는 어둠 위에 또렷하게
  if(VFX_WARN_UP)for(const w of G.warns)drawWarn(w);   // 밤에는 보스 경고를 어둠 위에 그린다(vfx_read)
  for(const f of G.fx)if(f.t==='num')drawNum(f,f.max?f.life/f.max:1);
  /* v16.2 요괴 탄은 내 효과 위에, 언제나 또렷하게 */

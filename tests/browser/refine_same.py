@@ -48,18 +48,18 @@ with sync_playwright() as p:
     br = p.chromium.launch(); ctx = br.new_context(viewport={'width': 1280, 'height': 720}); ctx.add_init_script(INIT); ctx.route('**/fonts.g*/**', lambda r: r.abort())
     pg = ctx.new_page(); pg.on('pageerror', lambda e: errs.append(str(e))); pg.goto('file://' + str(pathlib.Path(new).resolve())); pg.wait_for_timeout(400)
     # 검토 지적(중요): 실제로 테두리가 칠해졌는지(여백 줄에 불투명 칸이 있음) · 다듬기 오류 0 · 뒤집힌 그림은 뒤집은 뒤 다듬음(아래·오른쪽이 어두움)
-    chk = pg.evaluate("""()=>{meta.set.refine='on';const HERO=charSpr(CHARS.seonbi.look),L=[HERO,...Object.values(ESPR),...Object.values(PSPR)];let ring0=0,flipBad=0;
+    chk = pg.evaluate("""()=>{meta.set.refine='on';const HERO=charSpr(CHARS.seonbi.look),L=[HERO,...Object.values(ESPR),...Object.values(PSPR)];let ring0=0,flipBad=0,lined=0;
      const px=c=>c.getContext('2d').getImageData(0,0,c.width,c.height).data;
      for(const s of L){const c=s.ref.n,d=px(c),W=c.width,H=c.height,r=px(s.raw.n),w0=s.raw.n.width;let edgeLit=0,outl=0;
       /* 테두리 칸 = 다듬은 그림에서 불투명인데 원래 그림(1칸 옮긴 자리)에서는 빈칸 · 짙지 않은 가장자리 칸이 있는 그림은 테두리가 1칸 이상 있어야 함 */
       const A=(x,y)=>x>=0&&y>=0&&x<w0&&y<s.raw.n.height&&r[(y*w0+x)*4+3]>0,lum=(x,y)=>{const i=(y*w0+x)*4;return 0.2126*r[i]+0.7152*r[i+1]+0.0722*r[i+2];};
       for(let y=0;y<H;y++)for(let x=0;x<W;x++){if(d[(y*W+x)*4+3]&&!A(x-1,y-1))outl++;}
       for(let y=0;y<s.raw.n.height;y++)for(let x=0;x<w0;x++)if(A(x,y)&&lum(x,y)>=60&&(!A(x-1,y)||!A(x+1,y)||!A(x,y-1)||!A(x,y+1)))edgeLit++;
-      if(outl)ring0++;   /* 여기서는 테두리가 있는 그림 수(규칙의 세부는 단위 refine_rule이 본다) */
+      if(outl)ring0++;else if(!edgeLit)lined++;   /* v19.5: 가장자리가 모두 짙은 테두리(k)로 그려진 새 엘리트는 규칙대로 테두리를 더하지 않음 */   /* 여기서는 테두리가 있는 그림 수(규칙의 세부는 단위 refine_rule이 본다) */
       const e=refineCanvas(s.raw.f),a=px(s.ref.f),q=px(e);if(a.length!==q.length||a.some((v,i)=>v!==q[i]))flipBad++;}
-     return {n:L.length,ring0,flipBad,err:REFINE_ERR.slice(0,3),dark:L.filter(s=>{const r=px(s.raw.n);let t=0,k=0;for(let i=0;i<r.length;i+=4)if(r[i+3]){t++;if(0.2126*r[i]+0.7152*r[i+1]+0.0722*r[i+2]<60)k++;}return k>t*0.8;}).length};}""")
+     return {n:L.length,ring0,lined,flipBad,err:REFINE_ERR.slice(0,3),dark:L.filter(s=>{const r=px(s.raw.n);let t=0,k=0;for(let i=0;i<r.length;i+=4)if(r[i+3]){t++;if(0.2126*r[i]+0.7152*r[i+1]+0.0722*r[i+2]<60)k++;}return k>t*0.8;}).length};}""")
     # 실제 브라우저에서 다듬기가 돌았는지: v18.6.1부터 검은 요괴도 밝은 테두리를 받으므로 거의 모든 그림에 테두리 칸이 있어야 함(1칸 골목·갇힌 틈만 닿은 경우 두 장까지 허용)
-    if chk['ring0'] < chk['n'] - 2 or chk['flipBad'] or chk['err']: fails.append(f'다듬기 확인: 그림 {chk["n"]}장(거의 검은 그림 {chk["dark"]}) 중 테두리 있는 그림 {chk["ring0"]} · 뒤집힌 그림이 다른 것 {chk["flipBad"]} · 오류 {chk["err"]}')
+    if chk['ring0'] < chk['n'] - chk['lined'] - 2 or chk['flipBad'] or chk['err']: fails.append(f'다듬기 확인: 그림 {chk["n"]}장(거의 검은 그림 {chk["dark"]}) 중 테두리 있는 그림 {chk["ring0"]}(가장자리가 이미 짙은 그림 {chk["lined"]}) · 뒤집힌 그림이 다른 것 {chk["flipBad"]} · 오류 {chk["err"]}')
     print(f'다듬은 그림 {chk["n"]}장 · 테두리 있음 {chk["ring0"]} · 거의 검은 그림 {chk["dark"]} · 오류 {len(chk["err"])}')
     for st in (0, 4, 8):
         pg.evaluate(SCENE, {'st': st, 'v': 'on', 'n': 40, 'warm': 40})
