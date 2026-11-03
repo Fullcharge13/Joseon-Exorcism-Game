@@ -1,14 +1,28 @@
 #!/usr/bin/env python3
 """조선퇴마록 빌드: src/ 를 합쳐 배포용 index.html 한 장을 만든다 (v18.0).
   python3 build.py           # index.html 을 새로 만든다
-  python3 build.py --check   # 만들 결과가 지금 index.html 과 같은지만 본다(다르면 실패)
+  python3 build.py --check   # 만들 결과가 지금 index.html·sw.js 와 같은지만 본다(다르면 실패)
 src/shell.html 의 <!--JS--> 자리에 src/i18n/*.js 와 src/js/*.js 를 이름 순서대로 이어 붙인다.
+판 번호는 src/js/05_meta_save.js 의 GAME_VER 한 곳에만 쓴다. sw.js 의 캐시 이름(joseon-<판>)은 빌드가 맞춘다(v20.0.1).
 """
-import sys, pathlib, hashlib, json
+import sys, pathlib, hashlib, json, re
 ROOT = pathlib.Path(__file__).resolve().parent
 SRC = ROOT / 'src'
 OUT = ROOT / 'index.html'
+SW = ROOT / 'sw.js'
 MARK = '<!--JS-->\n'
+VER_RE = re.compile(r"^const GAME_VER = '(v[\w.]+)'", re.M)
+CACHE_RE = re.compile(r"^const CACHE='joseon-[^']*';", re.M)
+
+def game_ver():
+    m = VER_RE.findall((SRC / 'js' / '05_meta_save.js').read_text(encoding='utf8'))
+    if len(m) != 1: raise SystemExit("src/js/05_meta_save.js 에 const GAME_VER = 'v…' 줄이 정확히 한 번 있어야 합니다")
+    return m[0]
+
+def sw_text(ver):
+    s = SW.read_text(encoding='utf8')
+    if len(CACHE_RE.findall(s)) != 1: raise SystemExit("sw.js 에 const CACHE='joseon-…'; 줄이 정확히 한 번 있어야 합니다")
+    return CACHE_RE.sub(f"const CACHE='joseon-{ver}';", s)
 
 def build_text():
     shell = (SRC / 'shell.html').read_text(encoding='utf8')
@@ -37,19 +51,25 @@ def syntax_check(js):
     if r.returncode: raise SystemExit('합친 스크립트 문법 오류:\n' + r.stderr[-800:])
 
 def main():
+    try: sys.stdout.reconfigure(encoding='utf-8', errors='replace')   # 윈도 콘솔(cp1252 등)에서 한글 알림이 오류로 죽지 않게
+    except Exception: pass
     if not (SRC / 'shell.html').exists():
         print('FAIL build: src/shell.html 이 없습니다'); sys.exit(1)
     text = build_text()
     syntax_check(text.split('<script>',1)[1].rsplit('</script>',1)[0])
+    ver = game_ver(); sw = sw_text(ver)
     if '--check' in sys.argv:
         cur = OUT.read_text(encoding='utf8') if OUT.exists() else ''
         if cur != text:
             a, b = cur.splitlines(), text.splitlines()
             i = next((k for k in range(min(len(a), len(b))) if a[k] != b[k]), min(len(a), len(b)))
             print(f'FAIL build --check: index.html 과 다름 (처음 다른 줄 {i+1}) — python3 build.py 로 다시 만드세요'); sys.exit(1)
-        print('PASS build --check', hashlib.sha256(text.encode()).hexdigest()[:12]); return
+        if SW.read_text(encoding='utf8') != sw:
+            print(f'FAIL build --check: sw.js 캐시 이름이 판 {ver} 과 다름 — python3 build.py 로 다시 만드세요'); sys.exit(1)
+        print('PASS build --check', ver, hashlib.sha256(text.encode()).hexdigest()[:12]); return
     OUT.write_text(text, encoding='utf8')
-    print('built index.html', len(text.encode()) // 1024, 'KB')
+    if SW.read_text(encoding='utf8') != sw: SW.write_text(sw, encoding='utf8'); print('sw.js 캐시 →', f'joseon-{ver}')
+    print('built index.html', ver, len(text.encode()) // 1024, 'KB')
 
 if __name__ == '__main__':
     main()
