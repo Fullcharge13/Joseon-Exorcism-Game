@@ -1278,8 +1278,8 @@ function render() {
   let cx = R(P.x - W / 2),
     cy = R(P.y - H / 2);
   if (G.shake > 0 && meta.set.shake) {
-    cx += R(rnd(-G.shake, G.shake));
-    cy += R(rnd(-G.shake, G.shake));
+    cx += R(vrnd(-G.shake, G.shake));
+    cy += R(vrnd(-G.shake, G.shake));
   }
   RCX = cx;
   RCY = cy;
@@ -1491,7 +1491,7 @@ function render() {
     b.ellipse(P.x, P.y - 7 * hk, 9 * hk, 10 * hk, 0, 0, TAU);
     b.fill();
     b.globalAlpha = 1;
-    if (!LOW && Math.random() < 0.15) particle(P.x + rnd(-5, 5) * hk, P.y - rnd(2, 12) * hk, look.aura, 1, 8, 0.6);
+    if (!LOW && vrand() < 0.15) particle(P.x + vrnd(-5, 5) * hk, P.y - vrnd(2, 12) * hk, look.aura, 1, 8, 0.6);
   }
   if (G.sky && G.sky.t > 0) {
     const c = SKY[G.sky.k].rgb;

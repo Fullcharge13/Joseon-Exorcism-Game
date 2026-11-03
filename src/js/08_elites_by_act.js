@@ -598,7 +598,7 @@ ELITE_AI.blink = (e, dt, P, vx, vy) => {
       e.x = e.dx2;
       e.y = e.dy2;
       e.inv = e.inv0;
-      ringB(e, 8, 60, Math.random());
+      ringB(e, 8, 60, rand());
       particle(e.x, e.y, '#e07a2e', 10, 60, 0.4);
     }
     return [0, 0];
@@ -608,7 +608,7 @@ ELITE_AI.blink = (e, dt, P, vx, vy) => {
     e.bT = 6;
     let q = null;
     for (let t = 0; t < 16 && !q; t++) {
-      const a = Math.random() * TAU,
+      const a = rand() * TAU,
         dd = rnd(80, 120),
         c = {x: P.x + Math.cos(a) * dd, y: P.y + Math.sin(a) * dd};
       pushOut(c, e.r);
@@ -1123,7 +1123,7 @@ ELITE_AI.fire = (e, dt, P, vx, vy) => {
     for (let i = 0; i < 2; i++) {
       let q = null;
       for (let t = 0; t < 20 && !q; t++) {
-        const a = Math.random() * TAU,
+        const a = rand() * TAU,
           d = rnd(60, 110),
           c = {x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d};
         const c2 = {x: c.x, y: c.y};
@@ -1160,7 +1160,7 @@ ELITE_AI.fire = (e, dt, P, vx, vy) => {
     e.fT = 2;
     if (!wet) {
       for (let k = 0; k < 3; k++) {
-        const a = Math.random() * TAU,
+        const a = rand() * TAU,
           dd = k ? rnd(14, 24) : 0;
         G.ezones.push({
           x: e.x + Math.cos(a) * dd,

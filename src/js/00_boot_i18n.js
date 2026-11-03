@@ -1,7 +1,23 @@
 'use strict';
 const $ = s => document.querySelector(s);
+/* v20.1 씨앗 난수: 판의 일(요괴·드롭·선택지·피해)은 rand()·rnd(), 보이기만 하는 것(그리기·소리·잔상)은 vrand()·vrnd().
+   newGame이 씨앗(G.seed)으로 판 난수를 새로 만든다. 같은 씨앗이면 그리기·기기 빠르기·절약 모드와 상관없이 같은 판.
+   시험이 Math.random을 바꿔 두면 rand()도 그것을 따른다(옛 시험이 난수를 고정하던 방식 그대로). */
+const NATIVE_RANDOM = Math.random;
+function mulberry32(s) {
+  return function () {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+let RNG = NATIVE_RANDOM;
+const rand = () => (Math.random !== NATIVE_RANDOM ? Math.random() : RNG()),
+  vrand = () => Math.random();
 const TAU = Math.PI * 2,
-  rnd = (a, b) => a + Math.random() * (b - a),
+  rnd = (a, b) => a + rand() * (b - a),
+  vrnd = (a, b) => a + vrand() * (b - a),
   clamp = (v, a, b) => (v < a ? a : v > b ? b : v),
   R = Math.round;
 const cvs = $('#game'),

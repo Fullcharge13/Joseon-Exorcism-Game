@@ -61,7 +61,7 @@ function randomEnemy(range) {
   for (const e of G.enemies) {
     if (!e.dead && !e.inv && !e.prop && Math.abs(e.x - P.x) < rx && Math.abs(e.y - P.y) < ry) l.push(e);
   }
-  return l.length ? l[(Math.random() * l.length) | 0] : null;
+  return l.length ? l[(rand() * l.length) | 0] : null;
 }
 function shoot(x, y, a, spd, kind, dmg, pierce, life, r = 2, extra) {
   const p = {
@@ -85,9 +85,18 @@ function shoot(x, y, a, spd, kind, dmg, pierce, life, r = 2, extra) {
 }
 function particle(x, y, c, n = 1, sp = 40, life = 0.4) {
   for (let i = 0; i < n && G.fx.length < CAP.p; i++) {
-    const a = Math.random() * TAU,
-      s = rnd(sp * 0.3, sp);
-    G.fx.push({t: 'p', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, col: c, life: rnd(life * 0.5, life), max: life});
+    const a = vrand() * TAU,
+      s = vrnd(sp * 0.3, sp);
+    G.fx.push({
+      t: 'p',
+      x,
+      y,
+      vx: Math.cos(a) * s,
+      vy: Math.sin(a) * s,
+      col: c,
+      life: vrnd(life * 0.5, life),
+      max: life
+    });
   }
 }
 function aoe(x, y, r, dmg, kb) {
@@ -112,7 +121,7 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
     return;
   }
   if (duoOn('sancheon') && P.hp >= P.maxHp * 0.8) dmg *= 1.25;
-  if (!noCrit && (Math.random() < P.crit || (e.frz > 0 && duoOn('chilyong')))) {
+  if (!noCrit && (rand() < P.crit || (e.frz > 0 && duoOn('chilyong')))) {
     dmg *= P.critDmg;
     crit = true;
   }
@@ -152,8 +161,8 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
     e.ky += (dy / d) * kb * m;
   }
   if (!noCrit) {
-    if (P.frzCh && !e.boss && Math.random() < P.frzCh) e.frz = Math.max(e.frz, 0.7);
-    if (P.burnCh && Math.random() < P.burnCh) {
+    if (P.frzCh && !e.boss && rand() < P.frzCh) e.frz = Math.max(e.frz, 0.7);
+    if (P.burnCh && rand() < P.burnCh) {
       (e.dotSrc = HSRC || CUR_SRC || e.dotSrc), (e.dot = Math.max(e.dot || 0, 8 * P.might));
       e.dotT = 2.5;
     }
@@ -161,7 +170,7 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
   if (meta.set.nums && G.fx.length < CAP.n)
     G.fx.push({
       t: 'num',
-      x: e.x + rnd(-2, 2),
+      x: e.x + vrnd(-2, 2),
       y: e.y - e.r - 2,
       v: dmg,
       life: 0.5,
@@ -172,9 +181,9 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
   const now = performance.now();
   if (now - lastHit > 45) {
     lastHit = now;
-    snd(520 + Math.random() * 200, 0.03, 'square', 0.015);
+    snd(520 + vrand() * 200, 0.03, 'square', 0.015);
   }
-  if (!noCrit && !G._dg && duoOn('yongho') && Math.random() < 0.08) {
+  if (!noCrit && !G._dg && duoOn('yongho') && rand() < 0.08) {
     G._dg = 1;
     bolt(e.x, e.y, 14, (20 + 15 * G.stage) * P.might);
     G._dg = 0;
@@ -211,7 +220,7 @@ function kill(e) {
     G.rs.pots++;
     particle(e.x, e.y, '#b0702e', 8, 50, 0.4);
     snd(300, 0.08, 'square', 0.03);
-    const r = Math.random();
+    const r = rand();
     if (r < 0.35 && !G.mods.noTteok) dropItem('tteok', e.x, e.y);
     else if (r < 0.7) {
       for (let i = 0; i < 3; i++) dropItem('coin', e.x + rnd(-4, 4), e.y + rnd(-3, 3));
@@ -270,9 +279,9 @@ function kill(e) {
   if (e.ai === 'explode') {
     const nb = G.stage === 8 ? 4 : 6;
     for (let i = 0; i < nb; i++)
-      ebul(e.x, e.y, (i / nb) * TAU + Math.random(), 45, {dmg: e.dmg * (G.stage === 8 ? 0.5 : 0.7), col: '#c080ff'});
+      ebul(e.x, e.y, (i / nb) * TAU + rand(), 45, {dmg: e.dmg * (G.stage === 8 ? 0.5 : 0.7), col: '#c080ff'});
   }
-  if (G.jinogwi && Math.random() < G.jinogwi.ch)
+  if (G.jinogwi && rand() < G.jinogwi.ch)
     G.spirits.push({
       own: 'temp',
       src: 'jinogwi',
@@ -280,7 +289,7 @@ function kill(e) {
       x: e.x,
       y: e.y,
       ph: 0,
-      id: Math.random(),
+      id: rand(),
       dmg: G.jinogwi.dmg,
       sp: 130,
       life: G.jinogwi.life
@@ -290,7 +299,7 @@ function kill(e) {
     const tr = taleRule();
     if (tr && tr.kill) tr.kill(G.tale.R, e);
   }
-  const r = Math.random() / G.P.drop;
+  const r = rand() / G.P.drop;
   if (r < 0.025) dropItem('coin', e.x + 2, e.y);
   else if (r < 0.031 && !G.mods.noTteok) dropItem('tteok', e.x, e.y);
   else if (r < 0.0328) dropItem('pouch', e.x, e.y);
@@ -339,7 +348,7 @@ function pushOut(o, r) {
 }
 function spawnPot() {
   const P = G.P,
-    a = Math.random() * TAU,
+    a = rand() * TAU,
     d = rnd(70, 130);
   const x = P.x + Math.cos(a) * d,
     y = P.y + Math.sin(a) * d * 0.8;
@@ -369,7 +378,7 @@ function spawnPot() {
 }
 function spawnShrine() {
   const P = G.P,
-    a = Math.random() * TAU,
+    a = rand() * TAU,
     d = rnd(120, 150);
   G.shrine = {x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d * 0.8, prog: 0, need: G.ks === 'ocheon' ? 2.1 : 3.5};
   toast(_t('어디선가 성황당의 방울 소리가 들린다'));
@@ -399,7 +408,7 @@ function spawnEnemy(id, x, y, opt = {}) {
       G.mods.eHp *
       (G.path && G.path.hard ? 1.3 : 1);
   if (x === undefined) {
-    const a = Math.random() * TAU,
+    const a = rand() * TAU,
       R0 = Math.hypot(W / 2, H / 2) + 16;
     x = G.P.x + Math.cos(a) * R0;
     y = G.P.y + Math.sin(a) * R0;
@@ -425,7 +434,7 @@ function spawnEnemy(id, x, y, opt = {}) {
     slow: 0,
     frz: 0,
     vx: 0,
-    bob: Math.random() * TAU,
+    bob: rand() * TAU,
     sc: d.sc || 1,
     spr: id,
     dot: 0,
@@ -638,7 +647,7 @@ const BSK = {
         e.x += Math.cos(e.da) * 320 * dt;
         e.y += Math.sin(e.da) * 320 * dt;
         e.vx = Math.cos(e.da);
-        if (Math.random() < 0.5) particle(e.x, e.y, '#b0702e', 1, 20);
+        if (rand() < 0.5) particle(e.x, e.y, '#b0702e', 1, 20);
         if (e.k <= 0) return true;
       }
       return false;
@@ -741,7 +750,7 @@ const BSK = {
     },
     tick(e, dt) {
       e.k -= dt;
-      if (Math.random() < 0.3) particle(G.P.x, G.P.y - 8, '#ff7ab0', 1, 15);
+      if (rand() < 0.3) particle(G.P.x, G.P.y - 8, '#ff7ab0', 1, 15);
       if (e.k <= 0) {
         G.pull = null;
         ringB(e, 12, 70);
@@ -762,7 +771,7 @@ const BSK = {
       if (e.kt <= 0 && e.k > 0) {
         const P = G.P,
           n = 8,
-          o = Math.random();
+          o = rand();
         for (let i = 0; i < n; i++) {
           const a = ((i + o) / n) * TAU;
           const c = spawnEnemy('baekyeou', P.x + Math.cos(a) * 95, P.y + Math.sin(a) * 75, {
@@ -788,7 +797,7 @@ const BSK = {
     start(e) {
       e.k = 2.4;
       e.kt = 0;
-      e.sa = Math.random() * TAU;
+      e.sa = rand() * TAU;
     },
     tick(e, dt) {
       e.k -= dt;
@@ -831,7 +840,7 @@ const BSK = {
       const P = G.P;
       warn({x: P.x, y: P.y, r: 18, t: 1.1, dmg: bdmg(), col: '#3a8aff'});
       for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * TAU + Math.random();
+        const a = (i / 6) * TAU + rand();
         warn({
           x: P.x + Math.cos(a) * 42,
           y: P.y + Math.sin(a) * 32,
@@ -930,7 +939,7 @@ const BSK = {
       e.kt -= dt;
       if (e.kt <= 0 && e.k > 0) {
         const P = G.P,
-          a = Math.random() * Math.PI;
+          a = rand() * Math.PI;
         warn({
           kind: 'line',
           x: P.x - Math.cos(a) * 200,
@@ -975,7 +984,7 @@ const BSK = {
         e.x = P.x - P.dirx * 48;
         e.y = P.y - P.diry * 40;
         particle(e.x, e.y - 8, '#4a4552', 10, 50);
-        ringB(e, 10, 70, Math.random());
+        ringB(e, 10, 70, rand());
         e.k--;
         e.kt = 0.75;
       }
@@ -1063,7 +1072,7 @@ const BSK = {
     start(e) {
       e.k = 4.5;
       e.kt = 0;
-      const a = Math.random() * TAU;
+      const a = rand() * TAU;
       G.wind = {x: Math.cos(a) * 38, y: Math.sin(a) * 38, t: 4.5};
       flash('180,200,230', 0.4);
     },
@@ -1121,7 +1130,7 @@ const BSK = {
     start(e) {
       const P = G.P;
       for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * TAU + Math.random();
+        const a = (i / 6) * TAU + rand();
         G.ezones.push({
           x: P.x + Math.cos(a) * 55,
           y: P.y + Math.sin(a) * 42,
@@ -1248,7 +1257,7 @@ const BSK = {
       eatProj(e, 55);
       if (e.kt <= 0) {
         e.kt = 0.5;
-        ringB(e, 12, 70, Math.random());
+        ringB(e, 12, 70, rand());
         e.sc = Math.min(4.2, e.sc + 0.05);
       }
       if (e.k <= 0) {
@@ -1337,7 +1346,7 @@ const BSK = {
       if (e.ph === 2 && e.k <= 0) {
         if (e.n <= 0) return true;
         e.n--;
-        const a = Math.random() * TAU;
+        const a = rand() * TAU;
         e.x = P.x + Math.cos(a) * 130;
         e.y = P.y + Math.sin(a) * 100;
         e.da = angTo(e, P);
@@ -1388,7 +1397,7 @@ const BSK = {
     tick(e, dt) {
       e.kt -= dt;
       if (e.kt <= 0 && e.k > 0) {
-        ringB(e, 30, 50, Math.random(), Math.random() * TAU);
+        ringB(e, 30, 50, rand(), rand() * TAU);
         e.k--;
         e.kt = 0.7;
       }
@@ -1423,9 +1432,9 @@ const BSK = {
       e.kt -= dt;
       if (e.kt <= 0) {
         e.kt = 0.8;
-        ringB(e, 32, 58, Math.random(), Math.random() * TAU);
+        ringB(e, 32, 58, rand(), rand() * TAU);
         const P = G.P,
-          a = Math.random() * Math.PI;
+          a = rand() * Math.PI;
         warn({
           kind: 'line',
           x: P.x - Math.cos(a) * 200,
@@ -1469,7 +1478,7 @@ function spawnBoss(id, isMid) {
   const s = curStg(),
     D = BOSS[id],
     E = EN[id];
-  const a = Math.random() * TAU,
+  const a = rand() * TAU,
     R0 = Math.hypot(W / 2, H / 2) + 10;
   const baseHp = BOSS_HP[G.stage] * (isMid ? 0.32 : 1) * G.mods.bossHp * G.mods.eHp;
   const hp = Math.max(
@@ -1510,8 +1519,7 @@ function spawnBoss(id, isMid) {
   e.si = 0;
   if (G.mods.borrow) {
     const pool = BORROW.filter(k => !e.skills.includes(k));
-    for (let i = 0; i < G.mods.borrow && pool.length; i++)
-      e.skills.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+    for (let i = 0; i < G.mods.borrow && pool.length; i++) e.skills.push(pool.splice((rand() * pool.length) | 0, 1)[0]);
   }
   if (id === 'imugi') {
     e.segs = [];
@@ -1576,7 +1584,7 @@ function bossAI(e, dt) {
       e.act = e.skills[e.si++ % e.skills.length];
     } else {
       const opts = e.skills.filter(s => s !== e.last);
-      e.act = opts[(Math.random() * opts.length) | 0];
+      e.act = opts[(rand() * opts.length) | 0];
     }
     BSK[e.act].start(e);
   }
@@ -1749,9 +1757,9 @@ function update(dt) {
         list = G.st > 45 ? s.early.concat(s.late) : s.early;
       let n = Math.min(8, Math.ceil((target - alive) * 0.3));
       for (let i = 0; i < n; i++) {
-        const id = list[(Math.random() * list.length) | 0];
+        const id = list[(rand() * list.length) | 0];
         if (EN[id].ai === 'swarm') {
-          const a = Math.random() * TAU,
+          const a = rand() * TAU,
             R0 = Math.hypot(W / 2, H / 2) + 16,
             x = P.x + Math.cos(a) * R0,
             y = P.y + Math.sin(a) * R0;
@@ -1790,7 +1798,7 @@ function update(dt) {
     guideTick('shrine', s, dt);
     if (d < 22) {
       s.prog += dt;
-      if (Math.random() < 0.2) particle(s.x, s.y - 10, '#e0b048', 1, 20);
+      if (rand() < 0.2) particle(s.x, s.y - 10, '#e0b048', 1, 20);
       if (s.prog >= s.need) {
         guideDone('shrine', s);
         G.shrine = null;
@@ -1826,7 +1834,7 @@ function update(dt) {
     HSRC = m.src || null;
     m.x += m.vx * dt;
     m.life -= dt;
-    if (Math.random() < 0.6) particle(m.x - m.dir * 16, m.y + 2, '#bfe0ff', 1, 20, 0.4);
+    if (rand() < 0.6) particle(m.x - m.dir * 16, m.y + 2, '#bfe0ff', 1, 20, 0.4);
     for (const e of near(m.x, m.y, m.r, TMP).slice()) {
       if (m.hit.has(e)) continue;
       m.hit.add(e);
@@ -1944,7 +1952,7 @@ function update(dt) {
         G.coins += Math.round((1 + P.coinPlus) * G.mods.coin);
         snd(1200, 0.06, 'triangle', 0.03);
         if (duoOn('bokrok')) {
-          const r = Math.random();
+          const r = rand();
           if (r < 0.04) dropItem('tteok', it.x + rnd(-12, 12), it.y + rnd(-10, 10));
           else if (r < 0.06) dropItem('pouch', it.x + rnd(-12, 12), it.y + rnd(-10, 10));
         }
@@ -2037,8 +2045,8 @@ function resolveWarn(w) {
     G.fx.push({t: 'ring', x: w.x, y: w.y, r: 3, maxR: w.r, col: w.col, life: 0.25, max: 0.25});
     particle(w.x, w.y, w.col, 6, 60, 0.35);
   } else if (w.dmg) G.fx.push({t: 'beam', x: w.x, y: w.y, a: w.a, len: w.len, w: w.w, col: w.col, life: 0.2, max: 0.2});
-  if (w.fx === 'bolt') G.fx.push({t: 'bolt', x: w.x, y: w.y, life: 0.15, max: 0.15, seed: Math.random() * 99});
-  if (w.fx === 'gold' && Math.random() < 0.25) dropItem('coin', w.x, w.y);
+  if (w.fx === 'bolt') G.fx.push({t: 'bolt', x: w.x, y: w.y, life: 0.15, max: 0.15, seed: vrand() * 99});
+  if (w.fx === 'gold' && rand() < 0.25) dropItem('coin', w.x, w.y);
   if (w.fx === 'slam') G.shake = Math.max(G.shake, 3);
 }
 function updSpirits(dt) {
@@ -2095,11 +2103,11 @@ function updProjs(dt, P) {
         const ta = Math.atan2(p.tg.y - p.y, p.tg.x - p.x);
         let da = Math.atan2(Math.sin(ta - p.a), Math.cos(ta - p.a));
         p.a += da * Math.min(1, (p.kind === 'letter' ? 6 : 5) * dt);
-      } else if (p.kind === 'letter' && Math.random() < 0.1) p.tg = randomEnemy();
+      } else if (p.kind === 'letter' && rand() < 0.1) p.tg = randomEnemy();
       const s = Math.min(p.kind === 'letter' ? 190 : p.kind === 'jtal' ? 260 : 400, Math.hypot(p.vx, p.vy) + 160 * dt);
       p.vx = Math.cos(p.a) * s;
       p.vy = Math.sin(p.a) * s;
-      if (p.kind === 'rocket' && Math.random() < 0.5) particle(p.x, p.y, '#e0b048', 1, 10, 0.25);
+      if (p.kind === 'rocket' && rand() < 0.5) particle(p.x, p.y, '#e0b048', 1, 10, 0.25);
     } else if (p.kind === 'boomer') {
       p.tt += dt;
       const s = p.v0 - p.v0 * 1.4 * p.tt;
@@ -2181,7 +2189,7 @@ function updProjs(dt, P) {
         G._dg = 1;
         aoe(p.x, p.y, 14 * G.P.area, p.dmg * 0.5, 10);
         G._dg = 0;
-        if (Math.random() < 0.4) particle(p.x, p.y, '#ffb060', 3, 40, 0.25);
+        if (rand() < 0.4) particle(p.x, p.y, '#ffb060', 3, 40, 0.25);
       }
       if (p.heal) {
         P.healAcc++;
@@ -2255,7 +2263,7 @@ function updEnemies(dt, P) {
         HSRC = e.dotSrc || null;
         hurt(e, d, 0, 0, 0, true);
         HSRC = null;
-        if (Math.random() < 0.5) particle(e.x, e.y - 4, e.drain ? '#ff5a5a' : '#b07fd0', 1, 15);
+        if (rand() < 0.5) particle(e.x, e.y - 4, e.drain ? '#ff5a5a' : '#b07fd0', 1, 15);
         if (e.dead) continue;
       }
     } else e.dot = 0;
@@ -2340,7 +2348,7 @@ function updEnemies(dt, P) {
           }
           break;
         case 'leap':
-          if (e.ct === undefined) e.ct = Math.random();
+          if (e.ct === undefined) e.ct = rand();
           e.ct -= dt;
           if (e.ct <= 0) e.ct = 1.1;
           if (e.ct > 0.35) {
@@ -2382,7 +2390,7 @@ function updEnemies(dt, P) {
         e.et -= dt;
         if (e.et <= 0) {
           e.et = 3.5;
-          ringB(e, 8, 55, Math.random());
+          ringB(e, 8, 55, rand());
         }
       }
     }
@@ -2433,7 +2441,7 @@ function updEnemies(dt, P) {
       e.y = P.y + Math.sin(a) * R0;
     }
     if (e.boss && !e.act && (Math.abs(e.x - P.x) > W || Math.abs(e.y - P.y) > H)) {
-      const a = Math.random() * TAU;
+      const a = rand() * TAU;
       e.x = P.x + Math.cos(a) * W * 0.6;
       e.y = P.y + Math.sin(a) * H * 0.6;
     }
@@ -2499,9 +2507,9 @@ function skyOn(id) {
 function skyArrive() {
   const P = G.P,
     keys = Object.keys(SKY),
-    k = keys[(Math.random() * keys.length) | 0],
+    k = keys[(rand() * keys.length) | 0],
     god = SKY[k],
-    f = god.fx[(Math.random() * god.fx.length) | 0];
+    f = god.fx[(rand() * god.fx.length) | 0];
   G.sky = {k, fx: f.id, n: f.n, t: SKY_T, tk: 1};
   G.skyGod = {k, x: P.x + 40, y: P.y - 60, t: 4.5};
   G.rs.sky = (G.rs.sky || 0) + 1;
@@ -2526,7 +2534,7 @@ function updSky(dt) {
       ty = P.y - 30;
     g.x += (tx - g.x) * Math.min(1, 3 * dt);
     g.y += (ty - g.y) * Math.min(1, 3 * dt);
-    if (Math.random() < 0.3) particle(g.x + rnd(-8, 8), g.y + 2, '#efe6d2', 1, 10, 0.6);
+    if (rand() < 0.3) particle(g.x + rnd(-8, 8), g.y + 2, '#efe6d2', 1, 10, 0.6);
     if (g.t <= 0) {
       particle(g.x, g.y - 6, SKY[g.k].col, 14, 40, 0.6);
       G.skyGod = null;
@@ -2575,7 +2583,7 @@ function updSky(dt) {
     }
     snd(200, 0.2, 'sawtooth', 0.03);
   }
-  if (k.fx === 'rain' && Math.random() < 0.4)
+  if (k.fx === 'rain' && rand() < 0.4)
     particle(P.x + rnd(-W / 2, W / 2), P.y + rnd(-H / 2, H / 2), '#7fb0ff', 1, 6, 0.4);
 }
 function drawSky() {
@@ -2774,7 +2782,7 @@ function updJW(dt) {
       shoot(
         h.x,
         h.y - 6,
-        tg ? Math.atan2(tg.y - h.y, tg.x - h.x) + rnd(-0.4, 0.4) : Math.random() * TAU,
+        tg ? Math.atan2(tg.y - h.y, tg.x - h.x) + rnd(-0.4, 0.4) : rand() * TAU,
         90,
         'jtal',
         12 + 12 * s,
@@ -2860,7 +2868,7 @@ const PETSK = {
               t: 'slash',
               x: e.x,
               y: e.y,
-              a: Math.random() * TAU,
+              a: vrand() * TAU,
               r: 16,
               life: 0.15,
               max: 0.15,
@@ -3194,7 +3202,7 @@ function damagePlayer(dmg) {
 function gainXp(v) {
   const P = G.P;
   P.xp += v * P.xpGain * (1 + 0.1 * cbTier());
-  snd(900 + Math.random() * 300, 0.03, 'triangle', 0.012);
+  snd(900 + vrand() * 300, 0.03, 'triangle', 0.012);
   while (P.xp >= P.next) {
     P.xp -= P.next;
     P.lvl++;

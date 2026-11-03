@@ -416,7 +416,7 @@ function genOptions() {
     picks = [];
   while (picks.length < n && pool.length) {
     const tot = pool.reduce((s, o) => s + o.wt, 0);
-    let r = Math.random() * tot,
+    let r = rand() * tot,
       i = 0;
     for (; i < pool.length - 1; i++) {
       r -= pool[i].wt;
@@ -787,7 +787,7 @@ function openAdv() {
     const card = document.createElement('div');
     card.className = 'adv advinfo';
     const bonus = TIER_BONUS.slice()
-      .sort(() => Math.random() - 0.5)
+      .sort(() => rand() - 0.5)
       .slice(0, 3);
     card.innerHTML = _t(
       '<span class="badge cls">{name} · {p}차</span><div class="top"><img src="{p2}" alt=""><b>{name2}</b></div><div class="sk">{p3}고유 기술 · {name3}</div><p>{p4}</p><div class="bn">전직 보너스 · {bonus}</div><div class="tree">{p5}</div>',
@@ -838,7 +838,7 @@ function openBless(title) {
   $('#blessTitle').textContent = title || _t('신령께 비나이다');
   const ids = Object.keys(BLESS)
     .filter(id => (G.bless[id] || 0) < 3)
-    .sort(() => Math.random() - 0.5)
+    .sort(() => rand() - 0.5)
     .slice(0, 3);
   const done = () => {
     if (G.afterBless) {
@@ -848,8 +848,8 @@ function openBless(title) {
     } else show(null);
   };
   const duos = Object.keys(DUO).filter(d => !G.duo[d] && G.bless[DUO[d].a] && G.bless[DUO[d].b]);
-  if (duos.length && Math.random() < 0.7) {
-    const id = duos[(Math.random() * duos.length) | 0],
+  if (duos.length && rand() < 0.7) {
+    const id = duos[(rand() * duos.length) | 0],
       u = DUO[id];
     if (ids.length >= 3) ids.pop();
     const bt = document.createElement('button');
@@ -954,7 +954,7 @@ function openChest(n, cb) {
     for (const w of G.weapons) if (w.lv < WD[w.id].max) c.push({k: 'wup', id: w.id});
     for (const id in G.passives) if (G.passives[id] < PD[id].max) c.push({k: 'pup', id});
     if (!c.length && G.weapons.length) {
-      const w = G.weapons[(Math.random() * G.weapons.length) | 0];
+      const w = G.weapons[(rand() * G.weapons.length) | 0];
       const o = decorate({k: 'lb', id: w.id});
       applyOpt(o);
       list.innerHTML += `<div><span class="ic">${o.ic}</span><b>${o.name}</b>&nbsp;${o.badge}</div>`;
@@ -965,11 +965,11 @@ function openChest(n, cb) {
       list.innerHTML += _t('<div><img src="{coin}" alt="">엽전 25닢</div>', {coin: ICON.coin});
       continue;
     }
-    const o = decorate(c[(Math.random() * c.length) | 0]);
+    const o = decorate(c[(rand() * c.length) | 0]);
     applyOpt(o);
     list.innerHTML += `<div><span class="ic">${o.ic}</span><b>${o.name}</b>&nbsp;${o.badge}</div>`;
   }
-  if (Math.random() < 0.4) {
+  if (rand() < 0.4) {
     G.queue.push('seal');
     list.innerHTML += _t(
       '<div><span class="ic"><span class="seal" style="background:#7a2018">印</span></span><b>인장 하나</b>&nbsp;상자를 닫으면 새긴다</div>'
@@ -1031,7 +1031,7 @@ const TAVERN = [
       for (const w of G.weapons) if (w.lv < WD[w.id].max) c.push({k: 'wup', id: w.id});
       for (const id in G.passives) if (G.passives[id] < PD[id].max) c.push({k: 'pup', id});
       if (c.length) {
-        const o = decorate(c[(Math.random() * c.length) | 0]);
+        const o = decorate(c[(rand() * c.length) | 0]);
         applyOpt(o);
         toast(_t('{name} 강화', {name: o.name}));
       }
@@ -1589,7 +1589,7 @@ function prepRandOk() {
 function prepCardRand() {
   if (!prepRandOk()) return;
   const c = Object.keys(CARDS).filter(id => unlocked('card:' + id) && !prep.cards.includes(id));
-  prep.cards.push(c[(Math.random() * c.length) | 0]);
+  prep.cards.push(c[(rand() * c.length) | 0]);
 }
 function prepCardHead() {
   return _t('점괘 패 {n}/{max}', {n: prep.cards.length, max: CARD_MAX});

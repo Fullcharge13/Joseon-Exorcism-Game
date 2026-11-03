@@ -195,7 +195,7 @@ function awkOptions() {
     if (d.type !== 'c' || w.awk) continue;
     for (const t of awkTypes(w.id)) c.push({id: w.id, t});
   }
-  c.sort(() => Math.random() - 0.5);
+  c.sort(() => rand() - 0.5);
   const out = [],
     used = new Set();
   for (const o of c) {
@@ -357,12 +357,12 @@ function castCall() {
     case 'baekho':
       for (const e of vis()) {
         hurt(e, D * 2.5, 60, P.x, P.y);
-        if (Math.random() < 0.3)
+        if (rand() < 0.3)
           G.fx.push({
             t: 'slash',
             x: e.x,
             y: e.y,
-            a: Math.random() * TAU,
+            a: vrand() * TAU,
             r: 16,
             life: 0.2,
             max: 0.2,
@@ -485,10 +485,10 @@ function openPath() {
     return;
   }
   let ids = Object.keys(PATHS)
-    .sort(() => Math.random() - 0.5)
+    .sort(() => rand() - 0.5)
     .slice(0, 3);
   if (G.ks === 'mangchi' && !ids.includes('temper')) ids[2] = 'temper';
-  const hardI = Math.random() < 0.7 ? (Math.random() * 3) | 0 : -1,
+  const hardI = rand() < 0.7 ? (rand() * 3) | 0 : -1,
     n = STAGES[G.stage + 1];
   openPick(
     'CROSSROADS',
@@ -596,7 +596,7 @@ function zone(o) {
 }
 function volley(n, dmg, pierce, kind = 'arrow', spd = 250, extra) {
   const P = G.P,
-    o = Math.random();
+    o = rand();
   for (let i = 0; i < n; i++) shoot(P.x, P.y, ((i + o) / n) * TAU, spd, kind, dmg, pierce, 0.8, 2, extra);
 }
 function heal(v) {
@@ -605,7 +605,7 @@ function heal(v) {
 }
 function bolt(x, y, r, dmg) {
   aoe(x, y, r, dmg, 10);
-  G.fx.push({t: 'bolt', x, y, life: 0.18, max: 0.18, seed: Math.random() * 99});
+  G.fx.push({t: 'bolt', x, y, life: 0.18, max: 0.18, seed: vrand() * 99});
 }
 const L5 = (w, a) => a[w.lv - 1];
 const HANJA = '天地玄黃宇宙洪荒日月盈昃辰宿列張寒來暑往秋收冬藏';
@@ -777,7 +777,7 @@ const WD = {
         dps = (w.evo ? 18 : L5(w, [6, 6, 9, 9, 11])) * P.might;
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy(120);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU;
         shoot(P.x, P.y, a, 160 * P.pspd, 'cup', 4 * P.might, 1, 0.9, 3, {
           dot: dps,
           dotT: (w.evo ? 4 : L5(w, [3, 3, 3, 3, 4])) * P.dur,
@@ -811,7 +811,7 @@ const WD = {
         shoot(
           P.x,
           P.y,
-          Math.random() * TAU,
+          rand() * TAU,
           150 * P.pspd,
           'blade',
           dmg,
@@ -840,7 +840,7 @@ const WD = {
         dmg = (w.evo ? 20 : L5(w, [10, 10, 10, 12, 14])) * P.might;
       for (let i = 0; i < n; i++) {
         const tg = nearest(P.x, P.y, 200);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.4, 0.4) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.4, 0.4) : rand() * TAU;
         shoot(P.x, P.y, a, 200 * P.pspd, 'pill', dmg, 1, 1.5, 3, {
           bounces: w.evo ? 12 : L5(w, [3, 4, 4, 6, 6]),
           boom: w.evo ? 14 * P.area : 0
@@ -1296,7 +1296,7 @@ const WD = {
           if (!e.boss) e.frz = Math.max(e.frz, fr);
           (e.dotSrc = HSRC || CUR_SRC || e.dotSrc), (e.dot = Math.max(e.dot || 0, dps));
           e.dotT = 3;
-          if (Math.random() < 0.3) particle(e.x, e.y - 8, '#ff7ab0', 2, 15, 0.6);
+          if (rand() < 0.3) particle(e.x, e.y - 8, '#ff7ab0', 2, 15, 0.6);
         }
       w.t = L5(w, [12, 12, 12, 10, 9]) * P.cd;
     }
@@ -1542,7 +1542,7 @@ const WD = {
         bn = w.evo ? 6 : L5(w, [2, 3, 3, 3, 4]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy(160);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.25 : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.25 : rand() * TAU;
         shoot(P.x, P.y - 4, a, 210 * P.pspd, 'coin', dmg, 1, 1.4, 2.5, {bounces: bn});
       }
       w.t = (w.evo ? 1.1 : L5(w, [1.5, 1.4, 1.4, 1.3, 1.2])) * P.cd;
@@ -1647,7 +1647,7 @@ const WD = {
       for (const e of l) {
         e.mark = G.time + 4;
         hurt(e, dmg, 0);
-        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.15, max: 0.15, seed: Math.random() * 99});
+        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.15, max: 0.15, seed: vrand() * 99});
         particle(e.x, e.y - 6, '#e0b048', 4, 30, 0.4);
       }
       w.t = L5(w, [4, 4, 4, 3.4, 3.2]) * P.cd;
@@ -1771,7 +1771,7 @@ const WD = {
       if (w.t > 0) return;
       const n = L5(w, [2, 3, 3, 3, 5]) + P.amount,
         dmg = L5(w, [18, 18, 24, 24, 30]) * P.might,
-        a0 = Math.random() * TAU;
+        a0 = rand() * TAU;
       for (let i = 0; i < n; i++)
         shoot(P.x, P.y, a0 + (i / n) * TAU, 180 * P.pspd, 'boomer', dmg, 99, 3, L5(w, [5, 5, 5, 6, 6]) * P.area, {
           v0: 180 * P.pspd,
@@ -1945,7 +1945,7 @@ const WD = {
     upd(w, dt, P) {
       w.t -= dt;
       if (w.t > 0) return;
-      const r = Math.random(),
+      const r = rand(),
         k = w.evo ? (r < 0.45 ? 3 : r < 0.8 ? 4 : 5) : r < 0.15 ? 1 : r < 0.5 ? 2 : r < 0.8 ? 3 : r < 0.93 ? 4 : 5,
         NM = [_t('도'), _t('개'), _t('걸'), _t('윷|끗'), _t('모')];
       const n = k + (w.evo ? 2 : w.lv >= 5 ? 2 : w.lv >= 2 ? 1 : 0) + P.amount,
@@ -1953,7 +1953,7 @@ const WD = {
         pr = w.evo ? 3 : L5(w, [1, 1, 1, 2, 2]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy(180);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.15, 0.15) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.15, 0.15) : rand() * TAU;
         shoot(P.x, P.y - 4, a, 220 * P.pspd, 'yut', dmg, pr, 0.9, 3);
       }
       if (k === 5) pulseRing(P.x, P.y, (w.evo ? 80 : 60) * P.area, dmg * 2.5, '#e0b048', 80);
@@ -2002,7 +2002,7 @@ const WD = {
         bn = w.evo ? 8 : L5(w, [3, 5, 5, 5, 7]);
       for (let i = 0; i < n; i++) {
         const tg = nearest(P.x, P.y, 200);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.3 : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.3 : rand() * TAU;
         shoot(P.x, P.y - 4, a, 180 * P.pspd, 'jegi', dmg, 1, 1.5, 3, {bounces: bn});
       }
       w.t = (w.evo ? 1.2 : L5(w, [1.7, 1.6, 1.6, 1.5, 1.3])) * P.cd;
@@ -2045,7 +2045,7 @@ const WD = {
         pr = w.evo ? 5 : L5(w, [2, 2, 3, 3, 4]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy();
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU;
         shoot(P.x, P.y, a, (w.evo ? 330 : 270) * P.pspd, 'arrow', dmg, pr, 0.9, 2);
       }
       w.t = (w.evo ? 0.28 : L5(w, [1.2, 1.1, 1.05, 0.95, 0.8])) * P.cd;
@@ -2068,7 +2068,7 @@ const WD = {
         br = (w.evo ? 34 : L5(w, [20, 22, 22, 24, 26])) * P.area;
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy();
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.6, 0.6) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.6, 0.6) : rand() * TAU;
         shoot(P.x, P.y, a, 90, 'rocket', dmg, 1, 1.6, 3, {tg, br});
       }
       w.t = (w.evo ? 1.2 : L5(w, [2.2, 2.1, 2.0, 1.9, 1.6])) * P.cd;
@@ -2227,7 +2227,7 @@ const WD = {
         dmg = L5(w, [160, 200, 200, 240, 280]) * P.might;
       const strokes = w.lv >= 5 ? 2 : 1;
       for (let s = 0; s < strokes; s++) {
-        const a = (tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU) + (s * Math.PI) / 2;
+        const a = (tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU) + (s * Math.PI) / 2;
         const sx = P.x - (Math.cos(a) * len) / 2,
           sy = P.y - (Math.sin(a) * len) / 2;
         beam(sx, sy, a, len, wd, dmg, '#1a1418');
@@ -2342,7 +2342,7 @@ const WD = {
       for (const e of list) {
         e.mark = G.time + 5;
         hurt(e, L5(w, [60, 75, 75, 95, 110]) * P.might, 0);
-        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: Math.random() * 99, col: '#ff5a3a'});
+        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: vrand() * 99, col: '#ff5a3a'});
       }
       w.t = L5(w, [3, 3, 2.6, 2.6, 2.4]) * P.cd;
     }
@@ -2413,7 +2413,7 @@ const WD = {
       w.t -= dt;
       if (w.t > 0) return;
       const n = L5(w, [3, 4, 4, 5, 7]),
-        o = Math.random() * TAU;
+        o = rand() * TAU;
       for (let i = 0; i < n; i++) {
         const a = o + (i / n) * TAU;
         zone({
@@ -2480,7 +2480,7 @@ const WD = {
       w.t -= dt;
       if (w.t > 0) return;
       const n = w.lv >= 4 ? 4 : 3,
-        o = Math.random() * TAU;
+        o = rand() * TAU;
       for (let i = 0; i < n; i++) {
         const a = o + (i / n) * TAU;
         zone({
@@ -2693,7 +2693,7 @@ const WD = {
           x: P.x + Math.cos(a) * 20,
           y: P.y + Math.sin(a) * 20,
           ph: a,
-          id: Math.random(),
+          id: rand(),
           dmg: 24 * P.might,
           sp: 140,
           life: 6 * P.dur
@@ -2884,7 +2884,7 @@ const WD = {
           w.bt = 0.12;
           const tg = randomEnemy();
           if (tg) bolt(tg.x, tg.y, 14 * P.area, L5(w, [40, 46, 46, 52, 66]) * P.might);
-          if (Math.random() < 0.3) snd(80, 0.1, 'square', 0.02);
+          if (vrand() < 0.3) snd(80, 0.1, 'square', 0.02);
         }
         return;
       }
@@ -2946,7 +2946,7 @@ const WD = {
       const n = L5(w, [2, 3, 3, 3, 4]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy();
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU;
         shoot(P.x, P.y, a, 150, 'ball', L5(w, [50, 50, 64, 64, 80]) * P.might, 1, 1.4, 4, {
           br: L5(w, [30, 30, 30, 38, 38]) * P.area
         });

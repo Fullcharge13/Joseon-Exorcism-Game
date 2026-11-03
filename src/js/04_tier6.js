@@ -119,7 +119,7 @@ Object.assign(WD, {
         hold = L5(w, [2, 2, 2.5, 2.5, 2.5]),
         dmg = L5(w, [144, 162, 180, 225, 288]) * P.might; /* v19.2 ×1.8(자동 플레이 피해 비중 1%) */
       for (const e of t6Strong(n, false)) {
-        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: Math.random() * 99, col: '#e0b048'});
+        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: vrand() * 99, col: '#e0b048'});
         if (e.boss) {
           e.mark = G.time + 4;
           hurt(e, dmg * 0.5, 0);
@@ -422,7 +422,7 @@ Object.assign(WD, {
       w.t -= dt;
       if (w.t > 0) return;
       const pDg = L5(w, [0.2, 0.2, 0.3, 0.3, 0.4]),
-        r = Math.random(),
+        r = rand(),
         k = r < pDg ? 'daegil' : r < pDg + (1 - pDg) / 2 ? 'gil' : 'hyung',
         dmg = L5(w, [40, 55, 55, 70, 90]) * P.might;
       w.last = k;

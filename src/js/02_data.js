@@ -1844,7 +1844,7 @@ function rainGlyph(n, dmg, r, chars, spread) {
       x,
       y,
       h: 80 + i * (spread ? 5 : 14),
-      ch: chars[(Math.random() * chars.length) | 0],
+      ch: chars[(vrand() * chars.length) | 0],
       dmg,
       r,
       big: spread
@@ -1906,8 +1906,8 @@ function summon(w, n, dmg, look, sp = 110, extra) {
           look,
           x: G.P.x + rnd(-10, 10),
           y: G.P.y + rnd(-10, 10),
-          ph: Math.random() * TAU,
-          id: Math.random(),
+          ph: rand() * TAU,
+          id: rand(),
           dmg,
           sp
         },

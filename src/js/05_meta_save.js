@@ -503,6 +503,12 @@ let LAB = false;
 try {
   LAB = /[?&]combo\b/.test(location.search);
 } catch (e) {}
+/* v20.1 주소에 ?seed=숫자를 붙이면 모든 판을 그 씨앗으로 시작한다(오류 기록의 씨앗으로 같은 판을 다시 보기) */
+let URL_SEED = null;
+try {
+  const m = /[?&]seed=(\d+)/.exec(location.search);
+  if (m) URL_SEED = Number(m[1]) >>> 0;
+} catch (e) {}
 function saveMeta() {
   if (LAB) return;
   try {
@@ -541,7 +547,7 @@ function saveImport(code) {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.0.1',
+const GAME_VER = 'v20.1',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -573,6 +579,7 @@ function diagState() {
     return G
       ? {
           mode: G.mode,
+          seed: G.seed, // v20.1 이 씨앗으로 ?seed= 를 붙여 같은 판을 다시 본다
           cid: G.cid,
           stage: G.stage + 1,
           loop: G.loop,

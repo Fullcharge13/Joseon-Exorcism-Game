@@ -19,7 +19,10 @@ const TMP = [],
 const keys = {};
 let joy = null;
 
-function newGame(cid, card, curse, diff = 'normal', mode = 'normal') {
+function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
+  // v20.1 판 난수: 씨앗을 주면(시험·?seed=) 그 판을 다시 만들 수 있다. 없으면 새 씨앗
+  if (!Number.isInteger(seed)) seed = URL_SEED !== null ? URL_SEED : (NATIVE_RANDOM() * 4294967296) >>> 0;
+  RNG = mulberry32(seed);
   const cards = cardList(card);
   VFXS.debris.length = 0;
   diagSeen.clear();
@@ -31,6 +34,7 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal') {
     m = meta.up;
   G = {
     cid,
+    seed,
     cards,
     curse,
     diff,
@@ -790,7 +794,7 @@ function openSeal() {
     done();
     return;
   }
-  const sh = a => a.sort(() => Math.random() - 0.5),
+  const sh = a => a.sort(() => rand() - 0.5),
     pool = sh(ws.slice()),
     cards = [],
     shown = new Set();
@@ -843,7 +847,7 @@ function graze(q) {
   G.grazeT = 2;
   addCall(1.2);
   particle((q.x + P.x) / 2, (q.y + P.y - 3) / 2, '#ffffff', 3, 30, 0.25);
-  if (G.fx.length < CAP.n) G.fx.push({t: 'num', x: P.x + rnd(-4, 4), y: P.y - 20, v: _t('스침'), life: 0.4, max: 0.4});
+  if (G.fx.length < CAP.n) G.fx.push({t: 'num', x: P.x + vrnd(-4, 4), y: P.y - 20, v: _t('스침'), life: 0.4, max: 0.4});
   snd(1700, 0.03, 'triangle', 0.012);
 }
 
@@ -930,9 +934,9 @@ function rushRound() {
   const extra = [S[Math.min(9, r + 1)].mid, S[Math.max(0, r - 1)].boss, S[Math.min(9, r + 1)].boss].filter(
     x => !pick.has(x)
   );
-  pick.add(extra[(Math.random() * extra.length) | 0]);
-  const ids = [...pick].sort(() => Math.random() - 0.5),
-    gr = GRADES.slice().sort(() => Math.random() - 0.5);
+  pick.add(extra[(rand() * extra.length) | 0]);
+  const ids = [...pick].sort(() => rand() - 0.5),
+    gr = GRADES.slice().sort(() => rand() - 0.5);
   openPick(
     `EXPEDITION · ${r + 1} / ${STAGES.length}`,
     _t('{p}번째 원정', {p: r + 1}),
@@ -978,7 +982,7 @@ function rushReward(left) {
     return;
   }
   const keys = Object.keys(GIFTS)
-      .sort(() => Math.random() - 0.5)
+      .sort(() => rand() - 0.5)
       .slice(0, 3),
     next = () => rushReward(left - 1),
     P = G.P;
@@ -1053,9 +1057,9 @@ function variantChance() {
 }
 function maybeVariant(e) {
   const ch = variantChance();
-  if (ch <= 0 || Math.random() >= ch) return;
+  if (ch <= 0 || rand() >= ch) return;
   const ks = Object.keys(VARIANTS),
-    k = ks[(Math.random() * ks.length) | 0];
+    k = ks[(rand() * ks.length) | 0];
   e.vr = k;
   if (k === 'swift') e.spd *= 1.6;
   if (k === 'iron') {
@@ -1221,7 +1225,7 @@ function guideSay(kind, o, m) {
   const L = GUIDE[kind].lines[m];
   if (!L) return;
   o.said[m] = true;
-  let txt = L[(Math.random() * L.length) | 0],
+  let txt = L[(rand() * L.length) | 0],
     n = '';
   if (txt.includes('{n}')) {
     const A = ANOM.find(x => x.id === o.id);
@@ -1308,9 +1312,9 @@ function spawnAnom() {
   const P = G.P,
     pool = ANOM.filter(a => !(meta.anom || {})[a.id]),
     src = pool.length ? pool : ANOM,
-    a = src[(Math.random() * src.length) | 0];
+    a = src[(rand() * src.length) | 0];
   for (let t = 0; t < 20; t++) {
-    const ang = Math.random() * TAU,
+    const ang = rand() * TAU,
       d = rnd(150, 260),
       x = P.x + Math.cos(ang) * d,
       y = P.y + Math.sin(ang) * d * 0.75;
@@ -1337,7 +1341,7 @@ function updAnom(dt) {
   guideTick('anom', a, dt);
   if (d < 24) {
     a.prog += dt;
-    if (Math.random() < 0.25) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#c080ff', 1, 15, 0.5);
+    if (rand() < 0.25) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#c080ff', 1, 15, 0.5);
     if (a.prog >= a.need) {
       guideDone('anom', a);
       G.anom = null;
@@ -1354,7 +1358,7 @@ function investigate(a) {
   meta.anom[a.id] = (meta.anom[a.id] || 0) + 1;
   G.rs.anoms = (G.rs.anoms || 0) + 1;
   saveMeta();
-  const r = Math.random();
+  const r = rand();
   let rw;
   if (r < 0.3) {
     const c = 25 + G.stage * 6;
@@ -1441,7 +1445,7 @@ function drawAnomBase(a) {
     b.fillRect(x - 3 + ex, y - 10, 2, 1);
     b.fillRect(x + 1 + ex, y - 10, 2, 1);
   }
-  if (Math.random() < 0.1) particle(a.x + rnd(-10, 10), a.y - rnd(0, 14), '#c080ff', 1, 8, 0.6);
+  if (vrand() < 0.1) particle(a.x + vrnd(-10, 10), a.y - vrnd(0, 14), '#c080ff', 1, 8, 0.6);
   if (a.prog > 0) {
     b.strokeStyle = '#c080ff';
     b.lineWidth = 2;
@@ -1525,7 +1529,7 @@ function placeNear(d0, d1, avoid = [], gap = 0) {
   const P = G.P;
   const far = (x, y) => avoid.every(q => Math.hypot(q.x - x, q.y - y) >= gap); // avoid: 이미 놓은 것들과 gap 이상 떨어뜨림
   for (let t = 0; t < 60; t++) {
-    const a = Math.random() * TAU,
+    const a = rand() * TAU,
       d = rnd(d0, d1),
       x = P.x + Math.cos(a) * d,
       y = P.y + Math.sin(a) * d * 0.75,
@@ -1572,7 +1576,7 @@ const TALE_RULE_FN = {
       G.mods.noTteok = true;
     },
     kill(R, e) {
-      if (!e.boss && Math.random() < (G.st > TALE_T ? 0.1 : 0.05)) dropItem('grain', e.x, e.y);
+      if (!e.boss && rand() < (G.st > TALE_T ? 0.1 : 0.05)) dropItem('grain', e.x, e.y);
     },
     ready: R => R.grain >= 20,
     hud: R => _t('곡식 {p}/20', {p: Math.min(20, R.grain)})
@@ -1603,7 +1607,7 @@ const TALE_RULE_FN = {
       const P = G.P,
         d = Math.hypot(P.x - R.well.x, P.y - R.well.y);
       G.taleMight = d < 30 ? Math.min(0.6, G.taleMight + 0.06 * dt) : Math.max(0, G.taleMight - 0.1 * dt);
-      if (d < 30 && Math.random() < 0.2) particle(R.well.x + rnd(-6, 6), R.well.y - 8, '#8fd3ff', 1, 20, 0.5);
+      if (d < 30 && rand() < 0.2) particle(R.well.x + rnd(-6, 6), R.well.y - 8, '#8fd3ff', 1, 20, 0.5);
     },
     hud: () => _t('물의 힘 +{p}%', {p: Math.round(G.taleMight * 100)}),
     draw(R) {
@@ -1637,7 +1641,7 @@ const TALE_RULE_FN = {
         d = Math.hypot(P.x - w.x, P.y - w.y);
       if (d < 30) {
         R.wp += dt;
-        if (Math.random() < 0.25) particle(w.x + rnd(-6, 6), w.y - 8, '#8fd3ff', 1, 20, 0.5);
+        if (rand() < 0.25) particle(w.x + rnd(-6, 6), w.y - 8, '#8fd3ff', 1, 20, 0.5);
         if (R.wp >= 6) {
           R.wi++;
           R.wp = 0;
@@ -1870,7 +1874,7 @@ function spawnTrace() {
   const P = G.P,
     id = G.traceId;
   for (let t = 0; t < 30; t++) {
-    const ang = Math.random() * TAU,
+    const ang = rand() * TAU,
       d = rnd(150, 260),
       x = P.x + Math.cos(ang) * d,
       y = P.y + Math.sin(ang) * d * 0.75;
@@ -1896,7 +1900,7 @@ function updTrace(dt) {
   const d = Math.hypot(P.x - a.x, P.y - a.y);
   if (d < 24) {
     a.prog += dt;
-    if (Math.random() < 0.3) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#ffe08a', 1, 15, 0.5);
+    if (rand() < 0.3) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#ffe08a', 1, 15, 0.5);
     if (a.prog >= a.need) {
       G.trace = null;
       takeFrag(a.id);
@@ -1943,7 +1947,7 @@ function drawTrace(a) {
   pxRing(x, y, 18, 13, '#ffe08a', t * 5, 4, 2);
   b.globalAlpha = 1;
   b.drawImage(sp, R(x - sp.width / 2), R(y - sp.height - 2 + Math.sin(t * 2)));
-  if (Math.random() < 0.12) particle(a.x + rnd(-10, 10), a.y - rnd(0, 14), '#ffe08a', 1, 8, 0.6);
+  if (vrand() < 0.12) particle(a.x + vrnd(-10, 10), a.y - vrnd(0, 14), '#ffe08a', 1, 8, 0.6);
   if (a.prog > 0) {
     b.strokeStyle = '#ffe08a';
     b.lineWidth = 2;

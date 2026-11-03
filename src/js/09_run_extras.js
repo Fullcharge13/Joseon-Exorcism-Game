@@ -115,11 +115,11 @@ function tmRebuild() {
   for (const w of G.weapons) if (w.tm) G.tmOf[w.id] = w.tm;
 }
 function temperHit(tm, e, dmg) {
-  if (tm === 'thunder' && Math.random() < 0.1) {
+  if (tm === 'thunder' && rand() < 0.1) {
     G._dg = 1;
     bolt(e.x, e.y, 14, Math.max(dmg * 0.8, (15 + 10 * G.stage) * G.P.might));
     G._dg = 0;
-  } else if (tm === 'frost' && !e.boss && Math.random() < 0.15) {
+  } else if (tm === 'frost' && !e.boss && rand() < 0.15) {
     e.frz = Math.max(e.frz, 0.8);
   }
 }
@@ -133,7 +133,7 @@ function temperFor(w) {
 }
 function openTemper(cb) {
   const done = cb || (() => show(null));
-  const ws = G.weapons.filter(w => WD[w.id].type === 'w' && !w.tm).sort(() => Math.random() - 0.5);
+  const ws = G.weapons.filter(w => WD[w.id].type === 'w' && !w.tm).sort(() => rand() - 0.5);
   if (!ws.length) {
     const c = 40 + G.stage * 10;
     G.coins += c;
@@ -148,8 +148,8 @@ function openTemper(cb) {
       pool = temperFor(w).filter(t => !(used[w.id] || []).includes(t));
     if (!pool.length) continue;
     const pref = pool.filter(t => TEMPER[t].k !== '*'),
-      src = pref.length && Math.random() < 0.7 ? pref : pool,
-      t = src[(Math.random() * src.length) | 0];
+      src = pref.length && rand() < 0.7 ? pref : pool,
+      t = src[(rand() * src.length) | 0];
     (used[w.id] = used[w.id] || []).push(t);
     const d = WD[w.id],
       nm = wName(w),
@@ -252,12 +252,12 @@ const DKB = {
 };
 function dkPlan() {
   G.dk = null;
-  G.dkAt = G.mode === 'normal' && (G.ks === 'gamtu' || Math.random() < 0.5) ? rnd(40, 110) : undefined;
+  G.dkAt = G.mode === 'normal' && (G.ks === 'gamtu' || rand() < 0.5) ? rnd(40, 110) : undefined;
 }
 function spawnDk() {
   const P = G.P;
   for (let t = 0; t < 20; t++) {
-    const a = Math.random() * TAU,
+    const a = rand() * TAU,
       d = rnd(140, 220),
       x = P.x + Math.cos(a) * d,
       y = P.y + Math.sin(a) * d * 0.75,
@@ -321,7 +321,7 @@ function openDk() {
         f: () => {
           P.hp = Math.max(1, P.hp - cost);
           const ks = Object.keys(DKC);
-          G.dkC = ks[(Math.random() * ks.length) | 0];
+          G.dkC = ks[(rand() * ks.length) | 0];
           G.dkBoon = true;
           G.rs.dkIn = (G.rs.dkIn || 0) + 1;
           recompute();
@@ -354,7 +354,7 @@ function claimDk(cb) {
   G.dkC = null;
   recompute();
   const keys = Object.keys(DKB)
-    .sort(() => Math.random() - 0.5)
+    .sort(() => rand() - 0.5)
     .slice(0, 3);
   openPick(
     'GOBLIN TREASURE',
@@ -401,7 +401,7 @@ function drawDkBase(d) {
     b.fillRect(fx, fy, 2, 3);
     b.fillRect(fx + (i === 1 ? 0 : 1), fy - 1, 1, 1);
   }
-  if (Math.random() < 0.15) particle(d.x + rnd(-8, 8), d.y - rnd(6, 24), '#5af0d0', 1, 10, 0.6);
+  if (vrand() < 0.15) particle(d.x + vrnd(-8, 8), d.y - vrnd(6, 24), '#5af0d0', 1, 10, 0.6);
   if (d.prog > 0) {
     b.strokeStyle = '#5af0d0';
     b.lineWidth = 2;
@@ -427,7 +427,7 @@ function questPlan() {
   G.q = null;
   if (G.mode !== 'normal') return;
   const l = Object.keys(QUESTS).filter(k => !QUESTS[k].ok || QUESTS[k].ok()),
-    k = l[(Math.random() * l.length) | 0],
+    k = l[(rand() * l.length) | 0],
     Q = QUESTS[k];
   G.q = {id: k, need: Q.need(G.stage), base: k === 'combo' ? 0 : G.rs[Q.key] || 0, done: false};
   G.cbStage = 0;
@@ -790,7 +790,7 @@ function npcTalk(id) {
     } else {
       const rd = h.read[id] || 0,
         ok = N.lines.filter((l, i) => rd & (1 << i));
-      t = (ok[(Math.random() * ok.length) | 0] || N.lines[0]).t;
+      t = (ok[(rand() * ok.length) | 0] || N.lines[0]).t;
     }
   }
   saveMeta();

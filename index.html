@@ -661,8 +661,24 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
 <script>
 'use strict';
 const $ = s => document.querySelector(s);
+/* v20.1 씨앗 난수: 판의 일(요괴·드롭·선택지·피해)은 rand()·rnd(), 보이기만 하는 것(그리기·소리·잔상)은 vrand()·vrnd().
+   newGame이 씨앗(G.seed)으로 판 난수를 새로 만든다. 같은 씨앗이면 그리기·기기 빠르기·절약 모드와 상관없이 같은 판.
+   시험이 Math.random을 바꿔 두면 rand()도 그것을 따른다(옛 시험이 난수를 고정하던 방식 그대로). */
+const NATIVE_RANDOM = Math.random;
+function mulberry32(s) {
+  return function () {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+let RNG = NATIVE_RANDOM;
+const rand = () => (Math.random !== NATIVE_RANDOM ? Math.random() : RNG()),
+  vrand = () => Math.random();
 const TAU = Math.PI * 2,
-  rnd = (a, b) => a + Math.random() * (b - a),
+  rnd = (a, b) => a + rand() * (b - a),
+  vrnd = (a, b) => a + vrand() * (b - a),
   clamp = (v, a, b) => (v < a ? a : v > b ? b : v),
   R = Math.round;
 const cvs = $('#game'),
@@ -3406,7 +3422,7 @@ function rainGlyph(n, dmg, r, chars, spread) {
       x,
       y,
       h: 80 + i * (spread ? 5 : 14),
-      ch: chars[(Math.random() * chars.length) | 0],
+      ch: chars[(vrand() * chars.length) | 0],
       dmg,
       r,
       big: spread
@@ -3468,8 +3484,8 @@ function summon(w, n, dmg, look, sp = 110, extra) {
           look,
           x: G.P.x + rnd(-10, 10),
           y: G.P.y + rnd(-10, 10),
-          ph: Math.random() * TAU,
-          id: Math.random(),
+          ph: rand() * TAU,
+          id: rand(),
           dmg,
           sp
         },
@@ -3732,7 +3748,7 @@ function awkOptions() {
     if (d.type !== 'c' || w.awk) continue;
     for (const t of awkTypes(w.id)) c.push({id: w.id, t});
   }
-  c.sort(() => Math.random() - 0.5);
+  c.sort(() => rand() - 0.5);
   const out = [],
     used = new Set();
   for (const o of c) {
@@ -3894,12 +3910,12 @@ function castCall() {
     case 'baekho':
       for (const e of vis()) {
         hurt(e, D * 2.5, 60, P.x, P.y);
-        if (Math.random() < 0.3)
+        if (rand() < 0.3)
           G.fx.push({
             t: 'slash',
             x: e.x,
             y: e.y,
-            a: Math.random() * TAU,
+            a: vrand() * TAU,
             r: 16,
             life: 0.2,
             max: 0.2,
@@ -4022,10 +4038,10 @@ function openPath() {
     return;
   }
   let ids = Object.keys(PATHS)
-    .sort(() => Math.random() - 0.5)
+    .sort(() => rand() - 0.5)
     .slice(0, 3);
   if (G.ks === 'mangchi' && !ids.includes('temper')) ids[2] = 'temper';
-  const hardI = Math.random() < 0.7 ? (Math.random() * 3) | 0 : -1,
+  const hardI = rand() < 0.7 ? (rand() * 3) | 0 : -1,
     n = STAGES[G.stage + 1];
   openPick(
     'CROSSROADS',
@@ -4133,7 +4149,7 @@ function zone(o) {
 }
 function volley(n, dmg, pierce, kind = 'arrow', spd = 250, extra) {
   const P = G.P,
-    o = Math.random();
+    o = rand();
   for (let i = 0; i < n; i++) shoot(P.x, P.y, ((i + o) / n) * TAU, spd, kind, dmg, pierce, 0.8, 2, extra);
 }
 function heal(v) {
@@ -4142,7 +4158,7 @@ function heal(v) {
 }
 function bolt(x, y, r, dmg) {
   aoe(x, y, r, dmg, 10);
-  G.fx.push({t: 'bolt', x, y, life: 0.18, max: 0.18, seed: Math.random() * 99});
+  G.fx.push({t: 'bolt', x, y, life: 0.18, max: 0.18, seed: vrand() * 99});
 }
 const L5 = (w, a) => a[w.lv - 1];
 const HANJA = '天地玄黃宇宙洪荒日月盈昃辰宿列張寒來暑往秋收冬藏';
@@ -4314,7 +4330,7 @@ const WD = {
         dps = (w.evo ? 18 : L5(w, [6, 6, 9, 9, 11])) * P.might;
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy(120);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU;
         shoot(P.x, P.y, a, 160 * P.pspd, 'cup', 4 * P.might, 1, 0.9, 3, {
           dot: dps,
           dotT: (w.evo ? 4 : L5(w, [3, 3, 3, 3, 4])) * P.dur,
@@ -4348,7 +4364,7 @@ const WD = {
         shoot(
           P.x,
           P.y,
-          Math.random() * TAU,
+          rand() * TAU,
           150 * P.pspd,
           'blade',
           dmg,
@@ -4377,7 +4393,7 @@ const WD = {
         dmg = (w.evo ? 20 : L5(w, [10, 10, 10, 12, 14])) * P.might;
       for (let i = 0; i < n; i++) {
         const tg = nearest(P.x, P.y, 200);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.4, 0.4) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.4, 0.4) : rand() * TAU;
         shoot(P.x, P.y, a, 200 * P.pspd, 'pill', dmg, 1, 1.5, 3, {
           bounces: w.evo ? 12 : L5(w, [3, 4, 4, 6, 6]),
           boom: w.evo ? 14 * P.area : 0
@@ -4833,7 +4849,7 @@ const WD = {
           if (!e.boss) e.frz = Math.max(e.frz, fr);
           (e.dotSrc = HSRC || CUR_SRC || e.dotSrc), (e.dot = Math.max(e.dot || 0, dps));
           e.dotT = 3;
-          if (Math.random() < 0.3) particle(e.x, e.y - 8, '#ff7ab0', 2, 15, 0.6);
+          if (rand() < 0.3) particle(e.x, e.y - 8, '#ff7ab0', 2, 15, 0.6);
         }
       w.t = L5(w, [12, 12, 12, 10, 9]) * P.cd;
     }
@@ -5079,7 +5095,7 @@ const WD = {
         bn = w.evo ? 6 : L5(w, [2, 3, 3, 3, 4]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy(160);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.25 : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.25 : rand() * TAU;
         shoot(P.x, P.y - 4, a, 210 * P.pspd, 'coin', dmg, 1, 1.4, 2.5, {bounces: bn});
       }
       w.t = (w.evo ? 1.1 : L5(w, [1.5, 1.4, 1.4, 1.3, 1.2])) * P.cd;
@@ -5184,7 +5200,7 @@ const WD = {
       for (const e of l) {
         e.mark = G.time + 4;
         hurt(e, dmg, 0);
-        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.15, max: 0.15, seed: Math.random() * 99});
+        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.15, max: 0.15, seed: vrand() * 99});
         particle(e.x, e.y - 6, '#e0b048', 4, 30, 0.4);
       }
       w.t = L5(w, [4, 4, 4, 3.4, 3.2]) * P.cd;
@@ -5308,7 +5324,7 @@ const WD = {
       if (w.t > 0) return;
       const n = L5(w, [2, 3, 3, 3, 5]) + P.amount,
         dmg = L5(w, [18, 18, 24, 24, 30]) * P.might,
-        a0 = Math.random() * TAU;
+        a0 = rand() * TAU;
       for (let i = 0; i < n; i++)
         shoot(P.x, P.y, a0 + (i / n) * TAU, 180 * P.pspd, 'boomer', dmg, 99, 3, L5(w, [5, 5, 5, 6, 6]) * P.area, {
           v0: 180 * P.pspd,
@@ -5482,7 +5498,7 @@ const WD = {
     upd(w, dt, P) {
       w.t -= dt;
       if (w.t > 0) return;
-      const r = Math.random(),
+      const r = rand(),
         k = w.evo ? (r < 0.45 ? 3 : r < 0.8 ? 4 : 5) : r < 0.15 ? 1 : r < 0.5 ? 2 : r < 0.8 ? 3 : r < 0.93 ? 4 : 5,
         NM = [_t('도'), _t('개'), _t('걸'), _t('윷|끗'), _t('모')];
       const n = k + (w.evo ? 2 : w.lv >= 5 ? 2 : w.lv >= 2 ? 1 : 0) + P.amount,
@@ -5490,7 +5506,7 @@ const WD = {
         pr = w.evo ? 3 : L5(w, [1, 1, 1, 2, 2]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy(180);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.15, 0.15) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.15, 0.15) : rand() * TAU;
         shoot(P.x, P.y - 4, a, 220 * P.pspd, 'yut', dmg, pr, 0.9, 3);
       }
       if (k === 5) pulseRing(P.x, P.y, (w.evo ? 80 : 60) * P.area, dmg * 2.5, '#e0b048', 80);
@@ -5539,7 +5555,7 @@ const WD = {
         bn = w.evo ? 8 : L5(w, [3, 5, 5, 5, 7]);
       for (let i = 0; i < n; i++) {
         const tg = nearest(P.x, P.y, 200);
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.3 : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + (i - (n - 1) / 2) * 0.3 : rand() * TAU;
         shoot(P.x, P.y - 4, a, 180 * P.pspd, 'jegi', dmg, 1, 1.5, 3, {bounces: bn});
       }
       w.t = (w.evo ? 1.2 : L5(w, [1.7, 1.6, 1.6, 1.5, 1.3])) * P.cd;
@@ -5582,7 +5598,7 @@ const WD = {
         pr = w.evo ? 5 : L5(w, [2, 2, 3, 3, 4]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy();
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU;
         shoot(P.x, P.y, a, (w.evo ? 330 : 270) * P.pspd, 'arrow', dmg, pr, 0.9, 2);
       }
       w.t = (w.evo ? 0.28 : L5(w, [1.2, 1.1, 1.05, 0.95, 0.8])) * P.cd;
@@ -5605,7 +5621,7 @@ const WD = {
         br = (w.evo ? 34 : L5(w, [20, 22, 22, 24, 26])) * P.area;
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy();
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.6, 0.6) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) + rnd(-0.6, 0.6) : rand() * TAU;
         shoot(P.x, P.y, a, 90, 'rocket', dmg, 1, 1.6, 3, {tg, br});
       }
       w.t = (w.evo ? 1.2 : L5(w, [2.2, 2.1, 2.0, 1.9, 1.6])) * P.cd;
@@ -5764,7 +5780,7 @@ const WD = {
         dmg = L5(w, [160, 200, 200, 240, 280]) * P.might;
       const strokes = w.lv >= 5 ? 2 : 1;
       for (let s = 0; s < strokes; s++) {
-        const a = (tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU) + (s * Math.PI) / 2;
+        const a = (tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU) + (s * Math.PI) / 2;
         const sx = P.x - (Math.cos(a) * len) / 2,
           sy = P.y - (Math.sin(a) * len) / 2;
         beam(sx, sy, a, len, wd, dmg, '#1a1418');
@@ -5879,7 +5895,7 @@ const WD = {
       for (const e of list) {
         e.mark = G.time + 5;
         hurt(e, L5(w, [60, 75, 75, 95, 110]) * P.might, 0);
-        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: Math.random() * 99, col: '#ff5a3a'});
+        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: vrand() * 99, col: '#ff5a3a'});
       }
       w.t = L5(w, [3, 3, 2.6, 2.6, 2.4]) * P.cd;
     }
@@ -5950,7 +5966,7 @@ const WD = {
       w.t -= dt;
       if (w.t > 0) return;
       const n = L5(w, [3, 4, 4, 5, 7]),
-        o = Math.random() * TAU;
+        o = rand() * TAU;
       for (let i = 0; i < n; i++) {
         const a = o + (i / n) * TAU;
         zone({
@@ -6017,7 +6033,7 @@ const WD = {
       w.t -= dt;
       if (w.t > 0) return;
       const n = w.lv >= 4 ? 4 : 3,
-        o = Math.random() * TAU;
+        o = rand() * TAU;
       for (let i = 0; i < n; i++) {
         const a = o + (i / n) * TAU;
         zone({
@@ -6230,7 +6246,7 @@ const WD = {
           x: P.x + Math.cos(a) * 20,
           y: P.y + Math.sin(a) * 20,
           ph: a,
-          id: Math.random(),
+          id: rand(),
           dmg: 24 * P.might,
           sp: 140,
           life: 6 * P.dur
@@ -6421,7 +6437,7 @@ const WD = {
           w.bt = 0.12;
           const tg = randomEnemy();
           if (tg) bolt(tg.x, tg.y, 14 * P.area, L5(w, [40, 46, 46, 52, 66]) * P.might);
-          if (Math.random() < 0.3) snd(80, 0.1, 'square', 0.02);
+          if (vrand() < 0.3) snd(80, 0.1, 'square', 0.02);
         }
         return;
       }
@@ -6483,7 +6499,7 @@ const WD = {
       const n = L5(w, [2, 3, 3, 3, 4]);
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy();
-        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : Math.random() * TAU;
+        const a = tg ? Math.atan2(tg.y - P.y, tg.x - P.x) : rand() * TAU;
         shoot(P.x, P.y, a, 150, 'ball', L5(w, [50, 50, 64, 64, 80]) * P.might, 1, 1.4, 4, {
           br: L5(w, [30, 30, 30, 38, 38]) * P.area
         });
@@ -6849,7 +6865,7 @@ Object.assign(WD, {
         hold = L5(w, [2, 2, 2.5, 2.5, 2.5]),
         dmg = L5(w, [144, 162, 180, 225, 288]) * P.might; /* v19.2 ×1.8(자동 플레이 피해 비중 1%) */
       for (const e of t6Strong(n, false)) {
-        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: Math.random() * 99, col: '#e0b048'});
+        G.fx.push({t: 'bolt', x: e.x, y: e.y, life: 0.2, max: 0.2, seed: vrand() * 99, col: '#e0b048'});
         if (e.boss) {
           e.mark = G.time + 4;
           hurt(e, dmg * 0.5, 0);
@@ -7152,7 +7168,7 @@ Object.assign(WD, {
       w.t -= dt;
       if (w.t > 0) return;
       const pDg = L5(w, [0.2, 0.2, 0.3, 0.3, 0.4]),
-        r = Math.random(),
+        r = rand(),
         k = r < pDg ? 'daegil' : r < pDg + (1 - pDg) / 2 ? 'gil' : 'hyung',
         dmg = L5(w, [40, 55, 55, 70, 90]) * P.might;
       w.last = k;
@@ -7951,6 +7967,12 @@ let LAB = false;
 try {
   LAB = /[?&]combo\b/.test(location.search);
 } catch (e) {}
+/* v20.1 주소에 ?seed=숫자를 붙이면 모든 판을 그 씨앗으로 시작한다(오류 기록의 씨앗으로 같은 판을 다시 보기) */
+let URL_SEED = null;
+try {
+  const m = /[?&]seed=(\d+)/.exec(location.search);
+  if (m) URL_SEED = Number(m[1]) >>> 0;
+} catch (e) {}
 function saveMeta() {
   if (LAB) return;
   try {
@@ -7989,7 +8011,7 @@ function saveImport(code) {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.0.1',
+const GAME_VER = 'v20.1',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -8021,6 +8043,7 @@ function diagState() {
     return G
       ? {
           mode: G.mode,
+          seed: G.seed, // v20.1 이 씨앗으로 ?seed= 를 붙여 같은 판을 다시 본다
           cid: G.cid,
           stage: G.stage + 1,
           loop: G.loop,
@@ -8258,7 +8281,10 @@ const TMP = [],
 const keys = {};
 let joy = null;
 
-function newGame(cid, card, curse, diff = 'normal', mode = 'normal') {
+function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
+  // v20.1 판 난수: 씨앗을 주면(시험·?seed=) 그 판을 다시 만들 수 있다. 없으면 새 씨앗
+  if (!Number.isInteger(seed)) seed = URL_SEED !== null ? URL_SEED : (NATIVE_RANDOM() * 4294967296) >>> 0;
+  RNG = mulberry32(seed);
   const cards = cardList(card);
   VFXS.debris.length = 0;
   diagSeen.clear();
@@ -8270,6 +8296,7 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal') {
     m = meta.up;
   G = {
     cid,
+    seed,
     cards,
     curse,
     diff,
@@ -9029,7 +9056,7 @@ function openSeal() {
     done();
     return;
   }
-  const sh = a => a.sort(() => Math.random() - 0.5),
+  const sh = a => a.sort(() => rand() - 0.5),
     pool = sh(ws.slice()),
     cards = [],
     shown = new Set();
@@ -9082,7 +9109,7 @@ function graze(q) {
   G.grazeT = 2;
   addCall(1.2);
   particle((q.x + P.x) / 2, (q.y + P.y - 3) / 2, '#ffffff', 3, 30, 0.25);
-  if (G.fx.length < CAP.n) G.fx.push({t: 'num', x: P.x + rnd(-4, 4), y: P.y - 20, v: _t('스침'), life: 0.4, max: 0.4});
+  if (G.fx.length < CAP.n) G.fx.push({t: 'num', x: P.x + vrnd(-4, 4), y: P.y - 20, v: _t('스침'), life: 0.4, max: 0.4});
   snd(1700, 0.03, 'triangle', 0.012);
 }
 
@@ -9169,9 +9196,9 @@ function rushRound() {
   const extra = [S[Math.min(9, r + 1)].mid, S[Math.max(0, r - 1)].boss, S[Math.min(9, r + 1)].boss].filter(
     x => !pick.has(x)
   );
-  pick.add(extra[(Math.random() * extra.length) | 0]);
-  const ids = [...pick].sort(() => Math.random() - 0.5),
-    gr = GRADES.slice().sort(() => Math.random() - 0.5);
+  pick.add(extra[(rand() * extra.length) | 0]);
+  const ids = [...pick].sort(() => rand() - 0.5),
+    gr = GRADES.slice().sort(() => rand() - 0.5);
   openPick(
     `EXPEDITION · ${r + 1} / ${STAGES.length}`,
     _t('{p}번째 원정', {p: r + 1}),
@@ -9217,7 +9244,7 @@ function rushReward(left) {
     return;
   }
   const keys = Object.keys(GIFTS)
-      .sort(() => Math.random() - 0.5)
+      .sort(() => rand() - 0.5)
       .slice(0, 3),
     next = () => rushReward(left - 1),
     P = G.P;
@@ -9292,9 +9319,9 @@ function variantChance() {
 }
 function maybeVariant(e) {
   const ch = variantChance();
-  if (ch <= 0 || Math.random() >= ch) return;
+  if (ch <= 0 || rand() >= ch) return;
   const ks = Object.keys(VARIANTS),
-    k = ks[(Math.random() * ks.length) | 0];
+    k = ks[(rand() * ks.length) | 0];
   e.vr = k;
   if (k === 'swift') e.spd *= 1.6;
   if (k === 'iron') {
@@ -9460,7 +9487,7 @@ function guideSay(kind, o, m) {
   const L = GUIDE[kind].lines[m];
   if (!L) return;
   o.said[m] = true;
-  let txt = L[(Math.random() * L.length) | 0],
+  let txt = L[(rand() * L.length) | 0],
     n = '';
   if (txt.includes('{n}')) {
     const A = ANOM.find(x => x.id === o.id);
@@ -9547,9 +9574,9 @@ function spawnAnom() {
   const P = G.P,
     pool = ANOM.filter(a => !(meta.anom || {})[a.id]),
     src = pool.length ? pool : ANOM,
-    a = src[(Math.random() * src.length) | 0];
+    a = src[(rand() * src.length) | 0];
   for (let t = 0; t < 20; t++) {
-    const ang = Math.random() * TAU,
+    const ang = rand() * TAU,
       d = rnd(150, 260),
       x = P.x + Math.cos(ang) * d,
       y = P.y + Math.sin(ang) * d * 0.75;
@@ -9576,7 +9603,7 @@ function updAnom(dt) {
   guideTick('anom', a, dt);
   if (d < 24) {
     a.prog += dt;
-    if (Math.random() < 0.25) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#c080ff', 1, 15, 0.5);
+    if (rand() < 0.25) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#c080ff', 1, 15, 0.5);
     if (a.prog >= a.need) {
       guideDone('anom', a);
       G.anom = null;
@@ -9593,7 +9620,7 @@ function investigate(a) {
   meta.anom[a.id] = (meta.anom[a.id] || 0) + 1;
   G.rs.anoms = (G.rs.anoms || 0) + 1;
   saveMeta();
-  const r = Math.random();
+  const r = rand();
   let rw;
   if (r < 0.3) {
     const c = 25 + G.stage * 6;
@@ -9680,7 +9707,7 @@ function drawAnomBase(a) {
     b.fillRect(x - 3 + ex, y - 10, 2, 1);
     b.fillRect(x + 1 + ex, y - 10, 2, 1);
   }
-  if (Math.random() < 0.1) particle(a.x + rnd(-10, 10), a.y - rnd(0, 14), '#c080ff', 1, 8, 0.6);
+  if (vrand() < 0.1) particle(a.x + vrnd(-10, 10), a.y - vrnd(0, 14), '#c080ff', 1, 8, 0.6);
   if (a.prog > 0) {
     b.strokeStyle = '#c080ff';
     b.lineWidth = 2;
@@ -9764,7 +9791,7 @@ function placeNear(d0, d1, avoid = [], gap = 0) {
   const P = G.P;
   const far = (x, y) => avoid.every(q => Math.hypot(q.x - x, q.y - y) >= gap); // avoid: 이미 놓은 것들과 gap 이상 떨어뜨림
   for (let t = 0; t < 60; t++) {
-    const a = Math.random() * TAU,
+    const a = rand() * TAU,
       d = rnd(d0, d1),
       x = P.x + Math.cos(a) * d,
       y = P.y + Math.sin(a) * d * 0.75,
@@ -9811,7 +9838,7 @@ const TALE_RULE_FN = {
       G.mods.noTteok = true;
     },
     kill(R, e) {
-      if (!e.boss && Math.random() < (G.st > TALE_T ? 0.1 : 0.05)) dropItem('grain', e.x, e.y);
+      if (!e.boss && rand() < (G.st > TALE_T ? 0.1 : 0.05)) dropItem('grain', e.x, e.y);
     },
     ready: R => R.grain >= 20,
     hud: R => _t('곡식 {p}/20', {p: Math.min(20, R.grain)})
@@ -9842,7 +9869,7 @@ const TALE_RULE_FN = {
       const P = G.P,
         d = Math.hypot(P.x - R.well.x, P.y - R.well.y);
       G.taleMight = d < 30 ? Math.min(0.6, G.taleMight + 0.06 * dt) : Math.max(0, G.taleMight - 0.1 * dt);
-      if (d < 30 && Math.random() < 0.2) particle(R.well.x + rnd(-6, 6), R.well.y - 8, '#8fd3ff', 1, 20, 0.5);
+      if (d < 30 && rand() < 0.2) particle(R.well.x + rnd(-6, 6), R.well.y - 8, '#8fd3ff', 1, 20, 0.5);
     },
     hud: () => _t('물의 힘 +{p}%', {p: Math.round(G.taleMight * 100)}),
     draw(R) {
@@ -9876,7 +9903,7 @@ const TALE_RULE_FN = {
         d = Math.hypot(P.x - w.x, P.y - w.y);
       if (d < 30) {
         R.wp += dt;
-        if (Math.random() < 0.25) particle(w.x + rnd(-6, 6), w.y - 8, '#8fd3ff', 1, 20, 0.5);
+        if (rand() < 0.25) particle(w.x + rnd(-6, 6), w.y - 8, '#8fd3ff', 1, 20, 0.5);
         if (R.wp >= 6) {
           R.wi++;
           R.wp = 0;
@@ -10109,7 +10136,7 @@ function spawnTrace() {
   const P = G.P,
     id = G.traceId;
   for (let t = 0; t < 30; t++) {
-    const ang = Math.random() * TAU,
+    const ang = rand() * TAU,
       d = rnd(150, 260),
       x = P.x + Math.cos(ang) * d,
       y = P.y + Math.sin(ang) * d * 0.75;
@@ -10135,7 +10162,7 @@ function updTrace(dt) {
   const d = Math.hypot(P.x - a.x, P.y - a.y);
   if (d < 24) {
     a.prog += dt;
-    if (Math.random() < 0.3) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#ffe08a', 1, 15, 0.5);
+    if (rand() < 0.3) particle(a.x + rnd(-8, 8), a.y - rnd(4, 16), '#ffe08a', 1, 15, 0.5);
     if (a.prog >= a.need) {
       G.trace = null;
       takeFrag(a.id);
@@ -10182,7 +10209,7 @@ function drawTrace(a) {
   pxRing(x, y, 18, 13, '#ffe08a', t * 5, 4, 2);
   b.globalAlpha = 1;
   b.drawImage(sp, R(x - sp.width / 2), R(y - sp.height - 2 + Math.sin(t * 2)));
-  if (Math.random() < 0.12) particle(a.x + rnd(-10, 10), a.y - rnd(0, 14), '#ffe08a', 1, 8, 0.6);
+  if (vrand() < 0.12) particle(a.x + vrnd(-10, 10), a.y - vrnd(0, 14), '#ffe08a', 1, 8, 0.6);
   if (a.prog > 0) {
     b.strokeStyle = '#ffe08a';
     b.lineWidth = 2;
@@ -10295,7 +10322,7 @@ function randomEnemy(range) {
   for (const e of G.enemies) {
     if (!e.dead && !e.inv && !e.prop && Math.abs(e.x - P.x) < rx && Math.abs(e.y - P.y) < ry) l.push(e);
   }
-  return l.length ? l[(Math.random() * l.length) | 0] : null;
+  return l.length ? l[(rand() * l.length) | 0] : null;
 }
 function shoot(x, y, a, spd, kind, dmg, pierce, life, r = 2, extra) {
   const p = {
@@ -10319,9 +10346,18 @@ function shoot(x, y, a, spd, kind, dmg, pierce, life, r = 2, extra) {
 }
 function particle(x, y, c, n = 1, sp = 40, life = 0.4) {
   for (let i = 0; i < n && G.fx.length < CAP.p; i++) {
-    const a = Math.random() * TAU,
-      s = rnd(sp * 0.3, sp);
-    G.fx.push({t: 'p', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, col: c, life: rnd(life * 0.5, life), max: life});
+    const a = vrand() * TAU,
+      s = vrnd(sp * 0.3, sp);
+    G.fx.push({
+      t: 'p',
+      x,
+      y,
+      vx: Math.cos(a) * s,
+      vy: Math.sin(a) * s,
+      col: c,
+      life: vrnd(life * 0.5, life),
+      max: life
+    });
   }
 }
 function aoe(x, y, r, dmg, kb) {
@@ -10346,7 +10382,7 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
     return;
   }
   if (duoOn('sancheon') && P.hp >= P.maxHp * 0.8) dmg *= 1.25;
-  if (!noCrit && (Math.random() < P.crit || (e.frz > 0 && duoOn('chilyong')))) {
+  if (!noCrit && (rand() < P.crit || (e.frz > 0 && duoOn('chilyong')))) {
     dmg *= P.critDmg;
     crit = true;
   }
@@ -10386,8 +10422,8 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
     e.ky += (dy / d) * kb * m;
   }
   if (!noCrit) {
-    if (P.frzCh && !e.boss && Math.random() < P.frzCh) e.frz = Math.max(e.frz, 0.7);
-    if (P.burnCh && Math.random() < P.burnCh) {
+    if (P.frzCh && !e.boss && rand() < P.frzCh) e.frz = Math.max(e.frz, 0.7);
+    if (P.burnCh && rand() < P.burnCh) {
       (e.dotSrc = HSRC || CUR_SRC || e.dotSrc), (e.dot = Math.max(e.dot || 0, 8 * P.might));
       e.dotT = 2.5;
     }
@@ -10395,7 +10431,7 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
   if (meta.set.nums && G.fx.length < CAP.n)
     G.fx.push({
       t: 'num',
-      x: e.x + rnd(-2, 2),
+      x: e.x + vrnd(-2, 2),
       y: e.y - e.r - 2,
       v: dmg,
       life: 0.5,
@@ -10406,9 +10442,9 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
   const now = performance.now();
   if (now - lastHit > 45) {
     lastHit = now;
-    snd(520 + Math.random() * 200, 0.03, 'square', 0.015);
+    snd(520 + vrand() * 200, 0.03, 'square', 0.015);
   }
-  if (!noCrit && !G._dg && duoOn('yongho') && Math.random() < 0.08) {
+  if (!noCrit && !G._dg && duoOn('yongho') && rand() < 0.08) {
     G._dg = 1;
     bolt(e.x, e.y, 14, (20 + 15 * G.stage) * P.might);
     G._dg = 0;
@@ -10445,7 +10481,7 @@ function kill(e) {
     G.rs.pots++;
     particle(e.x, e.y, '#b0702e', 8, 50, 0.4);
     snd(300, 0.08, 'square', 0.03);
-    const r = Math.random();
+    const r = rand();
     if (r < 0.35 && !G.mods.noTteok) dropItem('tteok', e.x, e.y);
     else if (r < 0.7) {
       for (let i = 0; i < 3; i++) dropItem('coin', e.x + rnd(-4, 4), e.y + rnd(-3, 3));
@@ -10504,9 +10540,9 @@ function kill(e) {
   if (e.ai === 'explode') {
     const nb = G.stage === 8 ? 4 : 6;
     for (let i = 0; i < nb; i++)
-      ebul(e.x, e.y, (i / nb) * TAU + Math.random(), 45, {dmg: e.dmg * (G.stage === 8 ? 0.5 : 0.7), col: '#c080ff'});
+      ebul(e.x, e.y, (i / nb) * TAU + rand(), 45, {dmg: e.dmg * (G.stage === 8 ? 0.5 : 0.7), col: '#c080ff'});
   }
-  if (G.jinogwi && Math.random() < G.jinogwi.ch)
+  if (G.jinogwi && rand() < G.jinogwi.ch)
     G.spirits.push({
       own: 'temp',
       src: 'jinogwi',
@@ -10514,7 +10550,7 @@ function kill(e) {
       x: e.x,
       y: e.y,
       ph: 0,
-      id: Math.random(),
+      id: rand(),
       dmg: G.jinogwi.dmg,
       sp: 130,
       life: G.jinogwi.life
@@ -10524,7 +10560,7 @@ function kill(e) {
     const tr = taleRule();
     if (tr && tr.kill) tr.kill(G.tale.R, e);
   }
-  const r = Math.random() / G.P.drop;
+  const r = rand() / G.P.drop;
   if (r < 0.025) dropItem('coin', e.x + 2, e.y);
   else if (r < 0.031 && !G.mods.noTteok) dropItem('tteok', e.x, e.y);
   else if (r < 0.0328) dropItem('pouch', e.x, e.y);
@@ -10573,7 +10609,7 @@ function pushOut(o, r) {
 }
 function spawnPot() {
   const P = G.P,
-    a = Math.random() * TAU,
+    a = rand() * TAU,
     d = rnd(70, 130);
   const x = P.x + Math.cos(a) * d,
     y = P.y + Math.sin(a) * d * 0.8;
@@ -10603,7 +10639,7 @@ function spawnPot() {
 }
 function spawnShrine() {
   const P = G.P,
-    a = Math.random() * TAU,
+    a = rand() * TAU,
     d = rnd(120, 150);
   G.shrine = {x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d * 0.8, prog: 0, need: G.ks === 'ocheon' ? 2.1 : 3.5};
   toast(_t('어디선가 성황당의 방울 소리가 들린다'));
@@ -10633,7 +10669,7 @@ function spawnEnemy(id, x, y, opt = {}) {
       G.mods.eHp *
       (G.path && G.path.hard ? 1.3 : 1);
   if (x === undefined) {
-    const a = Math.random() * TAU,
+    const a = rand() * TAU,
       R0 = Math.hypot(W / 2, H / 2) + 16;
     x = G.P.x + Math.cos(a) * R0;
     y = G.P.y + Math.sin(a) * R0;
@@ -10659,7 +10695,7 @@ function spawnEnemy(id, x, y, opt = {}) {
     slow: 0,
     frz: 0,
     vx: 0,
-    bob: Math.random() * TAU,
+    bob: rand() * TAU,
     sc: d.sc || 1,
     spr: id,
     dot: 0,
@@ -10872,7 +10908,7 @@ const BSK = {
         e.x += Math.cos(e.da) * 320 * dt;
         e.y += Math.sin(e.da) * 320 * dt;
         e.vx = Math.cos(e.da);
-        if (Math.random() < 0.5) particle(e.x, e.y, '#b0702e', 1, 20);
+        if (rand() < 0.5) particle(e.x, e.y, '#b0702e', 1, 20);
         if (e.k <= 0) return true;
       }
       return false;
@@ -10975,7 +11011,7 @@ const BSK = {
     },
     tick(e, dt) {
       e.k -= dt;
-      if (Math.random() < 0.3) particle(G.P.x, G.P.y - 8, '#ff7ab0', 1, 15);
+      if (rand() < 0.3) particle(G.P.x, G.P.y - 8, '#ff7ab0', 1, 15);
       if (e.k <= 0) {
         G.pull = null;
         ringB(e, 12, 70);
@@ -10996,7 +11032,7 @@ const BSK = {
       if (e.kt <= 0 && e.k > 0) {
         const P = G.P,
           n = 8,
-          o = Math.random();
+          o = rand();
         for (let i = 0; i < n; i++) {
           const a = ((i + o) / n) * TAU;
           const c = spawnEnemy('baekyeou', P.x + Math.cos(a) * 95, P.y + Math.sin(a) * 75, {
@@ -11022,7 +11058,7 @@ const BSK = {
     start(e) {
       e.k = 2.4;
       e.kt = 0;
-      e.sa = Math.random() * TAU;
+      e.sa = rand() * TAU;
     },
     tick(e, dt) {
       e.k -= dt;
@@ -11065,7 +11101,7 @@ const BSK = {
       const P = G.P;
       warn({x: P.x, y: P.y, r: 18, t: 1.1, dmg: bdmg(), col: '#3a8aff'});
       for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * TAU + Math.random();
+        const a = (i / 6) * TAU + rand();
         warn({
           x: P.x + Math.cos(a) * 42,
           y: P.y + Math.sin(a) * 32,
@@ -11164,7 +11200,7 @@ const BSK = {
       e.kt -= dt;
       if (e.kt <= 0 && e.k > 0) {
         const P = G.P,
-          a = Math.random() * Math.PI;
+          a = rand() * Math.PI;
         warn({
           kind: 'line',
           x: P.x - Math.cos(a) * 200,
@@ -11209,7 +11245,7 @@ const BSK = {
         e.x = P.x - P.dirx * 48;
         e.y = P.y - P.diry * 40;
         particle(e.x, e.y - 8, '#4a4552', 10, 50);
-        ringB(e, 10, 70, Math.random());
+        ringB(e, 10, 70, rand());
         e.k--;
         e.kt = 0.75;
       }
@@ -11297,7 +11333,7 @@ const BSK = {
     start(e) {
       e.k = 4.5;
       e.kt = 0;
-      const a = Math.random() * TAU;
+      const a = rand() * TAU;
       G.wind = {x: Math.cos(a) * 38, y: Math.sin(a) * 38, t: 4.5};
       flash('180,200,230', 0.4);
     },
@@ -11355,7 +11391,7 @@ const BSK = {
     start(e) {
       const P = G.P;
       for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * TAU + Math.random();
+        const a = (i / 6) * TAU + rand();
         G.ezones.push({
           x: P.x + Math.cos(a) * 55,
           y: P.y + Math.sin(a) * 42,
@@ -11482,7 +11518,7 @@ const BSK = {
       eatProj(e, 55);
       if (e.kt <= 0) {
         e.kt = 0.5;
-        ringB(e, 12, 70, Math.random());
+        ringB(e, 12, 70, rand());
         e.sc = Math.min(4.2, e.sc + 0.05);
       }
       if (e.k <= 0) {
@@ -11571,7 +11607,7 @@ const BSK = {
       if (e.ph === 2 && e.k <= 0) {
         if (e.n <= 0) return true;
         e.n--;
-        const a = Math.random() * TAU;
+        const a = rand() * TAU;
         e.x = P.x + Math.cos(a) * 130;
         e.y = P.y + Math.sin(a) * 100;
         e.da = angTo(e, P);
@@ -11622,7 +11658,7 @@ const BSK = {
     tick(e, dt) {
       e.kt -= dt;
       if (e.kt <= 0 && e.k > 0) {
-        ringB(e, 30, 50, Math.random(), Math.random() * TAU);
+        ringB(e, 30, 50, rand(), rand() * TAU);
         e.k--;
         e.kt = 0.7;
       }
@@ -11657,9 +11693,9 @@ const BSK = {
       e.kt -= dt;
       if (e.kt <= 0) {
         e.kt = 0.8;
-        ringB(e, 32, 58, Math.random(), Math.random() * TAU);
+        ringB(e, 32, 58, rand(), rand() * TAU);
         const P = G.P,
-          a = Math.random() * Math.PI;
+          a = rand() * Math.PI;
         warn({
           kind: 'line',
           x: P.x - Math.cos(a) * 200,
@@ -11703,7 +11739,7 @@ function spawnBoss(id, isMid) {
   const s = curStg(),
     D = BOSS[id],
     E = EN[id];
-  const a = Math.random() * TAU,
+  const a = rand() * TAU,
     R0 = Math.hypot(W / 2, H / 2) + 10;
   const baseHp = BOSS_HP[G.stage] * (isMid ? 0.32 : 1) * G.mods.bossHp * G.mods.eHp;
   const hp = Math.max(
@@ -11744,8 +11780,7 @@ function spawnBoss(id, isMid) {
   e.si = 0;
   if (G.mods.borrow) {
     const pool = BORROW.filter(k => !e.skills.includes(k));
-    for (let i = 0; i < G.mods.borrow && pool.length; i++)
-      e.skills.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+    for (let i = 0; i < G.mods.borrow && pool.length; i++) e.skills.push(pool.splice((rand() * pool.length) | 0, 1)[0]);
   }
   if (id === 'imugi') {
     e.segs = [];
@@ -11810,7 +11845,7 @@ function bossAI(e, dt) {
       e.act = e.skills[e.si++ % e.skills.length];
     } else {
       const opts = e.skills.filter(s => s !== e.last);
-      e.act = opts[(Math.random() * opts.length) | 0];
+      e.act = opts[(rand() * opts.length) | 0];
     }
     BSK[e.act].start(e);
   }
@@ -11983,9 +12018,9 @@ function update(dt) {
         list = G.st > 45 ? s.early.concat(s.late) : s.early;
       let n = Math.min(8, Math.ceil((target - alive) * 0.3));
       for (let i = 0; i < n; i++) {
-        const id = list[(Math.random() * list.length) | 0];
+        const id = list[(rand() * list.length) | 0];
         if (EN[id].ai === 'swarm') {
-          const a = Math.random() * TAU,
+          const a = rand() * TAU,
             R0 = Math.hypot(W / 2, H / 2) + 16,
             x = P.x + Math.cos(a) * R0,
             y = P.y + Math.sin(a) * R0;
@@ -12024,7 +12059,7 @@ function update(dt) {
     guideTick('shrine', s, dt);
     if (d < 22) {
       s.prog += dt;
-      if (Math.random() < 0.2) particle(s.x, s.y - 10, '#e0b048', 1, 20);
+      if (rand() < 0.2) particle(s.x, s.y - 10, '#e0b048', 1, 20);
       if (s.prog >= s.need) {
         guideDone('shrine', s);
         G.shrine = null;
@@ -12060,7 +12095,7 @@ function update(dt) {
     HSRC = m.src || null;
     m.x += m.vx * dt;
     m.life -= dt;
-    if (Math.random() < 0.6) particle(m.x - m.dir * 16, m.y + 2, '#bfe0ff', 1, 20, 0.4);
+    if (rand() < 0.6) particle(m.x - m.dir * 16, m.y + 2, '#bfe0ff', 1, 20, 0.4);
     for (const e of near(m.x, m.y, m.r, TMP).slice()) {
       if (m.hit.has(e)) continue;
       m.hit.add(e);
@@ -12178,7 +12213,7 @@ function update(dt) {
         G.coins += Math.round((1 + P.coinPlus) * G.mods.coin);
         snd(1200, 0.06, 'triangle', 0.03);
         if (duoOn('bokrok')) {
-          const r = Math.random();
+          const r = rand();
           if (r < 0.04) dropItem('tteok', it.x + rnd(-12, 12), it.y + rnd(-10, 10));
           else if (r < 0.06) dropItem('pouch', it.x + rnd(-12, 12), it.y + rnd(-10, 10));
         }
@@ -12271,8 +12306,8 @@ function resolveWarn(w) {
     G.fx.push({t: 'ring', x: w.x, y: w.y, r: 3, maxR: w.r, col: w.col, life: 0.25, max: 0.25});
     particle(w.x, w.y, w.col, 6, 60, 0.35);
   } else if (w.dmg) G.fx.push({t: 'beam', x: w.x, y: w.y, a: w.a, len: w.len, w: w.w, col: w.col, life: 0.2, max: 0.2});
-  if (w.fx === 'bolt') G.fx.push({t: 'bolt', x: w.x, y: w.y, life: 0.15, max: 0.15, seed: Math.random() * 99});
-  if (w.fx === 'gold' && Math.random() < 0.25) dropItem('coin', w.x, w.y);
+  if (w.fx === 'bolt') G.fx.push({t: 'bolt', x: w.x, y: w.y, life: 0.15, max: 0.15, seed: vrand() * 99});
+  if (w.fx === 'gold' && rand() < 0.25) dropItem('coin', w.x, w.y);
   if (w.fx === 'slam') G.shake = Math.max(G.shake, 3);
 }
 function updSpirits(dt) {
@@ -12329,11 +12364,11 @@ function updProjs(dt, P) {
         const ta = Math.atan2(p.tg.y - p.y, p.tg.x - p.x);
         let da = Math.atan2(Math.sin(ta - p.a), Math.cos(ta - p.a));
         p.a += da * Math.min(1, (p.kind === 'letter' ? 6 : 5) * dt);
-      } else if (p.kind === 'letter' && Math.random() < 0.1) p.tg = randomEnemy();
+      } else if (p.kind === 'letter' && rand() < 0.1) p.tg = randomEnemy();
       const s = Math.min(p.kind === 'letter' ? 190 : p.kind === 'jtal' ? 260 : 400, Math.hypot(p.vx, p.vy) + 160 * dt);
       p.vx = Math.cos(p.a) * s;
       p.vy = Math.sin(p.a) * s;
-      if (p.kind === 'rocket' && Math.random() < 0.5) particle(p.x, p.y, '#e0b048', 1, 10, 0.25);
+      if (p.kind === 'rocket' && rand() < 0.5) particle(p.x, p.y, '#e0b048', 1, 10, 0.25);
     } else if (p.kind === 'boomer') {
       p.tt += dt;
       const s = p.v0 - p.v0 * 1.4 * p.tt;
@@ -12415,7 +12450,7 @@ function updProjs(dt, P) {
         G._dg = 1;
         aoe(p.x, p.y, 14 * G.P.area, p.dmg * 0.5, 10);
         G._dg = 0;
-        if (Math.random() < 0.4) particle(p.x, p.y, '#ffb060', 3, 40, 0.25);
+        if (rand() < 0.4) particle(p.x, p.y, '#ffb060', 3, 40, 0.25);
       }
       if (p.heal) {
         P.healAcc++;
@@ -12489,7 +12524,7 @@ function updEnemies(dt, P) {
         HSRC = e.dotSrc || null;
         hurt(e, d, 0, 0, 0, true);
         HSRC = null;
-        if (Math.random() < 0.5) particle(e.x, e.y - 4, e.drain ? '#ff5a5a' : '#b07fd0', 1, 15);
+        if (rand() < 0.5) particle(e.x, e.y - 4, e.drain ? '#ff5a5a' : '#b07fd0', 1, 15);
         if (e.dead) continue;
       }
     } else e.dot = 0;
@@ -12574,7 +12609,7 @@ function updEnemies(dt, P) {
           }
           break;
         case 'leap':
-          if (e.ct === undefined) e.ct = Math.random();
+          if (e.ct === undefined) e.ct = rand();
           e.ct -= dt;
           if (e.ct <= 0) e.ct = 1.1;
           if (e.ct > 0.35) {
@@ -12616,7 +12651,7 @@ function updEnemies(dt, P) {
         e.et -= dt;
         if (e.et <= 0) {
           e.et = 3.5;
-          ringB(e, 8, 55, Math.random());
+          ringB(e, 8, 55, rand());
         }
       }
     }
@@ -12667,7 +12702,7 @@ function updEnemies(dt, P) {
       e.y = P.y + Math.sin(a) * R0;
     }
     if (e.boss && !e.act && (Math.abs(e.x - P.x) > W || Math.abs(e.y - P.y) > H)) {
-      const a = Math.random() * TAU;
+      const a = rand() * TAU;
       e.x = P.x + Math.cos(a) * W * 0.6;
       e.y = P.y + Math.sin(a) * H * 0.6;
     }
@@ -12733,9 +12768,9 @@ function skyOn(id) {
 function skyArrive() {
   const P = G.P,
     keys = Object.keys(SKY),
-    k = keys[(Math.random() * keys.length) | 0],
+    k = keys[(rand() * keys.length) | 0],
     god = SKY[k],
-    f = god.fx[(Math.random() * god.fx.length) | 0];
+    f = god.fx[(rand() * god.fx.length) | 0];
   G.sky = {k, fx: f.id, n: f.n, t: SKY_T, tk: 1};
   G.skyGod = {k, x: P.x + 40, y: P.y - 60, t: 4.5};
   G.rs.sky = (G.rs.sky || 0) + 1;
@@ -12760,7 +12795,7 @@ function updSky(dt) {
       ty = P.y - 30;
     g.x += (tx - g.x) * Math.min(1, 3 * dt);
     g.y += (ty - g.y) * Math.min(1, 3 * dt);
-    if (Math.random() < 0.3) particle(g.x + rnd(-8, 8), g.y + 2, '#efe6d2', 1, 10, 0.6);
+    if (rand() < 0.3) particle(g.x + rnd(-8, 8), g.y + 2, '#efe6d2', 1, 10, 0.6);
     if (g.t <= 0) {
       particle(g.x, g.y - 6, SKY[g.k].col, 14, 40, 0.6);
       G.skyGod = null;
@@ -12809,7 +12844,7 @@ function updSky(dt) {
     }
     snd(200, 0.2, 'sawtooth', 0.03);
   }
-  if (k.fx === 'rain' && Math.random() < 0.4)
+  if (k.fx === 'rain' && rand() < 0.4)
     particle(P.x + rnd(-W / 2, W / 2), P.y + rnd(-H / 2, H / 2), '#7fb0ff', 1, 6, 0.4);
 }
 function drawSky() {
@@ -13008,7 +13043,7 @@ function updJW(dt) {
       shoot(
         h.x,
         h.y - 6,
-        tg ? Math.atan2(tg.y - h.y, tg.x - h.x) + rnd(-0.4, 0.4) : Math.random() * TAU,
+        tg ? Math.atan2(tg.y - h.y, tg.x - h.x) + rnd(-0.4, 0.4) : rand() * TAU,
         90,
         'jtal',
         12 + 12 * s,
@@ -13094,7 +13129,7 @@ const PETSK = {
               t: 'slash',
               x: e.x,
               y: e.y,
-              a: Math.random() * TAU,
+              a: vrand() * TAU,
               r: 16,
               life: 0.15,
               max: 0.15,
@@ -13428,7 +13463,7 @@ function damagePlayer(dmg) {
 function gainXp(v) {
   const P = G.P;
   P.xp += v * P.xpGain * (1 + 0.1 * cbTier());
-  snd(900 + Math.random() * 300, 0.03, 'triangle', 0.012);
+  snd(900 + vrand() * 300, 0.03, 'triangle', 0.012);
   while (P.xp >= P.next) {
     P.xp -= P.next;
     P.lvl++;
@@ -14046,7 +14081,7 @@ ELITE_AI.blink = (e, dt, P, vx, vy) => {
       e.x = e.dx2;
       e.y = e.dy2;
       e.inv = e.inv0;
-      ringB(e, 8, 60, Math.random());
+      ringB(e, 8, 60, rand());
       particle(e.x, e.y, '#e07a2e', 10, 60, 0.4);
     }
     return [0, 0];
@@ -14056,7 +14091,7 @@ ELITE_AI.blink = (e, dt, P, vx, vy) => {
     e.bT = 6;
     let q = null;
     for (let t = 0; t < 16 && !q; t++) {
-      const a = Math.random() * TAU,
+      const a = rand() * TAU,
         dd = rnd(80, 120),
         c = {x: P.x + Math.cos(a) * dd, y: P.y + Math.sin(a) * dd};
       pushOut(c, e.r);
@@ -14571,7 +14606,7 @@ ELITE_AI.fire = (e, dt, P, vx, vy) => {
     for (let i = 0; i < 2; i++) {
       let q = null;
       for (let t = 0; t < 20 && !q; t++) {
-        const a = Math.random() * TAU,
+        const a = rand() * TAU,
           d = rnd(60, 110),
           c = {x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d};
         const c2 = {x: c.x, y: c.y};
@@ -14608,7 +14643,7 @@ ELITE_AI.fire = (e, dt, P, vx, vy) => {
     e.fT = 2;
     if (!wet) {
       for (let k = 0; k < 3; k++) {
-        const a = Math.random() * TAU,
+        const a = rand() * TAU,
           dd = k ? rnd(14, 24) : 0;
         G.ezones.push({
           x: e.x + Math.cos(a) * dd,
@@ -14783,11 +14818,11 @@ function tmRebuild() {
   for (const w of G.weapons) if (w.tm) G.tmOf[w.id] = w.tm;
 }
 function temperHit(tm, e, dmg) {
-  if (tm === 'thunder' && Math.random() < 0.1) {
+  if (tm === 'thunder' && rand() < 0.1) {
     G._dg = 1;
     bolt(e.x, e.y, 14, Math.max(dmg * 0.8, (15 + 10 * G.stage) * G.P.might));
     G._dg = 0;
-  } else if (tm === 'frost' && !e.boss && Math.random() < 0.15) {
+  } else if (tm === 'frost' && !e.boss && rand() < 0.15) {
     e.frz = Math.max(e.frz, 0.8);
   }
 }
@@ -14801,7 +14836,7 @@ function temperFor(w) {
 }
 function openTemper(cb) {
   const done = cb || (() => show(null));
-  const ws = G.weapons.filter(w => WD[w.id].type === 'w' && !w.tm).sort(() => Math.random() - 0.5);
+  const ws = G.weapons.filter(w => WD[w.id].type === 'w' && !w.tm).sort(() => rand() - 0.5);
   if (!ws.length) {
     const c = 40 + G.stage * 10;
     G.coins += c;
@@ -14816,8 +14851,8 @@ function openTemper(cb) {
       pool = temperFor(w).filter(t => !(used[w.id] || []).includes(t));
     if (!pool.length) continue;
     const pref = pool.filter(t => TEMPER[t].k !== '*'),
-      src = pref.length && Math.random() < 0.7 ? pref : pool,
-      t = src[(Math.random() * src.length) | 0];
+      src = pref.length && rand() < 0.7 ? pref : pool,
+      t = src[(rand() * src.length) | 0];
     (used[w.id] = used[w.id] || []).push(t);
     const d = WD[w.id],
       nm = wName(w),
@@ -14920,12 +14955,12 @@ const DKB = {
 };
 function dkPlan() {
   G.dk = null;
-  G.dkAt = G.mode === 'normal' && (G.ks === 'gamtu' || Math.random() < 0.5) ? rnd(40, 110) : undefined;
+  G.dkAt = G.mode === 'normal' && (G.ks === 'gamtu' || rand() < 0.5) ? rnd(40, 110) : undefined;
 }
 function spawnDk() {
   const P = G.P;
   for (let t = 0; t < 20; t++) {
-    const a = Math.random() * TAU,
+    const a = rand() * TAU,
       d = rnd(140, 220),
       x = P.x + Math.cos(a) * d,
       y = P.y + Math.sin(a) * d * 0.75,
@@ -14989,7 +15024,7 @@ function openDk() {
         f: () => {
           P.hp = Math.max(1, P.hp - cost);
           const ks = Object.keys(DKC);
-          G.dkC = ks[(Math.random() * ks.length) | 0];
+          G.dkC = ks[(rand() * ks.length) | 0];
           G.dkBoon = true;
           G.rs.dkIn = (G.rs.dkIn || 0) + 1;
           recompute();
@@ -15022,7 +15057,7 @@ function claimDk(cb) {
   G.dkC = null;
   recompute();
   const keys = Object.keys(DKB)
-    .sort(() => Math.random() - 0.5)
+    .sort(() => rand() - 0.5)
     .slice(0, 3);
   openPick(
     'GOBLIN TREASURE',
@@ -15069,7 +15104,7 @@ function drawDkBase(d) {
     b.fillRect(fx, fy, 2, 3);
     b.fillRect(fx + (i === 1 ? 0 : 1), fy - 1, 1, 1);
   }
-  if (Math.random() < 0.15) particle(d.x + rnd(-8, 8), d.y - rnd(6, 24), '#5af0d0', 1, 10, 0.6);
+  if (vrand() < 0.15) particle(d.x + vrnd(-8, 8), d.y - vrnd(6, 24), '#5af0d0', 1, 10, 0.6);
   if (d.prog > 0) {
     b.strokeStyle = '#5af0d0';
     b.lineWidth = 2;
@@ -15095,7 +15130,7 @@ function questPlan() {
   G.q = null;
   if (G.mode !== 'normal') return;
   const l = Object.keys(QUESTS).filter(k => !QUESTS[k].ok || QUESTS[k].ok()),
-    k = l[(Math.random() * l.length) | 0],
+    k = l[(rand() * l.length) | 0],
     Q = QUESTS[k];
   G.q = {id: k, need: Q.need(G.stage), base: k === 'combo' ? 0 : G.rs[Q.key] || 0, done: false};
   G.cbStage = 0;
@@ -15458,7 +15493,7 @@ function npcTalk(id) {
     } else {
       const rd = h.read[id] || 0,
         ok = N.lines.filter((l, i) => rd & (1 << i));
-      t = (ok[(Math.random() * ok.length) | 0] || N.lines[0]).t;
+      t = (ok[(rand() * ok.length) | 0] || N.lines[0]).t;
     }
   }
   saveMeta();
@@ -16615,7 +16650,7 @@ function genOptions() {
     picks = [];
   while (picks.length < n && pool.length) {
     const tot = pool.reduce((s, o) => s + o.wt, 0);
-    let r = Math.random() * tot,
+    let r = rand() * tot,
       i = 0;
     for (; i < pool.length - 1; i++) {
       r -= pool[i].wt;
@@ -16986,7 +17021,7 @@ function openAdv() {
     const card = document.createElement('div');
     card.className = 'adv advinfo';
     const bonus = TIER_BONUS.slice()
-      .sort(() => Math.random() - 0.5)
+      .sort(() => rand() - 0.5)
       .slice(0, 3);
     card.innerHTML = _t(
       '<span class="badge cls">{name} · {p}차</span><div class="top"><img src="{p2}" alt=""><b>{name2}</b></div><div class="sk">{p3}고유 기술 · {name3}</div><p>{p4}</p><div class="bn">전직 보너스 · {bonus}</div><div class="tree">{p5}</div>',
@@ -17037,7 +17072,7 @@ function openBless(title) {
   $('#blessTitle').textContent = title || _t('신령께 비나이다');
   const ids = Object.keys(BLESS)
     .filter(id => (G.bless[id] || 0) < 3)
-    .sort(() => Math.random() - 0.5)
+    .sort(() => rand() - 0.5)
     .slice(0, 3);
   const done = () => {
     if (G.afterBless) {
@@ -17047,8 +17082,8 @@ function openBless(title) {
     } else show(null);
   };
   const duos = Object.keys(DUO).filter(d => !G.duo[d] && G.bless[DUO[d].a] && G.bless[DUO[d].b]);
-  if (duos.length && Math.random() < 0.7) {
-    const id = duos[(Math.random() * duos.length) | 0],
+  if (duos.length && rand() < 0.7) {
+    const id = duos[(rand() * duos.length) | 0],
       u = DUO[id];
     if (ids.length >= 3) ids.pop();
     const bt = document.createElement('button');
@@ -17153,7 +17188,7 @@ function openChest(n, cb) {
     for (const w of G.weapons) if (w.lv < WD[w.id].max) c.push({k: 'wup', id: w.id});
     for (const id in G.passives) if (G.passives[id] < PD[id].max) c.push({k: 'pup', id});
     if (!c.length && G.weapons.length) {
-      const w = G.weapons[(Math.random() * G.weapons.length) | 0];
+      const w = G.weapons[(rand() * G.weapons.length) | 0];
       const o = decorate({k: 'lb', id: w.id});
       applyOpt(o);
       list.innerHTML += `<div><span class="ic">${o.ic}</span><b>${o.name}</b>&nbsp;${o.badge}</div>`;
@@ -17164,11 +17199,11 @@ function openChest(n, cb) {
       list.innerHTML += _t('<div><img src="{coin}" alt="">엽전 25닢</div>', {coin: ICON.coin});
       continue;
     }
-    const o = decorate(c[(Math.random() * c.length) | 0]);
+    const o = decorate(c[(rand() * c.length) | 0]);
     applyOpt(o);
     list.innerHTML += `<div><span class="ic">${o.ic}</span><b>${o.name}</b>&nbsp;${o.badge}</div>`;
   }
-  if (Math.random() < 0.4) {
+  if (rand() < 0.4) {
     G.queue.push('seal');
     list.innerHTML += _t(
       '<div><span class="ic"><span class="seal" style="background:#7a2018">印</span></span><b>인장 하나</b>&nbsp;상자를 닫으면 새긴다</div>'
@@ -17230,7 +17265,7 @@ const TAVERN = [
       for (const w of G.weapons) if (w.lv < WD[w.id].max) c.push({k: 'wup', id: w.id});
       for (const id in G.passives) if (G.passives[id] < PD[id].max) c.push({k: 'pup', id});
       if (c.length) {
-        const o = decorate(c[(Math.random() * c.length) | 0]);
+        const o = decorate(c[(rand() * c.length) | 0]);
         applyOpt(o);
         toast(_t('{name} 강화', {name: o.name}));
       }
@@ -17788,7 +17823,7 @@ function prepRandOk() {
 function prepCardRand() {
   if (!prepRandOk()) return;
   const c = Object.keys(CARDS).filter(id => unlocked('card:' + id) && !prep.cards.includes(id));
-  prep.cards.push(c[(Math.random() * c.length) | 0]);
+  prep.cards.push(c[(rand() * c.length) | 0]);
 }
 function prepCardHead() {
   return _t('점괘 패 {n}/{max}', {n: prep.cards.length, max: CARD_MAX});
@@ -21668,8 +21703,8 @@ function render() {
   let cx = R(P.x - W / 2),
     cy = R(P.y - H / 2);
   if (G.shake > 0 && meta.set.shake) {
-    cx += R(rnd(-G.shake, G.shake));
-    cy += R(rnd(-G.shake, G.shake));
+    cx += R(vrnd(-G.shake, G.shake));
+    cy += R(vrnd(-G.shake, G.shake));
   }
   RCX = cx;
   RCY = cy;
@@ -21881,7 +21916,7 @@ function render() {
     b.ellipse(P.x, P.y - 7 * hk, 9 * hk, 10 * hk, 0, 0, TAU);
     b.fill();
     b.globalAlpha = 1;
-    if (!LOW && Math.random() < 0.15) particle(P.x + rnd(-5, 5) * hk, P.y - rnd(2, 12) * hk, look.aura, 1, 8, 0.6);
+    if (!LOW && vrand() < 0.15) particle(P.x + vrnd(-5, 5) * hk, P.y - vrnd(2, 12) * hk, look.aura, 1, 8, 0.6);
   }
   if (G.sky && G.sky.t > 0) {
     const c = SKY[G.sky.k].rgb;
