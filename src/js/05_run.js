@@ -22,17 +22,9 @@ function newGame(cid,card,curse,diff='normal',mode='normal'){const cards=cardLis
  C.base(G.base);if(cid==='sangin')G.mods.coin*=1.3;
  const B=G.base,M=G.mods;
  {const u=meta.upB;if(u.hp)B.regen+=(m.hp||0)*0.1;else B.maxHp+=(m.hp||0)*10;if(u.might)B.crit+=(m.might||0)*0.03;else B.might+=(m.might||0)*0.05;if(u.spd)B.magnet+=(m.spd||0)*0.12;else B.spd+=(m.spd||0)*0.04;if(u.xp)M.coinShop=1+(m.xp||0)*0.08;else B.xpGain+=(m.xp||0)*0.1;if(u.revive&&m.revive)M.dmgIn*=0.9;}
- for(const card of cards)switch(card){
-  case 'gilil':B.xpGain+=0.2;M.eCnt*=1.15;break; case 'hyungnyeon':M.noTteok=true;M.coin*=2;break;
-  case 'yeokma':B.spd+=0.25;B.maxHp*=0.8;break; case 'dohwa':B.magnet*=2;M.eSpd*=1.1;break;
-  case 'hongsu':B.area+=0.25;B.pspd-=0.2;break; case 'baekhosal':B.crit+=0.15;M.dmgIn*=1.2;break;
-  case 'samjae':M.elite*=2;M.chestPlus=1;break; case 'cheoneul':G.P.revive++;B.might-=0.1;break;
-  case 'jangwon':M.choice+=1;M.eHp*=1.15;break; case 'munchang':M.cls*=1.25;B.maxHp*=0.9;break;
-  case 'cheonsal':M.eHp*=1.3;B.xpGain+=0.4;break;}
- if(curse>=1)M.eHp*=1.25; if(curse>=2)M.eSpd*=1.1; if(curse>=3)M.elite*=2; if(curse>=4)M.bossHp*=1.35; if(curse>=5)M.tteokHeal*=0.5;
- if(curse>=6)M.eCnt*=1.25; if(curse>=7)M.eBul*=1.2; if(curse>=8)M.midUlt=true; if(curse>=9)B.maxHp*=0.8; if(curse>=10)M.extraUlt=true;
- if(diff==='easy'){M.eHp*=0.7;M.dmgIn*=0.7;M.bossOrder=true;M.bossCd=1.3;M.elite*=0.7;M.jw50=30;M.jw20=60;}
- if(diff==='hard'){M.eHp*=1.35;M.dmgIn*=1.25;M.bossCd=0.75;M.borrow=2;M.midUlt=true;M.eliteWithMid=true;M.elite*=1.2;M.jw50=60;M.jw20=120;}
+ for(const card of cards)applyFx(CARDS[card].fx);   // v19.9 숫자는 02_data의 CARDS·CURSE_FX·DIFFS 표에
+ for(let i=1;i<=Math.min(curse,CURSE_FX.length-1);i++)applyFx(CURSE_FX[i]);
+ if(DIFFS[diff])applyFx(DIFFS[diff].fx);
  goalSnap();tracePlan();
  recompute();G.P.hp=G.P.maxHp;
  addWeapon(C.start);
@@ -40,24 +32,17 @@ function newGame(cid,card,curse,diff='normal',mode='normal'){const cards=cardLis
  refreshSlots();show(null);stageToast();ksOnce();questPlan();dkPlan();
  if(mode==='rush')rushStart();
 }
+/* v19.9 효과 표 적용: {'+B.xpGain':0.2,'*M.eHp':1.15,'=M.noTteok':true} — 연산(+ * =)·대상(B 기본·M 판 규칙·P 퇴마사)·칸 */
+function applyFx(fx){const T={B:G.base,M:G.mods,P:G.P};for(const k in fx||{}){const o=T[k[1]],f=k.slice(3),v=fx[k];if(k[0]==='+')o[f]+=v;else if(k[0]==='*')o[f]*=v;else o[f]=v;}}
+/* 표 STATS의 능력치 하나: 기본 + Σ(보패 레벨·축복 단계 × 값), 적힌 순서대로. cd만 기본 × Π(1 − 레벨 × 값) */
+function statSum(id,base){const S=STATS[id];let v=base;for(const k in S){const n=k[0]==='@'?(G.bless[k.slice(1)]||0):(G.passives[k]||0);if(id==='cd')v*=1-n*S[k];else v+=n*S[k];}return v;}
 function xpNeed(l){const b=5+(l-1)*9+Math.pow(l-1,2.2);return Math.floor(l<=20?b:b*(1+XP_MID_A*Math.pow(l-20,XP_MID_B)));}
 const XP_MID_A=0.055,XP_MID_B=0.8;
-function recompute(){const P=G.P,B=G.base,l=id=>G.passives[id]||0,g=id=>G.bless[id]||0;const old=P.maxHp;
- P.maxHp=B.maxHp+l('insam')*20+l('nogyong')*12+l('tugu')*5+g('sansin')*25;
- P.spd=B.spd+l('jipsin')*0.08+l('jeonma')*0.07+l('norigae')*0.04;
- P.area=B.area+l('gat')*0.1+l('osaek')*0.06+g('seonghwang')*0.1+l('hwagwan')*0.08;
- P.magnet=28*(B.magnet+l('yundo')*0.3+l('jeonma')*0.1+l('jeondae')*0.2);
- P.cd=B.cd*(1-l('seochaek')*0.08)*(1-l('gunryeong')*0.03)*(1-g('cheongryong')*0.07)*(1-l('binyeo')*0.04);
- P.armor=B.armor+l('gapot')+l('tugu')+g('seongju');
- P.might=B.might+l('hwayak')*0.1+l('gunryeong')*0.06+g('baekho')*0.12+l('jeoul')*0.04+G.stageMight;
- P.dur=B.dur+l('horibyeong')*0.12+l('yeonjeok')*0.06+l('osaek')*0.06+g('seonghwang')*0.1;
- P.regen=B.regen+l('horibyeong')*0.1+l('gamcho')*0.15+l('jeonghwasu')*0.25+g('sansin')*0.3;
- P.xpGain=B.xpGain+l('hongpae')*0.08+l('jeonghwasu')*0.04+g('samsin')*0.12+l('hwagwan')*0.05+l('jangbu')*0.06;
- P.crit=B.crit+l('nakgwan')*0.05+g('chilseong')*0.06+l('norigae')*0.04+l('jangbu')*0.03;P.critDmg=B.critDmg+l('sahyang')*0.15+g('chilseong')*0.15+l('jeoul')*0.12;
- P.healM=B.healM+l('gamcho')*0.2;P.iframeB=l('nogyong')*0.06;P.pspd=Math.max(0.5,B.pspd+l('yeonjeok')*0.1+l('binyeo')*0.08);
- P.drop=1+l('myeongtae')*0.25+g('jowang')*0.3;P.amount=B.amount;P.luck=B.luck;
- P.frzCh=g('yong')*0.06;P.burnCh=g('jujak')*0.08;P.coinPlus=g('eopsin')+l('jeondae')*0.2;P.tteokM=(1+g('samsin')*0.5)*G.mods.tteokHeal;
- P.dmgRed=g('seongju')*0.08;if(G.ks==='gukja')P.tteokM*=1.5;
+function recompute(){const P=G.P,B=G.base,g=id=>G.bless[id]||0;const old=P.maxHp;
+ for(const id of ['maxHp','spd','area','cd','armor','dur','regen','xpGain','crit','critDmg','healM'])P[id]=statSum(id,B[id]);   // v19.9 계수는 02_data의 STATS 표에
+ P.magnet=28*statSum('magnet',B.magnet);P.might=statSum('might',B.might)+G.stageMight;P.pspd=Math.max(0.5,statSum('pspd',B.pspd));
+ for(const id of ['iframeB','frzCh','burnCh','coinPlus','dmgRed'])P[id]=statSum(id,0);P.drop=statSum('drop',1);
+ P.amount=B.amount;P.luck=B.luck;P.tteokM=(1+g('samsin')*0.5)*G.mods.tteokHeal;if(G.ks==='gukja')P.tteokM*=1.5;
  if(G.dkC){const c=G.dkC;if(c==='slow')P.spd*=0.85;if(c==='heavy')P.cd*=1.15;if(c==='dim')P.magnet*=0.5;if(c==='thirst')P.healM*=0.5;}P.shieldCd=g('hyeonmu')?15-3*g('hyeonmu'):0;
  if(G.callBuff>0)P.cd*=0.5;if(duoOn('suhwa')&&P.shieldCd)P.shieldCd=Math.max(4,P.shieldCd-3);
  if(G.sky&&G.sky.t>0){const f=G.sky.fx;

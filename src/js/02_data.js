@@ -249,23 +249,50 @@ const BLESS={
 
 /* ======================= fortune cards & curse levels ======================= */
 const CARDS={
- gilil:{n:'길일',d:'경험치 +20%. 요괴가 15% 더 많이 나온다.'},
- hyungnyeon:{n:'흉년',d:'떡이 나오지 않는다. 엽전을 두 배로 얻는다.'},
- yeokma:{n:'역마살',d:'이동 속도 +25%. 최대 체력 −20%.'},
- dohwa:{n:'도화살',d:'끌어오는 거리 두 배. 요괴 이동 속도 +10%.'},
- hongsu:{n:'홍수',d:'범위 +25%. 투사체 속도 −20%.'},
- baekhosal:{n:'백호살',d:'치명타 +15%. 받는 피해 +20%.'},
- samjae:{n:'삼재',d:'엘리트가 두 배로 나온다. 막을 끝낼 때 받는 보물상자에서 강화를 하나 더 얻는다.'},
- cheoneul:{n:'천을귀인',d:'쓰러져도 한 번 되살아난다. 공격력 −10%.'},
- jangwon:{n:'장원급제',d:'레벨업 선택지 +1. 요괴 체력 +15%.'},
- munchang:{n:'문창성',d:'전직 기술이 25% 더 자주 발동한다. 최대 체력 −10%.'},
- cheonsal:{n:'천살',d:'요괴 체력 +30%. 경험치 +40%.'},
+ gilil:{n:'길일',d:'경험치 +20%. 요괴가 15% 더 많이 나온다.',fx:{'+B.xpGain':0.2,'*M.eCnt':1.15}},
+ hyungnyeon:{n:'흉년',d:'떡이 나오지 않는다. 엽전을 두 배로 얻는다.',fx:{'=M.noTteok':true,'*M.coin':2}},
+ yeokma:{n:'역마살',d:'이동 속도 +25%. 최대 체력 −20%.',fx:{'+B.spd':0.25,'*B.maxHp':0.8}},
+ dohwa:{n:'도화살',d:'끌어오는 거리 두 배. 요괴 이동 속도 +10%.',fx:{'*B.magnet':2,'*M.eSpd':1.1}},
+ hongsu:{n:'홍수',d:'범위 +25%. 투사체 속도 −20%.',fx:{'+B.area':0.25,'+B.pspd':-0.2}},
+ baekhosal:{n:'백호살',d:'치명타 +15%. 받는 피해 +20%.',fx:{'+B.crit':0.15,'*M.dmgIn':1.2}},
+ samjae:{n:'삼재',d:'엘리트가 두 배로 나온다. 막을 끝낼 때 받는 보물상자에서 강화를 하나 더 얻는다.',fx:{'*M.elite':2,'=M.chestPlus':1}},
+ cheoneul:{n:'천을귀인',d:'쓰러져도 한 번 되살아난다. 공격력 −10%.',fx:{'+P.revive':1,'+B.might':-0.1}},
+ jangwon:{n:'장원급제',d:'레벨업 선택지 +1. 요괴 체력 +15%.',fx:{'+M.choice':1,'*M.eHp':1.15}},
+ munchang:{n:'문창성',d:'전직 기술이 25% 더 자주 발동한다. 최대 체력 −10%.',fx:{'*M.cls':1.25,'*B.maxHp':0.9}},
+ cheonsal:{n:'천살',d:'요괴 체력 +30%. 경험치 +40%.',fx:{'*M.eHp':1.3,'+B.xpGain':0.4}},
 };
 const DIFFS={
- easy:{n:'쉬움',coin:0.7,d:'요괴 체력 −30%, 받는 피해 −30%. 보스는 정해진 순서대로 기술을 쓰고 기술 사이 쉬는 틈이 길다. 중간 보스가 있는 동안 엘리트가 나오지 않는다. 전우치가 더 자주 온다. 출정 뒤 엽전 −30%.'},
- normal:{n:'보통',coin:1,d:'보스는 자기 기술 가운데 무작위로 골라 쓴다. 중간 보스가 있는 동안 엘리트가 나오지 않는다.'},
- hard:{n:'어려움',coin:1.3,d:'요괴 체력 +35%, 받는 피해 +25%. 보스마다 다른 보스의 기술 두 가지를 무작위로 빌려 와 섞어 쓰고, 기술 사이 틈이 짧다. 중간 보스도 필살기를 쓰며 엘리트를 거느리고 나온다. 전우치가 드물게 온다. 출정 뒤 엽전 +30%.'}};
+ easy:{n:'쉬움',coin:0.7,fx:{'*M.eHp':0.7,'*M.dmgIn':0.7,'=M.bossOrder':true,'=M.bossCd':1.3,'*M.elite':0.7,'=M.jw50':30,'=M.jw20':60},d:'요괴 체력 −30%, 받는 피해 −30%. 보스는 정해진 순서대로 기술을 쓰고 기술 사이 쉬는 틈이 길다. 중간 보스가 있는 동안 엘리트가 나오지 않는다. 전우치가 더 자주 온다. 출정 뒤 엽전 −30%.'},
+ normal:{n:'보통',coin:1,fx:{},d:'보스는 자기 기술 가운데 무작위로 골라 쓴다. 중간 보스가 있는 동안 엘리트가 나오지 않는다.'},
+ hard:{n:'어려움',coin:1.3,fx:{'*M.eHp':1.35,'*M.dmgIn':1.25,'=M.bossCd':0.75,'=M.borrow':2,'=M.midUlt':true,'=M.eliteWithMid':true,'*M.elite':1.2,'=M.jw50':60,'=M.jw20':120},d:'요괴 체력 +35%, 받는 피해 +25%. 보스마다 다른 보스의 기술 두 가지를 무작위로 빌려 와 섞어 쓰고, 기술 사이 틈이 짧다. 중간 보스도 필살기를 쓰며 엘리트를 거느리고 나온다. 전우치가 드물게 온다. 출정 뒤 엽전 +30%.'}};
 const CURSES=['','요괴 체력 +25%','요괴 이동 속도 +10%','엘리트가 두 배로 나온다','보스 체력 +35%','떡 회복량이 절반','요괴가 25% 더 많이 나온다','요괴 탄 속도·피해 +20%','중간 보스도 필살기를 쓴다','시작 최대 체력 −20%','막 보스가 필살기를 한 번 더 쓴다'];
+/* v19.9 밸런스 표: 효과는 {'연산대상.칸': 값}. 연산 + 더하기 · * 곱하기 · = 바꾸기, 대상 B 기본 능력치(G.base) · M 판 규칙(G.mods) · P 퇴마사(G.P).
+   적힌 순서대로 적용한다(점괘 패 → 액운 1단계부터 → 난이도). 설명 글(d)의 숫자는 시험 balance_tables가 이 표와 맞는지 본다 */
+const CURSE_FX=[{},{'*M.eHp':1.25},{'*M.eSpd':1.1},{'*M.elite':2},{'*M.bossHp':1.35},{'*M.tteokHeal':0.5},{'*M.eCnt':1.25},{'*M.eBul':1.2},{'=M.midUlt':true},{'*B.maxHp':0.8},{'=M.extraUlt':true}];   // CURSES와 같은 자리
+/* 능력치 = 기본 + Σ(보패 레벨 × 값) + Σ(축복 단계 × 값). '@'가 붙은 것은 신령 축복. 적힌 순서대로 더한다.
+   cd(재사용 대기시간)만 곱: 기본 × Π(1 − 레벨 × 값) */
+const STATS={
+ maxHp:{insam:20,nogyong:12,tugu:5,'@sansin':25},
+ spd:{jipsin:0.08,jeonma:0.07,norigae:0.04},
+ area:{gat:0.1,osaek:0.06,'@seonghwang':0.1,hwagwan:0.08},
+ magnet:{yundo:0.3,jeonma:0.1,jeondae:0.2},   // ×28(끌어오는 거리 픽셀)
+ cd:{seochaek:0.08,gunryeong:0.03,'@cheongryong':0.07,binyeo:0.04},
+ armor:{gapot:1,tugu:1,'@seongju':1},
+ might:{hwayak:0.1,gunryeong:0.06,'@baekho':0.12,jeoul:0.04},
+ dur:{horibyeong:0.12,yeonjeok:0.06,osaek:0.06,'@seonghwang':0.1},
+ regen:{horibyeong:0.1,gamcho:0.15,jeonghwasu:0.25,'@sansin':0.3},
+ xpGain:{hongpae:0.08,jeonghwasu:0.04,'@samsin':0.12,hwagwan:0.05,jangbu:0.06},
+ crit:{nakgwan:0.05,'@chilseong':0.06,norigae:0.04,jangbu:0.03},
+ critDmg:{sahyang:0.15,'@chilseong':0.15,jeoul:0.12},
+ healM:{gamcho:0.2},
+ iframeB:{nogyong:0.06},
+ pspd:{yeonjeok:0.1,binyeo:0.08},   // 최소 0.5
+ drop:{myeongtae:0.25,'@jowang':0.3},
+ frzCh:{'@yong':0.06},
+ burnCh:{'@jujak':0.08},
+ coinPlus:{'@eopsin':1,jeondae:0.2},
+ dmgRed:{'@seongju':0.08},
+};
 
 /* ======================= tasks (과업) ======================= */
 const T=(id,n,d,key,need,rw,rwText)=>({id,n,d,key,need,rw,rwText});
