@@ -21,6 +21,9 @@ FEET = """(o)=>{meta.set.refine=o.r;const seen=new Map(),add=s=>{if(s&&s.raw){fo
  add(charSpr(playerLook()));for(const id in ESPR)add(ESPR[id]);const out=[];const dI=b.drawImage;
  b.drawImage=function(img,...a){const s=seen.get(img);if(s&&a.length===4)out.push([Math.round((a[0]+a[2]/2)*4)/4,Math.round((a[1]+a[3])*4)/4,a[2],a[3],s.w,s.hgt,s.ref.n===img||s.ref.f===img||s.ref.h===img||s.ref.hf===img]);return dI.call(this,img,...a);};
  try{render();}finally{b.drawImage=dI;}return out;}"""
+# v20.3.1: 새 판(v20.1~)도 옛 판과 같은 난수 차례가 되게 — ① 주소 ?seed= 로 판을 시작할 때 씨앗을 뽑지 않게(옛 판은 무시)
+# ② 게임은 불러올 때의 Math.random을 「원래 것」으로 기억하고 그때만 씨앗 난수를 쓰므로, 불러온 뒤 감싸 시험 난수를 따르게
+SAME_RNG = "()=>{const f=Math.random;Math.random=()=>f();}"
 fails = []; errs = []
 # 판 시작(의뢰 고르기 등)도 같은 난수가 되게 처음부터 씨앗을 고정(HUD 글이 판마다 달라 비교가 흔들리지 않게)
 SEED = "let __s=3;Math.random=()=>{__s=(__s*16807)%2147483647;return (__s-1)/2147483646;};"
@@ -30,7 +33,8 @@ def shots(path, refine):
         br = p.chromium.launch()
         for vname, vopt in (('pc', dict(viewport={'width': 1280, 'height': 720})), ('phone', dict(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True, device_scale_factor=2))):
             ctx = br.new_context(**vopt); ctx.add_init_script(INIT + SEED); ctx.route('**/fonts.g*/**', lambda r: r.abort())
-            pg = ctx.new_page(); pg.on('pageerror', lambda e: errs.append(str(e))); pg.goto('file://' + str(pathlib.Path(path).resolve())); pg.wait_for_timeout(400)
+            pg = ctx.new_page(); pg.on('pageerror', lambda e: errs.append(str(e))); pg.goto('file://' + str(pathlib.Path(path).resolve()) + '?seed=1'); pg.wait_for_timeout(400)
+            pg.evaluate(SAME_RNG)
             pg.evaluate("()=>{if(typeof EN!=='undefined'&&EN.songaksi)delete EN.songaksi.ai;}")   # v19.7 손각시가 쏘게 되어 장면 속 자리·탄이 달라짐 → 그림 비교만 하도록 옛 행동으로(옛 판에는 원래 없음)
             for st in range(10):
                 pg.evaluate(f"()=>{{meta.set.refine='{refine}';}}"); pg.evaluate(SCENE, {'st': st, 'v': 'on', 'n': 40, 'warm': 40}); pg.evaluate(HIDE)

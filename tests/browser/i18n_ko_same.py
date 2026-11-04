@@ -18,10 +18,11 @@ def run(path, rich):
     with sync_playwright() as p:
         br = p.chromium.launch(); ctx = br.new_context(viewport={'width': 1280, 'height': 800}); ctx.add_init_script(INIT)
         ctx.route('**/fonts.g*/**', lambda r: r.abort()); pg = ctx.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
-        pg.goto('file://' + str(pathlib.Path(path).resolve())); pg.wait_for_timeout(500)
+        pg.goto('file://' + str(pathlib.Path(path).resolve()) + '?seed=1'); pg.wait_for_timeout(500)   # v20.3.1 ?seed=: 판을 시작할 때 씨앗을 뽑지 않게(옛 판은 무시)
         if rich: pg.evaluate(RICH)
         for i, (name, js) in enumerate(SCEN):
-            if i: pg.reload(); pg.wait_for_timeout(350)   # 화면마다 새로 열어 앞 화면의 상태가 새지 않게
+            if i: pg.reload(); pg.wait_for_timeout(350)
+            pg.evaluate("()=>{const f=Math.random;Math.random=()=>f();}")   # v20.3.1 불러온 뒤 감싸 새 판의 판 난수도 시험 난수를 따르게   # 화면마다 새로 열어 앞 화면의 상태가 새지 않게
             pg.evaluate(f"()=>{{window.__seed({i+7});window.__txt=[];try{{if(typeof G!=='undefined'&&G&&modal)show(null);}}catch(e){{}}try{{{js}}}catch(e){{window.__err=String(e);}}}}")
             pg.wait_for_timeout(250)
             snap = pg.evaluate(SNAP, name); snap['err'] = pg.evaluate("()=>{const e=window.__err||'';window.__err='';return e;}")
@@ -73,6 +74,7 @@ def e2_task_added(x, y):
         else: extra.append(l)
     okl = lambda l: l in ('', '엽전 300', '요괴 사냥꾼', '달성', '미달성') or l.startswith('막별 새 엘리트 10종 모두 퇴치')
     return i == len(xs) and all(okl(l) for l in extra)
+SAVECODE = '저장 코드 ·\n\n진행(엽전·과업·해금·설정)을 글자 한 줄로 옮깁니다. 복사해 두면 브라우저 저장이 지워져도, 다른 기기에서도 붙여넣어 이어 할 수 있습니다.\n\n복사\n불러오기\n'
 E2HELP = re.compile(r'(엘리트 (?:\?\?\?|[^·\n]+?)) · (?:\?\?\?|' + '|'.join(E2N) + r')')
 for rich in (False, True):
     a, b = run(old, rich), run(new, rich); tag = '넉넉한 저장' if rich else '처음 저장'
@@ -82,6 +84,8 @@ for rich in (False, True):
         for f in ('screens', 'overlay', 'hud', 'toast', 'canvas', 'err'):
             if k == 'help_foe' and isinstance(b[k][f], str): b[k][f] = E2HELP.sub(r'\1', b[k][f])
             if isinstance(b[k][f], str): b[k][f] = b[k][f].replace('막을 끝낼 때 받는 보물상자에서 강화를 하나 더', '보물상자에서 강화를 하나 더')   # v19.6 삼재 설명을 일부러 바꿈
+            if k == 'help_rule' and isinstance(b[k][f], str): b[k][f] = b[k][f].replace(' 엘리트 −30%.', '').replace(' 엘리트 +20%.', '')   # v19.9.1 난이도 설명에 엘리트 효과를 일부러 더함
+            if k == 'settings' and f == 'overlay' and isinstance(b[k][f], str): b[k][f] = re.sub(re.escape(SAVECODE) + r'\n?', '', b[k][f])   # v19.8 설정에 저장 코드 칸을 일부러 더함
             if k == 'codex_dogam' and e2_only_added(VER0(a[k][f], k), VER0(b[k][f], k)): continue
             if k == 'codex_task' and f == 'overlay' and e2_task_added(VER0(a[k][f], k), VER0(b[k][f], k)): continue
             if k.startswith('codex_') and f == 'canvas' and isinstance(b[k][f], list):   # 캔버스 글은 앞 80개만 모음 → 새 과업 휘장 「精」이 끼면 뒤가 밀려남

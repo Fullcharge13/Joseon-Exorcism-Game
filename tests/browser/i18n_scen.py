@@ -16,7 +16,7 @@ SCEN = [
  ('hub', "openHub();"), *[(f'codex_{k}', f"openCodex('title');codexTab='{k}';renderCodex();") for k in ['task','dogam','anom','tale']],
  ('arch', "openArch('title');"), ('arch_cls', "openArch('title');$('#tabCls').click();"), ('arch_log', "openArch('title');$('#tabLog').click();"),
  ('shop', "renderShop();show('shop');"), ('settings', "openSettings('title');"),
- ('game_hud', G0+"for(let i=0;i<90;i++)frame(100000+i*16);"),
+ ('game_hud', G0+"for(let i=0;i<90;i++)update(i?0.016:0.05);hud();render();"),   # v20.3.1 진행을 직접(옛 판이 한 그대로) — frame()은 판마다 진행 방식이 달라 요괴 자리·처치가 달라짐
  ('levelup', G0+"openLevel();"), ('chest', G0+"G.weapons[0].lv=5;openChest(2);"), ('tavern', G0+"openTavern();"), ('path', G0+"openPath();"),
  ('bless', G0+"openBless();"), ('adv', G0+"G.P.lvl=10;openAdv();"), ('pet', G0+"openPet();"), ('pause', G0+"openPause();"),
  ('status', G0+"openStatus();"), ('status_p', G0+"openStatus();$('#tabStP').click();"), ('status_s', G0+"openStatus();$('#tabStS').click();"),

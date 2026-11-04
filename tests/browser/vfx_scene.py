@@ -1,10 +1,12 @@
 """분위기 층 브라우저 시험이 함께 쓰는 장면(v18.2): 같은 씨앗으로 요괴·요괴 탄·경고 장판·피해 숫자·깨진 옹기를 놓고 몇 프레임 돌린다."""
 INIT = "window.requestAnimationFrame=()=>0;"
+# v20.3.1: 데우기는 진행(update)을 직접 — 옛 판이 실제로 한 그대로(첫 장면 0.05초, 그 뒤 0.016초). frame()으로 데우면
+# 장면 길이를 진행으로 바꾸는 방식(v20.2 조각·v20.3 1/60초 고정)에 따라 요괴 자리가 달라져 옛 판과 비교할 수 없었음
 SCENE = """(o)=>{show(null);meta.set.vfx=o.v;meta.set.perf=o.perf||'high';applyPerf();newGame('seonbi','gilil',0,'normal');G.queue.length=0;show(null);G.stage=o.st;G.P.hp=G.P.maxHp=1e9;
  let s=11;Math.random=()=>{s=(s*16807)%2147483647;return (s-1)/2147483646;};const P=G.P,st=curStg();
  for(let i=0;i<o.n;i++){const a=i*2.399,d=40+(i%9)*14;spawnEnemy(st.early[i%st.early.length],P.x+Math.cos(a)*d,P.y+Math.sin(a)*d*0.8);}
  for(let i=0;i<5;i++)spawnPot();for(const e of G.enemies.filter(e=>e.prop).slice(0,3))kill(e);for(let i=0;i<6;i++)kill(G.enemies.find(e=>!e.prop&&!e.dead));
- let t=100000;for(let i=0;i<(o.warm||40);i++){G.P.hp=1e9;G.P.xp=0;G.queue.length=0;if(modal)show(null);frame(t+=16);}window.__t=t;}"""
+ for(let i=0;i<(o.warm||40);i++){G.P.hp=1e9;G.P.xp=0;G.queue.length=0;if(modal)show(null);update(i?0.016:0.05);}hud();render();window.__t=100000+16*(o.warm||40);last=window.__t;}"""
 # 잘 보여야 하는 것들을 화면 곳곳(가까이·멀리)에 놓고 한 프레임 그린 뒤 그 자리 좌표(게임 좌표)를 돌려준다
 PROBE = """(o)=>{const P=G.P,pts=[];G.ebul.length=0;G.warns.length=0;G.fx=G.fx.filter(f=>f.t!=='num');
  const far=[[-150,-70],[150,-70],[-150,70],[150,70],[0,-80],[0,80],[-90,0],[90,0]];
