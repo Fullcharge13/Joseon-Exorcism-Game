@@ -1,5 +1,5 @@
 // 설화 시험 공용 도우미 (시험 파일 앞에 붙여 실행). 창이 뜨면 첫 선택지를 고르고 장면은 넘긴다.
-let __t=performance.now();
+let __t=performance.now();last=__t;   // v20.2.1 첫 장면이 게임을 불러온 뒤 흐른 실제 시간(기계가 느리면 0.25초까지)을 따라잡지 않게 시험 시계와 맞춤
 function autoPick(){armUntil=0;
   if(modal==='scene')sceneNext();else if(modal==='levelup')pickOpt(0);else if(modal==='adv'&&advPick.length)advPick[0]();
   else if(modal==='bless'&&blessPick.length)blessPick[0]();else if(modal==='petpick'&&petPick.length)petPick[0]();else if(modal==='pick'&&pickFns.length)pickFns[0]();

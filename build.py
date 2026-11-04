@@ -13,6 +13,7 @@ SW = ROOT / 'sw.js'
 MARK = '<!--JS-->\n'
 VER_RE = re.compile(r"^const GAME_VER = '(v[\w.]+)'", re.M)
 CACHE_RE = re.compile(r"^const CACHE='joseon-[^']*';", re.M)
+VERTAG_RE = re.compile(r'(<p class="ver" id="verTag">)[^<]*(</p>)')   # 시작 화면 아래 판 번호(v20.2.1~ 빌드가 채움)
 
 def game_ver():
     m = VER_RE.findall((SRC / 'js' / '05_meta_save.js').read_text(encoding='utf8'))
@@ -28,6 +29,9 @@ def build_text():
     shell = (SRC / 'shell.html').read_text(encoding='utf8')
     if shell.count(MARK) != 1:
         raise SystemExit('src/shell.html 에 <!--JS--> 줄이 정확히 한 번 있어야 합니다')
+    if len(VERTAG_RE.findall(shell)) != 1:
+        raise SystemExit('src/shell.html 에 <p class="ver" id="verTag">…</p> 가 정확히 한 번 있어야 합니다')
+    shell = VERTAG_RE.sub(lambda m: m.group(1) + game_ver() + m.group(2), shell)
     parts = sorted((SRC / 'js').glob('*.js'))
     if not parts:
         raise SystemExit('src/js/*.js 가 없습니다')
