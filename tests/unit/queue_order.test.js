@@ -2,7 +2,7 @@
 // 1) 대기열에 전직이 있으면 쌓인 레벨업 카드보다 전직 창이 먼저 뜬다.
 // 2) 5차 전직이 늦게 열려도 그 사이 들어온 「오의 각성」이 일반 레벨업으로 바뀌어 사라지지 않는다.
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
-let now=1000;performance.now=()=>now;
+let now=1000;performance.now=()=>now;last=now;   // 시험 시계와 게임 시계를 맞춤(v20.2.2)
 const step=()=>{now+=16;frame(now);};
 const closeAll=()=>{show(null);};
 

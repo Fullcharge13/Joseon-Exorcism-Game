@@ -19,3 +19,4 @@
 - 코드 모양(v20.0): Prettier가 한 줄을 여러 줄로 나누면 같은 줄에 붙인 `//i18n-skip`이 문구에서 떨어질 수 있다. 정렬 뒤 `node tools/i18n_wrap.js`의 「감쌀 곳」 수가 그대로인지 보고, 늘었으면 그 문구가 있는 줄에 `//i18n-skip`을 붙이거나 그 문장 앞에 `// prettier-ignore`를 둔다.
 - 판 번호(v20.0.1~): `src/js/05_meta_save.js`의 `GAME_VER` 한 곳만 고친다. `build.py`가 `sw.js`의 캐시 이름(`joseon-<판>`)을 맞추고, 잊으면 `--check`가 실패한다. `docs/개발-과정.md`의 버전 표는 손으로 적는다(v20.2 문서 정리 때 README에서 옮김).
 - 난수(v20.1~): 판에 영향을 주는 난수는 `rand()`·`rnd(a,b)`, 그리기 함수·소리·`G.fx`/`G.gfx`/`VFXS`에 넣는 값은 `vrand()`·`vrnd(a,b)`. `Math.random()`을 새로 쓰지 않는다. 섞이면 `tests/unit/rng_det.test.js`(같은 씨앗 → 그리기·빠르기가 달라도 같은 판)가 실패한다.
+- 시험에서 `frame(t)`를 직접 부를 때는 먼저 `last=t`로 게임 시계를 맞춘다(v20.2.1 시험 고침). 안 맞추면 첫 장면이 게임을 불러온 뒤 흐른 실제 시간을 0.25초까지 따라잡아, 느린 기계(CI)에서 결과가 달라진다. 설화 시험 도우미(`tests/lib/tale_helpers.js`)는 시계를 맞추고 씨앗도 고정한다.

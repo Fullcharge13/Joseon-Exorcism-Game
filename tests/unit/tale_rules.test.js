@@ -25,7 +25,7 @@ tick(3,()=>{G.P.x=W0.x+200;G.P.y=W0.y;});ok(Math.abs(G.taleMight-0.3)<0.03,'well
 // 지하국 3막: 회복 아이템 없음
 goAct('jiha',2);for(let i=0;i<400;i++){const e=spawnEnemy('jomagu',G.P.x+200,G.P.y);kill(e);}for(let i=0;i<60;i++)kill({prop:true,x:G.P.x+200,y:G.P.y});
 ok(!G.items.some(it=>it.k==='tteok'),'noHeal: 떡이 나오지 않음');
-{G.gems.length=0;G.queue.length=0;G.items.length=0;const h=G.P.maxHp;G.P.hp=h*0.5;G.P.regen=1;tick(1,()=>{G.gems.length=0;G.P.xp=0;G.P.regen=1;});/* 레벨업 고르기가 능력치를 다시 계산해 회복이 0이 되지 않게 */ok(G.P.hp>h*0.5,'noHeal: 초당 회복은 그대로');G.P.regen=0;}
+{G.gems.length=0;G.queue.length=0;G.items.length=0;const h=G.P.maxHp;G.P.hp=h*0.5;G.P.regen=1;const calm=()=>{G.enemies.length=0;G.ebul.length=0;G.ezones.length=0;};tick(1,()=>{calm();G.gems.length=0;G.P.xp=0;G.P.regen=1;});/* 요괴·탄을 비워 맞는 피해 없이 회복만 잼(v20.2.2) *//* 레벨업 고르기가 능력치를 다시 계산해 회복이 0이 되지 않게 */ok(G.P.hp>h*0.5,'noHeal: 초당 회복은 그대로');G.P.regen=0;}
 // 바리 1막: 역병
 goAct('bari',0);{G.gems.length=0;const P=G.P;P.maxHp=200;P.hp=200;tick(10);ok(P.hp<200&&P.hp>190,'plague: 초당 0.4% 잃음 (지금 '+P.hp.toFixed(1)+')');
  G.jw.cd20=G.jw.cd50=1e9;P.hp=2;G.mods.noTteok=true;tick(5,()=>{G.items.length=0;});G.mods.noTteok=false;/* 떡을 주우면 체력이 오르므로 막는다(같은 걸음에 떨어져 주워질 수 있음) */ok(P.hp>=1&&P.hp<1.05&&!G.over,'plague: 체력 1에서 멈춤 (지금 '+P.hp+' regen '+P.regen+')');}
