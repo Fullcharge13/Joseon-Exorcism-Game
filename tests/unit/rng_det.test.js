@@ -1,4 +1,4 @@
-// 씨앗 난수(v20.1): 같은 씨앗이면 그리기 여부·기기 빠르기와 상관없이 판이 똑같이 흘러간다.
+// 씨앗 난수(v20.1): 같은 씨앗이면 그리기 여부·기기 빠르기와 상관없이 판이 똑같이 흘러간다. v20.3부터 장면 빠르기(fps)와도 상관없이(같은 조작일 때).
 // (절약 모드는 요괴 수 상한 CAP.e를 300→200으로 낮추는 설계라 판이 달라질 수 있다 — 같은 모드끼리만 같다. 화면 크기도 등장 거리를 바꾼다)
 // 그리기·소리·잔상(파티클)처럼 보이기만 하는 것은 따로 된 난수를 써서 판의 난수를 건드리지 않아야 한다.
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
@@ -40,6 +40,18 @@ ok(A.kills>20&&A.time>60,`판이 실제로 흘러감 (처치 ${A.kills}, ${A.tim
 ok(ra===rb,'같은 씨앗 → 그림·빠르기가 달라도 같은 판'+(ra===rb?'':` (처치 ${A.kills}/${B.kills}, 요괴 ${A.enemies.length}/${B.enemies.length}, 레벨 ${A.lvl}/${B.lvl})`));
 ok(rl===rl2,'절약 모드끼리도 그림·빠르기와 상관없이 같은 판');
 ok(ra!==rc,'다른 씨앗 → 다른 판');
+// v20.3: 같은 씨앗·같은 조작이면 장면 빠르기(fps)와 상관없이 같은 판. 조작(걷는 길)은 장면이 아니라 진행(update) 차례에 묶는다
+function runFps(seed,fps,sec){
+  meta=JSON.parse(META0);meta.set.perf='high';autoLow=false;applyPerf();document.hidden=true;
+  const u0=update;let k=0;update=d=>{G.P.hp=G.P.maxHp;G.P.x=Math.sin(k/80)*60;G.P.y=Math.cos(k/110)*40;k++;return u0(d);};
+  try{
+    newGame('seonbi',['gilil'],2,'normal','normal',seed);let t=1000;last=t;
+    for(let i=0;i<fps*sec*3&&G.time<sec&&!G.over;i++){if(modal){if(!pick())break;continue;}t+=1000/fps;frame(t);}
+    return {kills:G.kills,lvl:G.P.lvl,weapons:G.weapons.map(w=>w.id).join(','),x:Math.round(G.P.x*1000),y:Math.round(G.P.y*1000),en:G.enemies.length,next:rand(),steps:k};
+  }finally{update=u0;document.hidden=false;}}
+{const F=[10,30,60,144].map(f=>[f,runFps(12345,f,60)]);const key=o=>JSON.stringify({...o,steps:undefined});
+ const same=F.every(([,o])=>key(o)===key(F[2][1]));
+ ok(same,'같은 씨앗·같은 조작 → fps가 달라도 같은 판: '+F.map(([f,o])=>`${f}fps 처치 ${o.kills}·Lv ${o.lvl}·진행 ${o.steps}`).join(' / '));}
 // 씨앗을 주지 않으면 판마다 새 씨앗
 newGame('seonbi',[],0,'normal','normal');const s1=G.seed;newGame('seonbi',[],0,'normal','normal');
 ok(Number.isInteger(s1)&&s1!==G.seed,'씨앗 없이 시작하면 판마다 다른 씨앗 ('+s1+', '+G.seed+')');

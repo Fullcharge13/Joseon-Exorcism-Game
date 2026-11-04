@@ -5,6 +5,7 @@
 // 봇: 0.1초마다 방향을 정한다. 요괴·탄·붉은 장판에서 멀어지고, 규칙 목표(우물·꽃)·곡식·상자·구슬 쪽으로 간다.
 // 창이 뜨면 첫 선택지를 고른다(레벨업 선택지는 섞여 나오므로 사실상 무작위).
 const TALE=process.env.TALE||'woochi',RUNS=+(process.env.RUNS||12),BR=+(process.env.BR||0),MAXST=+(process.env.MAXST||6);let seed=+(process.env.SEED||1);
+const FPS=+(process.env.FPS||30);   // v20.3: 봇의 장면 빠르기(기본 30)
 const DIFF=process.env.DIFF||'normal',CARD=(process.env.CARD||'').split(',').filter(Boolean);   // 난이도·점괘 패(쉼표로 여러 개)
 const UP=JSON.parse(process.env.UP||'{"hp":3,"might":3,"spd":2,"xp":3}');
 Math.random=()=>{seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;};
@@ -33,7 +34,7 @@ if(TALE.startsWith('main:')){const cid=TALE.slice(5);let t=performance.now();con
   for(let run=0;run<RUNS;run++){newGame(cid,CARD,0,DIFF);let dec=0,lv=[],st=-1,snap=[];
    let lv60=null,hp0=G.P.hp,taken={},bt={},bs=null;const sb2=spawnBoss,bd2=bossDown;
    spawnBoss=(id,mid)=>{const r=sb2(id,mid);if(!mid)bs=G.time;return r;};bossDown=e=>{if(!e.mid&&bs!==null)bt[G.stage+1]=+(G.time-bs).toFixed(1);bs=null;return bd2(e);};
-   for(let i=0;i<30*60*60&&!G.over;i++){if(modal){if(!pick())break;continue;}dec-=1/30;if(dec<=0){dec=0.1;steer();}t+=1000/30;frame(t);
+   for(let i=0;i<FPS*60*60&&!G.over;i++){if(modal){if(!pick())break;continue;}dec-=1/FPS;if(dec<=0){dec=0.1;steer();}t+=1000/FPS;frame(t);
     if(G.P.hp<hp0)taken[G.stage+1]=(taken[G.stage+1]||0)+(hp0-G.P.hp);hp0=G.P.hp;if(lv60===null&&G.P.lvl>=60)lv60=G.stage+1;
     if(G.stage!==st){st=G.stage;lv.push(G.P.lvl+'@'+Math.round(G.time));snap.push(G.weapons.filter(w=>w.lv>=((WD[w.id]||{}).max||5)).length+'/'+G.weapons.length+'w '+Object.entries(G.passives).filter(([k,l])=>l>=((PD[k]||{}).max||5)).length+'/'+Object.keys(G.passives).length+'p');}if(G.stage>=MAXST)break;}
    spawnBoss=sb2;bossDown=bd2;const dm=G.rs.dmg||{},tot=Object.values(dm).reduce((a,v)=>a+v,0)||1,share=Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+Math.round(v/tot*100));

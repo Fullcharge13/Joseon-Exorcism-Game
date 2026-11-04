@@ -2169,17 +2169,20 @@ function drawFps() {
 }
 /* v20.2 시간 나누기: 한 장면이 1/30초보다 길면(느린 기기) 1/30초 이하 조각으로 나눠 update를 여러 번 부른다.
    예전에는 한 장면을 0.05초로 잘라 20fps 아래에서 게임이 느리게 흘렀다. 멈췄다 돌아온 장면은 0.25초까지만 따라잡는다 */
-const STEP_MAX = 1 / 30,
+// v20.3 고정 진행: 게임은 늘 1/60초씩 진행(STEP)하고, 장면 길이는 모아 두었다가(stepAcc) 1/60초가 찰 때마다 진행한다.
+// 그러면 같은 씨앗·같은 조작이면 장면 빠르기(fps)와 상관없이 같은 판. 한 장면은 FRAME_MAX(0.25초)까지만 따라잡는다.
+const STEP = 1 / 60,
   FRAME_MAX = 0.25;
+let stepAcc = 0;
 function frame(now) {
   const raw = now - last;
   const dt = Math.min(FRAME_MAX, raw / 1000);
   last = now;
   try {
-    const n = Math.max(1, Math.ceil(dt / STEP_MAX - 1e-9)),
-      step = dt / n;
-    for (let k = 0; k < n && G && !G.over && !modal; k++) {
-      update(step);
+    stepAcc += dt;
+    for (let k = 0; k < 16 && stepAcc + 1e-9 >= STEP && G && !G.over && !modal; k++) {
+      stepAcc -= STEP;
+      update(STEP);
       if (!modal && G.queue.length && !G.over && G.clearT === undefined) {
         const q = takeQueued();
         if (q === 'adv' && G.P.tier < tierMax(G.cid, G.P.branch)) openAdv();
@@ -2191,6 +2194,8 @@ function frame(now) {
         else openLevel();
       }
     }
+    if (!G || G.over || modal) stepAcc = 0;   // 창이 열리거나 판이 끝나면 남은 시간은 버린다(창이 닫히면 새로 셈)
+    if (stepAcc < 0) stepAcc = 0;
     if (!document.hidden) {
       render();
       drawFps();
@@ -2214,8 +2219,9 @@ function frame(now) {
     requestAnimationFrame(frame);
   }
 }
-document.addEventListener('visibilitychange', () => {
+function onVisibility() {
   last = performance.now();
+  stepAcc = 0;   // v20.3 떠났다 돌아오면 모아 둔 시간도 버림
   if (document.hidden && DIAG.hb) {
     DIAG.hb.hidden = true;
     diagSave();
@@ -2225,7 +2231,8 @@ document.addEventListener('visibilitychange', () => {
   pm.slow = 0;
   if (document.hidden && G && !G.over && !modal) openPause();
   if (!document.hidden) resumeAudio();
-});
+}
+document.addEventListener('visibilitychange', onVisibility);
 /* 조합 시험장: 진화 무기마다 쓸 수 있는 퇴마사 하나(전용 무기는 그 퇴마사, 공용은 짝 보패를 받을 수 있는 첫 퇴마사) */
 function labList() {
   const out = [];

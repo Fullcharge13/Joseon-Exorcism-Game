@@ -399,7 +399,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button class="btn ghost" id="labBtn" hidden>조합 시험장</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v20.2.1</p>
+    <p class="ver" id="verTag">v20.3</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -8011,7 +8011,7 @@ function saveImport(code) {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.2.1',
+const GAME_VER = 'v20.3',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -22594,17 +22594,20 @@ function drawFps() {
 }
 /* v20.2 시간 나누기: 한 장면이 1/30초보다 길면(느린 기기) 1/30초 이하 조각으로 나눠 update를 여러 번 부른다.
    예전에는 한 장면을 0.05초로 잘라 20fps 아래에서 게임이 느리게 흘렀다. 멈췄다 돌아온 장면은 0.25초까지만 따라잡는다 */
-const STEP_MAX = 1 / 30,
+// v20.3 고정 진행: 게임은 늘 1/60초씩 진행(STEP)하고, 장면 길이는 모아 두었다가(stepAcc) 1/60초가 찰 때마다 진행한다.
+// 그러면 같은 씨앗·같은 조작이면 장면 빠르기(fps)와 상관없이 같은 판. 한 장면은 FRAME_MAX(0.25초)까지만 따라잡는다.
+const STEP = 1 / 60,
   FRAME_MAX = 0.25;
+let stepAcc = 0;
 function frame(now) {
   const raw = now - last;
   const dt = Math.min(FRAME_MAX, raw / 1000);
   last = now;
   try {
-    const n = Math.max(1, Math.ceil(dt / STEP_MAX - 1e-9)),
-      step = dt / n;
-    for (let k = 0; k < n && G && !G.over && !modal; k++) {
-      update(step);
+    stepAcc += dt;
+    for (let k = 0; k < 16 && stepAcc + 1e-9 >= STEP && G && !G.over && !modal; k++) {
+      stepAcc -= STEP;
+      update(STEP);
       if (!modal && G.queue.length && !G.over && G.clearT === undefined) {
         const q = takeQueued();
         if (q === 'adv' && G.P.tier < tierMax(G.cid, G.P.branch)) openAdv();
@@ -22616,6 +22619,8 @@ function frame(now) {
         else openLevel();
       }
     }
+    if (!G || G.over || modal) stepAcc = 0;   // 창이 열리거나 판이 끝나면 남은 시간은 버린다(창이 닫히면 새로 셈)
+    if (stepAcc < 0) stepAcc = 0;
     if (!document.hidden) {
       render();
       drawFps();
@@ -22639,8 +22644,9 @@ function frame(now) {
     requestAnimationFrame(frame);
   }
 }
-document.addEventListener('visibilitychange', () => {
+function onVisibility() {
   last = performance.now();
+  stepAcc = 0;   // v20.3 떠났다 돌아오면 모아 둔 시간도 버림
   if (document.hidden && DIAG.hb) {
     DIAG.hb.hidden = true;
     diagSave();
@@ -22650,7 +22656,8 @@ document.addEventListener('visibilitychange', () => {
   pm.slow = 0;
   if (document.hidden && G && !G.over && !modal) openPause();
   if (!document.hidden) resumeAudio();
-});
+}
+document.addEventListener('visibilitychange', onVisibility);
 /* 조합 시험장: 진화 무기마다 쓸 수 있는 퇴마사 하나(전용 무기는 그 퇴마사, 공용은 짝 보패를 받을 수 있는 첫 퇴마사) */
 function labList() {
   const out = [];

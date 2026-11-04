@@ -2,8 +2,8 @@
 // 1) 대기열에 전직이 있으면 쌓인 레벨업 카드보다 전직 창이 먼저 뜬다.
 // 2) 5차 전직이 늦게 열려도 그 사이 들어온 「오의 각성」이 일반 레벨업으로 바뀌어 사라지지 않는다.
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
-let now=1000;performance.now=()=>now;last=now;   // 시험 시계와 게임 시계를 맞춤(v20.2.2)
-const step=()=>{now+=16;frame(now);};
+let now=1000;performance.now=()=>now;last=now;   // v20.3: 앞 장면 시각을 시험 시계에 맞춤(예전에는 음수 길이 장면에도 진행을 한 번 했음)
+const step=()=>{now+=1000/60;frame(now);};   // v20.3: 1/60초보다 짧은 장면은 진행이 없어(창도 진행 때만 열림) 장면 하나 = 1/60초로
 const closeAll=()=>{show(null);};
 
 // 1) 레벨 10에 이르렀는데 앞에 레벨업 카드 둘이 쌓여 있음
