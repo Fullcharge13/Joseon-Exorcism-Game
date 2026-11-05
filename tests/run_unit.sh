@@ -23,4 +23,6 @@ node tests/harness.js "$G" tests/unit/save_guard.test.js || fail=1   # v19.8 저
 SAVE=tests/fixtures/save_v12.json node tests/harness.js "$G" tests/unit/save_guard.test.js || fail=1
 SAVE=tests/fixtures/save_broken.txt SAVE_BAK=tests/fixtures/save_bak_ok.json WANT=rescue node tests/harness.js "$G" tests/unit/save_guard.test.js || fail=1
 SAVE=tests/fixtures/save_broken.txt WANT=none node tests/harness.js "$G" tests/unit/save_guard.test.js || fail=1
+SAVE=tests/fixtures/save_empty.txt WANT=empty node tests/harness.js "$G" tests/unit/save_guard.test.js || fail=1   # v20.4 빈 저장
+SAVE=tests/fixtures/save_blank.txt WANT=empty node tests/harness.js "$G" tests/unit/save_guard.test.js || fail=1
 [ $fail = 0 ] && echo "ALL PASS" || { echo "SOME FAILED"; exit 1; }

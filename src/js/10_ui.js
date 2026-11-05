@@ -1827,6 +1827,7 @@ function renderShop() {
 function openSettings(from) {
   prevScreen = from;
   diagRender();
+  saveUndoShow();
   const s = meta.set;
   {
     const L = $('#setLang');
@@ -3046,7 +3047,7 @@ $('#saveCodeLoad').onclick = () => {
   }
   if (
     !confirm(
-      _t('이 코드의 진행(엽전 {coins}닢)으로 바꾸고 다시 시작합니다. 지금 진행은 이 코드로 대신됩니다. 바꿀까요?', {
+      _t('이 코드의 진행(엽전 {coins}닢)으로 바꾸고 다시 시작합니다. 지금 진행은 설정의 「불러오기 전으로」로 되돌릴 수 있습니다. 바꿀까요?', {
         coins: Math.floor(+s.coins || 0)
       })
     )
@@ -3054,6 +3055,19 @@ $('#saveCodeLoad').onclick = () => {
     return;
   if (saveImport($('#saveCodeText').value)) location.reload();
   else n.textContent = _t('불러오지 못했습니다');
+};
+/* v20.4 저장 코드를 불러오기 전 진행으로 되돌리기: 되돌릴 진행이 있을 때만 단추를 보임 */
+function saveUndoShow() {
+  let has = false;
+  try {
+    has = !!saveParse(localStorage.getItem(SAVE_UNDO) || 'null');
+  } catch (e) {}
+  $('#saveCodeUndo').hidden = !has;
+}
+$('#saveCodeUndo').onclick = () => {
+  if (!confirm(_t('저장 코드를 불러오기 전의 진행으로 되돌리고 다시 시작합니다. 되돌릴까요?'))) return;
+  if (saveImportUndo()) location.reload();
+  else $('#saveCodeN').textContent = _t('되돌릴 진행이 없습니다');
 };
 $('#resetBtn').onclick = () => {
   if (

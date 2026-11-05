@@ -392,7 +392,8 @@ function taleNorm() {
 }
 const SAVE_KEY = 'joseon-toema-v1',
   SAVE_BAK = SAVE_KEY + '-bak',
-  SAVE_BROKEN = SAVE_KEY + '-broken';
+  SAVE_BROKEN = SAVE_KEY + '-broken',
+  SAVE_UNDO = SAVE_KEY + '-undo'; // v20.4 저장 코드를 불러오기 전 진행
 /* v19.8 저장 지키기: 제대로 읽힌 저장은 -bak 칸에 한 벌 더 둔다. 읽을 수 없는 저장은 지우지 않고 -broken 칸에 옮긴 뒤 -bak으로 시작한다
    (예전에는 깨진 저장을 만나면 새 저장으로 시작해 곧바로 덮어써, 진행이 영영 사라졌다) */
 function saveParse(raw) {
@@ -410,6 +411,7 @@ let meta = {coins: 0, up: {}, best: null},
   try {
     raw = localStorage.getItem(SAVE_KEY);
   } catch (e) {}
+  if (raw != null && !raw.trim()) raw = null; // v20.4 빈 저장(빈 글·띄어쓰기만)은 저장이 없는 것으로 — 「읽을 수 없음」 안내 없이 새로 시작
   const s = raw == null ? null : saveParse(raw);
   if (s) {
     meta = Object.assign(meta, s);
@@ -512,6 +514,11 @@ try {
 function saveMeta() {
   if (LAB) return;
   try {
+    // v20.4 백업은 저장할 때마다 한 걸음 앞 저장으로(예전에는 게임을 열 때만 → 되살리면 그 사이 진행을 잃음). 본 칸이 깨져 있으면 백업을 덮지 않음
+    const prev = localStorage.getItem(SAVE_KEY);
+    if (prev != null && saveParse(prev)) localStorage.setItem(SAVE_BAK, prev);
+  } catch (e) {}
+  try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(meta));
   } catch (e) {}
 }
@@ -538,7 +545,22 @@ function saveImport(code) {
   const s = saveDecode(code);
   if (!s || LAB) return false;
   try {
+    const prev = localStorage.getItem(SAVE_KEY);
+    if (prev != null && saveParse(prev)) localStorage.setItem(SAVE_UNDO, prev); // v20.4 되돌릴 수 있게 앞 진행을 남김
     localStorage.setItem(SAVE_KEY, JSON.stringify(s));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+/* v20.4 저장 코드 불러오기 되돌리기: -undo 칸의 진행을 본 칸으로(다시 불러오면 그대로 이어 감). 되돌릴 것이 없으면 false */
+function saveImportUndo() {
+  if (LAB) return false;
+  try {
+    const u = localStorage.getItem(SAVE_UNDO);
+    if (u == null || !saveParse(u)) return false;
+    localStorage.setItem(SAVE_KEY, u);
+    localStorage.removeItem(SAVE_UNDO);
     return true;
   } catch (e) {
     return false;
@@ -547,7 +569,7 @@ function saveImport(code) {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.3.1',
+const GAME_VER = 'v20.4',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
