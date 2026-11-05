@@ -103,4 +103,5 @@
   - 『전우치전』: [한국민족문화대백과사전 「전우치전」](https://encykorea.aks.ac.kr/Article/E0049554)
   - 『지하국대적』: [한국민족문화대백과사전 「지하국대적퇴치설화」](https://encykorea.aks.ac.kr/Article/E0054449), 현승환, 「지하국대적제치계 설화의 성인식과 기자의례적 성격」, 『한국언어문학』 102, 2017
   - 『바리공주』: [디지털 인문학 위키 「바리데기」](https://dh.aks.ac.kr/~dh_edu/wiki/index.php/%EB%B0%94%EB%A6%AC%EB%8D%B0%EA%B8%B0)(한국민족문화대백과사전·한국민속신앙사전 인용), [「피살이꽃과 서천꽃밭」](https://dh.aks.ac.kr/Edu/wiki/index.php/피살이꽃과_서천꽃밭)
+- 그림 다듬기의 색조 이동·두 색 테두리(v20.5)는 [mankidev/codixel](https://github.com/mankidev/codixel)(MIT License)의 생각을 빌려 새로 썼습니다(코드·그림은 가져오지 않음).
 - 코드: [MIT License](LICENSE)

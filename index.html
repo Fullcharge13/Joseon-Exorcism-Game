@@ -399,7 +399,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button class="btn ghost" id="labBtn" hidden>조합 시험장</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v20.4</p>
+    <p class="ver" id="verTag">v20.5</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -791,9 +791,66 @@ function mk(rows, pal = PAL) {
   });
   return c;
 }
-/* v18.6 그림 다듬기(설계 docs/specs/2026-11-02-그림-다듬기.md): 둘레 1칸 여백 · 바깥 빈칸에만 테두리(맞닿은 색 × 0.45) ·
-   안에 갇힌 빈칸과 1칸 골목은 비움 · 바깥에 닿은 맨 위 칸은 밝게(짙은 색 제외) · 맨 아래·오른쪽 칸은 × 0.8 */
+/* v18.6 그림 다듬기(설계 docs/specs/2026-11-02-그림-다듬기.md): 둘레 1칸 여백 · 바깥 빈칸에만 테두리 · 안에 갇힌 빈칸과 1칸 골목은 비움.
+   v20.5부터 테두리·가장자리 색은 색조 이동(아래 hueShift): 위·왼쪽 가장자리는 밝게, 아래·오른쪽은 어둡게, 짙은 칸·한 칸 무늬는 그대로 */
 const REFINE_RIM = [122, 100, 108]; // v18.6.1 검은 요괴 테두리: 붉은 기 도는 밝은 회색(밤 바닥 위에서 보이게)
+/* v20.5 은은한 색조 이동(설계 docs/specs/2026-11-03-그림-다듬기-v20.5.md · 생각은 github.com/mankidev/codixel(MIT)의
+   hueRamp·selout·rimLight에서 빌리고 코드는 새로 씀): 밝게 할수록 노랑(50°) 쪽, 어둡게 할수록 파랑(250°) 쪽으로 조금 돌리고 채도를 줄인다 */
+const REFINE_LIT = 0.1, // 빛 받는 가장자리(위·왼쪽) 밝기 +
+  REFINE_SHADE = -0.12, // 그림자 가장자리(아래·오른쪽) 밝기 −
+  REFINE_OUT_LIT = 0.55, // 빛 쪽 테두리(몸이 오른쪽·아래): 밝기 × (예전 테두리 × 0.45와 비슷한 짙기)
+  REFINE_OUT_SHADE = 0.4, // 그림자 쪽 테두리: 밝기 ×
+  REFINE_HUE_MAX = 15 / 360; // 색조는 15°까지만(은은하게 — 주황 테두리가 빨갛게 돌지 않게)
+function rgbToHsl(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const M = Math.max(r, g, b),
+    m = Math.min(r, g, b),
+    l = (M + m) / 2;
+  if (M === m) return [0, 0, l];
+  const d = M - m,
+    s = l > 0.5 ? d / (2 - M - m) : d / (M + m);
+  let h = M === r ? (g - b) / d + (g < b ? 6 : 0) : M === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return [h / 6, s, l];
+}
+function hslToRgb(h, s, l) {
+  if (!s) return [l * 255, l * 255, l * 255];
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s,
+    p = 2 * l - q,
+    f = t => {
+      t = (t + 1) % 1;
+      return t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p;
+    };
+  return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
+}
+/* dl: 밝기 변화(+ 노랑 쪽, − 파랑 쪽). lMul을 주면 밝기는 곱으로(테두리), 색조·채도는 dl 세기로.
+   같은 색·같은 세기는 한 번만 계산해 기억(v20.5: 그림을 처음 만드는 시간이 1.9배로 늘어 설계의 대비책대로) */
+const HUE_MEMO = new Map();
+function hueShift(c, dl, lMul) {
+  const r0 = Math.round(c[0]),
+    g0 = Math.round(c[1]),
+    b0 = Math.round(c[2]),
+    key = (r0 + g0 * 256 + b0 * 65536) * 4 + (dl > 0 ? 0 : lMul === undefined ? 1 : lMul === REFINE_OUT_LIT ? 2 : 3), // 수로 된 열쇠(글자 열쇠는 느림)
+    hit = HUE_MEMO.get(key);
+  if (hit) return hit;
+  const out = hueShiftRaw([r0, g0, b0], dl, lMul);
+  HUE_MEMO.set(key, out);
+  return out;
+}
+function hueShiftRaw(c, dl, lMul) {
+  let [h, s, l] = rgbToHsl(c[0], c[1], c[2]);
+  const a = Math.abs(dl),
+    dh = (((dl < 0 ? 250 / 360 : 50 / 360) - h + 1.5) % 1) - 0.5; // 목표까지 가까운 쪽으로
+  if (s > 0) h = (h + Math.max(-REFINE_HUE_MAX, Math.min(REFINE_HUE_MAX, dh * Math.min(1, a * 1.6) * 0.35)) + 1) % 1; // 목표 쪽으로 최대 35%, 15°까지
+  s *= 1 - a * 0.5;
+  l = Math.min(1, Math.max(0, lMul !== undefined ? l * lMul : l + dl));
+  // 색 짙기(채도×밝기 폭)가 원래보다 커지지 않게: 연한 흰 옷이 분홍으로, 갈색 머리가 주황으로 물들던 것을 막음(v20.5 캡처에서 찾음)
+  const c0 = (Math.max(c[0], c[1], c[2]) - Math.min(c[0], c[1], c[2])) / 255,
+    k = 1 - Math.abs(2 * l - 1);
+  if (k > 0 && s * k > c0) s = c0 / k;
+  return hslToRgb(h, s, l);
+}
 function refinePix(src, w, h) {
   const W = w + 2,
     H = h + 2,
@@ -851,12 +908,13 @@ function refinePix(src, w, h) {
         let r = 0,
           g = 0,
           bb = 0,
-          n = 0;
-        for (const [a, b2] of [
-          [x - 1, y],
-          [x + 1, y],
-          [x, y - 1],
-          [x, y + 1]
+          n = 0,
+          lit = false;
+        for (const [a, b2, li] of [
+          [x - 1, y, 0],
+          [x + 1, y, 1],
+          [x, y - 1, 0],
+          [x, y + 1, 1]
         ])
           if (isA(a, b2)) {
             const k = (b2 * W + a) * 4;
@@ -865,6 +923,7 @@ function refinePix(src, w, h) {
             g += d[k + 1];
             bb += d[k + 2];
             n++;
+            if (li) lit = true; // 몸이 오른쪽·아래 = 이 테두리는 몸의 위·왼쪽(빛 쪽). 둘 다면 빛 쪽
           }
         if (!n) {
           if (darkSpr) {
@@ -875,19 +934,30 @@ function refinePix(src, w, h) {
           }
           continue;
         } // 짙은 색에만 닿으면 테두리 없음(갓·눈처럼 이미 짙은 가장자리가 두꺼워져 뭉개지지 않게). 단 검은 요괴는 밝은 테두리
-        res[p] = (r / n) * 0.45;
-        res[p + 1] = (g / n) * 0.45;
-        res[p + 2] = (bb / n) * 0.45;
+        const oc = hueShift([r / n, g / n, bb / n], -0.4, lit ? REFINE_OUT_LIT : REFINE_OUT_SHADE);
+        res[p] = oc[0];
+        res[p + 1] = oc[1];
+        res[p + 2] = oc[2];
         res[p + 3] = 255;
         continue;
       }
       if (!A[q]) continue;
       const lum = 0.2126 * d[p] + 0.7152 * d[p + 1] + 0.0722 * d[p + 2];
-      if (isO(x, y - 1)) {
-        if (lum >= 60) for (let k = 0; k < 3; k++) res[p + k] = d[p + k] + (255 - d[p + k]) * 0.18;
-      } else if (isO(x, y + 1) || isO(x + 1, y)) {
-        for (let k = 0; k < 3; k++) res[p + k] = d[p + k] * 0.8;
-      }
+      if (lum < 60) continue; // 짙은 칸(갓·눈·머리카락)은 그대로
+      const lt = isO(x, y - 1) || isO(x - 1, y),
+        sh = !lt && (isO(x, y + 1) || isO(x + 1, y));
+      if (!lt && !sh) continue;
+      // 한 칸 무늬(입·볼·단추): 몸 이웃 셋 이상이 다른 색이면 그대로
+      const dif = (a, b2) => {
+        if (!isA(a, b2)) return 0;
+        const k = (b2 * W + a) * 4;
+        return d[k] !== d[p] || d[k + 1] !== d[p + 1] || d[k + 2] !== d[p + 2] ? 1 : 0;
+      };
+      if (dif(x - 1, y) + dif(x + 1, y) + dif(x, y - 1) + dif(x, y + 1) >= 3) continue;
+      const c = hueShift([d[p], d[p + 1], d[p + 2]], lt ? REFINE_LIT : REFINE_SHADE);
+      res[p] = c[0];
+      res[p + 1] = c[1];
+      res[p + 2] = c[2];
     }
   return {data: res, w: W, h: H};
 }
@@ -8033,7 +8103,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.4',
+const GAME_VER = 'v20.5',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
