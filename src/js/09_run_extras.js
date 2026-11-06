@@ -1263,6 +1263,8 @@ function stWeaponRow(w) {
   else if (w.evo) tags.push(_t('<span class="tg ev">진화</span>'));
   if (w.awk) tags.push(_t('<span class="tg aw">각성 · {n}</span>', {n: AWK[w.awk].n}));
   if (w.tm) tags.push(_t('<span class="tg tm">{g} 담금질 · {n}</span>', {g: TEMPER[w.tm].g, n: TEMPER[w.tm].n}));
+  if (w.evo && w.ev2) tags.push(_t('<span class="tg ev">진화 Lv {a}/{m}</span>', {a: w.ev2, m: EV2_MAX}));
+  if (cls && w.lv >= max) tags.push(_t('<span class="tg">숙련 {a}/{m}</span>', {a: w.mas || 0, m: MAS_MAX}));
   if (w.lb) tags.push(_t('<span class="tg ev">한계 돌파 +{lb}</span>', {lb: w.lb}));
   for (const k of w.seals || []) tags.push(`<span class="tg fu">${SEALS[k].g} ${SEALS[k].n}</span>`);
   const name = d.fuse ? d.name : wName(w),
@@ -1321,7 +1323,7 @@ function renderStatus() {
     const ws = G.weapons.filter(w => WD[w.id].type === 'w'),
       cs = G.weapons.filter(w => WD[w.id].type === 'c');
     h += hcard(
-      _t('무기 <small>{length}/6</small>', {length: ws.length}),
+      _t('무기 <small>{length}/{m}</small>', {length: ws.length, m: W_SLOTS}),
       ws.length ? ws.map(stWeaponRow).join('') : _t('<p>무기가 없다.</p>')
     );
     h += hcard(
@@ -1382,7 +1384,7 @@ function renderStatus() {
   } else if (stTab === 'p') {
     const pk = Object.keys(G.passives);
     h += hcard(
-      _t('보패 <small>{length}/6</small>', {length: pk.length}),
+      _t('보패 <small>{length}/{m}</small>', {length: pk.length, m: P_SLOTS}),
       pk.length
         ? pk
             .map(id => {

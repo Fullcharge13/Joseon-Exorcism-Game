@@ -1641,7 +1641,7 @@ function update(dt) {
       G.clearT = undefined;
       if (G.mode === 'rush') rushReward();
       else if (G.mode === 'tale') taleCleared();
-      else claimDk(() => claimPath(() => openChest(3 + (G.mods.chestPlus || 0), () => openTavern())));
+      else claimDk(() => claimPath(() => openChest(STAGE_CHEST + (G.mods.chestPlus || 0), () => openTavern())));
       if (modal) return;
     }
   } // 막을 끝맺는 창이 열렸으면 이번 걸음은 여기서 멈춘다(같은 걸음에 주운 상자 창이 덮어쓰지 않게)

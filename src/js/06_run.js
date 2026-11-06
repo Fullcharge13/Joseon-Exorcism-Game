@@ -157,6 +157,7 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
     potT: 3,
     banned: new Set(),
     stageMight: 0,
+    train: 0,
     jinogwi: null,
     rr: 1 + (meta.extra.rr || 0) + (meta.upB.rr ? 0 : m.rr || 0),
     sk: 1 + (meta.extra.sk || 0) + (meta.upB.rr ? m.rr || 0 : 0),
@@ -268,6 +269,8 @@ function recompute() {
   const old = P.maxHp;
   for (const id of ['maxHp', 'spd', 'area', 'cd', 'armor', 'dur', 'regen', 'xpGain', 'crit', 'critDmg', 'healM'])
     P[id] = statSum(id, B[id]); // v19.9 계수는 02_data의 STATS 표에
+  P.maxHp += TRAIN_HP * (G.train || 0);
+  P.regen += TRAIN_REGEN * (G.train || 0);
   P.magnet = 28 * statSum('magnet', B.magnet);
   P.might = statSum('might', B.might) + G.stageMight;
   P.pspd = Math.max(0.5, statSum('pspd', B.pspd));
@@ -636,6 +639,7 @@ function doFusion(f) {
     kids: [a, b],
     tm: a.tm || b.tm || null,
     lb: Math.max(a.lb || 0, b.lb || 0),
+    ev2: Math.max(1, a.ev2 || 0, b.ev2 || 0), // v20.6 높은 쪽 진화 Lv를 이어받음
     seals: [...(a.seals || []), ...(b.seals || [])].slice(0, 4)
   });
   tmRebuild();

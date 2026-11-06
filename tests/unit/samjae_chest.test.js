@@ -3,7 +3,7 @@ const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
 {
 const oc=openChest;let got=[];openChest=(n,cb)=>{got.push(n);};
 try{
- for(const [cards,field,end] of [[['samjae'],1,4],[[],1,3]]){
+ for(const [cards,field,end] of [[['samjae'],1,3],[[],1,2]])   /* v20.6 막 끝 상자 3 → 2(삼재 +1 그대로) */{
   newGame('uiwon',cards,0,'hard');G.queue.length=0;show(null);G.enemies.length=0;got=[];
   G.items.push({k:'chest',x:G.P.x,y:G.P.y});for(let i=0;i<3;i++)update(1/60);
   ok(got[0]===field,(cards[0]||'패 없음')+' 길 상자 강화 '+field+'개 (본 값 '+got[0]+')');

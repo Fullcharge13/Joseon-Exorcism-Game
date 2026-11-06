@@ -31,15 +31,19 @@ function steer(){const P=G.P;let vx=0,vy=0;
 // 보스 시간은 등장·퇴치 함수를 감싸 잰다
 let bT0=null,bRec=null;{const sb=spawnBoss,bd=bossDown;spawnBoss=(id,mid)=>{const r=sb(id,mid);if(!mid)bT0=G.time;return r;};bossDown=e=>{if(!e.mid&&bT0!==null&&bRec&&G.tale)bRec[G.tale.act]=+(G.time-bT0).toFixed(1);bT0=null;return bd(e);};}
 if(TALE.startsWith('main:')){const cid=TALE.slice(5);let t=performance.now();const out=[];
-  for(let run=0;run<RUNS;run++){newGame(cid,CARD,0,DIFF);let dec=0,lv=[],st=-1,snap=[];
+  // v20.6 2단계 포함 다 찬 비율: 무기 칸마다 (lv + ev2)/10(진화 안 해도 10으로 셈), 보패 lv/5, 직업 기술 (lv + mas)/8 · 칸 수는 그 판의 칸(W_SLOTS·P_SLOTS가 없으면 6)
+function full2Of(){const WS=typeof W_SLOTS!=='undefined'?W_SLOTS:6,PS=typeof P_SLOTS!=='undefined'?P_SLOTS:6,ws=G.weapons.filter(w=>WD[w.id].type==='w'),cs=G.weapons.filter(w=>WD[w.id].type==='c');
+ const e2=typeof EV2_MAX!=='undefined',got=ws.reduce((a,w)=>a+w.lv+(e2?(w.ev2||0):(w.evo?5:0)),0)+Object.values(G.passives).reduce((a,l)=>a+l,0)+cs.reduce((a,w)=>a+w.lv+(e2?(w.mas||0):(w.lv>=5?3:0)),0);
+ const cap=WS*10+PS*5+cs.length*8;return Math.round(got/cap*100)+'%/'+(ws.length+cs.length+(G.pet?1:0));}
+for(let run=0;run<RUNS;run++){newGame(cid,CARD,0,DIFF);let dec=0,lv=[],st=-1,snap=[],full2=[],tierAt=[],surv=[];
    let lv60=null,hp0=G.P.hp,taken={},bt={},bs=null;const sb2=spawnBoss,bd2=bossDown;
    spawnBoss=(id,mid)=>{const r=sb2(id,mid);if(!mid)bs=G.time;return r;};bossDown=e=>{if(!e.mid&&bs!==null)bt[G.stage+1]=+(G.time-bs).toFixed(1);bs=null;return bd2(e);};
    for(let i=0;i<FPS*60*60&&!G.over;i++){if(modal){if(!pick())break;continue;}dec-=1/FPS;if(dec<=0){dec=0.1;steer();}t+=1000/FPS;frame(t);
     if(G.P.hp<hp0)taken[G.stage+1]=(taken[G.stage+1]||0)+(hp0-G.P.hp);hp0=G.P.hp;if(lv60===null&&G.P.lvl>=60)lv60=G.stage+1;
-    if(G.stage!==st){st=G.stage;lv.push(G.P.lvl+'@'+Math.round(G.time));snap.push(G.weapons.filter(w=>w.lv>=((WD[w.id]||{}).max||5)).length+'/'+G.weapons.length+'w '+Object.entries(G.passives).filter(([k,l])=>l>=((PD[k]||{}).max||5)).length+'/'+Object.keys(G.passives).length+'p');}if(G.stage>=MAXST)break;}
+    if(G.stage!==st){st=G.stage;lv.push(G.P.lvl+'@'+Math.round(G.time));full2.push(full2Of());tierAt.push(G.P.tier);surv.push([Math.round(G.P.maxHp),+(G.P.dmgRed||0).toFixed(3),+(G.P.regen||0).toFixed(2),+(G.P.healM||1).toFixed(2),Object.keys(G.passives).join(',')]);snap.push(G.weapons.filter(w=>w.lv>=((WD[w.id]||{}).max||5)).length+'/'+G.weapons.length+'w '+Object.entries(G.passives).filter(([k,l])=>l>=((PD[k]||{}).max||5)).length+'/'+Object.keys(G.passives).length+'p');}if(G.stage>=MAXST)break;}
    spawnBoss=sb2;bossDown=bd2;const dm=G.rs.dmg||{},tot=Object.values(dm).reduce((a,v)=>a+v,0)||1,share=Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+Math.round(v/tot*100));
    const t6=CHARS[cid].branches[G.P.branch||0].tiers[5],t6s=t6&&dm[t6.skill]?Math.round(dm[t6.skill]/tot*100):null;
-   out.push({run,stage:G.stage+1,lvAtStage:lv,maxAt:snap,weapons:G.weapons.length,pass:Object.keys(G.passives).length,over:G.over,br:G.P.branch,tier:G.P.tier,lv60At:lv60,t6share:t6s,share,taken:Object.fromEntries(Object.entries(taken).map(([k,v])=>[k,Math.round(v)])),bossT:bt,elites:(G.rs.eliteLog||[]).map(l=>[l.id,l.st+1,l.t1===null?null:+(l.t1-l.t0).toFixed(1)]),eTake:Object.fromEntries(Object.entries(G.rs.eTake||{}).map(([k,v])=>[k,Math.round(v)]))});console.log(JSON.stringify(out[out.length-1]));if(!G.over)endGame(false);}
+   out.push({run,stage:G.stage+1,lvAtStage:lv,maxAt:snap,full2,tierAt,surv,weapons:G.weapons.length,pass:Object.keys(G.passives).length,over:G.over,br:G.P.branch,tier:G.P.tier,lv60At:lv60,t6share:t6s,share,taken:Object.fromEntries(Object.entries(taken).map(([k,v])=>[k,Math.round(v)])),bossT:bt,elites:(G.rs.eliteLog||[]).map(l=>[l.id,l.st+1,l.t1===null?null:+(l.t1-l.t0).toFixed(1)]),eTake:Object.fromEntries(Object.entries(G.rs.eTake||{}).map(([k,v])=>[k,Math.round(v)]))});console.log(JSON.stringify(out[out.length-1]));if(!G.over)endGame(false);}
   throw 'done';}
 let bdT=0,lastEv='';{const tc=taleCleared,ta=taleAct,os=openScene,sh=show;taleCleared=()=>{lastEv+='|cleared@'+G.time.toFixed(1)+' modal='+modal;return tc();};taleAct=(i,h)=>{lastEv+='|act'+i;return ta(i,h);};openScene=(p,d)=>{lastEv+='|scene';return os(p,d);};show=id=>{if(G&&G.mode==='tale')lastEv+='|show:'+id;return sh(id);};}
 const res=[];let t=performance.now();   // 판이 바뀌어도 시각은 앞으로만 간다

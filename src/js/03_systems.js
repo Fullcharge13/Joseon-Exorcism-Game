@@ -3,6 +3,24 @@ const AWK_LV = [54, 58, 62, 66, 70],
   ULT_LV = 74;
 const START_TIER_B = 0.12,
   LB_STEP = 0.05;
+/* v20.6 2단계 성장(설계 docs/specs/2026-11-06-칸-줄이기-2단계-성장-v20.6.md): 진화·합공 무기는 진화 Lv 1~5(ev2), 직업 기술은 Lv 5 뒤 숙련 1~3(mas).
+   힘은 한계 돌파처럼 실행 순간에만 붙였다 되돌린다 */
+const EV2_MAX = 5,
+  MAS_MAX = 3,
+  EV2_STEP = 0.1, // 진화 Lv마다 피해 +10%(+15%는 앞 막만 쉬워지고 끝까지 버틴 판은 늘지 않아 되돌림)
+  MAS_STEP = 0.1, // 숙련마다 피해 +10%
+  TRAIN_HP = 6, // v20.6 생존 보강: 진화 Lv·숙련이 1 오를 때마다 최대 체력 +6·초당 회복 +0.075(보패 4칸으로 생존 보패가 밀려난 만큼. 1배 +4는 끝까지 21/48, 1.5배 28, 2배 29 → 작은 쪽)
+  TRAIN_REGEN = 0.075;
+/* 진화 Lv·숙련이 실제로 오른 횟수를 판 안에서 셈 — 합공으로 무기가 합쳐져도 줄지 않음 */
+function trainUp() {
+  G.train = (G.train || 0) + 1;
+  recompute();
+}
+function ev2CdMul(w) {
+  const e = w.ev2 || 0,
+    m = w.mas || 0;
+  return (e >= 3 ? 0.95 : 1) * (e >= 5 ? 0.95 : 1) * (m >= 3 ? 0.9 : 1); // 진화 Lv 3·5 재사용 −5%씩, 숙련 3 −10%
+}
 const AWK = {
   echo: {n: '연환', d: '시전하고 0.4초 뒤 한 번 더 시전한다 (두 번째는 위력 60%).'},
   geuk: {n: '극의', d: '피해 +50% · 범위 +25%.'},
@@ -39,7 +57,9 @@ function runW(w, dt, P) {
       w.id === CHARS[G.cid].start && G.P.tier
         ? 1 + START_TIER_B * Math.min(5, G.P.tier)
         : 1; /* v19.2 시작 무기 보너스는 5차까지 */
-  if (!ak && !lb && !(se && se.length) && !gz && sb === 1) {
+  const e2 = w.ev2 || 0,
+    ms = w.mas || 0;
+  if (!ak && !lb && !(se && se.length) && !gz && sb === 1 && !e2 && !ms) {
     d.upd(w, dt, P);
     return;
   }
@@ -49,7 +69,8 @@ function runW(w, dt, P) {
     am = P.amount,
     du = P.dur,
     ps = P.pspd;
-  P.might *= sb * (1 + LB_STEP * lb) * (ak === 'geuk' ? 1.5 : 1);
+  P.might *= sb * (1 + LB_STEP * lb) * (ak === 'geuk' ? 1.5 : 1) * (1 + EV2_STEP * e2) * (1 + MAS_STEP * ms);
+  P.cd *= ev2CdMul(w);
   P.area *= (1 + 0.1 * Math.floor(lb / 5)) * (ak === 'geuk' ? 1.25 : 1);
   if (ak === 'sin') P.cd *= 0.65;
   if (gz) P.cd *= 0.85;

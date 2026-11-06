@@ -43,10 +43,10 @@ ok(ra!==rc,'다른 씨앗 → 다른 판');
 // v20.3: 같은 씨앗·같은 조작이면 장면 빠르기(fps)와 상관없이 같은 판. 조작(걷는 길)은 장면이 아니라 진행(update) 차례에 묶는다
 function runFps(seed,fps,sec){
   meta=JSON.parse(META0);meta.set.perf='high';autoLow=false;applyPerf();document.hidden=true;
-  const u0=update;let k=0;update=d=>{G.P.hp=G.P.maxHp;G.P.x=Math.sin(k/80)*60;G.P.y=Math.cos(k/110)*40;k++;return u0(d);};
+  const u0=update,N=sec*60;let k=0;update=d=>{if(k>=N)return;G.P.hp=G.P.maxHp;G.P.x=Math.sin(k/80)*60;G.P.y=Math.cos(k/110)*40;k++;return u0(d);};   // v20.6: 정확히 N번 진행에서 멈춰 비교(예전에는 장면 끝에서 멈춰, 10fps는 한 장면에 진행이 6번이라 60초를 최대 5번 넘겨 진행함 — 그 사이 처치가 나면 달라 보였음)
   try{
     newGame('seonbi',['gilil'],2,'normal','normal',seed);let t=1000;last=t;
-    for(let i=0;i<fps*sec*3&&G.time<sec&&!G.over;i++){if(modal){if(!pick())break;continue;}t+=1000/fps;frame(t);}
+    for(let i=0;i<fps*sec*3&&k<N&&!G.over;i++){if(modal){if(!pick())break;continue;}t+=1000/fps;frame(t);}
     return {kills:G.kills,lvl:G.P.lvl,weapons:G.weapons.map(w=>w.id).join(','),x:Math.round(G.P.x*1000),y:Math.round(G.P.y*1000),en:G.enemies.length,next:rand(),steps:k};
   }finally{update=u0;document.hidden=false;}}
 {const F=[10,30,60,144].map(f=>[f,runFps(12345,f,60)]);const key=o=>JSON.stringify({...o,steps:undefined});

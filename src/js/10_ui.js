@@ -382,6 +382,29 @@ function mergeRun() {
 const jobHas = (d, c) => d.job === c || !!(d.also && d.also.includes(c)); // v17.4: also = 함께 쓰는 퇴마사(명태: 무당·상인, 상인 됫박의 진화 짝)
 const jobOk = d => !d.job || jobHas(d, G.cid);
 const wUnlocked = id => !WD[id].lock || unlocked('w:' + id);
+/* v20.6 칸 줄이기 · 2단계 성장(설계 docs/specs/2026-11-06-칸-줄이기-2단계-성장-v20.6.md) */
+const W_SLOTS = 4, // 무기(type w) 칸(예전 6)
+  P_SLOTS = 4, // 보패 칸(예전 6)
+  STAGE_CHEST = 2; // 막 끝 상자 강화 수(예전 3, 삼재 +1은 그대로)
+/* 무기가 더 클 곳이 없는지: 진화·합공 무기는 진화 Lv 5, 직업 기술은 숙련 3, 진화 안 한 무기는 Lv 5 */
+function wFull(w) {
+  const d = WD[w.id];
+  if (w.lv < d.max) return false;
+  if (d.type === 'c') return (w.mas || 0) >= MAS_MAX;
+  if (w.evo) return (w.ev2 || 0) >= EV2_MAX;
+  return true;
+}
+/* 다 큰 뒤에도 키울 곳(진화 Lv·숙련) — 레벨업 카드와 상자가 같이 씀 */
+function growOpts(B) {
+  const o = [];
+  for (const w of G.weapons) {
+    if (B && B.has(w.id)) continue;
+    const d = WD[w.id];
+    if (w.evo && w.lv >= d.max && (w.ev2 || 0) < EV2_MAX) o.push({k: 'evup', id: w.id, wt: 1.2});
+    else if (d.type === 'c' && w.lv >= d.max && (w.mas || 0) < MAS_MAX) o.push({k: 'mas', id: w.id, wt: 1.2});
+  }
+  return o;
+}
 function genOptions() {
   const pool = [],
     B = G.banned;
@@ -389,7 +412,7 @@ function genOptions() {
     if (w.lv < WD[w.id].max && !B.has(w.id)) pool.push({k: 'wup', id: w.id, wt: WD[w.id].type === 'c' ? 1.5 : 1.3});
   }
   const wc = G.weapons.filter(w => WD[w.id].type === 'w').length;
-  if (wc < 6)
+  if (wc < W_SLOTS)
     for (const id in WD) {
       const d = WD[id];
       if (
@@ -408,10 +431,11 @@ function genOptions() {
     if (!jobOk(d) || B.has(id)) continue;
     const l = G.passives[id] || 0;
     if (l > 0 && l < d.max) pool.push({k: 'pup', id, wt: 1});
-    else if (!l && pc < 6) pool.push({k: 'pnew', id, wt: d.job ? 1 : 0.7});
+    else if (!l && pc < P_SLOTS) pool.push({k: 'pnew', id, wt: d.job ? 1 : 0.7});
   }
+  pool.push(...growOpts(B));
   if (G.P.lvl >= 50 || !pool.length)
-    for (const w of G.weapons) if (w.lv >= WD[w.id].max && !B.has(w.id)) pool.push({k: 'lb', id: w.id, wt: 0.8});
+    for (const w of G.weapons) if (wFull(w) && !B.has(w.id)) pool.push({k: 'lb', id: w.id, wt: 0.8}); // v20.6 다 키운 뒤에만
   const n = (G.P.luck ? 4 : 3) + G.mods.choice,
     picks = [];
   while (picks.length < n && pool.length) {
@@ -524,6 +548,22 @@ function decorate(o) {
       badge: _t('보급'),
       bc: ''
     };
+  if (o.k === 'evup' || o.k === 'mas') {
+    const w = G.weapons.find(w => w.id === o.id),
+      ev = o.k === 'evup',
+      a = ev ? w.ev2 || 0 : w.mas || 0,
+      b = a + 1,
+      mx = ev ? EV2_MAX : MAS_MAX,
+      cd = ev ? (b === 3 || b === 5 ? _t(' · 재사용 −5%') : '') : b === MAS_MAX ? _t(' · 재사용 −10%') : '';
+    return {
+      ...o,
+      ic: wIconHTML(w),
+      name: wName(w) + (ev ? _t(' 진화 성장') : _t(' 숙련')),
+      desc: _t('피해 +{p}% · 최대 체력 +{h} · 초당 회복 +{r}{cd}.', {p: Math.round((ev ? EV2_STEP : MAS_STEP) * 100), h: TRAIN_HP, r: TRAIN_REGEN, cd}),
+      badge: ev ? _t('진화 Lv {a} → {b}/{m}', {a, b, m: mx}) : _t('숙련 {a} → {b}/{m}', {a, b, m: mx}),
+      bc: ev ? 'lb' : 'cls' // 진화 성장은 한계 돌파와 같은 금빛 꼬리표
+    };
+  }
   if (o.k === 'lb') {
     const d = WD[o.id],
       w = G.weapons.find(w => w.id === o.id),
@@ -577,6 +617,19 @@ function applyOpt(o) {
   else if (o.k === 'cash') G.coins += 25;
   else if (o.k === 'wnew') addWeapon(o.id);
   else if (o.k === 'wup') G.weapons.find(w => w.id === o.id).lv++;
+  else if (o.k === 'evup') {
+    const w = G.weapons.find(w => w.id === o.id);
+    if ((w.ev2 || 0) < EV2_MAX) {
+      w.ev2 = (w.ev2 || 0) + 1;
+      trainUp();
+    }
+  } else if (o.k === 'mas') {
+    const w = G.weapons.find(w => w.id === o.id);
+    if ((w.mas || 0) < MAS_MAX) {
+      w.mas = (w.mas || 0) + 1;
+      trainUp();
+    }
+  }
   else if (o.k === 'lb') {
     const w = G.weapons.find(w => w.id === o.id);
     w.lb = (w.lb || 0) + 1;
@@ -934,6 +987,10 @@ function openChest(n, cb) {
   );
   if (ev) {
     ev.evo = true;
+    if (!(ev.ev2 > 0)) {
+      ev.ev2 = 1; // v20.6 진화 순간 진화 Lv 1
+      trainUp();
+    }
     G.rs.evo.add(ev.id);
     const d = WD[ev.id];
     list.innerHTML += `<div><img src="${ICON[ev.id]}" alt=""><div><span class="ev">${d.name} → ${d.evoName}</span><br>${d.evoDesc}</div></div>`;
@@ -953,8 +1010,10 @@ function openChest(n, cb) {
     const c = [];
     for (const w of G.weapons) if (w.lv < WD[w.id].max) c.push({k: 'wup', id: w.id});
     for (const id in G.passives) if (G.passives[id] < PD[id].max) c.push({k: 'pup', id});
-    if (!c.length && G.weapons.length) {
-      const w = G.weapons[(rand() * G.weapons.length) | 0];
+    c.push(...growOpts()); // v20.6 진화 Lv·숙련도 상자에서
+    const full = G.weapons.filter(wFull);
+    if (!c.length && full.length) {
+      const w = full[(rand() * full.length) | 0]; // v20.6 한계 돌파는 다 키운 무기에만
       const o = decorate({k: 'lb', id: w.id});
       applyOpt(o);
       list.innerHTML += `<div><span class="ic">${o.ic}</span><b>${o.name}</b>&nbsp;${o.badge}</div>`;
@@ -1221,8 +1280,8 @@ function buildHTML() {
       .map(w => {
         const d = WD[w.id];
         return d.type === 'c'
-          ? `<div class="slot cls${w.awk ? ' awk' : ''}" title="${w.awk ? AWK[w.awk].n + _t('의 ') : ''}${d.name}"><span class="si" style="background:${d.col}">${d.g}</span><b>${w.lv}${w.lb ? '+' + w.lb : ''}</b></div>`
-          : `<div class="slot ${d.fuse ? 'fuse' : w.evo ? 'evo' : ''}" title="${wName(w)}${w.tm ? _t(' · 담금질 ') + TEMPER[w.tm].n : ''}${(w.seals || []).length ? _t(' · 인장 ') + w.seals.map(k => SEALS[k].g).join('') : ''}"><img src="${wIcon(w)}" alt="${wName(w)}">${(w.seals || []).length ? `<i class="sl">${'•'.repeat(w.seals.length)}</i>` : ''}${w.tm ? `<i class="tm">${TEMPER[w.tm].g}</i>` : ''}<b>${d.fuse ? '合' : w.evo ? '★' : w.lv}${w.lb ? '+' + w.lb : ''}</b></div>`;
+          ? `<div class="slot cls${w.awk ? ' awk' : ''}" title="${w.awk ? AWK[w.awk].n + _t('의 ') : ''}${d.name}"><span class="si" style="background:${d.col}">${d.g}</span><b>${w.lv}${w.mas ? '·' + w.mas : ''}${w.lb ? '+' + w.lb : ''}</b></div>`
+          : `<div class="slot ${d.fuse ? 'fuse' : w.evo ? 'evo' : ''}" title="${wName(w)}${w.tm ? _t(' · 담금질 ') + TEMPER[w.tm].n : ''}${(w.seals || []).length ? _t(' · 인장 ') + w.seals.map(k => SEALS[k].g).join('') : ''}"><img src="${wIcon(w)}" alt="${wName(w)}">${(w.seals || []).length ? `<i class="sl">${'•'.repeat(w.seals.length)}</i>` : ''}${w.tm ? `<i class="tm">${TEMPER[w.tm].g}</i>` : ''}<b>${d.fuse ? '合' + (w.ev2 || '') : w.evo ? '★' + (w.ev2 || '') : w.lv}${w.lb ? '+' + w.lb : ''}</b></div>`;
       })
       .join('') +
     Object.keys(G.passives)
@@ -2343,7 +2402,7 @@ function renderHelp() {
           }
         ) +
         _t(
-          '<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#9a6a10">破</span></span><div><p><b>한계 돌파</b> · Lv 50부터, 또는 더 올릴 것이 없을 때</p><p>만렙 무기·기술의 카드가 「한계 돌파」로 나온다. 돌파마다 피해 +5%, 5번마다 범위 +10%. 끝없이 쌓인다. 보물 상자도 올릴 것이 없으면 돌파를 준다.</p></div></div>'
+          '<div class="hrow"><span class="ic"><span class="seal" style="width:32px;height:32px;font-size:16px;background:#9a6a10">破</span></span><div><p><b>진화 성장 · 숙련 · 한계 돌파</b></p><p>무기 칸은 넷, 보패 칸도 넷이다. 진화·합공 무기는 진화 Lv 1~5로 더 자라고(레벨마다 피해 +10%, 3·5에 재사용 −5%), 직업 기술은 Lv 5 뒤 숙련 1~3(단계마다 피해 +10%, 숙련 3에 재사용 −10%)을 더 쌓는다. 진화 Lv·숙련이 한 단계 오를 때마다 몸도 단련되어 최대 체력 +6, 초당 회복 +0.075. 합공 무기는 두 무기 중 높은 진화 Lv를 이어받는다. 다 키운 무기·기술만 Lv 50부터(또는 더 올릴 것이 없을 때) 「한계 돌파」가 나온다. 돌파마다 피해 +5%, 5번마다 범위 +10%. 막을 평정할 때 받는 보물 상자는 강화 둘이다.</p></div></div>'
         )
     );
     for (const id in CHARS) {
@@ -2454,7 +2513,7 @@ function renderHelp() {
         _t(
           '엘리트·중간 보스·막 보스가 떨군 <b>보물상자</b>를 열면 진화한다. 조건을 갖춘 무기가 여럿이면 한 번에 하나씩 진화한다.'
         ),
-        _t('무기는 6개, 보패는 6개까지 가질 수 있다. 전직 기술은 따로 세며 칸을 차지하지 않는다.')
+        _t('무기는 4개, 보패는 4개까지 가질 수 있다. 전직 기술은 따로 세며 칸을 차지하지 않는다.')
       ])
     );
     h += hcard(
