@@ -1887,6 +1887,7 @@ function openSettings(from) {
   prevScreen = from;
   diagRender();
   saveUndoShow();
+  homeUI();
   const s = meta.set;
   {
     const L = $('#setLang');
@@ -2271,7 +2272,8 @@ function renderHelp() {
               '<b>캐릭터 상태창</b>: <b>C</b>(또는 Tab) 키나 오른쪽 아래 <b>상태</b> 버튼. 지금 쓰는 무기·직업 기술·보패·축복·정표와 능력치, 무기마다 이번 출정에서 준 피해와 비중을 본다. 열어 둔 동안 게임이 멈춘다. 일시정지 화면에서도 열 수 있다.'
             )
           ) +
-          r(I.santong, _t('레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>X</b> 물리기, <b>B</b> 봉인.'))
+          r(I.santong, _t('레벨업 화면: 숫자 키로 고르기, <b>R</b> 산통 흔들기, <b>X</b> 물리기, <b>B</b> 봉인.')) +
+          r(null, _t('<b>저장과 홈 화면 앱</b>: 진행은 이 브라우저에만 남는다. 휴대폰을 바꿀 때는 설정 → 「저장 내보내기」로 파일을 받아 새 기기에서 「저장 가져오기」. 설정의 「홈 화면에 추가」에서 기기에 맞는 방법을 볼 수 있다(아이폰은 사파리에서). 홈 화면 앱은 인터넷 없이도 열린다.'))
       );
     h += hcard(
       _t('한 판의 흐름'),
@@ -3097,13 +3099,10 @@ $('#saveCodeCopy').onclick = () => {
   } catch (e) {}
   pick();
 };
-$('#saveCodeLoad').onclick = () => {
-  const n = $('#saveCodeN'),
-    s = saveDecode($('#saveCodeText').value);
-  if (!s) {
-    n.textContent = _t('저장 코드가 맞지 않습니다 (JTM1: 로 시작하는 글 전체를 붙여넣으세요)');
-    return;
-  }
+/* v20.7 불러오기 흐름 하나(저장 코드 글상자·저장 파일이 함께 씀): 'bad' 맞지 않음 · 'cancel' 아니요 · 'ok' 바꿈(부른 쪽이 다시 시작) · 'fail' */
+function saveLoadFlow(code) {
+  const s = saveDecode(code);
+  if (!s) return 'bad';
   if (
     !confirm(
       _t('이 코드의 진행(엽전 {coins}닢)으로 바꾸고 다시 시작합니다. 지금 진행은 설정의 「불러오기 전으로」로 되돌릴 수 있습니다. 바꿀까요?', {
@@ -3111,9 +3110,116 @@ $('#saveCodeLoad').onclick = () => {
       })
     )
   )
-    return;
-  if (saveImport($('#saveCodeText').value)) location.reload();
-  else n.textContent = _t('불러오지 못했습니다');
+    return 'cancel';
+  return saveImport(code) ? 'ok' : 'fail';
+}
+$('#saveCodeLoad').onclick = () => {
+  const n = $('#saveCodeN'),
+    r = saveLoadFlow($('#saveCodeText').value);
+  if (r === 'ok') location.reload();
+  else if (r === 'bad') n.textContent = _t('저장 코드가 맞지 않습니다 (JTM1: 로 시작하는 글 전체를 붙여넣으세요)');
+  else if (r === 'fail') n.textContent = _t('불러오지 못했습니다');
+};
+/* v20.7 저장 파일 내보내기·가져오기 */
+$('#saveFileOut').onclick = () => {
+  const n = $('#saveFileN'),
+    name = saveFileName();
+  try {
+    const url = URL.createObjectURL(new Blob([saveFileText()], {type: 'text/plain'})),
+      a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    n.textContent = _t('내보냈습니다: {name} · 다른 기기에서는 「저장 가져오기」로 이 파일을 고르세요', {name});
+  } catch (e) {
+    n.textContent = _t('파일로 내보내지 못했습니다. 아래 「저장 코드로 옮기기」를 쓰세요');
+  }
+};
+$('#saveFileIn').onclick = () => {
+  const p = $('#saveFilePick');
+  p.value = '';
+  p.click();
+};
+$('#saveFilePick').onchange = e => {
+  const f = e.target.files && e.target.files[0],
+    n = $('#saveFileN');
+  if (!f) return;
+  const go = t => {
+    const r = saveLoadFlow(saveFileCode(t) || '');
+    if (r === 'ok') location.reload();
+    else if (r === 'bad') n.textContent = _t('조선퇴마록 저장 파일이 아닙니다');
+    else if (r === 'fail') n.textContent = _t('불러오지 못했습니다');
+  };
+  if (f.size > 2e6) return void (n.textContent = _t('조선퇴마록 저장 파일이 아닙니다'));
+  const rd = new FileReader();
+  rd.onload = () => go(String(rd.result || ''));
+  rd.onerror = () => (n.textContent = _t('파일을 읽지 못했습니다'));
+  rd.readAsText(f);
+};
+/* v20.7 오프라인 표시 · 홈 화면에 추가 */
+let swReady = false,
+  installEv = null;
+if ('serviceWorker' in navigator && navigator.serviceWorker.ready)
+  navigator.serviceWorker.ready.then(() => {
+    swReady = true;
+    homeUI();
+  }, () => {});
+addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installEv = e;
+  homeUI();
+});
+addEventListener('appinstalled', () => {
+  installEv = null;
+  homeUI();
+});
+function homeUI() {
+  try {
+    homeUIDraw();
+  } catch (e) {} // 안내 줄이 설정 화면을 막지 않게
+}
+function homeUIDraw() {
+  const L = typeof location !== 'undefined' ? location : {},
+    st = offlineState({proto: L.protocol, host: L.hostname, sw: 'serviceWorker' in navigator, ready: swReady}),
+    o = $('#offlineN');
+  o.textContent =
+    st === 'ready'
+      ? _t('✓ 오프라인 준비 완료 · 인터넷 없이도 열립니다')
+      : st === 'wait'
+        ? _t('오프라인 준비 중… (한 번 연 뒤 잠시 기다리면 됩니다)')
+        : _t('이 주소에서는 오프라인을 쓸 수 없습니다 (플레이 사이트 주소로 열면 됩니다)');
+  o.className = 'hint' + (st === 'ready' ? ' ok' : '');
+  const k = homeKind({
+      ua: navigator.userAgent || '',
+      standalone: !!((window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone),
+      prompt: !!installEv,
+      touch: navigator.maxTouchPoints || 0
+    }),
+    T = {
+      app: _t('홈 화면 앱으로 실행 중입니다. 진행은 이 앱 안에 저장됩니다.'),
+      'ios-safari': _t('아이폰·아이패드 사파리에서는 홈 화면에 추가해 두면 앱처럼 열리고 기록도 더 안전합니다.'),
+      'ios-other': _t('아이폰·아이패드에서는 사파리에서만 홈 화면에 추가할 수 있습니다. 이 주소를 사파리로 열어 주세요.'),
+      prompt: _t('홈 화면(또는 바탕 화면)에 추가하면 앱처럼 한 화면으로 열리고, 인터넷 없이도 할 수 있습니다.'),
+      manual: _t('브라우저 메뉴(⋮)에서 「홈 화면에 추가」 또는 「앱 설치」를 고르면 앱처럼 열립니다.')
+    };
+  $('#a2hsN').textContent = T[k];
+  const b = $('#a2hsBtn');
+  b.hidden = k === 'app' || k === 'manual' || k === 'ios-other';
+  b.textContent = k === 'prompt' ? _t('홈 화면에 추가') : _t('홈 화면에 추가 방법');
+  b.dataset.k = k;
+  if (k !== 'ios-safari') $('#a2hsSteps').hidden = true;
+}
+$('#a2hsBtn').onclick = () => {
+  const b = $('#a2hsBtn');
+  if (b.dataset.k === 'prompt' && installEv) {
+    const ev = installEv;
+    installEv = null;
+    ev.prompt();
+    (ev.userChoice || Promise.resolve()).then(homeUI, homeUI);
+  } else $('#a2hsSteps').hidden = !$('#a2hsSteps').hidden;
 };
 /* v20.4 저장 코드를 불러오기 전 진행으로 되돌리기: 되돌릴 진행이 있을 때만 단추를 보임 */
 function saveUndoShow() {
@@ -3122,6 +3228,7 @@ function saveUndoShow() {
     has = !!saveParse(localStorage.getItem(SAVE_UNDO) || 'null');
   } catch (e) {}
   $('#saveCodeUndo').hidden = !has;
+  if (has) $('details.savecode').open = true; // v20.7 파일로 가져온 뒤에도 「불러오기 전으로」가 보이게
 }
 $('#saveCodeUndo').onclick = () => {
   if (!confirm(_t('저장 코드를 불러오기 전의 진행으로 되돌리고 다시 시작합니다. 되돌릴까요?'))) return;

@@ -540,6 +540,40 @@ function saveDecode(code) {
     return null;
   }
 }
+/* v20.7 저장 파일: 내용은 저장 코드 그대로(메모 앱을 거쳐 앞뒤 글·줄바꿈·BOM이 붙어도 JTM1: 부터 읽음) */
+function saveFileName(d = new Date()) {
+  const p = n => String(n).padStart(2, '0');
+  return `조선퇴마록-저장-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.txt`;
+}
+function saveFileText() {
+  return saveCode() + '\n';
+}
+function saveFileCode(text) {
+  const t = String(text || '').replace(/^﻿/, ''),
+    i = t.indexOf(SAVE_CODE_HEAD);
+  if (i < 0) return null;
+  const m = t.slice(i + SAVE_CODE_HEAD.length).match(/^[A-Za-z0-9+/=\s]*/);
+  return SAVE_CODE_HEAD + m[0].replace(/\s+/g, '');
+}
+function saveFileRead(text) {
+  const c = saveFileCode(text);
+  return c ? saveDecode(c) : null;
+}
+/* v20.7 홈 화면에 추가: 기기 판별. app 이미 홈 화면 앱 · ios-safari 세 단계 안내 · ios-other 사파리로 열기 · prompt 설치 창 · manual 브라우저 메뉴 */
+function homeKind({ua = '', standalone = false, prompt = false, touch = 0} = {}) {
+  if (standalone) return 'app';
+  const ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && touch > 1);
+  if (ios)
+    return /Safari\//.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|KAKAOTALK|NAVER|Line\/|Instagram|FBAN|FBAV|DaumApps/.test(ua)
+      ? 'ios-safari'
+      : 'ios-other';
+  return prompt ? 'prompt' : 'manual';
+}
+/* v20.7 오프라인 표시: 홈 화면 앱 캐시(sw.js)는 https·localhost에서만 */
+function offlineState({proto = '', host = '', sw = false, ready = false} = {}) {
+  if (!sw || !(proto === 'https:' || host === 'localhost' || host === '127.0.0.1')) return 'none';
+  return ready ? 'ready' : 'wait';
+}
 /* 맞는 코드면 본 칸에 넣는다(다시 불러오면 바로잡기·옮기기를 그대로 거친다). 틀린 코드는 아무것도 건드리지 않는다 */
 function saveImport(code) {
   const s = saveDecode(code);
@@ -569,7 +603,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.6',
+const GAME_VER = 'v20.7',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
