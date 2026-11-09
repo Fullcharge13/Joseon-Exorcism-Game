@@ -1,7 +1,7 @@
 /* 도감 목록 — tools/assets.py가 만듦(손으로 고치지 마세요) */
 window.ASSETS = {
  "game": "joseon-exorcism",
- "version": "v20.8",
+ "version": "v20.9",
  "kinds": [
   {
    "kind": "char",

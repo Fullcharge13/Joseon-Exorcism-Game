@@ -603,7 +603,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.8',
+const GAME_VER = 'v20.9',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -774,16 +774,24 @@ if (saveRescue)
       ? '읽을 수 없는 저장 → 지난번 백업으로 시작 (원본은 ' + SAVE_BROKEN + ')'
       : '읽을 수 없는 저장 · 백업 없음 → 새로 시작 (원본은 ' + SAVE_BROKEN + ')'
   ); // v19.8
-addEventListener('error', e =>
-  diagErr(
+/* v20.9 오류 사건 → [종류, 내용]. 다른 곳에서 온 스크립트(사파리 확장 프로그램·브라우저 기능 등)의 오류는
+   브라우저가 내용을 감추고 「Script error.」만 주며 파일·줄도 비움 → 게임 코드 오류와 구분해 「바깥 스크립트 오류」로 */
+function diagFromEvent(e) {
+  if (e && !e.error && !e.filename && /^Script error\.?$/i.test(String(e.message || '').trim()))
+    return [
+      _t('바깥 스크립트 오류'),
+      _t('Script error. — 게임 밖(사파리 확장 프로그램·브라우저 기능 등)에서 난 오류일 가능성이 큼 (브라우저가 내용을 감춤)')
+    ];
+  return [
     _t('페이지 오류'),
     e && e.error
       ? e.error
       : e && e.message
         ? e.message + (e.filename ? ' (' + e.filename + ':' + e.lineno + ')' : '')
         : e
-  )
-);
+  ];
+}
+addEventListener('error', e => diagErr(...diagFromEvent(e)));
 addEventListener('unhandledrejection', e =>
   diagErr(_t('처리되지 않은 오류'), e && e.reason !== undefined ? e.reason : e)
 );
