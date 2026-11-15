@@ -399,7 +399,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button class="btn ghost" id="labBtn" hidden>조합 시험장</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v20.9</p>
+    <p class="ver" id="verTag">v21.0</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -618,6 +618,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
     <div class="setlist">
       <label id="setLangRow" hidden>언어 · Language <select id="setLang"></select></label>
       <label>효과음 크기 <input type="range" id="setVol" min="0" max="100" step="5"></label>
+      <label>배경음 크기 <input type="range" id="setBgm" min="0" max="100" step="5"></label>
       <label>화면 흔들림 <input type="checkbox" id="setShake"></label>
       <label>피해 숫자 표시 <input type="checkbox" id="setNums"></label>
       <label>화면 번쩍임 <input type="checkbox" id="setFlash"></label>
@@ -765,7 +766,7 @@ Object.assign(I18N.zh,{"거중기":"举重机","도르래로 큰 돌을 들어 �
 Object.assign(I18N.zh,{"객귀":"客鬼","집 밖이나 객지에서 죽은 사람의 혼령. 다가와 들러붙어 걸음을 무겁게 한다. 출처: 한국민족문화대백과사전 「객귀」 · 들러붙는 행동은 게임 속 각색":"在家外或他乡死去之人的魂灵。靠近后缠上身，使脚步变得沉重。出处：《韩国民族文化大百科事典》「客鬼」 · 缠身行为为游戏中的改编","죽통 나그네":"竹筒旅人","대나무 통에 여인 둘을 넣고 다니는 정체 모를 나그네. 통을 열어 여인을 불러낸다. 출처: 한국민족문화대백과사전 「죽통미녀 설화」 · 여인이 싸우는 것은 게임 속 각색":"在竹筒里装着两名女子四处行走的神秘旅人。打开竹筒唤出女子。出处：《韩国民族文化大百科事典》「竹筒美女说话」 · 女子参战为游戏中的改编","대통 여인":"竹筒女子","죽통 나그네가 대통에서 꺼낸 여인.":"竹筒旅人从竹筒中唤出的女子。","범이 된 남편":"化虎的丈夫","부적으로 범이 되었다가 사람으로 돌아오지 못한 남자. 웅크렸다가 덮친다. 출처: 한국민족문화대백과사전 「호랑이로 변한 남편」 · 덮치는 행동은 게임 속 각색":"借符咒化为老虎后再也变不回人的男子。伏身后猛扑而来。出处：《韩国民族文化大百科事典》「变成老虎的丈夫」 · 猛扑行为为游戏中的改编","곰나루 암곰":"熊津母熊","곰나루 전설의 암곰. 새끼 곰을 데리고 다니고, 새끼를 잃으면 성이 나 거세진다. 출처: 한국민족문화대백과사전 「곰나루」 · 새끼와 함께 싸우는 것은 게임 속 각색":"熊津传说中的母熊。带着幼熊行动，失去幼熊便会发怒变得凶猛。出处：《韩国民族文化大百科事典》「熊津」 · 与幼熊一同作战为游戏中的改编","새끼 곰":"幼熊","곰나루 암곰의 새끼.":"熊津母熊的幼崽。","길달":"吉达","사람으로 나타나 벼슬을 하던 도깨비. 여우로 변해 사라졌다가 다른 곳에 나타난다. 출처: 한국민족문화대백과사전 「길달」(『삼국유사』) · 순간이동은 게임 속 각색":"化作人形做过官的鬼怪。化为狐狸消失后又在别处现身。出处：《韩国民族文化大百科事典》「吉达」（《三国遗事》） · 瞬移为游戏中的改编","객귀가 들러붙었다! 걸음이 무겁다":"客鬼缠上身了！脚步变得沉重","새끼를 잃은 암곰이 성이 났다":"失去幼崽的母熊发怒了","요괴 68종 모두 만나기":"遇见全部68种妖怪","요괴 사냥꾼":"妖怪猎人","막별 새 엘리트 10종 모두 퇴치":"击退全部10种各幕新精英","여귀":"厉鬼","비명횡사해 기댈 데 없는 외로운 혼. 나라에 역질이 돌면 여제로 달랬다. 다니는 길에 역병 기운을 남긴다. 출처: 한국민족문화대백과사전 「귀신」 · 독 안개는 게임 속 각색":"横死后无所依托的孤魂。国中疫病流行时以厉祭安抚。所经之处留下疫气。出处：《韩国民族文化大百科事典》「鬼神」 · 毒雾为游戏中的改编","흑룡":"黑龙","백두산 전설에서 물줄기를 말리고 태양을 훔치려 한 악룡. 하늘을 가려 앞이 어두워진다. 출처: 한국민족문화대백과사전 「백두산 설화」 · 어둠은 게임 속 각색":"白头山传说中烤干水脉、企图偷走太阳的恶龙。遮蔽天空使眼前变暗。出处：《韩国民族文化大百科事典》「白头山说话」 · 黑暗为游戏中的改编","바닷속 큰 메기":"海底大鲇鱼","바다 밑 굴에 살며 들고 날 때마다 밀물과 썰물을 일으킨다는 큰 메기. 퇴마사를 끌어당겼다 밀어낸다. 출처: 한국민족문화대백과사전 「밀물썰물 설화」 · 끌고 미는 것은 게임 속 각색":"据说住在海底洞穴、每次进出都会引起涨潮退潮的大鲇鱼。将退魔师拉近又推开。出处：《韩国民族文化大百科事典》「潮汐说话」 · 拉扯推开为游戏中的改编","삼두구미":"三头九尾","제주 무가 〈삼두구미본〉의 괴물. 생김새가 기이하고, 물리친 뒤에도 강한 힘이 남는다고 그려진다. 쓰러뜨려도 한 번 다시 일어난다. 출처: 유정월 『한국고전연구』 56집(2022) · 머리 셋·꼬리 아홉 그림과 다시 일어남은 게임 속 각색":"济州巫歌〈三头九尾本〉中的怪物。形貌怪异，即使被击退后仍被描绘为力量强大。被打倒后会再站起来一次。出处：刘贞月《韩国古典研究》第56辑（2022） · 三头九尾的形象与复起为游戏中的改编","화마":"火魔","궁궐에 불을 내는 기운(화기). 근정전 앞 무쇠 물독 드므의 물에 제 얼굴이 비치면 놀라 움츠러든다고 여겼다. 출처: 한국민족문화대백과사전 「경복궁 근정전」 · 불 장판과 드므에서 약해짐은 게임 속 각색":"引发宫中火灾的气（火气）。人们认为它在勤政殿前铁水缸的水中照见自己的脸便会惊惧畏缩。出处：《韩国民族文化大百科事典》「景福宫勤政殿」 · 火焰地带与在水缸旁变弱为游戏中的改编","흑룡이 해를 가렸다":"黑龙遮住了太阳","삼두구미가 머리 하나를 잃고 다시 일어난다":"三头九尾失去一个头，又站了起来","뜰에 물독 드므가 놓였다 — 화마를 드므 곁으로":"庭中放置了水缸——把火魔引到水缸旁"});   // 70_elite2.json
 Object.assign(I18N.zh,{"저장 안내: 이 브라우저의 저장을 읽을 수 없고 백업도 없어 처음부터 시작합니다. 저장 코드를 복사해 둔 것이 있다면 설정 → 「저장 코드」에서 불러오세요.":"存档提示：无法读取此浏览器中的存档，也没有备份，将从头开始。如果之前复制过存档码，请在 设置 → 「存档码」 中导入。","저장 코드":"存档码","진행(엽전·과업·해금·설정)을 글자 한 줄로 옮깁니다. 복사해 두면 브라우저 저장이 지워져도, 다른 기기에서도 붙여넣어 이어 할 수 있습니다.":"把进度（铜钱·任务·解锁·设置）转成一行文字。先复制保存，即使浏览器存档被清除，或换到其他设备，也能粘贴后继续。","저장 코드를 여기에 붙여넣기":"在此粘贴存档码","불러오기":"导入","글상자를 길게 눌러 복사하세요":"请长按文本框复制","복사했습니다. 메모 앱 같은 곳에 붙여 두세요":"已复制。请粘贴到备忘录等地方保存","저장 코드가 맞지 않습니다 (JTM1: 로 시작하는 글 전체를 붙여넣으세요)":"存档码不正确（请粘贴以 JTM1: 开头的完整文字）","불러오지 못했습니다":"导入失败","저장 안내: 이 브라우저의 저장을 읽을 수 없어, 마지막으로 제대로 저장된 진행으로 이어 갑니다.":"存档提示：无法读取此浏览器中的存档，已从最后一次正常保存的进度继续。","이 코드의 진행(엽전 {coins}닢)으로 바꾸고 다시 시작합니다. 지금 진행은 설정의 「불러오기 전으로」로 되돌릴 수 있습니다. 바꿀까요?":"将换成此存档码的进度（铜钱 {coins} 枚）并重新开始。当前进度可在设置中用「回到导入前」恢复。要换吗？","불러오기 전으로":"回到导入前","저장 코드를 불러오기 전의 진행으로 되돌리고 다시 시작합니다. 되돌릴까요?":"将恢复为导入存档码之前的进度并重新开始。要恢复吗？","되돌릴 진행이 없습니다":"没有可恢复的进度"});   // 71_savecode.json
 Object.assign(I18N.zh,{"<span class=\"tg ev\">진화 Lv {a}/{m}</span>":"<span class=\"tg ev\">进化 Lv {a}/{m}</span>","<span class=\"tg\">숙련 {a}/{m}</span>":"<span class=\"tg\">熟练 {a}/{m}</span>","무기 <small>{length}/{m}</small>":"武器 <small>{length}/{m}</small>","보패 <small>{length}/{m}</small>":"法器 <small>{length}/{m}</small>"," · 재사용 −5%":" · 冷却 −5%"," · 재사용 −10%":" · 冷却 −10%"," 진화 성장":" 进化成长"," 숙련":" 熟练","진화 Lv {a} → {b}/{m}":"进化 Lv {a} → {b}/{m}","숙련 {a} → {b}/{m}":"熟练 {a} → {b}/{m}","피해 +{p}% · 최대 체력 +{h} · 초당 회복 +{r}{cd}.":"伤害 +{p}% · 最大体力 +{h} · 每秒回复 +{r}{cd}。","<div class=\"hrow\"><span class=\"ic\"><span class=\"seal\" style=\"width:32px;height:32px;font-size:16px;background:#9a6a10\">破</span></span><div><p><b>진화 성장 · 숙련 · 한계 돌파</b></p><p>무기 칸은 넷, 보패 칸도 넷이다. 진화·합공 무기는 진화 Lv 1~5로 더 자라고(레벨마다 피해 +10%, 3·5에 재사용 −5%), 직업 기술은 Lv 5 뒤 숙련 1~3(단계마다 피해 +10%, 숙련 3에 재사용 −10%)을 더 쌓는다. 진화 Lv·숙련이 한 단계 오를 때마다 몸도 단련되어 최대 체력 +6, 초당 회복 +0.075. 합공 무기는 두 무기 중 높은 진화 Lv를 이어받는다. 다 키운 무기·기술만 Lv 50부터(또는 더 올릴 것이 없을 때) 「한계 돌파」가 나온다. 돌파마다 피해 +5%, 5번마다 범위 +10%. 막을 평정할 때 받는 보물 상자는 강화 둘이다.</p></div></div>":"<div class=\"hrow\"><span class=\"ic\"><span class=\"seal\" style=\"width:32px;height:32px;font-size:16px;background:#9a6a10\">破</span></span><div><p><b>进化成长 · 熟练 · 极限突破</b></p><p>武器栏位四个，法器栏位也是四个。进化·合击武器可继续成长至进化 Lv 1~5（每级伤害 +10%，3·5 级冷却 −5%），职业技能在 Lv 5 之后还能积累熟练 1~3（每阶伤害 +10%，熟练 3 时冷却 −10%）。进化 Lv·熟练每提升一阶，身体也随之锤炼：最大体力 +6，每秒回复 +0.075。合击武器继承两把武器中较高的进化 Lv。只有养满的武器·技能才会从 Lv 50 起（或没有可提升的项目时）出现「极限突破」。每次突破伤害 +5%，每 5 次范围 +10%。平定一幕时获得的宝箱提供两次强化。</p></div></div>"});   // 72_slots_evo2.json
-Object.assign(I18N.zh,{"내보냈습니다: {name} · 다른 기기에서는 「저장 가져오기」로 이 파일을 고르세요":"已导出：{name} · 在其他设备上用「导入存档」选择此文件即可","파일로 내보내지 못했습니다. 아래 「저장 코드로 옮기기」를 쓰세요":"无法导出为文件。请使用下方的「用存档码转移」","조선퇴마록 저장 파일이 아닙니다":"这不是朝鲜退魔录的存档文件","파일을 읽지 못했습니다":"无法读取文件","✓ 오프라인 준비 완료 · 인터넷 없이도 열립니다":"✓ 离线准备完毕 · 没有网络也能打开","오프라인 준비 중… (한 번 연 뒤 잠시 기다리면 됩니다)":"离线准备中…（打开一次后稍等片刻即可）","이 주소에서는 오프라인을 쓸 수 없습니다 (플레이 사이트 주소로 열면 됩니다)":"此地址无法使用离线功能（请用游戏网站地址打开）","홈 화면 앱으로 실행 중입니다. 진행은 이 앱 안에 저장됩니다.":"正以主屏幕应用运行。进度保存在此应用内。","아이폰·아이패드 사파리에서는 홈 화면에 추가해 두면 앱처럼 열리고 기록도 더 안전합니다.":"在 iPhone·iPad 的 Safari 中添加到主屏幕后，可以像应用一样打开，记录也更安全。","아이폰·아이패드에서는 사파리에서만 홈 화면에 추가할 수 있습니다. 이 주소를 사파리로 열어 주세요.":"在 iPhone·iPad 上只能通过 Safari 添加到主屏幕。请用 Safari 打开此地址。","홈 화면(또는 바탕 화면)에 추가하면 앱처럼 한 화면으로 열리고, 인터넷 없이도 할 수 있습니다.":"添加到主屏幕（或桌面）后，可以像应用一样全屏打开，没有网络也能玩。","브라우저 메뉴(⋮)에서 「홈 화면에 추가」 또는 「앱 설치」를 고르면 앱처럼 열립니다.":"在浏览器菜单（⋮）中选择「添加到主屏幕」或「安装应用」，即可像应用一样打开。","홈 화면에 추가":"添加到主屏幕","홈 화면에 추가 방법":"添加到主屏幕的方法","저장":"存档","진행은 이 브라우저에만 저장됩니다. 휴대폰을 바꾸거나 기록이 지워질까 걱정되면 파일로 내보내 두세요.":"进度只保存在此浏览器中。如果要换手机，或担心记录被清除，请先导出为文件。","저장 내보내기":"导出存档","저장 가져오기":"导入存档","사파리 아래(아이패드는 위)의 공유 단추(네모에 위 화살표)를 누릅니다.":"点按 Safari 下方（iPad 在上方）的分享按钮（方框加向上箭头）。","목록을 내려 「홈 화면에 추가」를 고릅니다.":"向下滑动列表，选择「添加到主屏幕」。","오른쪽 위 「추가」를 누르면 홈 화면에 조선퇴마록 아이콘이 생깁니다.":"点按右上角的「添加」，主屏幕上就会出现朝鲜退魔录的图标。","앞으로는 그 아이콘으로 여세요. 사파리와 홈 화면 앱은 저장이 따로라, 옮길 때는 위의 「저장 내보내기」를 쓰세요.":"以后请用这个图标打开。Safari 与主屏幕应用的存档是分开的，转移时请使用上方的「导出存档」。","저장 코드로 옮기기 (파일을 못 쓸 때)":"用存档码转移（无法使用文件时）","<b>저장과 홈 화면 앱</b>: 진행은 이 브라우저에만 남는다. 휴대폰을 바꿀 때는 설정 → 「저장 내보내기」로 파일을 받아 새 기기에서 「저장 가져오기」. 설정의 「홈 화면에 추가」에서 기기에 맞는 방법을 볼 수 있다(아이폰은 사파리에서). 홈 화면 앱은 인터넷 없이도 열린다.":"<b>存档与主屏幕应用</b>：进度只保存在此浏览器中。换手机时，在设置中用「导出存档」取得文件，再在新设备上「导入存档」。在设置的「添加到主屏幕」中可以查看适合本设备的方法（iPhone 请用 Safari）。主屏幕应用没有网络也能打开。","바깥 스크립트 오류":"外部脚本错误","Script error. — 게임 밖(사파리 확장 프로그램·브라우저 기능 등)에서 난 오류일 가능성이 큼 (브라우저가 내용을 감춤)":"Script error. — 很可能是游戏之外（Safari 扩展程序、浏览器功能等）发生的错误（浏览器隐藏了详细内容）"});   // 73_save_home.json
+Object.assign(I18N.zh,{"내보냈습니다: {name} · 다른 기기에서는 「저장 가져오기」로 이 파일을 고르세요":"已导出：{name} · 在其他设备上用「导入存档」选择此文件即可","파일로 내보내지 못했습니다. 아래 「저장 코드로 옮기기」를 쓰세요":"无法导出为文件。请使用下方的「用存档码转移」","조선퇴마록 저장 파일이 아닙니다":"这不是朝鲜退魔录的存档文件","파일을 읽지 못했습니다":"无法读取文件","✓ 오프라인 준비 완료 · 인터넷 없이도 열립니다":"✓ 离线准备完毕 · 没有网络也能打开","오프라인 준비 중… (한 번 연 뒤 잠시 기다리면 됩니다)":"离线准备中…（打开一次后稍等片刻即可）","이 주소에서는 오프라인을 쓸 수 없습니다 (플레이 사이트 주소로 열면 됩니다)":"此地址无法使用离线功能（请用游戏网站地址打开）","홈 화면 앱으로 실행 중입니다. 진행은 이 앱 안에 저장됩니다.":"正以主屏幕应用运行。进度保存在此应用内。","아이폰·아이패드 사파리에서는 홈 화면에 추가해 두면 앱처럼 열리고 기록도 더 안전합니다.":"在 iPhone·iPad 的 Safari 中添加到主屏幕后，可以像应用一样打开，记录也更安全。","아이폰·아이패드에서는 사파리에서만 홈 화면에 추가할 수 있습니다. 이 주소를 사파리로 열어 주세요.":"在 iPhone·iPad 上只能通过 Safari 添加到主屏幕。请用 Safari 打开此地址。","홈 화면(또는 바탕 화면)에 추가하면 앱처럼 한 화면으로 열리고, 인터넷 없이도 할 수 있습니다.":"添加到主屏幕（或桌面）后，可以像应用一样全屏打开，没有网络也能玩。","브라우저 메뉴(⋮)에서 「홈 화면에 추가」 또는 「앱 설치」를 고르면 앱처럼 열립니다.":"在浏览器菜单（⋮）中选择「添加到主屏幕」或「安装应用」，即可像应用一样打开。","홈 화면에 추가":"添加到主屏幕","홈 화면에 추가 방법":"添加到主屏幕的方法","저장":"存档","진행은 이 브라우저에만 저장됩니다. 휴대폰을 바꾸거나 기록이 지워질까 걱정되면 파일로 내보내 두세요.":"进度只保存在此浏览器中。如果要换手机，或担心记录被清除，请先导出为文件。","저장 내보내기":"导出存档","저장 가져오기":"导入存档","사파리 아래(아이패드는 위)의 공유 단추(네모에 위 화살표)를 누릅니다.":"点按 Safari 下方（iPad 在上方）的分享按钮（方框加向上箭头）。","목록을 내려 「홈 화면에 추가」를 고릅니다.":"向下滑动列表，选择「添加到主屏幕」。","오른쪽 위 「추가」를 누르면 홈 화면에 조선퇴마록 아이콘이 생깁니다.":"点按右上角的「添加」，主屏幕上就会出现朝鲜退魔录的图标。","앞으로는 그 아이콘으로 여세요. 사파리와 홈 화면 앱은 저장이 따로라, 옮길 때는 위의 「저장 내보내기」를 쓰세요.":"以后请用这个图标打开。Safari 与主屏幕应用的存档是分开的，转移时请使用上方的「导出存档」。","저장 코드로 옮기기 (파일을 못 쓸 때)":"用存档码转移（无法使用文件时）","<b>저장과 홈 화면 앱</b>: 진행은 이 브라우저에만 남는다. 휴대폰을 바꿀 때는 설정 → 「저장 내보내기」로 파일을 받아 새 기기에서 「저장 가져오기」. 설정의 「홈 화면에 추가」에서 기기에 맞는 방법을 볼 수 있다(아이폰은 사파리에서). 홈 화면 앱은 인터넷 없이도 열린다.":"<b>存档与主屏幕应用</b>：进度只保存在此浏览器中。换手机时，在设置中用「导出存档」取得文件，再在新设备上「导入存档」。在设置的「添加到主屏幕」中可以查看适合本设备的方法（iPhone 请用 Safari）。主屏幕应用没有网络也能打开。","바깥 스크립트 오류":"外部脚本错误","Script error. — 게임 밖(사파리 확장 프로그램·브라우저 기능 등)에서 난 오류일 가능성이 큼 (브라우저가 내용을 감춤)":"Script error. — 很可能是游戏之外（Safari 扩展程序、浏览器功能等）发生的错误（浏览器隐藏了详细内容）","배경음 크기":"背景音乐音量","배경음 못 받음":"背景音乐加载失败"});   // 73_save_home.json
 /* ======================= pixel sprite toolkit ======================= */
 const PAL = {
   k: '#1a1418',
@@ -8008,22 +8009,27 @@ meta.stats = meta.stats || {};
 meta.seen = meta.seen || {};
 meta.done = meta.done || [];
 meta.curseMax = meta.curseMax || 0;
-meta.set = Object.assign(
-  {
-    vol: 70,
-    shake: true,
-    nums: true,
-    flash: true,
-    scale: 'mid',
-    joy: true,
-    perf: 'auto',
-    fps: false,
-    fxA: 1,
-    vfx: 'on',
-    refine: 'on'
-  },
-  meta.set || {}
-);
+/* 설정 기본값 합치기(옛 저장에 없는 칸은 기본값 · 있는 값은 그대로) — v21.0 배경음 bgm 60 */
+function metaSetDefaults(set) {
+  return Object.assign(
+    {
+      vol: 70,
+      bgm: 60,
+      shake: true,
+      nums: true,
+      flash: true,
+      scale: 'mid',
+      joy: true,
+      perf: 'auto',
+      fps: false,
+      fxA: 1,
+      vfx: 'on',
+      refine: 'on'
+    },
+    set || {}
+  );
+}
+meta.set = metaSetDefaults(meta.set);
 /* 설정 값 바로잡기: 고를 수 있는 값이 아니면 기본으로 */
 /* v17.1 2배 정밀 그리기: 캐릭터·요괴 크기가 기본이 아니고, 절약 모드가 아니고, 느려짐으로 끄지 않았을 때 */
 function hdOn() {
@@ -8170,7 +8176,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.9',
+const GAME_VER = 'v21.0',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -8395,7 +8401,7 @@ let AC = null,
   lastHit = 0;
 /* 멈춘 오디오 되살리기: resume()은 약속을 돌려주므로 거절도 받아 둔다(콘솔에 처리되지 않은 오류가 남지 않게) */
 function resumeAudio() {
-  if (!AC || AC.state !== 'suspended') return;
+  if (!AC || AC.state === 'running' || AC.state === 'closed') return; // v21.0 아이폰은 전화·앱 전환 뒤 'interrupted'일 수도
   try {
     const r = AC.resume();
     if (r && r.catch) r.catch(() => {});
@@ -8427,6 +8433,245 @@ function snd(f, d = 0.06, type = 'square', v = 0.035) {
     o.stop(t + d + 0.02);
   } catch (e) {}
 }
+/* v21.0 배경음 — 미리 만든 국악풍 곡(audio/bgm/*.mp3, tools/bgm.py)을 상황에 맞게 반복 재생
+   「지금 들려야 할 곡」 bgmWanted(상태) → {id, gain} 하나로 정하고, 1초에 네 번 보아 바뀌면 2초 동안 겹쳐 넘어감.
+   곡: s01~s10 막 곡 · b01~b10 같은 막의 보스 판(빠르고 세게) · hub 판 밖(시작 화면·본부) */
+
+/* 상황 → 곡과 크기(0~1). st = {G, modal, vol(설정 0~100), muted}
+   - 판 밖(G 없음): hub · 판 안: 그 막(끝없는 밤은 10으로 돌림), 막 보스가 있으면 보스 판(중간 보스는 막 곡)
+   - 창(레벨업·정지·보상…)이 떠 있으면 반 · 결과 화면·음소거는 같은 곡을 0으로(줄여 끔) · 설정 0이면 곡 없음(받지도 않음) */
+function bgmWanted(st) {
+  if (!(st.vol > 0)) return {id: null, gain: 0};
+  const g = st.G;
+  let id = 'hub',
+    gain = 1;
+  if (g) {
+    // 설화 출정은 화면의 막(G.tale.st)을 따름 — G.stage는 세기용(eq)이라 다른 막일 수 있음
+    const sn = g.mode === 'tale' && g.tale && g.tale.st != null ? g.tale.st : g.stage,
+      n = (((Math.max(0, sn | 0) % 10) + 10) % 10) + 1,
+      nn = String(n).padStart(2, '0');
+    id = (g.boss ? 'b' : 's') + nn;
+    if (g.over) gain = 0;
+    else if (st.modal) gain = 0.5;
+  }
+  if (st.muted) gain = 0;
+  return {id, gain};
+}
+/* 바꾸기 규칙: 곡이 바뀐 뒤 1초 안에는 다른 곡으로 다시 바꾸지 않음(보스가 잠깐 사라졌다 나오는 깜빡임 막기)
+   cur = {id, at(바꾼 시각 초)} → 새 {id, at} */
+const BGM_HOLD = 1;
+function bgmNext(cur, want, now) {
+  if (want.id === cur.id) return cur;
+  if (cur.id && now - cur.at < BGM_HOLD) return cur;
+  return {id: want.id, at: now};
+}
+
+/* ── 재생 ── */
+const BGM_LEVEL = 0.55, // 「배경음 100」일 때 크기(효과음보다 뒤에 깔리게)
+  BGM_FADE = 2, // 곡이 바뀔 때 겹치는 초
+  BGM_KEEP = 3; // 한 번에 들고 있는 곡 수(메모리)
+const BGM = {cur: {id: null, at: 0}, man: null, manP: null, manNext: 0, manFail: 0, bufs: new Map(), raw: new Map(), use: [], play: null, want: {id: null, gain: 0}, tick: 0, failed: new Set(), master: null};
+function bgmManifest() {
+  if (BGM.man || BGM.manP) return BGM.manP;
+  if (performance.now() < BGM.manNext) return null; // 못 받았으면 물러섬(5초 → 10초 → … 1분)
+  BGM.manP = fetch('audio/bgm/bgm.json')
+    .then(r => (r.ok ? r.json() : Promise.reject(new Error('bgm.json ' + r.status))))
+    .then(m => {
+      BGM.man = m;
+      // 오프라인 저장소(sw.js의 jtm-bgm)에서 이 목록에 없는 옛 곡 파일(지문이 바뀐 것)을 지움
+      try {
+        const keep = new Set(Object.values(m.tracks || {}).map(t => t.file));
+        if (window.caches)
+          caches
+            .open('jtm-bgm')
+            .then(c => c.keys().then(ks => ks.forEach(k => keep.has(k.url.split('/').pop()) || c.delete(k))))
+            .catch(() => {});
+      } catch (_) {}
+      return m;
+    })
+    .catch(e => {
+      BGM.manP = null;
+      BGM.manFail++;
+      BGM.manNext = performance.now() + Math.min(60, 5 * 2 ** (BGM.manFail - 1)) * 1000;
+      bgmFail('bgm.json', e);
+    });
+  return BGM.manP;
+}
+/* 받기 실패를 오류 기록에 넣을지 — 인터넷이 없거나 파일로 직접 연 때는 당연히 못 받으니 넣지 않음 */
+function bgmLogFail(env) {
+  return env.proto !== 'file:' && env.online !== false;
+}
+function bgmFail(id, e) {
+  if (BGM.failed.has(id)) return;
+  BGM.failed.add(id);
+  try {
+    const env = {
+      proto: typeof location !== 'undefined' ? location.protocol : '',
+      online: typeof navigator !== 'undefined' ? navigator.onLine : true,
+    };
+    if (bgmLogFail(env)) diagNote(_t('배경음 못 받음'), id + ': ' + (e && e.message ? e.message : e));
+  } catch (_) {}
+}
+/* 곡 파일 받기(한 번만) — 아이폰 첫 터치 전에도 받아만 둠(소리 엔진이 없어 풀지는 못함) */
+function bgmFetch(id) {
+  if (BGM.raw.has(id)) return BGM.raw.get(id);
+  const t = BGM.man && BGM.man.tracks && BGM.man.tracks[id];
+  if (!t) return null;
+  const p = fetch('audio/bgm/' + t.file).then(r => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.status))));
+  BGM.raw.set(id, p);
+  p.catch(() => BGM.raw.delete(id));
+  return p;
+}
+/* 곡 받기·풀기(한 번만) — 3곡 넘으면 오래 안 쓴 것부터 버림(지금 곡 빼고) */
+function bgmLoad(id) {
+  if (!id || !AC || !BGM.man || BGM.failed.has(id)) return null;
+  BGM.use = BGM.use.filter(x => x !== id).concat(id);
+  if (BGM.bufs.has(id)) return BGM.bufs.get(id);
+  const t = BGM.man.tracks && BGM.man.tracks[id];
+  if (!t) return null;
+  const p = (bgmFetch(id) || Promise.reject(new Error('no track')))
+    .then(ab => new Promise((ok, no) => {
+      BGM.raw.delete(id); // 풀고 나면 받은 바이트는 버림(메모리)
+      let done = false;
+      const ok1 = b => done || ((done = true), ok(b)),
+        no1 = e => done || ((done = true), no(e));
+      const q = AC.decodeAudioData(ab, ok1, no1); // 옛 사파리는 콜백, 새것은 약속(Promise) — 한 번만 받음
+      if (q && q.then) q.then(ok1, no1);
+    }))
+    .then(buf => {
+      if (BGM.bufs.get(id) === p) BGM.bufs.set(id, buf); // 받는 사이 버려졌으면 다시 넣지 않음
+      return buf;
+    })
+    .catch(e => {
+      BGM.bufs.delete(id);
+      bgmFail(id, e);
+      return null;
+    });
+  BGM.bufs.set(id, p);
+  while (BGM.use.length > BGM_KEEP) {
+    const old = BGM.use.find(x => x !== BGM.cur.id && x !== id);
+    if (!old) break;
+    BGM.use = BGM.use.filter(x => x !== old);
+    BGM.bufs.delete(old);
+  }
+  return p;
+}
+/* 반복 지점: 브라우저가 mp3 앞 지연을 지우지 않았으면(길이 ≥ 곡 + 지연) 그만큼 뒤에서 시작 ·
+   앞은 지우고 끝 덧붙임(≤26ms)만 남긴 경우는 그대로 0에서 */
+function bgmLoopPts(buf, t, man = BGM.man) {
+  const dl = (man && man.delay) || 0,
+    d = buf.duration >= t.sec + dl - 0.002 ? dl : 0;
+  return [d, d + t.sec];
+}
+/* 크기 흐름을 스스로 기억(소리 노드의 value는 재생 전·흐름 중에 믿을 수 없음 — 새 노드가 1로 읽혀 크게 시작하던 것) */
+function bgmRampNow(r, now) {
+  if (!r) return 0;
+  if (now >= r.t1) return r.v1;
+  if (now <= r.t0) return r.v0;
+  return r.v0 + ((r.v1 - r.v0) * (now - r.t0)) / (r.t1 - r.t0);
+}
+function bgmRamp(p, v, sec) {
+  const now = AC.currentTime,
+    cur = bgmRampNow(p.r, now);
+  p.g.gain.cancelScheduledValues(now);
+  p.g.gain.setValueAtTime(cur, now);
+  p.g.gain.linearRampToValueAtTime(v, now + sec);
+  p.r = {v0: cur, v1: v, t0: now, t1: now + sec};
+}
+function bgmBus() {
+  if (!BGM.master) {
+    BGM.master = AC.createGain();
+    BGM.master.connect(AC.destination);
+  }
+  return BGM.master;
+}
+function bgmStart(id, buf) {
+  const t = BGM.man.tracks[id],
+    [a, b] = bgmLoopPts(buf, t),
+    src = AC.createBufferSource(),
+    g = AC.createGain(),
+    now = AC.currentTime;
+  src.buffer = buf;
+  src.loop = true;
+  src.loopStart = a;
+  src.loopEnd = b;
+  g.gain.value = 0; // 새 소리 노드는 처음 1 — 첫 소리가 나기 전에 0으로(크게 시작하지 않게)
+  g.gain.setValueAtTime(0, now);
+  src.connect(g).connect(bgmBus());
+  src.start(now, a);
+  bgmStop(BGM.play);
+  BGM.play = {id, src, g, r: {v0: 0, v1: 0, t0: now, t1: now}};
+  bgmLevel(true);
+}
+function bgmStop(p, sec = BGM_FADE) {
+  if (!p) return;
+  try {
+    bgmRamp(p, 0, sec);
+    p.src.stop(AC.currentTime + sec + 0.05);
+  } catch (_) {}
+}
+function bgmTarget() {
+  return BGM.want.gain * (Math.max(0, Math.min(100, meta.set.bgm | 0)) / 100) * BGM_LEVEL;
+}
+/* 지금 곡 크기를 목표로(새 곡은 BGM_FADE초, 창 열고 닫기는 0.3초) */
+function bgmLevel(fresh) {
+  const p = BGM.play;
+  if (!p || !AC) return;
+  const v = bgmTarget();
+  bgmRamp(p, v, fresh ? BGM_FADE : 0.3);
+  p.tgt = v;
+}
+/* 1초에 네 번: 원하는 곡 → 받기 → 바꾸기 · 다음에 쓸 곡 미리 받기 */
+function bgmTick(nowS) {
+  if (nowS - BGM.tick < 0.25) return;
+  BGM.tick = nowS;
+  const w = bgmWanted({G, modal, vol: meta.set.bgm, muted});
+  BGM.want = w;
+  if (!AC) {
+    // 아이폰: 첫 터치 전에는 소리를 낼 수 없음 → 목록과 지금 곡 파일을 받아만 둠
+    if (w.id) BGM.man ? bgmFetch(w.id) : bgmManifest();
+    return;
+  }
+  if (!w.id) {
+    if (BGM.play) {
+      bgmStop(BGM.play);
+      BGM.play = null;
+    }
+    BGM.cur = {id: null, at: nowS};
+    return;
+  }
+  if (!BGM.man) return void bgmManifest();
+  BGM.cur = bgmNext(BGM.cur, w, nowS);
+  const id = BGM.cur.id;
+  if (!BGM.play || BGM.play.id !== id) {
+    const b = bgmLoad(id);
+    if (b && !(b instanceof Promise)) bgmStart(id, b);
+    else if (b) b.then(buf => buf && BGM.cur.id === id && (!BGM.play || BGM.play.id !== id) && bgmStart(id, buf)); // 받은 뒤 아직 그 곡일 때만
+  } else if (Math.abs((BGM.play.tgt || 0) - bgmTarget()) > 1e-6) bgmLevel(false);
+  // 미리 받기: 막 곡이면 그 보스 판, 보스 판이면 다음 막 곡(꺼져 있을 때는 받지 않음)
+  if (G && id !== 'hub' && w.gain > 0) {
+    const n = +id.slice(1);
+    bgmLoad(id[0] === 's' ? 'b' + id.slice(1) : 's' + String((n % 10) + 1).padStart(2, '0'));
+  }
+}
+/* 시험·오류 기록용: 지금 상태 */
+function bgmState() {
+  return {
+    want: BGM.want.id,
+    playing: BGM.play ? BGM.play.id : null,
+    target: bgmTarget(),
+    level: BGM.play && AC ? +BGM.play.g.gain.value.toFixed(4) : 0,
+    loaded: [...BGM.bufs.keys()].filter(k => !(BGM.bufs.get(k) instanceof Promise)),
+    ctx: AC ? AC.state : null
+  };
+}
+/* 첫 터치·클릭·키(아이폰은 손가락을 뗄 때만 소리를 열어 줌)에 소리 엔진을 켬 — 그 뒤로 배경음이 시작됨 */
+function bgmUnlock() {
+  if (AC && AC.state === 'running') return; // 켜져 있으면 할 일 없음(가벼움) — 전화 등으로 끊긴('interrupted') 뒤 다음 터치에 다시 켜려고 듣기는 계속
+  initAudio();
+  resumeAudio();
+}
+for (const ev of ['touchend', 'click', 'keydown']) addEventListener(ev, bgmUnlock, {capture: true, passive: true});
 /* ======================= run state ======================= */
 /* v19.3 점괘 패는 세 장까지: 글자 한 장(옛 기록·옛 호출)이나 배열을 받아 없는 패·같은 패를 거르고 세 장으로 자름 */
 const CARD_MAX = 3;
@@ -18301,6 +18546,7 @@ function openSettings(from) {
     if (L) L.value = LANG;
   }
   $('#setVol').value = s.vol;
+  $('#setBgm').value = s.bgm;
   $('#setShake').checked = s.shake;
   $('#setNums').checked = s.nums;
   $('#setFlash').checked = s.flash;
@@ -18350,6 +18596,10 @@ function bindSettings() {
   $('#setVol').onchange = () => {
     initAudio();
     snd(660, 0.1, 'triangle');
+  };
+  $('#setBgm').oninput = e => {
+    s.bgm = +e.target.value; // v21.0 배경음 크기(0이면 끔 · 받지도 않음)
+    save();
   };
   $('#setShake').onchange = e => {
     s.shake = e.target.checked;
@@ -22986,6 +23236,7 @@ function frame(now) {
       }
     }
     perfWatch(raw);
+    bgmTick(now / 1000); // v21.0 배경음
   } catch (e) {
     diagErr(_t('오류'), e);
     if (errN++ < 5) console.warn('frame error', e);
@@ -23009,6 +23260,7 @@ function onVisibility() {
   pm.slow = 0;
   if (document.hidden && G && !G.over && !modal) openPause();
   if (!document.hidden) resumeAudio();
+  else if (AC && AC.state === 'running' && AC.suspend) AC.suspend().catch(() => {}); // v21.0 가려지면 소리(배경음)도 멈춤
 }
 document.addEventListener('visibilitychange', onVisibility);
 /* 조합 시험장: 진화 무기마다 쓸 수 있는 퇴마사 하나(전용 무기는 그 퇴마사, 공용은 짝 보패를 받을 수 있는 첫 퇴마사) */

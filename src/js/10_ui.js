@@ -1894,6 +1894,7 @@ function openSettings(from) {
     if (L) L.value = LANG;
   }
   $('#setVol').value = s.vol;
+  $('#setBgm').value = s.bgm;
   $('#setShake').checked = s.shake;
   $('#setNums').checked = s.nums;
   $('#setFlash').checked = s.flash;
@@ -1943,6 +1944,10 @@ function bindSettings() {
   $('#setVol').onchange = () => {
     initAudio();
     snd(660, 0.1, 'triangle');
+  };
+  $('#setBgm').oninput = e => {
+    s.bgm = +e.target.value; // v21.0 배경음 크기(0이면 끔 · 받지도 않음)
+    save();
   };
   $('#setShake').onchange = e => {
     s.shake = e.target.checked;

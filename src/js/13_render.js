@@ -2208,6 +2208,7 @@ function frame(now) {
       }
     }
     perfWatch(raw);
+    bgmTick(now / 1000); // v21.0 배경음
   } catch (e) {
     diagErr(_t('오류'), e);
     if (errN++ < 5) console.warn('frame error', e);
@@ -2231,6 +2232,7 @@ function onVisibility() {
   pm.slow = 0;
   if (document.hidden && G && !G.over && !modal) openPause();
   if (!document.hidden) resumeAudio();
+  else if (AC && AC.state === 'running' && AC.suspend) AC.suspend().catch(() => {}); // v21.0 가려지면 소리(배경음)도 멈춤
 }
 document.addEventListener('visibilitychange', onVisibility);
 /* 조합 시험장: 진화 무기마다 쓸 수 있는 퇴마사 하나(전용 무기는 그 퇴마사, 공용은 짝 보패를 받을 수 있는 첫 퇴마사) */

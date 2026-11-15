@@ -441,22 +441,27 @@ meta.stats = meta.stats || {};
 meta.seen = meta.seen || {};
 meta.done = meta.done || [];
 meta.curseMax = meta.curseMax || 0;
-meta.set = Object.assign(
-  {
-    vol: 70,
-    shake: true,
-    nums: true,
-    flash: true,
-    scale: 'mid',
-    joy: true,
-    perf: 'auto',
-    fps: false,
-    fxA: 1,
-    vfx: 'on',
-    refine: 'on'
-  },
-  meta.set || {}
-);
+/* 설정 기본값 합치기(옛 저장에 없는 칸은 기본값 · 있는 값은 그대로) — v21.0 배경음 bgm 60 */
+function metaSetDefaults(set) {
+  return Object.assign(
+    {
+      vol: 70,
+      bgm: 60,
+      shake: true,
+      nums: true,
+      flash: true,
+      scale: 'mid',
+      joy: true,
+      perf: 'auto',
+      fps: false,
+      fxA: 1,
+      vfx: 'on',
+      refine: 'on'
+    },
+    set || {}
+  );
+}
+meta.set = metaSetDefaults(meta.set);
 /* 설정 값 바로잡기: 고를 수 있는 값이 아니면 기본으로 */
 /* v17.1 2배 정밀 그리기: 캐릭터·요괴 크기가 기본이 아니고, 절약 모드가 아니고, 느려짐으로 끄지 않았을 때 */
 function hdOn() {
@@ -603,7 +608,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v20.9',
+const GAME_VER = 'v21.0',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -828,7 +833,7 @@ let AC = null,
   lastHit = 0;
 /* 멈춘 오디오 되살리기: resume()은 약속을 돌려주므로 거절도 받아 둔다(콘솔에 처리되지 않은 오류가 남지 않게) */
 function resumeAudio() {
-  if (!AC || AC.state !== 'suspended') return;
+  if (!AC || AC.state === 'running' || AC.state === 'closed') return; // v21.0 아이폰은 전화·앱 전환 뒤 'interrupted'일 수도
   try {
     const r = AC.resume();
     if (r && r.catch) r.catch(() => {});
