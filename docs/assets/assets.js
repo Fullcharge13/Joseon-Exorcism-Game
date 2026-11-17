@@ -1,7 +1,7 @@
 /* 도감 목록 — tools/assets.py가 만듦(손으로 고치지 마세요) */
 window.ASSETS = {
  "game": "joseon-exorcism",
- "version": "v21.2",
+ "version": "v21.2.2",
  "kinds": [
   {
    "kind": "char",
@@ -1178,7 +1178,8 @@ window.ASSETS = {
    "readme": [
     "docs/img/char_baekjeong.png",
     "docs/img/charS_baekjeong.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "char",
@@ -4189,7 +4190,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/w_neokal.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "weapon",
@@ -4201,7 +4203,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/w_galgori.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "weapon",
@@ -4213,7 +4216,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/w_gorideot.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "weapon",
@@ -4225,7 +4229,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/w_jeoulchu.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4241,7 +4246,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_gyeol.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4257,7 +4263,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_ssangkal.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4273,7 +4280,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_kalhoeori.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4289,7 +4297,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_hwangso.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4305,7 +4314,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_pojeong.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4321,7 +4331,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_kkeokjeong.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4337,7 +4348,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_gorideonji.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4353,7 +4365,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_gajukchae.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4369,7 +4382,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_mongdung.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4385,7 +4399,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_jeouljil.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4401,7 +4416,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_gitbal.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "skill",
@@ -4417,7 +4433,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/s_jijipil.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "weapon",
@@ -4429,7 +4446,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/w_f_kalgori.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "weapon",
@@ -4441,7 +4459,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/w_f_gorichu.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "weapon",
@@ -4946,7 +4965,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/p_sutdol.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "passive",
@@ -4957,7 +4977,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/p_soegajuk.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "passive",
@@ -4968,7 +4989,8 @@ window.ASSETS = {
    "h": 32,
    "readme": [
     "docs/img/p_beodeul.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "item",
@@ -5855,7 +5877,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_allchar7.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6010,7 +6033,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_h_one.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6021,7 +6045,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_h_three.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6032,7 +6057,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_h_all.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6043,7 +6069,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_rage10.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6054,7 +6081,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_rage50.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6065,7 +6093,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_c_baekjeong.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6076,7 +6105,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_t_baekjeong.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -6087,7 +6117,8 @@ window.ASSETS = {
    "h": 72,
    "readme": [
     "docs/img/task_t5_baekjeong.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "task",
@@ -8178,7 +8209,8 @@ window.ASSETS = {
    },
    "readme": [
     "docs/img/u_baekjeong.png"
-   ]
+   ],
+   "since": "v21.2"
   },
   {
    "kind": "anom",

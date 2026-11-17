@@ -406,21 +406,27 @@ function charSpr(L) {
     A: L.A,
     T: L.T || L.A,
     L: L.L || '#1a1418',
-    C: L.C || L.A
+    C: L.C || L.A,
+    P: '#7a4a2a', // v21.2.2 백정 가죽 앞치마
+    Q: '#5a3420'
   };
+  return (charCache[key] = variants(mk(charGrid(L), pal)));
+}
+/* 모습 격자(글자 줄) — 모자·얼굴·몸 + 소매(C) + 앞치마(apron, 백정) + 든 물건. 시험이 화면 없이 봄 */
+const APRON = [[5, 7], [6, 7], [4, 8], [5, 8], [6, 8], [7, 8], [4, 9], [5, 9], [6, 9], [7, 9], [4, 10], [5, 10], [6, 10], [7, 10]];
+function charGrid(L) {
   const g = [...HATS[L.hat], ...FACE, ...BODY].map(r => ('.' + r + '.').split(''));
   if (L.C)
     for (let j = 7; j <= 10; j++) {
       g[j][1] = 'C';
       g[j][10] = 'C';
     }
+  if (L.apron) {
+    for (const [x, y] of APRON) g[y][x] = 'P';
+    g[9][4] = g[9][7] = 'Q'; // 앞치마 끈 매듭 자리(어두운 가죽)
+  }
   for (const [x, y, c] of ITEMS[L.item] || []) g[y][x] = c;
-  return (charCache[key] = variants(
-    mk(
-      g.map(r => r.join('')),
-      pal
-    )
-  ));
+  return g.map(r => r.join(''));
 }
 
 /* --- monster templates (A = main colour, B = secondary) --- */

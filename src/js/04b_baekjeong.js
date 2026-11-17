@@ -4,6 +4,14 @@
    「임꺽정」(E0047411) — 양주 백정 출신, 명종 때 황해도 구월산 등지를 근거로 활동, 1562년 붙잡힘.
    묘사 원칙: 우스개·잔혹함의 상징으로 쓰지 않는다. 천대받던 손재주(칼·고리·가죽)와 「저울처럼 고르게」라는 형평의 뜻이 기둥.
    첫 모자 패랭이는 백정에게 강요된 차별의 표지 — 전직할수록 그 표지를 벗는다. */
+/* v21.2.2 차림새(사용자 「다른 퇴마사와 너무 겹친다」): 백정 전용 모자·물건 + 가죽 앞치마(charGrid의 apron).
+   모자 흐름: 대나무 패랭이(차별의 표지) → 동여맨 수건 → 망건·상투 → 두건(임꺽정)·갓(형평의 기수부터) */
+Object.assign(HATS, {
+  jukparaengi: ['...hHHh...', '.HHHHHHHH.', 'HHHHHHHHHH'], // 누런 대나무 패랭이
+  sugeon: ['....kk....', '...kkkk...', '..wwwwwwww'], // 동여맨 흰 수건(끝이 옆으로)
+  manggeon: ['....kk....', '...kkkk...', '...XXXX...'], // 상투 + 망건
+  dugeon: ['..HHHHH...', '.HHHHHHHH.', '.HH....HHH'] // 검은 두건(끈)
+});
 ITEMS.cleaver = [
   [10, 5, 'x'],
   [11, 5, 'x'],
@@ -30,6 +38,20 @@ ITEMS.cleaver = [
     ICON[k] = big(ICS[k], 4);
   }
 }
+{
+  const col = (x, y0, y1, c) => Array.from({length: y1 - y0 + 1}, (_, i) => [x, y0 + i, c]);
+  Object.assign(ITEMS, {
+    cleaver2: [...ITEMS.cleaver, [0, 7, 'x'], [1, 7, 'x'], [0, 8, 'x'], [1, 8, 'w'], [1, 9, 'n']], // 쌍칼
+    doggi: [...col(11, 3, 11, 'n'), [10, 3, 'x'], [10, 4, 'x'], [9, 3, 'x'], [9, 4, 'w'], [11, 2, 'x']], // 소 잡는 큰 도끼
+    gori: [[9, 8, 'o'], [10, 7, 'n'], [11, 8, 'o'], [9, 9, 'y'], [10, 9, 'o'], [11, 9, 'y'], [9, 10, 'o'], [10, 10, 'y'], [11, 10, 'o']], // 버들고리
+    whip: [[10, 9, 'n'], [10, 8, 'n'], [11, 7, 'o'], [11, 6, 'o'], [10, 5, 'o'], [10, 4, 'o'], [11, 3, 'o']], // 가죽 채찍
+    club: [...col(11, 4, 11, 'o'), [10, 4, 'n'], [10, 5, 'n'], [11, 3, 'n']], // 몽둥이
+    scale: [...col(10, 4, 9, 'n'), [8, 4, 'y'], [9, 4, 'y'], [11, 4, 'y'], [8, 5, 'x'], [11, 5, 'x'], [8, 6, 'x'], [11, 6, 'x']], // 저울
+    hflag: [...col(11, 0, 11, 'n'), [8, 0, 'r'], [9, 0, 'r'], [10, 0, 'r'], [8, 1, 'r'], [9, 1, 'w'], [10, 1, 'r'], [8, 2, 'r'], [9, 2, 'r'], [10, 2, 'r']] // 「衡」 깃발
+  });
+}
+const BJ_W = '#efe6d2',
+  BJ_STRAW = {H: '#c8a868', h: '#8a6a3a'};
 /* 칼 던지기: 되돌아오는 탄(boomer)에 칼 모양(cleaver) */
 function bjCleaver(a, dmg, r) {
   const P = G.P;
@@ -348,15 +370,15 @@ CHARS.baekjeong = {
     B.crit += 0.08;
     B.maxHp = 110;
   },
-  look: lk('paraengi', '#9a8a6a', {T: '#efe6d2', item: 'cleaver'}),
+  look: lk('jukparaengi', BJ_W, {...BJ_STRAW, apron: 1, item: 'cleaver'}),
   branches: [
     {
       name: '칼의 길',
       tiers: [
-        {name: '칼잡이', skill: 'gyeol', bonus: '치명타 +5%', apply: B => (B.crit += 0.05), look: lk('paraengi', '#8a7a62', {item: 'cleaver'})},
-        {name: '날 선 백정', skill: 'ssangkal', bonus: '공격력 +10%', apply: B => (B.might += 0.1), look: lk('paraengi', '#6a5a48', {item: 'cleaver'})},
-        {name: '칼바람 사냥꾼', skill: 'kalhoeori', bonus: '범위 +10%', apply: B => (B.area += 0.1), look: lk('hood', '#4a5a3a', {item: 'cleaver'})},
-        {name: '황소 장사', skill: 'hwangso', bonus: '최대 체력 +30', apply: B => (B.maxHp += 30), look: lk('tang', '#7a4a2a', {item: 'cleaver'})},
+        {name: '칼잡이', skill: 'gyeol', bonus: '치명타 +5%', apply: B => (B.crit += 0.05), look: lk('jukparaengi', BJ_W, {...BJ_STRAW, apron: 1, item: 'cleaver'})},
+        {name: '날 선 백정', skill: 'ssangkal', bonus: '공격력 +10%', apply: B => (B.might += 0.1), look: lk('sugeon', '#d8d0bc', {apron: 1, item: 'cleaver2'})},
+        {name: '칼바람 사냥꾼', skill: 'kalhoeori', bonus: '범위 +10%', apply: B => (B.area += 0.1), look: lk('sugeon', '#5a6a4a', {apron: 1, item: 'cleaver2'})},
+        {name: '황소 장사', skill: 'hwangso', bonus: '최대 체력 +30', apply: B => (B.maxHp += 30), look: lk('manggeon', '#8a3a2a', {apron: 1, item: 'doggi'})},
         {
           name: '포정',
           skill: 'pojeong',
@@ -365,17 +387,17 @@ CHARS.baekjeong = {
             B.might += 0.15;
             B.critDmg += 0.2;
           },
-          look: lk('gat', '#efe6d2', {T: '#c23b2a', item: 'cleaver'})
+          look: lk('manggeon', BJ_W, {T: '#c23b2a', apron: 1, item: 'doggi'})
         }
       ]
     },
     {
       name: '형평의 길',
       tiers: [
-        {name: '고리장이', skill: 'gorideonji', bonus: '이동 속도 +10%', apply: B => (B.spd += 0.1), look: lk('paraengi', '#a08a5a', {item: 'bag'})},
-        {name: '갖바치', skill: 'gajukchae', bonus: '방어 +1', apply: B => (B.armor += 1), look: lk('paraengi', '#7a5a3a', {item: 'cloth'})},
-        {name: '장정', skill: 'mongdung', bonus: '최대 체력 +30', apply: B => (B.maxHp += 30), look: lk('hood', '#5a4a3a', {item: 'staff'})},
-        {name: '형평사원', skill: 'jeouljil', bonus: '재사용 대기 −8%', apply: B => (B.cd *= 0.92), look: lk('gat', '#3a3a4a', {item: 'mapae'})},
+        {name: '고리장이', skill: 'gorideonji', bonus: '이동 속도 +10%', apply: B => (B.spd += 0.1), look: lk('jukparaengi', BJ_W, {...BJ_STRAW, apron: 1, item: 'gori'})},
+        {name: '갖바치', skill: 'gajukchae', bonus: '방어 +1', apply: B => (B.armor += 1), look: lk('sugeon', '#c8b898', {apron: 1, item: 'whip'})},
+        {name: '장정', skill: 'mongdung', bonus: '최대 체력 +30', apply: B => (B.maxHp += 30), look: lk('sugeon', '#4a5a6a', {apron: 1, item: 'club'})},
+        {name: '형평사원', skill: 'jeouljil', bonus: '재사용 대기 −8%', apply: B => (B.cd *= 0.92), look: lk('manggeon', BJ_W, {T: '#c23b2a', item: 'scale'})},
         {
           name: '형평의 기수',
           skill: 'gitbal',
@@ -384,7 +406,7 @@ CHARS.baekjeong = {
             B.area += 0.15;
             B.regen += 0.5;
           },
-          look: lk('gat', '#efe6d2', {T: '#c23b2a', item: 'spear'})
+          look: lk('gat', BJ_W, {T: '#c23b2a', item: 'hflag'})
         }
       ]
     }
@@ -398,7 +420,7 @@ CHARS.baekjeong.branches[0].tiers.push({
     B.might += 0.25;
     B.crit += 0.08;
   },
-  look: lk('jeonrip', '#2a2a2a', {T: '#c9b07a', item: 'sword', aura: '#c9b07a'}),
+  look: lk('dugeon', '#2a2a2a', {T: '#c23b2a', item: 'cleaver2', aura: '#c9b07a'}),
   who: '양주의 백정 출신. 명종 때 황해도 구월산 등지를 근거로 활동하다 1562년에 붙잡혔다고 기록된 인물.',
   src: 'https://encykorea.aks.ac.kr/Article/E0047411'
 });
@@ -410,7 +432,7 @@ CHARS.baekjeong.branches[1].tiers.push({
     B.might += 0.2;
     B.cd *= 0.9;
   },
-  look: lk('gat', '#1a1a1a', {T: '#efe6d2', item: 'book', aura: '#ffe3a0'}),
+  look: lk('gat', '#3a3a4a', {T: '#e0b048', item: 'scale', aura: '#ffe3a0'}),
   who: '1923년 진주에서 백정의 신분 해방과 차별 철폐를 내건 형평사가 세워질 때 위원을 맡았고, 이후 형평 운동을 이끈 인물.',
   src: 'https://encykorea.aks.ac.kr/Article/E0063567'
 });
