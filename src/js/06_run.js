@@ -335,8 +335,8 @@ const FUSE = [
     d: '5초마다 둘레의 요괴를 갈고리로 끌어모은 뒤 넓적칼 여덟 자루가 사방으로 날아간다.',
     fx(P) {
       const D = FDMG();
-      for (const e of near(P.x, P.y, 150 * P.area, TMP2).slice()) if (!e.prop) bjHook(e, D * 0.6);
-      for (let i = 0; i < 8; i++) bjCleaver((i / 8) * TAU, D, 5);
+      for (const e of near(P.x, P.y, 150 * P.area, TMP2).slice()) if (!e.prop) bjHook(e, D * 0.3);
+      for (let i = 0; i < 8; i++) bjCleaver((i / 8) * TAU, D * 0.5, 5); // v21.2.1: 실제 판 피해 비중 42% → 낮춤(갈고리 0.6→0.3, 칼 1→0.5)
     }
   },
   {
@@ -355,7 +355,7 @@ const FUSE = [
         if (!tg) break;
         got.push(tg);
         zone({x: tg.x, y: tg.y, r: 30 * P.area, life: 1.5, dmg: D * 0.2, tick: 0.5, slow: 1, hold: 1, col: '#b08a4a'});
-        warn({x: tg.x, y: tg.y, r: 30 * P.area, t: 0.7, dmg: D * 1.6, friendly: 1, col: '#c9c4bc', fx: 'slam'});
+        warn({x: tg.x, y: tg.y, r: 30 * P.area, t: 0.7, dmg: D * 1.1, friendly: 1, col: '#c9c4bc', fx: 'slam'}); // v21.2.1: 1.6 → 1.1
       }
     }
   },

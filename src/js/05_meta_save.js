@@ -612,7 +612,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v21.2',
+const GAME_VER = 'v21.2.1',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -743,7 +743,7 @@ function diagCopy() {
 /* 매 장면: 진행 멈춤(창 없이 3초 넘게 시간 정지)·창 없음(2초)·긴 끊김(보이는 동안 한 장면 3초 넘게)·5초마다 마지막 상태 */
 function diagWatch(raw) {
   if (document.hidden) return;
-  if (raw > 3000 && raw < 600000 && G && !G.over) diagNote('긴 끊김', Math.round(raw) + 'ms');
+  if (raw > 3000 && raw < 600000 && G && !G.over && !modal) diagNote('긴 끊김', Math.round(raw) + 'ms'); // v21.2.1 창이 열린 동안(제어 센터·알림으로 일시정지 등)은 게임 시간이 멈춰 있어 기록하지 않음
   if (G && !G.over && !modal) {
     if (diagLastT === G.time) {
       diagStuck += raw;

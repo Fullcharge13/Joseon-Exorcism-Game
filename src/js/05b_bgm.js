@@ -35,7 +35,7 @@ function bgmNext(cur, want, now) {
 const BGM_LEVEL = 0.55, // 「배경음 100」일 때 크기(효과음보다 뒤에 깔리게)
   BGM_FADE = 2, // 곡이 바뀔 때 겹치는 초
   BGM_KEEP = 3; // 한 번에 들고 있는 곡 수(메모리)
-const BGM = {cur: {id: null, at: 0}, man: null, manP: null, manNext: 0, manFail: 0, bufs: new Map(), raw: new Map(), use: [], play: null, want: {id: null, gain: 0}, tick: 0, failed: new Set(), master: null};
+const BGM = {cur: {id: null, at: 0}, man: null, manP: null, manNext: 0, manFail: 0, bufs: new Map(), raw: new Map(), use: [], play: null, want: {id: null, gain: 0}, tick: 0, failed: new Map(), master: null};
 function bgmManifest() {
   if (BGM.man || BGM.manP) return BGM.manP;
   if (performance.now() < BGM.manNext) return null; // 못 받았으면 물러섬(5초 → 10초 → … 1분)
@@ -66,9 +66,19 @@ function bgmManifest() {
 function bgmLogFail(env) {
   return env.proto !== 'file:' && env.online !== false;
 }
+/* v21.2.1 받기 실패: 그 판 내내 막지 않고 30초 → 60초 → 120초(최대) 뒤 다시 받아 봄 · 오류 기록은 곡마다 한 번 */
+function bgmRetryOk(id, now = performance.now()) {
+  const f = BGM.failed.get(id);
+  return !f || now >= f.next;
+}
 function bgmFail(id, e) {
-  if (BGM.failed.has(id)) return;
-  BGM.failed.add(id);
+  const f = BGM.failed.get(id) || {n: 0, logged: false},
+    now = performance.now();
+  f.n++;
+  f.next = now + Math.min(120, 30 * 2 ** (f.n - 1)) * 1000;
+  BGM.failed.set(id, f);
+  if (f.logged) return;
+  f.logged = true;
   try {
     const env = {
       proto: typeof location !== 'undefined' ? location.protocol : '',
@@ -89,7 +99,7 @@ function bgmFetch(id) {
 }
 /* 곡 받기·풀기(한 번만) — 3곡 넘으면 오래 안 쓴 것부터 버림(지금 곡 빼고) */
 function bgmLoad(id) {
-  if (!id || !AC || !BGM.man || BGM.failed.has(id)) return null;
+  if (!id || !AC || !BGM.man || !bgmRetryOk(id)) return null;
   BGM.use = BGM.use.filter(x => x !== id).concat(id);
   if (BGM.bufs.has(id)) return BGM.bufs.get(id);
   const t = BGM.man.tracks && BGM.man.tracks[id];
@@ -105,6 +115,8 @@ function bgmLoad(id) {
     }))
     .then(buf => {
       if (BGM.bufs.get(id) === p) BGM.bufs.set(id, buf); // 받는 사이 버려졌으면 다시 넣지 않음
+      const f = BGM.failed.get(id);
+      if (f) f.n = 0; // 받았으면 다음 실패는 다시 30초부터(기록은 한 번 그대로)
       return buf;
     })
     .catch(e => {

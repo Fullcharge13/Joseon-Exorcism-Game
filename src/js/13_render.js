@@ -2247,6 +2247,10 @@ function onVisibility() {
   else if (AC && AC.state === 'running' && AC.suspend) AC.suspend().catch(() => {}); // v21.0 가려지면 소리(배경음)도 멈춤
 }
 document.addEventListener('visibilitychange', onVisibility);
+addEventListener('focus', () => {
+  last = performance.now();
+  stepAcc = 0;
+}); // v21.2.1 아이폰 제어 센터·알림에서 돌아오면 숨김 알림 없이 초점만 돌아옴 → 쉬는 동안의 시간을 버림
 /* 조합 시험장: 진화 무기마다 쓸 수 있는 퇴마사 하나(전용 무기는 그 퇴마사, 공용은 짝 보패를 받을 수 있는 첫 퇴마사) */
 function labList() {
   const out = [];

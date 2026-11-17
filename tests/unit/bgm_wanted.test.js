@@ -53,3 +53,18 @@ ok(meta&&meta.set&&meta.set.bgm===60,'처음 설정 배경음 60 ('+(meta&&meta.
  ok(s2&&s2.bgm===60&&s2.vol===40&&s2.shake===false,'옛 저장 설정(배경음 칸 없음)에 배경음 60, 옛 값은 그대로 ('+JSON.stringify(s2&&{bgm:s2.bgm,vol:s2.vol,shake:s2.shake})+')');}
 }
 if(fails.length){console.log('FAIL bgm_wanted\n  '+fails.join('\n  '));process.exitCode=1;}else console.log('PASS bgm_wanted');
+// v21.2.1 받기에 실패한 곡: 그 판 내내 막지 않고 30초 → 60초 → … (최대 120초) 뒤 다시 받아 봄 · 오류 기록은 곡마다 한 번
+{const f=[];const ok3=(c,m)=>{if(!c)f.push(m);};
+ ok3(typeof bgmRetryOk==='function','bgmRetryOk 있음');
+ if(typeof bgmRetryOk==='function'){
+  BGM.failed.clear&&BGM.failed.clear();const t0=1e6;const P0=performance.now;performance.now=()=>t0;
+  try{
+   const n0=DIAG.log.length;bgmFail('s03',new Error('Load failed'));bgmFail('s03',new Error('Load failed'));bgmFail('s02',new Error('Load failed'));
+   ok3(DIAG.log.length-n0<=2,'같은 곡 실패는 한 번만 기록(s03 두 번 → 한 줄, s02 한 줄)');
+   ok3(!bgmRetryOk('s02',t0+10000),'실패 10초 뒤에는 아직 다시 받지 않음');
+   ok3(bgmRetryOk('s02',t0+31000),'30초가 지나면 다시 받아 봄');
+   performance.now=()=>t0+31000;bgmFail('s02',new Error('Load failed'));
+   ok3(!bgmRetryOk('s02',t0+31000+50000)&&bgmRetryOk('s02',t0+31000+61000),'두 번째 실패 뒤엔 60초');
+   ok3(bgmRetryOk('s05',t0),'실패한 적 없는 곡은 바로');
+  }finally{performance.now=P0;}}
+ if(f.length){console.log('FAIL bgm_wanted(다시 받기)\n  '+f.join('\n  '));process.exitCode=1;}}

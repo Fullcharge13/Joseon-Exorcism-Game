@@ -978,6 +978,7 @@ function archiveRun(win) {
   const A = meta.arch,
     r = snapRun(win),
     R = A.rec;
+  if (!r.win && !r.loop && !r.kills && r.time < 10) return r; // v21.2.1 「다시 하기」 뒤 바로 나간 빈 판은 기록관에 넣지 않음
   A.runs.unshift(r);
   if (A.runs.length > 50) A.runs.length = 50;
   const better = (k, v, lower) => {

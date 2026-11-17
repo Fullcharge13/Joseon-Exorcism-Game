@@ -76,8 +76,8 @@ Object.assign(WD, {
       if (w.t > 0) return;
       if (w.evo) {
         const o = rand() * TAU;
-        for (let i = 0; i < 6 + P.amount; i++) bjCleaver(o + (i / (6 + P.amount)) * TAU, 34 * P.might, 6);
-        w.t = 1.3 * P.cd;
+        for (let i = 0; i < 6 + P.amount; i++) bjCleaver(o + (i / (6 + P.amount)) * TAU, 20 * P.might, 6);
+        w.t = 1.5 * P.cd; // v21.2.1: 34·1.3초 → 20·1.5초(진화 무기 중앙값의 2.5배였음)
         return;
       }
       const n = L5(w, [1, 1, 2, 2, 3]) + P.amount,
@@ -105,7 +105,7 @@ Object.assign(WD, {
       w.t -= dt;
       if (w.t > 0) return;
       if (w.evo) {
-        for (const e of near(P.x, P.y, 140 * P.area, TMP2).slice()) if (!e.prop) bjHook(e, 30 * P.might);
+        for (const e of near(P.x, P.y, 140 * P.area, TMP2).slice()) if (!e.prop) bjHook(e, 40 * P.might); // v21.2.1: 30 → 40(중앙값의 0.5배였음)
         w.t = 1.6 * P.cd;
         return;
       }
@@ -150,7 +150,7 @@ Object.assign(WD, {
       const ev = w.evo,
         n = ev ? 3 : L5(w, [1, 1, 2, 2, 3]),
         r = (ev ? 40 : L5(w, [28, 28, 28, 34, 34])) * P.area,
-        dmg = (ev ? 14 : L5(w, [7, 8.5, 8.5, 9, 11])) * P.might;
+        dmg = (ev ? 9 : L5(w, [7, 8.5, 8.5, 9, 11])) * P.might; // v21.2.1: 진화 14 → 9
       for (let i = 0; i < n; i++) {
         const tg = randomEnemy(170);
         const x = tg ? tg.x : P.x + rnd(-60, 60),
@@ -180,7 +180,7 @@ Object.assign(WD, {
       w.t -= dt;
       if (w.t > 0) return;
       const n = w.evo ? 3 : L5(w, [1, 1, 2, 2, 3]),
-        dmg = (w.evo ? 90 : L5(w, [40, 50, 50, 62, 78])) * P.might,
+        dmg = (w.evo ? 70 : L5(w, [40, 50, 50, 62, 78])) * P.might, // v21.2.1: 진화 90 → 70
         got = [];
       for (let i = 0; i < n; i++) {
         const tg = bjHeaviest(220, got);
