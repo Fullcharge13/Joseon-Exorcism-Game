@@ -1643,6 +1643,19 @@ const CARDS = {
   },
   cheonsal: {n: '천살', d: '요괴 체력 +30%. 경험치 +40%.', fx: {'*M.eHp': 1.3, '+B.xpGain': 0.4}}
 };
+/* v21.2 흉괘(凶卦): 나쁜 효과만 있는 패. 점괘 패와 따로 세 칸, 한 장마다 엽전 ×HYUNG_COIN. 제10막을 한 번 깨야 열린다.
+   이름은 민간 사주의 신살 이름을 빌렸고 효과는 그 뜻을 옮긴 각색(설계 docs/specs/2026-11-17-흉괘-패.md) */
+const HYUNG_MAX = 3,
+  HYUNG_COIN = 1.15;
+const HYUNG = {
+  sangmun: {n: '상문살', d: '쓰러진 요괴 다섯에 하나꼴로 그 자리에 원혼 불꽃이 터진다.', fx: {'=M.sangmun': 0.2}},
+  gongmang: {n: '공망', d: '레벨업 선택지가 하나 줄어든다.', fx: {'+M.choice': -1}},
+  gosin: {n: '고신살', d: '모든 회복량이 절반.', fx: {'*B.healM': 0.5}},
+  wonjin: {n: '원진살', d: '엘리트 체력 +60%, 이동 속도 +15%.', fx: {'*M.eliteHp': 1.6, '*M.eliteSpd': 1.15}},
+  hyeonchim: {n: '현침살', d: '요괴 탄의 속도와 피해 +30%.', fx: {'*M.eBul': 1.3}},
+  gwimun: {n: '귀문관살', d: '시야가 좁아진다. 퇴마사 둘레 밖이 어둡다.', fx: {'=M.gwimun': true}},
+  yangin: {n: '양인살', d: '받는 피해 +30%.', fx: {'*M.dmgIn': 1.3}}
+};
 const DIFFS = {
   easy: {
     n: '쉬움',
@@ -1801,7 +1814,8 @@ const TASKS = [
   T('combo300', '끊이지 않는 칼', '연격 300 잇기', 'comboMax', 300, {sk: 1}, '물리기 +1'),
   T('ks3', '정 많은 퇴마사', '정표 3개 받기', 'ksN', 3, {coins: 150}, '엽전 150'),
   T('k50000', '백귀야행을 끊다', '요괴 50,000마리 퇴치', 'kills', 50000, {coins: 500}, '엽전 500'),
-  T('allchar', '여섯 퇴마사', '퇴마사 여섯 모두 해금', 'charN', 6, {coins: 300}, '엽전 300'),
+  T('allchar', '여섯 퇴마사', '퇴마사 여섯 해금', 'charN', 6, {coins: 300}, '엽전 300'),
+  T('allchar7', '일곱 퇴마사', '퇴마사 일곱 모두 해금', 'charN', 7, {coins: 300}, '엽전 300'), // v21.2 백정
   T('runs30', '서른 번의 밤', '출정 30번', 'runs', 30, {rr: 1}, '산통 흔들기 +1'),
   T('combo1000', '천 번의 칼끝', '연격 1,000 잇기', 'comboMax', 1000, {coins: 200}, '엽전 200'),
   T('loop3', '세 바퀴의 밤', '끝없는 밤 3바퀴 들어서기', 'bestLoop', 3, {coins: 400}, '엽전 400'),
@@ -1813,7 +1827,13 @@ const TASKS = [
   T('curse10', '액막이의 끝', '액운 10에서 제10막 완주', 'curseClear', 10, {coins: 1000}, '엽전 1000'),
   T('t_frag1', '이야기의 실마리', '설화 흔적을 조사해 설화 조각 얻기', 'fragN', 1, {coins: 30}, '엽전 30'),
   T('t_tale1', '옛이야기 한 편', '설화 출정 한 편 끝맺기', 'taleN', 1, {coins: 100}, '엽전 100'),
-  T('t_ending', '새벽의 이야기', '제10막을 평정하고 본편 결말 보기', 'ending', 1, {coins: 100}, '엽전 100')
+  T('t_ending', '새벽의 이야기', '제10막을 평정하고 본편 결말 보기', 'ending', 1, {coins: 100}, '엽전 100'),
+  // v21.2 흉괘·성난 엘리트
+  T('h_one', '흉한 점괘', '흉괘를 한 장 이상 얹고 제10막 평정', 'hyungClear', 1, {coins: 150}, '엽전 150'),
+  T('h_three', '삼흉을 견디다', '흉괘 세 장을 얹고 제10막 평정', 'hyungClear', 3, {coins: 500}, '엽전 500'),
+  T('h_all', '일곱 흉살을 넘다', '흉괘 일곱 가지를 모두 한 번씩 얹고 제10막 평정', 'hyungKinds', 7, {coins: 700}, '엽전 700'),
+  T('rage10', '성난 요괴 잠재우기', '성난 엘리트 10마리 퇴치', 'rageKills', 10, {coins: 100}, '엽전 100'),
+  T('rage50', '노여움을 거두다', '성난 엘리트 50마리 퇴치', 'rageKills', 50, {coins: 300}, '엽전 300')
 ];
 const MAXKEYS = new Set([
   'maxStage',
@@ -1828,7 +1848,9 @@ const MAXKEYS = new Set([
   'petLv',
   'ult',
   'bestLoop',
-  'comboMax'
+  'comboMax',
+  'hyungClear',
+  'hyungKinds'
 ]);
 
 /* ======================= weapon / skill archetypes ======================= */

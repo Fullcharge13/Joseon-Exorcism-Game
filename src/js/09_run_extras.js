@@ -937,6 +937,7 @@ function snapRun(win) {
     diff: G.diff,
     curse: G.curse,
     card: G.cards.slice(),
+    hyung: (G.hyung || []).slice(),
     ks: G.ks || null,
     win: !!win,
     stage: G.stage,
@@ -1447,6 +1448,13 @@ function renderStatus() {
         _t(
           '<div class="strow"><span class="ic"><span class="seal" style="background:#2a2228">{p}</span></span><div><p><b>{n}</b> <small>점괘 패</small></p><p>{d}</p></div><div></div></div>',
           {p: CARDS[cd].n[0], n: CARDS[cd].n, d: CARDS[cd].d}
+        )
+      );
+    for (const h of G.hyung || [])
+      ot.push(
+        _t(
+          '<div class="strow"><span class="ic"><span class="seal" style="background:#3a1a22">{p}</span></span><div><p><b>{n}</b> <small>흉괘</small></p><p>{d}</p></div><div></div></div>',
+          {p: HYUNG[h].n[0], n: HYUNG[h].n, d: HYUNG[h].d}
         )
       );
     if (G.dkC)

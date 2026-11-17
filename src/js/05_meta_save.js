@@ -55,7 +55,8 @@ const JOBTASK = {
   mudang: ['넋을 달래는 방울', '무조의 경지', '하늘 만신의 경지', '굿판의 첫 신명', '무당의 새벽'],
   jangsu: ['변방을 지킨 칼', '대원수의 군령', '궁성의 시위', '첫 칼을 벼리다', '장수의 새벽'],
   gisaeng: ['가락으로 벤 요괴', '국창의 소리', '검선의 칼춤', '흥에 겨운 가락', '기생의 새벽'],
-  sangin: ['셈이 맞는 장사', '대방의 장부', '도반수의 통문', '천금의 셈', '상인의 새벽']
+  sangin: ['셈이 맞는 장사', '대방의 장부', '도반수의 통문', '천금의 셈', '상인의 새벽'],
+  baekjeong: ['결대로 가른 요괴', '포정의 경지', '형평의 깃발', '첫 칼을 갈다', '백정의 새벽']
 };
 // prettier-ignore
 const jong=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return c>=0&&c<11172?c%28:0;},euro=w=>w+(jong(w)===0||jong(w)===8?'로':'으로'),eul=w=>w+(jong(w)?'을':'를'); //i18n-skip 조사 고르기(번역하지 않음)
@@ -347,7 +348,9 @@ const ENDING = {
     gisaeng:
       '그녀는 잊힌 이야기들로 새 노래를 지었다. 노래가 끝날 때마다 객석 어딘가에서 그림자 하나가 고개를 숙였다가, 웃으며 사라졌다.',
     sangin:
-      '장부를 덮으며 외상값 한 줄을 지웠다. 「이야기로 갚음」이라고 적고서. 그날부터 그의 보부상단은 장터마다 물건과 함께 옛이야기를 실어 날랐다.'
+      '장부를 덮으며 외상값 한 줄을 지웠다. 「이야기로 갚음」이라고 적고서. 그날부터 그의 보부상단은 장터마다 물건과 함께 옛이야기를 실어 날랐다.',
+    baekjeong:
+      '그는 넓적칼을 숫돌에 마지막으로 갈아 벽에 걸었다. 요괴를 가르던 손으로 이번에는 저울을 들었다. 사람과 이야기를 똑같은 눈금으로 다는 저울이었다.'
   }
 };
 /* 설화 막 규칙: start(막 시작) · tick(매 프레임) · ready(보스가 나와도 되는가) · hud(위쪽 진행 글). 동작은 아래 TALE_RULE_FN에서 붙인다 */
@@ -441,6 +444,7 @@ meta.stats = meta.stats || {};
 meta.seen = meta.seen || {};
 meta.done = meta.done || [];
 meta.curseMax = meta.curseMax || 0;
+meta.hyungWon = Array.isArray(meta.hyungWon) ? meta.hyungWon.filter(id => HYUNG[id]) : []; // v21.2 흉괘를 낀 채 깬 종류
 /* 설정 기본값 합치기(옛 저장에 없는 칸은 기본값 · 있는 값은 그대로) — v21.0 배경음 bgm 60 */
 function metaSetDefaults(set) {
   return Object.assign(
@@ -608,7 +612,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v21.1',
+const GAME_VER = 'v21.2',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};

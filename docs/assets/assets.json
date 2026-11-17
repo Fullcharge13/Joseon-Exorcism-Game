@@ -1,11 +1,11 @@
 {
  "game": "joseon-exorcism",
- "version": "v21.0",
+ "version": "v21.2",
  "kinds": [
   {
    "kind": "char",
    "name": "퇴마사·전직",
-   "count": 78
+   "count": 91
   },
   {
    "kind": "enemy",
@@ -35,17 +35,17 @@
   {
    "kind": "weapon",
    "name": "무기·진화·합공",
-   "count": 46
+   "count": 52
   },
   {
    "kind": "skill",
    "name": "직업 기술",
-   "count": 72
+   "count": 84
   },
   {
    "kind": "passive",
    "name": "보패",
-   "count": 26
+   "count": 29
   },
   {
    "kind": "item",
@@ -60,7 +60,7 @@
   {
    "kind": "task",
    "name": "과업 휘장",
-   "count": 119
+   "count": 135
   },
   {
    "kind": "prop",
@@ -120,7 +120,7 @@
   {
    "kind": "ult",
    "name": "궁극 오의",
-   "count": 6
+   "count": 7
   },
   {
    "kind": "anom",
@@ -1163,6 +1163,176 @@
    "fileR": "img/char/sangin_16@r.png",
    "readme": [
     "docs/img/char_sangin_16.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong",
+   "name": "백정",
+   "used": "백정",
+   "file": "img/char/baekjeong.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong@r.png",
+   "readme": [
+    "docs/img/char_baekjeong.png",
+    "docs/img/charS_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_01",
+   "name": "칼잡이",
+   "used": "백정 · 칼의 길 1차",
+   "file": "img/char/baekjeong_01.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_01@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_01.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_02",
+   "name": "날 선 백정",
+   "used": "백정 · 칼의 길 2차",
+   "file": "img/char/baekjeong_02.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_02@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_02.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_03",
+   "name": "칼바람 사냥꾼",
+   "used": "백정 · 칼의 길 3차",
+   "file": "img/char/baekjeong_03.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_03@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_03.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_04",
+   "name": "황소 장사",
+   "used": "백정 · 칼의 길 4차",
+   "file": "img/char/baekjeong_04.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_04@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_04.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_05",
+   "name": "포정",
+   "used": "백정 · 칼의 길 5차",
+   "file": "img/char/baekjeong_05.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_05@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_05.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_06",
+   "name": "의적 임꺽정",
+   "used": "백정 · 칼의 길 6차",
+   "file": "img/char/baekjeong_06.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_06@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_06.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_11",
+   "name": "고리장이",
+   "used": "백정 · 형평의 길 1차",
+   "file": "img/char/baekjeong_11.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_11@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_11.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_12",
+   "name": "갖바치",
+   "used": "백정 · 형평의 길 2차",
+   "file": "img/char/baekjeong_12.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_12@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_12.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_13",
+   "name": "장정",
+   "used": "백정 · 형평의 길 3차",
+   "file": "img/char/baekjeong_13.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_13@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_13.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_14",
+   "name": "형평사원",
+   "used": "백정 · 형평의 길 4차",
+   "file": "img/char/baekjeong_14.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_14@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_14.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_15",
+   "name": "형평의 기수",
+   "used": "백정 · 형평의 길 5차",
+   "file": "img/char/baekjeong_15.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_15@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_15.png"
+   ]
+  },
+  {
+   "kind": "char",
+   "id": "baekjeong_16",
+   "name": "형평사 장지필",
+   "used": "백정 · 형평의 길 6차",
+   "file": "img/char/baekjeong_16.png",
+   "w": 12,
+   "h": 13,
+   "fileR": "img/char/baekjeong_16@r.png",
+   "readme": [
+    "docs/img/char_baekjeong_16.png"
    ]
   },
   {
@@ -4010,6 +4180,270 @@
   },
   {
    "kind": "weapon",
+   "id": "neokal",
+   "name": "넓적칼",
+   "used": "백정 전용",
+   "file": "img/weapon/neokal.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/w_neokal.png"
+   ]
+  },
+  {
+   "kind": "weapon",
+   "id": "galgori",
+   "name": "쇠갈고리",
+   "used": "백정 전용",
+   "file": "img/weapon/galgori.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/w_galgori.png"
+   ]
+  },
+  {
+   "kind": "weapon",
+   "id": "gorideot",
+   "name": "버들고리 덫",
+   "used": "백정 전용",
+   "file": "img/weapon/gorideot.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/w_gorideot.png"
+   ]
+  },
+  {
+   "kind": "weapon",
+   "id": "jeoulchu",
+   "name": "저울추",
+   "used": "백정 전용",
+   "file": "img/weapon/jeoulchu.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/w_jeoulchu.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "gyeol",
+   "name": "결 따라 베기",
+   "file": "img/skill/gyeol.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "刃",
+    "bg": "#a8a8b8",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_gyeol.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "ssangkal",
+   "name": "쌍칼",
+   "file": "img/skill/ssangkal.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "雙",
+    "bg": "#8a8a9a",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_ssangkal.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "kalhoeori",
+   "name": "칼회오리",
+   "file": "img/skill/kalhoeori.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "旋",
+    "bg": "#c8c8d0",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_kalhoeori.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "hwangso",
+   "name": "황소 들이받기",
+   "file": "img/skill/hwangso.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "牛",
+    "bg": "#7a4a2a",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_hwangso.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "pojeong",
+   "name": "포정해우",
+   "file": "img/skill/pojeong.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "解",
+    "bg": "#d0b080",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_pojeong.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "kkeokjeong",
+   "name": "구월산 칼바람",
+   "file": "img/skill/kkeokjeong.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "賊",
+    "bg": "#4a4a4a",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_kkeokjeong.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "gorideonji",
+   "name": "고리 던지기",
+   "file": "img/skill/gorideonji.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "環",
+    "bg": "#b08a4a",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_gorideonji.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "gajukchae",
+   "name": "가죽 채찍",
+   "file": "img/skill/gajukchae.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "鞭",
+    "bg": "#8a5a2b",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_gajukchae.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "mongdung",
+   "name": "몽둥이질",
+   "file": "img/skill/mongdung.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "棒",
+    "bg": "#a07850",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_mongdung.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "jeouljil",
+   "name": "저울질",
+   "file": "img/skill/jeouljil.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "秤",
+    "bg": "#c9c4bc",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_jeouljil.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "gitbal",
+   "name": "형평의 깃발",
+   "file": "img/skill/gitbal.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "旗",
+    "bg": "#c23b2a",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_gitbal.png"
+   ]
+  },
+  {
+   "kind": "skill",
+   "id": "jijipil",
+   "name": "저울은 고르다",
+   "file": "img/skill/jijipil.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "平",
+    "bg": "#e0b048",
+    "color": null
+   },
+   "readme": [
+    "docs/img/s_jijipil.png"
+   ]
+  },
+  {
+   "kind": "weapon",
+   "id": "f_kalgori",
+   "name": "칼과 갈고리",
+   "used": "합공",
+   "file": "img/weapon/f_kalgori.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/w_f_kalgori.png"
+   ]
+  },
+  {
+   "kind": "weapon",
+   "id": "f_gorichu",
+   "name": "고리와 추",
+   "used": "합공",
+   "file": "img/weapon/f_gorichu.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/w_f_gorichu.png"
+   ]
+  },
+  {
+   "kind": "weapon",
    "id": "f_pilryeok",
    "name": "필력 교지",
    "used": "합공",
@@ -4501,6 +4935,39 @@
     "docs/img/p_jeoul.png"
    ],
    "since": "v14"
+  },
+  {
+   "kind": "passive",
+   "id": "sutdol",
+   "name": "숫돌",
+   "file": "img/passive/sutdol.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/p_sutdol.png"
+   ]
+  },
+  {
+   "kind": "passive",
+   "id": "soegajuk",
+   "name": "쇠가죽",
+   "file": "img/passive/soegajuk.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/p_soegajuk.png"
+   ]
+  },
+  {
+   "kind": "passive",
+   "id": "beodeul",
+   "name": "버들고리",
+   "file": "img/passive/beodeul.png",
+   "w": 32,
+   "h": 32,
+   "readme": [
+    "docs/img/p_beodeul.png"
+   ]
   },
   {
    "kind": "item",
@@ -5380,6 +5847,17 @@
   },
   {
    "kind": "task",
+   "id": "allchar7",
+   "name": "일곱 퇴마사",
+   "file": "img/task/allchar7.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_allchar7.png"
+   ]
+  },
+  {
+   "kind": "task",
    "id": "runs30",
    "name": "서른 번의 밤",
    "file": "img/task/runs30.png",
@@ -5521,6 +5999,94 @@
     "docs/img/task_t_ending.png"
    ],
    "since": "v17.0"
+  },
+  {
+   "kind": "task",
+   "id": "h_one",
+   "name": "흉한 점괘",
+   "file": "img/task/h_one.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_h_one.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "h_three",
+   "name": "삼흉을 견디다",
+   "file": "img/task/h_three.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_h_three.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "h_all",
+   "name": "일곱 흉살을 넘다",
+   "file": "img/task/h_all.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_h_all.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "rage10",
+   "name": "성난 요괴 잠재우기",
+   "file": "img/task/rage10.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_rage10.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "rage50",
+   "name": "노여움을 거두다",
+   "file": "img/task/rage50.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_rage50.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "c_baekjeong",
+   "name": "저울을 든 손",
+   "file": "img/task/c_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_c_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "t_baekjeong",
+   "name": "백정 1차 전직",
+   "file": "img/task/t_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_t_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "t5_baekjeong",
+   "name": "포정·형평의 기수가 되다",
+   "file": "img/task/t5_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_t5_baekjeong.png"
+   ]
   },
   {
    "kind": "task",
@@ -5982,6 +6548,83 @@
    "h": 72,
    "readme": [
     "docs/img/task_j_c_sangin.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "j_k_baekjeong",
+   "name": "결대로 가른 요괴",
+   "file": "img/task/j_k_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_j_k_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "j_b0_baekjeong",
+   "name": "포정의 경지",
+   "file": "img/task/j_b0_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_j_b0_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "j_b1_baekjeong",
+   "name": "형평의 깃발",
+   "file": "img/task/j_b1_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_j_b1_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "j_6b0_baekjeong",
+   "name": "의적 임꺽정",
+   "file": "img/task/j_6b0_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_j_6b0_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "j_6b1_baekjeong",
+   "name": "형평사 장지필",
+   "file": "img/task/j_6b1_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_j_6b1_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "j_e_baekjeong",
+   "name": "첫 칼을 갈다",
+   "file": "img/task/j_e_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_j_e_baekjeong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "j_c_baekjeong",
+   "name": "백정의 새벽",
+   "file": "img/task/j_c_baekjeong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_j_c_baekjeong.png"
    ]
   },
   {
@@ -7518,6 +8161,23 @@
     "docs/img/u_sangin.png"
    ],
    "since": "v14"
+  },
+  {
+   "kind": "ult",
+   "id": "baekjeong",
+   "name": "형평",
+   "used": "백정",
+   "file": "img/ult/baekjeong.png",
+   "w": 32,
+   "h": 32,
+   "seal": {
+    "g": "衡",
+    "bg": "#7a2018",
+    "color": null
+   },
+   "readme": [
+    "docs/img/u_baekjeong.png"
+   ]
   },
   {
    "kind": "anom",

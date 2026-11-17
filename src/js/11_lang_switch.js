@@ -28,6 +28,8 @@ const L10N_TABLES = () => ({
   STORY,
   UPG,
   CARDS,
+  HYUNG,
+  ELITE_RAGE,
   STAGES,
   PATHS,
   TEMPER,

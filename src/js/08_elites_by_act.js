@@ -849,6 +849,23 @@ function drawEclipse(b, cx, cy) {
   b.fillRect(cx, cy, W, H);
 }
 
+/* v21.2 흉괘 귀문관살: 퇴마사 둘레 110px까지 맑고 190px에서 0.7 어둠(흑룡 어둠과 겹치면 둘 다 그림 — 더 어두운 쪽이 이김) */
+function drawGwimun(b, cx, cy) {
+  const P = G.P;
+  if (typeof b.createRadialGradient !== 'function') {
+    b.globalAlpha = 0.45;
+    b.fillStyle = '#05040a';
+    b.fillRect(cx, cy, W, H);
+    b.globalAlpha = 1;
+    return;
+  }
+  const g = b.createRadialGradient(P.x, P.y, 110, P.x, P.y, 190);
+  g.addColorStop(0, 'rgba(5,4,10,0)');
+  g.addColorStop(1, 'rgba(5,4,10,0.7)');
+  b.fillStyle = g;
+  b.fillRect(cx, cy, W, H);
+}
+
 /* ---- 8막 바닷속 큰 메기: 바다 밑 굴에 살며 들고 나는 데 따라 밀물·썰물이 생긴다는 큰 메기. 경고 뒤 끌어당김 3초 ↔ 밀쳐 냄 3초(세기 = 보스 끌어당김 × 0.5) ----
    출처: 한국민족문화대백과사전 「밀물썰물 설화」. 퇴마사를 끌고 미는 것은 게임 속 각색 */
 const TIDE_SPD = 18;
@@ -1218,3 +1235,77 @@ STAGES[6].elite2 = 'heukryong';
 STAGES[7].elite2 = 'keunmegi';
 STAGES[8].elite2 = 'samdugumi';
 STAGES[9].elite2 = 'hwama';
+
+/* ======================= v21.2 엘리트 성난 행동(설계 docs/specs/2026-11-17-엘리트-성난-행동.md) =======================
+   체력 절반 이하(삼두구미는 다시 일어난 뒤)에 한 번 성나고, 그 뒤 자기 행동과 함께 주기마다 성난 행동. 모두 경고 뒤 피해.
+   경고 원은 own(그 엘리트 종류)으로 받은 피해를 셈, 탄은 EBUL_OWN으로 셈 */
+const rageDmg = () => bdmg() * 0.8;
+function rageWarn(e, x, y, r, t, extra) {
+  warn(Object.assign({x, y, r, t, dmg: rageDmg(), col: '#ff4a3a', own: e.kind}, extra || {}));
+}
+function rageFan(e, n, spread, sp) {
+  const P = G.P,
+    a0 = Math.atan2(P.y - e.y, P.x - e.x);
+  EBUL_OWN = e.kind;
+  try {
+    for (let i = 0; i < n; i++) ebul(e.x, e.y - 6, a0 + (n > 1 ? (i / (n - 1) - 0.5) * spread : 0), sp);
+  } finally {
+    EBUL_OWN = null;
+  }
+}
+const ELITE_RAGE = {
+  gaekgwi: {d: '퇴마사 자리에 원한의 손이 솟는다.', cd: 4, f: (e, P) => rageWarn(e, P.x, P.y, 30, 0.9)}, // 원한의 손
+  juktong: {d: '대통에서 탄 다섯 발을 부채꼴로 쏜다.', cd: 4, f: e => rageFan(e, 5, 1.0, 70)}, // 대통 탄
+  beomnam: {
+    d: '퇴마사 자리를 두 번 연달아 할퀸다.',
+    cd: 5,
+    f: (e, P) => {
+      rageWarn(e, P.x, P.y, 28, 0.8);
+      rageWarn(e, P.x + rnd(-20, 20), P.y + rnd(-20, 20), 28, 1.4);
+    }
+  }, // 발톱 자국
+  gomnaru: {d: '자기 둘레 땅을 크게 내리친다.', cd: 5, f: e => rageWarn(e, e.x, e.y, 60, 1.0)}, // 땅 내리치기
+  gildal: {d: '여우불 여섯 개를 사방으로 날린다.', cd: 4, f: e => ringB(e, 6, 60, rand() * TAU)}, // 여우불
+  yeogwi: {
+    d: '퇴마사 자리에 역병 자국을 남겨 독 안개가 핀다.',
+    cd: 4,
+    f: (e, P) =>
+      rageWarn(e, P.x, P.y, 24, 1.0, {
+        on2: w => G.ezones.push({x: w.x, y: w.y, r: 24, life: 3, max: 3, dmg: 4 + G.stage * 2, col: '#7fb07a', kind: 'miasma', owner: e})
+      })
+  }, // 역병 자국
+  heukryong: {
+    d: '퇴마사 쪽으로 불칼을 길게 내리긋는다.',
+    cd: 3.5,
+    f: (e, P) => rageWarn(e, e.x, e.y, 0, 0.9, {kind: 'line', a: Math.atan2(P.y - e.y, P.x - e.x), len: 220, w: 16})
+  }, // 불칼
+  keunmegi: {d: '물살 열 줄기를 사방으로 뿜는다.', cd: 4, f: e => ringB(e, 10, 60, rand() * TAU)}, // 물살
+  samdugumi: {d: '다시 일어난 뒤 남은 머리로 세 갈래 탄을 쏜다.', cd: 3, f: e => rageFan(e, 3, 0.7, 80)}, // 세 갈래 탄(다시 일어난 뒤)
+  hwama: {
+    d: '퇴마사 둘레 세 곳에 불기둥이 솟는다.',
+    cd: 5,
+    f: (e, P) => {
+      for (let i = 0; i < 3; i++) {
+        const a = rand() * TAU,
+          d = rand() * 60;
+        rageWarn(e, P.x + Math.cos(a) * d, P.y + Math.sin(a) * d, 26, 1.0);
+      }
+    }
+  } // 불기둥
+};
+function eliteRage(e, dt, P) {
+  const R = ELITE_RAGE[e.kind];
+  if (!R || !e.elite || e.dead || e.frz > 0) return;
+  if (!e.rage) {
+    if (e.kind === 'samdugumi' ? !e.revived || e.inv : e.hp > e.maxHp * 0.5) return;
+    e.rage = true;
+    e.rT = 1.2; // 성난 뒤 첫 행동까지 틈
+    particle(e.x, e.y - 8, '#ff4a3a', 14, 70, 0.5);
+    toast(_t('{n}이(가) 성났다', {n: EN[e.kind].n}), 'red');
+    return;
+  }
+  e.rT -= dt;
+  if (e.rT > 0) return;
+  e.rT = R.cd;
+  R.f(e, P);
+}

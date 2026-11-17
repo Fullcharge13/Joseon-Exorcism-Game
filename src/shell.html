@@ -248,6 +248,7 @@ button.adv:hover{background:#fff6e2}
 .tasklist em{font-style:normal;font-size:12px;color:#2f6b5a;text-align:right}
 .tasklist .pg{font:10px var(--f-pix);color:#7a6a5a}
 .dogam h3{font:18px var(--f-disp);font-weight:400;margin:6px 0 0;color:var(--gold)}
+.dogam span.rage{color:#e2715c}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:8px}
 .dgrid div{background:var(--hanji);color:var(--sumi);padding:8px;display:flex;gap:8px;align-items:center;min-width:0}
 .dgrid div.unk{background:#3a3238;color:var(--dim)}
@@ -442,6 +443,11 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <p>무당이 산통을 흔들어 패를 세 장까지 뽑습니다. 패는 이번 출정의 규칙을 바꿉니다. 과업을 이루면 패가 늘어납니다.</p>
       <div class="pae" id="paeList"></div>
       <div class="row"><button class="btn ghost small" id="paeRand">아무 패나 뽑기</button></div>
+    </div>
+    <div class="panel" id="panHyung">
+      <h3 id="hyungHead">흉괘</h3>
+      <p id="hyungDesc">나쁜 일만 일어나는 흉한 점괘입니다. 세 장까지 더 얹을 수 있고, 한 장마다 엽전을 15% 더 얻습니다.</p>
+      <div class="pae" id="hyungList"></div>
     </div>
     <div class="row">
       <button class="btn" id="goBtn">출정</button>

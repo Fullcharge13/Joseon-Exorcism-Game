@@ -188,6 +188,8 @@ function castUlt() {
       });
     }
     G.coins += 10 + 5 * G.stage;
+  } else if (G.cid === 'baekjeong') {
+    baekUlt(P, D);
   } else if (G.cid === 'gisaeng') {
     for (const e of G.enemies)
       if (!e.dead && !e.prop && inView(e)) {

@@ -1,7 +1,7 @@
 // v19.0 6차 인물·기술: 이름·소개·출처 · 기술 Lv1~5가 피해를 주고 오류 없음 · 기술마다 특별 규칙(보스는 묶이지 않음 등)
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
 // @include tests/lib/tier6_helpers.js
-const SIX={seonbi:['다산 정약용','어사 박문수'],uiwon:['구암 허준','신의 백광현'],jangsu:['충무공 이순신','홍의장군 곽재우'],mudang:['토정 이지함','격암 남사고'],gisaeng:['명월 황진이','의기 논개'],sangin:['거상 임상옥','도반수 백달원']};   // v19.1 무당·기생·상인
+const SIX={seonbi:['다산 정약용','어사 박문수'],uiwon:['구암 허준','신의 백광현'],jangsu:['충무공 이순신','홍의장군 곽재우'],mudang:['토정 이지함','격암 남사고'],gisaeng:['명월 황진이','의기 논개'],sangin:['거상 임상옥','도반수 백달원'],baekjeong:['의적 임꺽정','형평사 장지필']};   // v19.1 무당·기생·상인
 for(const cid in SIX)SIX[cid].forEach((nm,b)=>{const t=CHARS[cid].branches[b].tiers[5];
  ok(t&&t.name===nm,`${cid} 갈래${b} 6차 이름 ${nm}: ${t&&t.name}`);
  ok(t&&t.who&&t.who.length>8&&/^https:\/\/encykorea\.aks\.ac\.kr\//.test(t.src||''),`${nm} 소개·고증 출처`);

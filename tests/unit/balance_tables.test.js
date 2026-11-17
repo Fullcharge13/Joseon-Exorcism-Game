@@ -20,6 +20,8 @@ const fxTokens=fx=>Object.entries(fx).map(([k,v])=>[fxToken(k,v),k]).filter(t=>t
 
 // 점괘 패
 for(const id in CARDS){const c=CARDS[id];ok(c.fx&&typeof c.fx==='object',`점괘 패 ${id}에 fx가 없음`);if(c.fx)consume(c.d,fxTokens(c.fx),'card:'+id);}
+// v21.2 흉괘
+for(const id in HYUNG){const c=HYUNG[id];ok(c.fx&&typeof c.fx==='object',`흉괘 ${id}에 fx가 없음`);if(c.fx)consume(c.d,fxTokens(c.fx),'hyung:'+id);}
 // 액운: CURSES와 같은 자리, 0단계는 비어 있음
 ok(CURSE_FX.length===CURSES.length,`CURSE_FX ${CURSE_FX.length}칸 · CURSES ${CURSES.length}칸`);
 ok(!Object.keys(CURSE_FX[0]).length,'액운 0단계는 효과 없음');
@@ -28,7 +30,7 @@ for(let i=1;i<CURSES.length;i++)consume(CURSES[i],fxTokens(CURSE_FX[i]||{}),'cur
 for(const id in DIFFS){const D=DIFFS[id];const t=fxTokens(D.fx||{});if(D.coin!==1)t.push([r1(Math.abs(D.coin-1))+'%','coin']);consume(D.d,t,'diff:'+id);}
 // 효과 키 모양: 연산 + * =, 대상 B·M·P. 더하기·곱하기는 이미 있는 칸에만(없는 칸이면 오타라 NaN이 된다), 바꾸기(=)는 새 칸도 됨
 newGame('seonbi',[],0,'normal','normal');
-const all=[...Object.entries(CARDS).map(([i,c])=>['card:'+i,c.fx]),...CURSE_FX.map((f,i)=>['curse:'+i,f]),...Object.entries(DIFFS).map(([i,d])=>['diff:'+i,d.fx])];
+const all=[...Object.entries(CARDS).map(([i,c])=>['card:'+i,c.fx]),...Object.entries(HYUNG).map(([i,c])=>['hyung:'+i,c.fx]),...CURSE_FX.map((f,i)=>['curse:'+i,f]),...Object.entries(DIFFS).map(([i,d])=>['diff:'+i,d.fx])];
 for(const [w,fx] of all)for(const k in fx||{}){const T={B:G.base,M:G.mods,P:G.P}[k[1]];
   ok(/^[+*=][BMP]\.\w+$/.test(k)&&T&&(k[0]==='='||typeof T[k.slice(3)]==='number'),`${w}: 효과 키 ${k} 이(가) 맞지 않음(없는 칸이면 오타)`);}
 

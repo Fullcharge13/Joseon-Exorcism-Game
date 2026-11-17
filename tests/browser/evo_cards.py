@@ -62,7 +62,7 @@ with sync_playwright() as p:
         ctx, pg, errs = page(mob, '?combo'); tag = '시험장 ' + ('휴대폰' if mob else 'PC')
         before = pg.evaluate("()=>localStorage.getItem(SAVE_KEY)")
         ok(pg.evaluate("()=>modal") == 'lab', tag + ': ?combo로 열면 시험장 화면')
-        rows = pg.locator('#labList .labrow'); ok(rows.count() == 32, tag + f': 목록 {rows.count()}줄')
+        rows = pg.locator('#labList .labrow'); ok(rows.count() == 36, tag + f': 목록 {rows.count()}줄')   # v21.2 백정 진화 무기 4 → 32+4
         if mob: pg.screenshot(path=str(out / 'lab_phone.png'))
         ok(pg.evaluate("()=>{const l=document.querySelector('#labList');return [...l.querySelectorAll('.labrow')].every(r=>r.scrollWidth<=r.clientWidth+1)}"), tag + ': 목록 줄 넘침')
         for idx in (0, 16, 31):

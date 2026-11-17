@@ -4,6 +4,10 @@ const CARD_MAX = 3;
 function cardList(c) {
   return (Array.isArray(c) ? c : c ? [c] : []).filter((v, i, a) => CARDS[v] && a.indexOf(v) === i).slice(0, CARD_MAX);
 }
+/* v21.2 흉괘: 같은 인자(card)에 섞여 와도 HYUNG에 있는 것만 골라 세 장까지 */
+function hyungList(c) {
+  return (Array.isArray(c) ? c : c ? [c] : []).filter((v, i, a) => HYUNG[v] && a.indexOf(v) === i).slice(0, HYUNG_MAX);
+}
 function cardNames(c) {
   return cardList(c)
     .map(id => CARDS[id].n)
@@ -13,7 +17,7 @@ let G = null,
   modal = 'title',
   selChar = null,
   prevScreen = 'title',
-  prep = {cards: [], curse: 0, diff: meta.diff || 'normal', mode: meta.mode || 'normal'};
+  prep = {cards: [], hyung: [], curse: 0, diff: meta.diff || 'normal', mode: meta.mode || 'normal'};
 const TMP = [],
   TMP2 = [];
 const keys = {};
@@ -23,7 +27,8 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
   // v20.1 판 난수: 씨앗을 주면(시험·?seed=) 그 판을 다시 만들 수 있다. 없으면 새 씨앗
   if (!Number.isInteger(seed)) seed = URL_SEED !== null ? URL_SEED : (NATIVE_RANDOM() * 4294967296) >>> 0;
   RNG = mulberry32(seed);
-  const cards = cardList(card);
+  const cards = cardList(card),
+    hyung = hyungList(card);
   VFXS.debris.length = 0;
   diagSeen.clear();
   diagStuck = 0;
@@ -36,6 +41,7 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
     cid,
     seed,
     cards,
+    hyung,
     curse,
     diff,
     stage: 0,
@@ -165,6 +171,7 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
     rs: {
       kills: 0,
       elites: 0,
+      rageKills: 0,
       mids: 0,
       pots: 0,
       tteok: 0,
@@ -195,7 +202,11 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
       borrow: 0,
       eliteWithMid: false,
       jw50: 45,
-      jw20: 90
+      jw20: 90,
+      sangmun: 0,
+      eliteHp: 1,
+      eliteSpd: 1,
+      gwimun: false
     }
   };
   C.base(G.base);
@@ -215,6 +226,10 @@ function newGame(cid, card, curse, diff = 'normal', mode = 'normal', seed) {
     if (u.revive && m.revive) M.dmgIn *= 0.9;
   }
   for (const card of cards) applyFx(CARDS[card].fx); // v19.9 숫자는 02_data의 CARDS·CURSE_FX·DIFFS 표에
+  for (const h of hyung) {
+    applyFx(HYUNG[h].fx);
+    M.coin *= HYUNG_COIN;
+  } // v21.2 흉괘: 나쁜 효과 + 장마다 엽전
   for (let i = 1; i <= Math.min(curse, CURSE_FX.length - 1); i++) applyFx(CURSE_FX[i]);
   if (DIFFS[diff]) applyFx(DIFFS[diff].fx);
   goalSnap();
@@ -310,6 +325,40 @@ function recompute() {
 /* ---- 합공(무기 합체) ---- */
 const FDMG = () => (30 + 20 * G.stage) * G.P.might;
 const FUSE = [
+  {
+    id: 'f_kalgori',
+    a: 'neokal',
+    b: 'galgori',
+    job: 'baekjeong',
+    n: '칼과 갈고리',
+    cd: 5,
+    d: '5초마다 둘레의 요괴를 갈고리로 끌어모은 뒤 넓적칼 여덟 자루가 사방으로 날아간다.',
+    fx(P) {
+      const D = FDMG();
+      for (const e of near(P.x, P.y, 150 * P.area, TMP2).slice()) if (!e.prop) bjHook(e, D * 0.6);
+      for (let i = 0; i < 8; i++) bjCleaver((i / 8) * TAU, D, 5);
+    }
+  },
+  {
+    id: 'f_gorichu',
+    a: 'gorideot',
+    b: 'jeoulchu',
+    job: 'baekjeong',
+    n: '고리와 추',
+    cd: 5,
+    d: '5초마다 가장 무거운 요괴 셋을 고리 덫으로 묶고 그 위에 추를 떨어뜨린다.',
+    fx(P) {
+      const D = FDMG(),
+        got = [];
+      for (let i = 0; i < 3; i++) {
+        const tg = bjHeaviest(240, got);
+        if (!tg) break;
+        got.push(tg);
+        zone({x: tg.x, y: tg.y, r: 30 * P.area, life: 1.5, dmg: D * 0.2, tick: 0.5, slow: 1, hold: 1, col: '#b08a4a'});
+        warn({x: tg.x, y: tg.y, r: 30 * P.area, t: 0.7, dmg: D * 1.6, friendly: 1, col: '#c9c4bc', fx: 'slam'});
+      }
+    }
+  },
   {
     id: 'f_pilryeok',
     a: 'meok',
@@ -862,6 +911,10 @@ function recordClear() {
   meta.stats['clear_' + G.cid] = (meta.stats['clear_' + G.cid] || 0) + 1;
   meta.stats.clears = (meta.stats.clears || 0) + 1;
   meta.stats.curseClear = Math.max(meta.stats.curseClear || 0, G.curse);
+  meta.stats.hyungClear = Math.max(meta.stats.hyungClear || 0, (G.hyung || []).length);
+  meta.hyungWon = meta.hyungWon || [];
+  for (const h of G.hyung || []) if (!meta.hyungWon.includes(h)) meta.hyungWon.push(h);
+  meta.stats.hyungKinds = meta.hyungWon.length;
   if (G.curse >= meta.curseMax && meta.curseMax < 10) meta.curseMax = G.curse + 1;
 }
 function openEndless() {
@@ -1271,6 +1324,12 @@ const ANOM = [
   {id: 'mirror', n: '좌우가 바뀐 것', g: '鏡', d: '거울에 비친 듯 좌우가 뒤집혀 있다.'}
 ];
 const STORY = {
+  baekjeong: [
+    '패랭이를 눌러쓰고 장터를 지나면 사람들이 길을 비켰다. 그날 밤 그를 피하지 않은 것은 요괴뿐이었다.',
+    '소의 결을 아는 손은 요괴의 결도 알았다. 칼은 힘이 아니라 결을 따라 들어갔다.',
+    '버들고리를 엮던 아낙이 말했다. 천한 손이라 불린 손들이 이 고을을 먹여 살렸다고.',
+    '마지막 괴이를 가른 새벽, 그는 패랭이를 벗었다. 누구도 그것을 다시 씌우지 못했다.'
+  ],
   seonbi: [
     '붓을 꺾고 길을 나선 날, 서책 사이에서 떨어진 부적 한 장이 시작이었다.',
     '과거 시험장에서 본 그림자는 사람의 것이 아니었다. 그날부터 글자가 칼이 되었다.',

@@ -228,6 +228,8 @@ function kill(e) {
     else G.gems.push({x: e.x, y: e.y, v: 10 + G.stage * 6, mag: false});
     return;
   }
+  if (G.mods.sangmun && !e.elite && !e.boss && G.warns.length < 60 && rand() < G.mods.sangmun)
+    warn({x: e.x, y: e.y, r: 22, t: 0.8, dmg: 6 + (G.stage + 1) * 2, col: '#9a7cff', sangmun: true}); // v21.2 상문살
   G.kills++;
   G.rs.kills++;
   cbKill();
@@ -270,6 +272,7 @@ function kill(e) {
   }
   if (e.elite) {
     G.rs.elites++;
+    if (e.rage) G.rs.rageKills = (G.rs.rageKills || 0) + 1; // v21.2 성난 엘리트
     dropItem('chest', e.x, e.y);
     if (e.elog) e.elog.t1 = G.time;
   }
@@ -453,7 +456,8 @@ function spawnElite() {
   const e = spawnEnemy(id);
   e.elite = true;
   (G.rs.eliteLog || (G.rs.eliteLog = [])).push((e.elog = {id, st: G.stage, t0: G.time, t1: null}));
-  e.hp = e.maxHp = e.maxHp * 10;
+  e.hp = e.maxHp = e.maxHp * 10 * G.mods.eliteHp;
+  e.spd *= G.mods.eliteSpd; // v21.2 원진살
   e.et = 2;
   toast(_t('엘리트 {n} 출현', {n: EN[id].n}), 'red');
 }
@@ -2040,7 +2044,11 @@ function resolveWarn(w) {
   if (w.kind === 'line')
     hit = segDist(P.x, P.y - 3, w.x, w.y, w.x + Math.cos(w.a) * w.len, w.y + Math.sin(w.a) * w.len) < w.w / 2 + P.r;
   else hit = (P.x - w.x) ** 2 + (P.y - w.y) ** 2 < (w.r + P.r) ** 2;
-  if (w.dmg && hit && P.iframe <= 0) damagePlayer(w.dmg);
+  if (w.dmg && hit && P.iframe <= 0) {
+    if (w.own) damageFrom(w.own, w.dmg);
+    else damagePlayer(w.dmg);
+  } // v21.2 엘리트 성난 행동의 경고는 그 엘리트 몫
+  if (w.on2) w.on2(w); // v21.2 경고가 끝나면 남는 것(여귀 독 안개)
   if (w.kind !== 'line') {
     G.fx.push({t: 'ring', x: w.x, y: w.y, r: 3, maxR: w.r, col: w.col, life: 0.25, max: 0.25});
     particle(w.x, w.y, w.col, 6, 60, 0.35);
@@ -2381,6 +2389,7 @@ function updEnemies(dt, P) {
         } else {
           const r = ELITE_AI[ai](e, dt, P, vx, vy);
           if (e.dead) continue;
+          eliteRage(e, dt, P); // v21.2 성난 행동
           if (r) {
             vx = r[0];
             vy = r[1];

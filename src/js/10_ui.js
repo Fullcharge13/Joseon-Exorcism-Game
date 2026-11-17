@@ -328,6 +328,17 @@ function taskToast(t) {
   snd(880, 0.12, 'triangle', 0.04);
   setTimeout(() => snd(1320, 0.18, 'triangle', 0.035), 110);
 }
+/* 출정이 끝날 때 받는 엽전. 흉괘는 줍는 엽전(G.mods.coin)과 함께 막·처치·평정 보너스에도 장마다 ×HYUNG_COIN(v21.2 검토) */
+function runEarned(cleared) {
+  const hy = Math.pow(HYUNG_COIN, (G.hyung || []).length);
+  return Math.round(
+    (G.coins +
+      (Math.floor(G.kills / 25) + (G.mode === 'tale' ? G.tale.act : G.stage) * 15 + (cleared ? 150 : 0) + G.loop * 150) * hy) *
+      (1 + G.curse * 0.15) *
+      DIFFS[G.diff].coin *
+      (G.mods.coinShop || 1)
+  );
+}
 function mergeRun() {
   const rs = G.rs,
     st = meta.stats;
@@ -350,7 +361,8 @@ function mergeRun() {
     'variants',
     'temper',
     'dkIn',
-    'quests'
+    'quests',
+    'rageKills'
   ])
     st[k] = (st[k] || 0) + (rs[k] || 0);
   st.comboMax = Math.max(st.comboMax || 0, rs.comboMax || 0);
@@ -1303,6 +1315,7 @@ function statHTML() {
     [_t('난이도'), DIFFS[G.diff].n, 1],
     [_t('액운'), G.curse],
     [_t('점괘 패'), G.cards.length ? cardNames(G.cards) : _t('없음'), 1],
+    ...((G.hyung || []).length ? [[_t('흉괘'), G.hyung.map(h => HYUNG[h].n).join('·'), 1]] : []),
     [_t('공격력'), Math.round(P.might * 100) + '%'],
     [_t('치명타'), Math.round(P.crit * 100) + '%']
   ]
@@ -1357,16 +1370,7 @@ function endGame(win) {
   if (win && G.mode === 'rush') meta.stats.rushBest = Math.max(meta.stats.rushBest || 0, STAGES.length);
   const cleared = win || G.loop > 0;
   mergeRun();
-  const earned = Math.round(
-    (G.coins +
-      Math.floor(G.kills / 25) +
-      (G.mode === 'tale' ? G.tale.act : G.stage) * 15 +
-      (cleared ? 150 : 0) +
-      G.loop * 150) *
-      (1 + G.curse * 0.15) *
-      DIFFS[G.diff].coin *
-      (G.mods.coinShop || 1)
-  );
+  const earned = runEarned(cleared);
   meta.coins += earned;
   {
     const r = archiveRun(win),
@@ -1615,7 +1619,7 @@ function setSkin(cid, k) {
 }
 function renderTalePrep() {
   const tale = prep.mode === 'tale';
-  for (const id of ['#panDiff', '#panCurse', '#panKs', '#panPae']) $(id).hidden = tale;
+  for (const id of ['#panDiff', '#panCurse', '#panKs', '#panPae', '#panHyung']) $(id).hidden = tale;
   $('#panTale').hidden = !tale;
   const cards = taleCards(),
     openN = cards.filter(c => c.state !== 'lock').length;
@@ -1690,6 +1694,26 @@ function prepCardRand() {
 }
 function prepCardHead() {
   return _t('점괘 패 {n}/{max}', {n: prep.cards.length, max: CARD_MAX});
+}
+/* v21.2 흉괘: 제10막을 한 번 깨면 열리는 따로 세 칸(시험이 화면 없이 부름) */
+function hyungOpen() {
+  return (meta.stats.clears || 0) >= 1;
+}
+function prepHyungOk(id) {
+  prep.hyung = prep.hyung || [];
+  return hyungOpen() && !!HYUNG[id] && (prep.hyung.includes(id) || prep.hyung.length < HYUNG_MAX);
+}
+function prepHyungToggle(id) {
+  if (!prepHyungOk(id)) return;
+  const i = prep.hyung.indexOf(id);
+  if (i >= 0) prep.hyung.splice(i, 1);
+  else prep.hyung.push(id);
+}
+function prepHyungHead() {
+  const n = (prep.hyung || []).length;
+  return n
+    ? _t('흉괘 {n}/{max} · 엽전 +{p}%', {n, max: HYUNG_MAX, p: Math.round((Math.pow(HYUNG_COIN, n) - 1) * 100)})
+    : _t('흉괘 {n}/{max}', {n, max: HYUNG_MAX});
 }
 function renderPrep() {
   diffChips($('#diffChips'), $('#diffDesc'), renderPrep);
@@ -1780,7 +1804,33 @@ function renderPrep() {
     };
     pl.appendChild(bt);
   }
+  renderHyungPrep();
   renderTalePrep();
+}
+/* v21.2 흉괘 묶음: 닫혀 있으면 안내 한 줄, 열리면 일곱 장 */
+function renderHyungPrep() {
+  const hl = $('#hyungList'),
+    open = hyungOpen();
+  hl.innerHTML = '';
+  prep.hyung = (prep.hyung || []).filter(id => HYUNG[id]);
+  $('#hyungHead').textContent = prepHyungHead();
+  $('#hyungDesc').textContent = open
+    ? _t('나쁜 일만 일어나는 흉한 점괘입니다. 세 장까지 더 얹을 수 있고, 한 장마다 엽전을 15% 더 얻습니다.')
+    : _t('제10막을 한 번 깨면 흉괘를 얹을 수 있습니다.');
+  if (!open) return;
+  for (const id in HYUNG) {
+    const h = HYUNG[id],
+      bt = document.createElement('button');
+    bt.id = 'hyung-' + id;
+    bt.disabled = !prepHyungOk(id);
+    bt.setAttribute('aria-pressed', prep.hyung.includes(id));
+    bt.innerHTML = `<b>${h.n}</b><span>${h.d}</span>`;
+    bt.onclick = () => {
+      prepHyungToggle(id);
+      renderPrep();
+    };
+    hl.appendChild(bt);
+  }
 }
 let codexTab = 'task';
 let codexFrom = 'title';
@@ -1859,7 +1909,7 @@ function renderCodex() {
               .map(id => {
                 const e = EN[id],
                   m = meta.seen[id];
-                return `<div class="${m ? '' : 'unk'}"><img src="${big(ESPR[id].n, 3)}" alt=""><p style="margin:0;min-width:0"><b>${m ? e.n : '???'}</b><span>${cat[e.c]}${m ? _t(' · 퇴치 {k}', {k: m.k}) : ''}</span><span>${m ? e.d : _t('아직 만나지 못했다.')}</span></p></div>`;
+                return `<div class="${m ? '' : 'unk'}"><img src="${big(ESPR[id].n, 3)}" alt=""><p style="margin:0;min-width:0"><b>${m ? e.n : '???'}</b><span>${cat[e.c]}${m ? _t(' · 퇴치 {k}', {k: m.k}) : ''}</span><span>${m ? e.d : _t('아직 만나지 못했다.')}</span>${m && ELITE_RAGE[id] ? `<span class="rage">${_t('성나면: {d}', {d: ELITE_RAGE[id].d})}</span>` : ''}</p></div>`;
               })
               .join('')}</div>`
         ).join('')
@@ -2948,7 +2998,7 @@ function begin() {
     if (c && c.state !== 'lock') taleStart(prep.tale);
     return;
   }
-  newGame(selChar, prep.cards.slice(), prep.curse, prep.diff, prep.mode || 'normal');
+  newGame(selChar, prep.cards.concat(prep.hyung || []), prep.curse, prep.diff, prep.mode || 'normal');
 }
 function goHome() {
   G = null;
@@ -3038,7 +3088,7 @@ $('#againBtn').onclick = () => {
     taleStart(G.tale.id);
     return;
   }
-  newGame(G.cid, G.cards.slice(), G.curse, G.diff, G.mode);
+  newGame(G.cid, G.cards.concat(G.hyung || []), G.curse, G.diff, G.mode);
 };
 $('#homeBtn').onclick = () => {
   $('#toast').innerHTML = '';

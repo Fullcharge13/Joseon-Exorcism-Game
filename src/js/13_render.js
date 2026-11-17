@@ -1333,7 +1333,7 @@ function render() {
     if (z.r >= 18) emblem('boss', z.x, z.y, a * 0.8);
     b.globalAlpha = 1;
   }
-  VFX_WARN_UP = vfxNight() > 0.05 || G.eclipse > 0;
+  VFX_WARN_UP = vfxNight() > 0.05 || G.eclipse > 0 || G.mods.gwimun;
   if (!VFX_WARN_UP) for (const w of G.warns) drawWarn(w);
   if (G.shrine) drawShrine(G.shrine);
   if (G.anom) drawAnom(G.anom);
@@ -1667,6 +1667,17 @@ function render() {
             b.restore();
             break;
           }
+          if (p.cleaver) {
+            // v21.2 백정 넓적칼: 넓은 쇠 날 + 나무 손잡이
+            b.fillStyle = '#b8b8c4';
+            b.fillRect(-s, -s * 0.7, s * 1.4, s * 1.4);
+            b.fillStyle = '#efe6d2';
+            b.fillRect(-s, -s * 0.7, s * 1.4, 1);
+            b.fillStyle = '#6a4a2a';
+            b.fillRect(s * 0.4, -1, s * 0.8, 2);
+            b.restore();
+            break;
+          }
           b.fillStyle = '#2a2830';
           b.fillRect(-s, -s * 0.6, s * 2, s * 1.2);
           b.fillStyle = '#14121a';
@@ -1915,6 +1926,7 @@ function render() {
     }
   });
   vfxLight(cx, cy);
+  if (G.mods.gwimun) drawGwimun(b, cx, cy); // v21.2 흉괘 귀문관살
   if (G.eclipse > 0) drawEclipse(b, cx, cy); // v19.5 흑룡 어둠은 밤 어둠 위, 경고·피해 숫자·요괴 탄 아래
   //  v18.2 분위기 층: 이 아래(피해 숫자·요괴 탄·체력 막대)는 어둠 위에 또렷하게
   if (VFX_WARN_UP) for (const w of G.warns) drawWarn(w); // 밤에는 보스 경고를 어둠 위에 그린다(vfx_read)
