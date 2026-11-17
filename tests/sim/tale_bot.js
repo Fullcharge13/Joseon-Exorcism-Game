@@ -11,10 +11,14 @@ const UP=JSON.parse(process.env.UP||'{"hp":3,"might":3,"spd":2,"xp":3}');
 Math.random=()=>{seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;};
 document.hidden=true;let errs=0;const cw=console.warn;console.warn=(...a)=>{errs++;if(errs<4)cw(...a);};
 meta.up=UP;meta.tale.frag[TALE]=3;meta.set.nums=false;
+// v21.1 주막 기록: 막마다 [막, 옛 보따리 헛삼(Lv 5 전 무기·보패 없음), 새 보따리 못 삼, 인장 못 삼, 정화수 못 삼]
+// TAVBUY=1이면 주막마다 보부상 보따리를 엽전이 닿는 대로 삼(가장 센 경우)
+const TAVBUY=(typeof process!=='undefined'&&process.env.TAVBUY)==='1';let tavBuys=0;let tavRec=[];function tavNote(){const old=!G.weapons.some(w=>w.lv<WD[w.id].max)&&!Object.keys(G.passives).some(id=>G.passives[id]<PD[id].max);
+ const T=id=>TAVERN.find(t=>t.id===id),no=id=>typeof tavWhy==='function'&&tavWhy(T(id))?1:0;tavRec.push([G.stage+1,old?1:0,typeof bottariOpts==='function'?(bottariOpts().length?0:1):(old?1:0),no('injang'),no('jeonghwa')]);}
 function pick(){armUntil=0;
   if(modal==='scene')return sceneNext(),1;if(modal==='levelup')return pickOpt(0),1;if(modal==='adv'&&advPick.length)return advPick[G.P.tier===0?Math.min(BR,advPick.length-1):0](),1;
   if(modal==='bless'&&blessPick.length)return blessPick[0](),1;if(modal==='petpick'&&petPick.length)return petPick[0](),1;
-  if(modal==='pick'&&pickFns.length)return pickFns[0](),1;if(modal==='chest')return $('#chestOk').onclick(),1;if(modal==='tavern')return $('#tavGo').onclick(),1;if(modal==='over')return 0;return 0;}
+  if(modal==='pick'&&pickFns.length)return pickFns[0](),1;if(modal==='chest')return $('#chestOk').onclick(),1;if(modal==='tavern'){tavNote();if(typeof TAVBUY!=='undefined'&&TAVBUY){const it=TAVERN.find(t=>t.id==='bottari');let k=0;while(k++<30&&tavBuy(it))tavBuys++;}return $('#tavGo').onclick(),1;}if(modal==='over')return 0;return 0;}
 function steer(){const P=G.P;let vx=0,vy=0;
   for(const e of G.enemies){if(e.dead||e.prop)continue;const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy)||1;const lim=e.boss?110:70;if(d<lim){const w=(e.boss?3:1)*(lim-d)/lim/d;vx+=dx*w;vy+=dy*w;}}
   for(const u of G.ebul){const dx=P.x-u.x,dy=P.y-u.y,d=Math.hypot(dx,dy)||1;if(d<36){const w=1.5*(36-d)/36/d;vx+=dx*w;vy+=dy*w;}}
@@ -35,7 +39,7 @@ if(TALE.startsWith('main:')){const cid=TALE.slice(5);let t=performance.now();con
 function full2Of(){const WS=typeof W_SLOTS!=='undefined'?W_SLOTS:6,PS=typeof P_SLOTS!=='undefined'?P_SLOTS:6,ws=G.weapons.filter(w=>WD[w.id].type==='w'),cs=G.weapons.filter(w=>WD[w.id].type==='c');
  const e2=typeof EV2_MAX!=='undefined',got=ws.reduce((a,w)=>a+w.lv+(e2?(w.ev2||0):(w.evo?5:0)),0)+Object.values(G.passives).reduce((a,l)=>a+l,0)+cs.reduce((a,w)=>a+w.lv+(e2?(w.mas||0):(w.lv>=5?3:0)),0);
  const cap=WS*10+PS*5+cs.length*8;return Math.round(got/cap*100)+'%/'+(ws.length+cs.length+(G.pet?1:0));}
-for(let run=0;run<RUNS;run++){newGame(cid,CARD,0,DIFF);let dec=0,lv=[],st=-1,snap=[],full2=[],tierAt=[],surv=[];
+for(let run=0;run<RUNS;run++){newGame(cid,CARD,0,DIFF);tavRec=[];tavBuys=0;let dec=0,lv=[],st=-1,snap=[],full2=[],tierAt=[],surv=[];
    let lv60=null,hp0=G.P.hp,taken={},bt={},bs=null;const sb2=spawnBoss,bd2=bossDown;
    spawnBoss=(id,mid)=>{const r=sb2(id,mid);if(!mid)bs=G.time;return r;};bossDown=e=>{if(!e.mid&&bs!==null)bt[G.stage+1]=+(G.time-bs).toFixed(1);bs=null;return bd2(e);};
    for(let i=0;i<FPS*60*60&&!G.over;i++){if(modal){if(!pick())break;continue;}dec-=1/FPS;if(dec<=0){dec=0.1;steer();}t+=1000/FPS;frame(t);
@@ -43,7 +47,7 @@ for(let run=0;run<RUNS;run++){newGame(cid,CARD,0,DIFF);let dec=0,lv=[],st=-1,sna
     if(G.stage!==st){st=G.stage;lv.push(G.P.lvl+'@'+Math.round(G.time));full2.push(full2Of());tierAt.push(G.P.tier);surv.push([Math.round(G.P.maxHp),+(G.P.dmgRed||0).toFixed(3),+(G.P.regen||0).toFixed(2),+(G.P.healM||1).toFixed(2),Object.keys(G.passives).join(',')]);snap.push(G.weapons.filter(w=>w.lv>=((WD[w.id]||{}).max||5)).length+'/'+G.weapons.length+'w '+Object.entries(G.passives).filter(([k,l])=>l>=((PD[k]||{}).max||5)).length+'/'+Object.keys(G.passives).length+'p');}if(G.stage>=MAXST)break;}
    spawnBoss=sb2;bossDown=bd2;const dm=G.rs.dmg||{},tot=Object.values(dm).reduce((a,v)=>a+v,0)||1,share=Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+Math.round(v/tot*100));
    const t6=CHARS[cid].branches[G.P.branch||0].tiers[5],t6s=t6&&dm[t6.skill]?Math.round(dm[t6.skill]/tot*100):null;
-   out.push({run,stage:G.stage+1,lvAtStage:lv,maxAt:snap,full2,tierAt,surv,weapons:G.weapons.length,pass:Object.keys(G.passives).length,over:G.over,br:G.P.branch,tier:G.P.tier,lv60At:lv60,t6share:t6s,share,taken:Object.fromEntries(Object.entries(taken).map(([k,v])=>[k,Math.round(v)])),bossT:bt,elites:(G.rs.eliteLog||[]).map(l=>[l.id,l.st+1,l.t1===null?null:+(l.t1-l.t0).toFixed(1)]),eTake:Object.fromEntries(Object.entries(G.rs.eTake||{}).map(([k,v])=>[k,Math.round(v)]))});console.log(JSON.stringify(out[out.length-1]));if(!G.over)endGame(false);}
+   out.push({run,tav:tavRec,tavBuys,lbSum:G.weapons.reduce((a,w)=>a+(w.lb||0),0),stage:G.stage+1,lvAtStage:lv,maxAt:snap,full2,tierAt,surv,weapons:G.weapons.length,pass:Object.keys(G.passives).length,over:G.over,br:G.P.branch,tier:G.P.tier,lv60At:lv60,t6share:t6s,share,taken:Object.fromEntries(Object.entries(taken).map(([k,v])=>[k,Math.round(v)])),bossT:bt,elites:(G.rs.eliteLog||[]).map(l=>[l.id,l.st+1,l.t1===null?null:+(l.t1-l.t0).toFixed(1)]),eTake:Object.fromEntries(Object.entries(G.rs.eTake||{}).map(([k,v])=>[k,Math.round(v)]))});console.log(JSON.stringify(out[out.length-1]));if(!G.over)endGame(false);}
   throw 'done';}
 let bdT=0,lastEv='';{const tc=taleCleared,ta=taleAct,os=openScene,sh=show;taleCleared=()=>{lastEv+='|cleared@'+G.time.toFixed(1)+' modal='+modal;return tc();};taleAct=(i,h)=>{lastEv+='|act'+i;return ta(i,h);};openScene=(p,d)=>{lastEv+='|scene';return os(p,d);};show=id=>{if(G&&G.mode==='tale')lastEv+='|show:'+id;return sh(id);};}
 const res=[];let t=performance.now();   // 판이 바뀌어도 시각은 앞으로만 간다

@@ -901,7 +901,7 @@ function openBless(title) {
     } else show(null);
   };
   const duos = Object.keys(DUO).filter(d => !G.duo[d] && G.bless[DUO[d].a] && G.bless[DUO[d].b]);
-  if (duos.length && rand() < 0.7) {
+  if (duos.length && (rand() < 0.7 || !ids.length)) {
     const id = duos[(rand() * duos.length) | 0],
       u = DUO[id];
     if (ids.length >= 3) ids.pop();
@@ -1085,14 +1085,13 @@ const TAVERN = [
     n: '보부상 보따리',
     d: '가진 무기나 보패 하나를 무작위로 강화한다.',
     p: 25,
+    why: () => (bottariOpts().length ? null : _t('더 키울 무기·보패가 없다.')),
     f: () => {
-      const c = [];
-      for (const w of G.weapons) if (w.lv < WD[w.id].max) c.push({k: 'wup', id: w.id});
-      for (const id in G.passives) if (G.passives[id] < PD[id].max) c.push({k: 'pup', id});
+      const c = bottariOpts();
       if (c.length) {
         const o = decorate(c[(rand() * c.length) | 0]);
         applyOpt(o);
-        toast(_t('{name} 강화', {name: o.name}));
+        toast(o.k === 'lb' ? o.name : _t('{name} 강화', {name: o.name}));
       }
     }
   },
@@ -1101,6 +1100,7 @@ const TAVERN = [
     n: '정화수 한 그릇',
     d: '신령께 올려 축복 하나를 고른다.',
     p: 35,
+    why: () => (blessLeft() ? null : _t('받을 축복이 남지 않았다.')),
     f: () => {
       G.tavBless = true;
     }
@@ -1110,11 +1110,45 @@ const TAVERN = [
     n: '인장 장인',
     d: '무기 하나에 인장을 새긴다.',
     p: 30,
+    why: () =>
+      G.weapons.some(w => (w.seals || []).length < sealSlots(w) && Object.keys(SEALS).some(k => sealOk(w, k)))
+        ? null
+        : _t('인장을 새길 빈 칸이 없다.'),
     f: () => {
       G.tavSeal = true;
     }
   }
 ];
+/* 보부상 보따리가 키울 수 있는 것 — 상자와 같은 규칙(Lv 5 전 → 진화 Lv·숙련 → 다 키운 무기 한계 돌파) */
+function bottariOpts() {
+  const c = [];
+  for (const w of G.weapons) if (w.lv < WD[w.id].max) c.push({k: 'wup', id: w.id});
+  for (const id in G.passives) if (G.passives[id] < PD[id].max) c.push({k: 'pup', id});
+  for (const o of growOpts()) c.push({k: o.k, id: o.id});
+  if (!c.length) for (const w of G.weapons) if (wFull(w)) c.push({k: 'lb', id: w.id}); // 키울 게 없으면 상자처럼 한계 돌파
+  return c;
+}
+/* 받을 축복이 남았는지(보통 축복 3단계 전 또는 쌍신 축복) */
+function blessLeft() {
+  return (
+    Object.keys(BLESS).some(id => (G.bless[id] || 0) < 3) ||
+    Object.keys(DUO).some(d => !G.duo[d] && G.bless[DUO[d].a] && G.bless[DUO[d].b])
+  );
+}
+/* 지금 사도 효과가 없으면 그 까닭(살 수 있으면 null) */
+function tavWhy(it) {
+  return it.why ? it.why() : null;
+}
+/* 사기: 엽전이 모자라거나 효과가 없으면 사지 않음(false) */
+function tavBuy(it) {
+  const p = tavPrice(it);
+  if (G.coins < p || tavWhy(it)) return false;
+  G.coins -= p;
+  G.rs.tavern += p;
+  G.tavBuy[it.id] = (G.tavBuy[it.id] || 0) + 1;
+  it.f();
+  return true;
+}
 const TAV_ICON = {
   gukbap: 'gukbap',
   makgeolli: 'makgeolli',
@@ -1172,19 +1206,23 @@ function renderTavern() {
     box.appendChild(d);
   }
   for (const it of TAVERN) {
-    const p = tavPrice(it);
+    const p = tavPrice(it),
+      no = tavWhy(it);
     const d = document.createElement('div');
-    d.className = 'it';
+    d.className = 'it' + (no ? ' no' : '');
     d.innerHTML = _t(
       '<span class="ic"><img src="{p}" alt=""></span><div class="cm"><b>{n}</b><p>{d}</p></div><button id="tav-{id}" {p2}>{p3}닢</button>',
-      {p: ICON[TAV_ICON[it.id]], n: it.n, d: it.d, id: it.id, p2: G.coins < p ? 'disabled' : '', p3: p}
+      {
+        p: ICON[TAV_ICON[it.id]],
+        n: it.n,
+        d: no ? it.d + '<br><em class="tav-no">' + no + '</em>' : it.d,
+        id: it.id,
+        p2: G.coins < p || no ? 'disabled' : '',
+        p3: p
+      }
     );
     d.querySelector('button').onclick = () => {
-      if (G.coins < p) return;
-      G.coins -= p;
-      G.rs.tavern += p;
-      G.tavBuy[it.id] = (G.tavBuy[it.id] || 0) + 1;
-      it.f();
+      if (!tavBuy(it)) return;
       snd(1000, 0.1, 'triangle');
       if (G.tavBless) {
         G.tavBless = false;
