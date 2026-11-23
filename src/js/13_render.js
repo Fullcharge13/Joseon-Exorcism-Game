@@ -1668,7 +1668,8 @@ function render() {
             break;
           }
           if (p.cleaver) {
-            // v21.2 백정 넓적칼: 넓은 쇠 날 + 나무 손잡이
+            // v21.2 백정 넓적칼: 넓은 쇠 날 + 나무 손잡이 (v21.2.3 big = 그림 배율, 쌍칼 1.6)
+            if (p.big > 1) b.scale(p.big, p.big);
             b.fillStyle = '#b8b8c4';
             b.fillRect(-s, -s * 0.7, s * 1.4, s * 1.4);
             b.fillStyle = '#efe6d2';
@@ -1912,6 +1913,48 @@ function render() {
         b.fillStyle = f.col === '#1a1418' ? '#3a3540' : '#fff';
         b.fillRect(0, -1, f.len, 2);
         b.restore();
+        b.globalAlpha = 1;
+      } else if (f.t === 'crack') {
+        // v21.2.3 백정 몽둥이질: 땅이 갈라지는 금(갈래마다 두 번 꺾임)
+        const k = f.life / f.max,
+          grow = Math.min(1, (1 - k) * 4);
+        b.globalAlpha = Math.min(1, k * 2);
+        b.beginPath();
+        for (let i = 0; i < f.n; i++) {
+          const a = f.a0 + (i / f.n) * TAU,
+            L = f.R * grow * (0.75 + 0.25 * Math.sin(i * 7.3));
+          b.moveTo(R(f.x), R(f.y));
+          b.lineTo(R(f.x + Math.cos(a + 0.25) * L * 0.4), R(f.y + Math.sin(a + 0.25) * L * 0.4 * 0.7));
+          b.lineTo(R(f.x + Math.cos(a - 0.2) * L * 0.75), R(f.y + Math.sin(a - 0.2) * L * 0.75 * 0.7));
+          b.lineTo(R(f.x + Math.cos(a + 0.1) * L), R(f.y + Math.sin(a + 0.1) * L * 0.7));
+        }
+        b.strokeStyle = '#1e1208'; // 어두운 틈
+        b.lineWidth = 4;
+        b.stroke();
+        b.strokeStyle = '#e8cfa0'; // 밝은 흙 가장자리(갈색 땅 위에서 보이게)
+        b.lineWidth = 1.5;
+        b.stroke();
+        b.globalAlpha = 1;
+      } else if (f.t === 'scale') {
+        // v21.2.3 백정 저울질·저울은 고르다: 금빛 저울(가로대·기둥·접시 둘)이 떠오르며 흐려짐
+        const k = f.life / f.max,
+          z = f.big ? 2 : 1,
+          x = R(f.x),
+          y = R(f.y - (1 - k) * 10 * z),
+          tilt = Math.sin((1 - k) * 9) * 2 * z;
+        b.globalAlpha = Math.min(1, k * 2.5);
+        b.fillStyle = '#3a2a10';
+        b.fillRect(x - 7 * z, y - tilt / 2 - 1, 14 * z, 3 * z);
+        b.fillStyle = '#ffd76a';
+        b.fillRect(x - 7 * z, y - tilt / 2, 14 * z, 2 * z); // 가로대
+        b.fillRect(x - 1 * z, y, 2 * z, 9 * z); // 기둥
+        b.fillRect(x - 3 * z, y + 9 * z, 6 * z, 2 * z); // 받침
+        b.fillStyle = '#e0b048';
+        b.fillRect(x - 9 * z, y - tilt + 4 * z, 5 * z, 2 * z); // 왼 접시
+        b.fillRect(x + 4 * z, y + tilt + 4 * z, 5 * z, 2 * z); // 오른 접시
+        b.fillStyle = '#c9a040';
+        b.fillRect(x - 7 * z, y - tilt + 1 * z, 1 * z, 3 * z);
+        b.fillRect(x + 6 * z, y + tilt + 1 * z, 1 * z, 3 * z);
         b.globalAlpha = 1;
       } else if (f.t === 'glyph') {
         b.font = (f.big ? 'bold 16px ' : 'bold 13px ') + FD();

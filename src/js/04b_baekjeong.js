@@ -53,9 +53,20 @@ ITEMS.cleaver = [
 const BJ_W = '#efe6d2',
   BJ_STRAW = {H: '#c8a868', h: '#8a6a3a'};
 /* 칼 던지기: 되돌아오는 탄(boomer)에 칼 모양(cleaver) */
-function bjCleaver(a, dmg, r) {
+function bjCleaver(a, dmg, r, big) {
   const P = G.P;
-  return shoot(P.x, P.y, a, 170 * P.pspd, 'boomer', dmg, 99, 3, r * P.area, {v0: 170 * P.pspd, tt: 0, cleaver: 1});
+  return shoot(P.x, P.y, a, 170 * P.pspd, 'boomer', dmg, 99, 3, r * P.area, {v0: 170 * P.pspd, tt: 0, cleaver: 1, big: big || 1});
+}
+/* v21.2.3 그림만(피해와 무관): 흙먼지 · 땅 금 · 저울 — 모두 G.fx에 넣고 수명이 다하면 사라짐 */
+function bjDust(x, y, n) {
+  for (let i = 0; i < n && G.fx.length < CAP.p; i++) {
+    const a = vrand() * TAU,
+      sp = vrnd(10, 34);
+    G.fx.push({t: 'p', x: x + vrnd(-6, 6), y: y + vrnd(-3, 3), vx: Math.cos(a) * sp, vy: -Math.abs(Math.sin(a) * sp) * 0.6, col: vrand() < 0.5 ? '#e0cba0' : '#c8ab7a', life: vrnd(0.35, 0.6), max: 0.6, dust: 1}); // 밝은 흙빛(갈색 땅 위에서 보이게)
+  }
+}
+function bjScale(x, y, big) {
+  G.fx.push({t: 'scale', x, y, big: big ? 1 : 0, life: big ? 0.9 : 0.7, max: big ? 0.9 : 0.7});
 }
 /* 가장 체력이 많은 요괴(range 안) — 저울로 다는 대상 */
 function bjHeaviest(range, skip) {
@@ -243,7 +254,7 @@ Object.assign(WD, {
     if (w.t > 0) return;
     const a = bjAim(220),
       n = w.lv >= 4 ? 4 : 2;
-    for (let i = 0; i < n; i++) bjCleaver(a + Math.PI / 2 + (i / n) * TAU, L5(w, [18, 22, 26, 26, 34]) * P.might, 4);
+    for (let i = 0; i < n; i++) bjCleaver(a + Math.PI / 2 + (i / n) * TAU, L5(w, [18, 22, 26, 26, 34]) * P.might, 4, 1.6); // v21.2.3 그림만 1.6배
     w.t = 2.2 * P.cd;
   }),
   kalhoeori: bjC('칼회오리', '旋', '#c8c8d0', ['칼을 휘돌려 둘레를 벤다.', '피해 +', '범위 +', '두 번 휘돈다', '피해 +30%'], (w, dt, P) => {
@@ -270,7 +281,8 @@ Object.assign(WD, {
           const x = x0 + Math.cos(a) * i * 28,
             y = y0 + Math.sin(a) * i * 28;
           aoe(x, y, 24 * P.area, dmg, 50);
-          G.fx.push({t: 'ring', x, y, r: 3, maxR: 24 * P.area, col: '#c08a5a', life: 0.25, max: 0.25});
+          G.fx.push({t: 'ring', x, y, r: 3, maxR: 32 * P.area, col: '#c08a5a', life: 0.3, max: 0.3}); // v21.2.3 그림만 크게(맞는 범위 24 그대로)
+          bjDust(x, y, 5); // 돌진 자국 흙먼지
         }
       });
     w.t = 3.2 * P.cd;
@@ -321,7 +333,10 @@ Object.assign(WD, {
   mongdung: bjC('몽둥이질', '棒', '#a07850', ['몽둥이로 둘레를 크게 쳐서 밀쳐 낸다.', '피해 +', '범위 +', '피해 +', '피해 +30%'], (w, dt, P) => {
     w.t -= dt;
     if (w.t > 0) return;
-    pulseRing(P.x, P.y, L5(w, [45, 45, 52, 52, 60]) * P.area, L5(w, [16, 20, 20, 24, 31]) * P.might, '#a07850', 90);
+    const R0 = L5(w, [45, 45, 52, 52, 60]) * P.area;
+    aoe(P.x, P.y, R0, L5(w, [16, 20, 20, 24, 31]) * P.might, 90); // pulseRing과 같은 피해, 원 대신 땅 금(v21.2.3)
+    G.fx.push({t: 'crack', x: P.x, y: P.y + 4, R: R0, n: 7, a0: vrand() * TAU, col: '#5a3a1e', life: 0.45, max: 0.45});
+    bjDust(P.x, P.y + 4, 6);
     w.t = 2.4 * P.cd;
   }),
   jeouljil: bjC('저울질', '秤', '#c9c4bc', ['가장 무거운 요괴를 달아 치고 표식을 남긴다(받는 피해 ×1.5).', '피해 +', '두 마리', '피해 +', '세 마리, 피해 +30%'], (w, dt, P) => {
@@ -335,6 +350,7 @@ Object.assign(WD, {
       tg.mark = G.time + 4;
       hurt(tg, L5(w, [45, 56, 56, 68, 86]) * P.might, 20, P.x, P.y); // v21.2 조정 2: +50%
       particle(tg.x, tg.y - 6, '#c9c4bc', 6, 40, 0.4);
+      bjScale(tg.x, tg.y - 16); // v21.2.3 작은 금빛 저울
     }
     w.t = 3 * P.cd; // 조정 2: 3.5 → 3초
   }),
@@ -356,6 +372,8 @@ Object.assign(WD, {
         particle(e.x, e.y - 6, '#e0b048', 2, 30, 0.3);
       }
     flash('255,230,160', 0.12);
+    bjScale(P.x, P.y - 24, true); // v21.2.3 큰 금빛 저울 + 피해 없는 금빛 물결
+    G.fx.push({t: 'ring', x: P.x, y: P.y, r: 6, maxR: 180 * P.area, col: '#e0b048', gold: 1, life: 0.6, max: 0.6});
     w.t = L5(w, [8, 8, 7, 7, 6]) * P.cd;
   })
 });
