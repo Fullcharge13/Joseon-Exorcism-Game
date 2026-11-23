@@ -1938,6 +1938,8 @@ function render() {
         b.fillRect(0, -1, f.len, 2);
         b.restore();
         b.globalAlpha = 1;
+      } else if (f.t === 'apw') {
+        drawApFx(f); // v22.2 견습 공격 그림
       } else if (f.t === 'crack') {
         // v21.2.3 백정 몽둥이질: 땅이 갈라지는 금(갈래마다 두 번 꺾임)
         const k = f.life / f.max,

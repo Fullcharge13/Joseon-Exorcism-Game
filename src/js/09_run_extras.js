@@ -1290,10 +1290,13 @@ function renderStatus() {
   const P = G.P,
     C = CHARS[G.cid],
     t = curTier();
+  if (stTab === 'a' && !G.ap) stTab = 'w'; // v22.2 견습 탭은 견습이 있는 판에만
+  $('#tabStA').hidden = !G.ap;
   for (const [k, id] of [
     ['w', 'tabStW'],
     ['p', 'tabStP'],
-    ['s', 'tabStS']
+    ['s', 'tabStS'],
+    ['a', 'tabStA']
   ])
     $('#' + id).setAttribute('aria-selected', stTab === k);
   const path = P.tier
@@ -1492,6 +1495,8 @@ function renderStatus() {
       )
     );
     h += hcard(_t('정표 · 점괘 · 그 밖'), ot.join(''));
+  } else if (stTab === 'a') {
+    h += apStatusHTML();
   } else {
     const D = DIFFS[G.diff];
     const st = [

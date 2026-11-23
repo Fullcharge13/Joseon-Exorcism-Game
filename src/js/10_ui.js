@@ -449,7 +449,7 @@ function genOptions() {
   if (G.P.lvl >= 50 || !pool.length)
     for (const w of G.weapons) if (wFull(w) && !B.has(w.id)) pool.push({k: 'lb', id: w.id, wt: 0.8}); // v20.6 다 키운 뒤에만
   const apC = G.ap ? apPick2(B) : [], // v22.1 견습 카드 두 칸(퇴마사 칸은 하나 줄임)
-    n = (G.P.luck ? 4 : 3) + G.mods.choice - (apC.length ? 1 : 0),
+    n = (G.P.luck ? 4 : 3) + G.mods.choice - (apC.length >= 2 ? 1 : 0), // v22.2 단련 한 장뿐이면 퇴마사 칸은 그대로
     picks = [];
   while (picks.length < n && pool.length) {
     const tot = pool.reduce((s, o) => s + o.wt, 0);
@@ -3155,6 +3155,10 @@ $('#tabStP').onclick = () => {
 };
 $('#tabStS').onclick = () => {
   stTab = 's';
+  renderStatus();
+};
+$('#tabStA').onclick = () => {
+  stTab = 'a'; // v22.2 견습
   renderStatus();
 };
 $('#callBtn').onclick = e => {

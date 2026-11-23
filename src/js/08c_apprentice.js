@@ -38,7 +38,10 @@ const AP_HP = 160, // 내구 조정 2: 120 → 160(자동 플레이 막당 기�
   AP_TAKE = 0.15, // 견습이 받는 피해 배율(사용자 결정 「거리 두기 + 받는 피해 절반」: 0.3 → 0.15. 0.3일 땐 11막 보스 곁에서 10초에 두 번 기절)
   AP_K = 1, // 견습 피해 배율(균형 조정 대상)
   AP_REV_R = 26,
-  AP_REV_T = 5;
+  AP_REV_T = 5,
+  AP_CHASE = 105, // v22.2 움직이는 범위 +50%: 복돌이 쫓는 요괴는 퇴마사 105 안(예전 70)
+  AP_LEASH = 90, //   복돌은 퇴마사에서 90까지(예전 60)
+  AP_GIRL_OFF = 27; //   연이는 퇴마사 곁 27(예전 18)
 const apLv = k => (G.ap && G.ap.p && G.ap.p.id === k ? G.ap.p.lv : 0);
 /* 조정 3: 보스 초당 상한은 퇴마사가 이미 다 쓰므로, 견습은 따로 상한을 가진다 — 퇴마사 상한의 10%(Lv1) ~ 32%(Lv5·댕기5) */
 function apBossCapF() {
@@ -49,9 +52,21 @@ function apBossCapF() {
 function apMaxHp() {
   return Math.round(AP_HP * (1 + 0.2 * apLv('bokjumeoni')));
 }
-function apStart(kid) {
+/* v22.2 떡 나누기: 견습이 서 있고 체력이 덜 찼을 때만 */
+function apCanEat() {
+  const A = G.ap;
+  return !!(A && !A.hidden && !A.down && A.hp < A.maxHp);
+}
+function apHeal(v) {
+  const A = G.ap;
+  if (!A) return;
+  A.hp = Math.min(A.maxHp, A.hp + v);
+  particle(A.x, A.y - 4, '#7fe0a0', 5, 30);
+}
+function apStart(kid, wid) {
   const P = G.P;
-  G.ap = {kid, w: {id: kid === 'boy' ? 'mokgeom' : 'saechong', lv: 1}, p: null, tr: 0, hp: 0, maxHp: AP_HP};
+  if (!wid || !AWD[wid] || AWD[wid].kid !== kid) wid = kid === 'boy' ? 'mokgeom' : 'saechong';
+  G.ap = {kid, w: {id: wid, lv: 1}, p: null, tr: 0, hp: 0, maxHp: AP_HP};
   G.ap.x = P.x - 16;
   G.ap.y = P.y + 4;
   apStage();
@@ -141,7 +156,7 @@ function apFire(A, tg) {
   try {
     if (w.id === 'mokgeom') {
       const R0 = D.r * area;
-      G.fx.push({t: 'slash', x: A.x, y: A.y - 4, a, r: R0, life: 0.16, max: 0.16, delay: 0, half: 1.0, col: '#e8d8b0'});
+      G.fx.push({t: 'apw', w: 'mokgeom', x: A.x, y: A.y - 5, a, r: R0, face: A.face, life: 0.2, max: 0.2});
       for (const e of near(A.x, A.y, R0, TMP2).slice()) {
         let da = Math.atan2(e.y - A.y, e.x - A.x) - a;
         da = Math.atan2(Math.sin(da), Math.cos(da));
@@ -149,22 +164,22 @@ function apFire(A, tg) {
       }
     } else if (w.id === 'dorikkae') {
       const R0 = D.r * area;
-      G.fx.push({t: 'ring', x: A.x, y: A.y - 3, r: 4, maxR: R0, col: '#c8a070', life: 0.25, max: 0.25});
+      G.fx.push({t: 'apw', w: 'dorikkae', x: A.x, y: A.y - 4, a, r: R0, life: 0.32, max: 0.32});
       for (const e of near(A.x, A.y, R0, TMP2).slice()) hurt(e, dmg, 40, A.x, A.y, true);
     } else if (w.id === 'jangdae') {
       const L = D.r * area;
-      G.fx.push({t: 'beam', x: A.x, y: A.y - 4, a, len: L, w: 4, col: '#c8b080', life: 0.15, max: 0.15});
+      G.fx.push({t: 'apw', w: 'jangdae', x: A.x, y: A.y - 5, a, r: L, life: 0.22, max: 0.22});
       for (const e of G.enemies.slice())
         if (!e.dead && segDist(e.x, e.y, A.x, A.y - 4, A.x + Math.cos(a) * L, A.y - 4 + Math.sin(a) * L) < e.r + 4)
           hurt(e, dmg, 20, A.x, A.y, true);
     } else if (w.id === 'saechong') {
-      G.fx.push({t: 'beam', x: A.x, y: A.y - 6, a, len: Math.hypot(tg.x - A.x, tg.y - A.y), w: 1, col: '#a09070', life: 0.08, max: 0.08});
+      G.fx.push({t: 'apw', w: 'saechong', x: A.x, y: A.y - 7, a, r: Math.hypot(tg.x - A.x, tg.y - A.y), life: 0.16, max: 0.16});
       hurt(tg, dmg, 15, A.x, A.y, true);
     } else if (w.id === 'daehwal') {
       const L = D.r * area,
         ex = A.x + Math.cos(a) * L,
         ey = A.y - 6 + Math.sin(a) * L;
-      G.fx.push({t: 'beam', x: A.x, y: A.y - 6, a, len: L, w: 1, col: '#e0d8b0', life: 0.1, max: 0.1});
+      G.fx.push({t: 'apw', w: 'daehwal', x: A.x, y: A.y - 7, a, r: Math.min(L, Math.hypot(tg.x - A.x, tg.y - A.y) + 30), life: 0.24, max: 0.24});
       const hit = G.enemies
         .filter(e => !e.dead && !e.prop && segDist(e.x, e.y, A.x, A.y - 6, ex, ey) < e.r + 3)
         .sort((p, q) => (p.x - A.x) ** 2 + (p.y - A.y) ** 2 - ((q.x - A.x) ** 2 + (q.y - A.y) ** 2))
@@ -177,7 +192,7 @@ function apFire(A, tg) {
         const aa = a + da,
           ex = A.x + Math.cos(aa) * L,
           ey = A.y - 5 + Math.sin(aa) * L;
-        G.fx.push({t: 'beam', x: A.x, y: A.y - 5, a: aa, len: L, w: 2, col: '#8fd3ff', life: 0.12, max: 0.12});
+        G.fx.push({t: 'apw', w: 'mulchong', x: A.x, y: A.y - 6, a: aa, r: L, life: 0.22, max: 0.22, sd: da});
         const e =
           da === 0 && tg.boss
             ? tg // 가운데 물줄기는 노린 보스에게
@@ -261,11 +276,11 @@ function apTick(dt) {
   // 회복(복주머니)
   const rg = apLv('bokjumeoni');
   if (rg) A.hp = Math.min(A.maxHp, A.hp + rg * dt);
-  // 움직임: 소년은 퇴마사 70 안의 요괴에게 붙되 60을 넘지 않음 · 소녀는 곁에서
+  // 움직임: 소년은 퇴마사 105 안의 요괴에게 붙되 90을 넘지 않음 · 소녀는 곁 27에서(v22.2 +50%)
   const boy = A.kid === 'boy';
   const bo0 = [G.boss, G.mid].find(q => q && !q.dead && Math.hypot(q.x - P.x, q.y - P.y) < 90),
-    tg = (boy && bo0) || apNearest(P.x, P.y, boy ? 70 : AWD[A.w.id].r); // 소년은 보스가 가까우면 보스 곁(거리는 apSafe가 지킴)
-  let tx = P.x + (boy ? -16 : 18),
+    tg = (boy && bo0) || apNearest(P.x, P.y, boy ? AP_CHASE : AWD[A.w.id].r); // 소년은 보스가 가까우면 보스 곁(거리는 apSafe가 지킴)
+  let tx = P.x + (boy ? -16 : AP_GIRL_OFF),
     ty = P.y + 6;
   if (boy && tg) {
     const a = Math.atan2(A.y - tg.y, A.x - tg.x);
@@ -274,9 +289,9 @@ function apTick(dt) {
     const dx = tx - P.x,
       dy = ty - P.y,
       d = Math.hypot(dx, dy);
-    if (d > 60) {
-      tx = P.x + (dx / d) * 60;
-      ty = P.y + (dy / d) * 60;
+    if (d > AP_LEASH) {
+      tx = P.x + (dx / d) * AP_LEASH;
+      ty = P.y + (dy / d) * AP_LEASH;
     }
   }
   [tx, ty] = apSafe(A, tx, ty, boy);
@@ -332,6 +347,140 @@ function apTick(dt) {
       break;
     }
 }
+/* v22.2 견습 공격 그림(fx 't: apw'): 무기마다 손에 든 것이 실제로 움직이게. t = 0 → 1 진행 */
+function drawApFx(f) {
+  const t = clamp(1 - f.life / f.max, 0, 1),
+    fade = clamp(f.life / f.max, 0, 1) * 1.6,
+    ca = Math.cos(f.a),
+    sa = Math.sin(f.a);
+  b.save();
+  b.globalAlpha = Math.min(1, fade);
+  if (f.w === 'mokgeom') {
+    // 휘두른 자리에 굵은 반달 자국 + 목검
+    const a0 = f.a - 1.1,
+      cur = a0 + 2.2 * Math.min(1, t * 1.6),
+      R0 = f.r * 0.85;
+    b.strokeStyle = 'rgba(255,244,210,0.85)';
+    b.lineWidth = 5;
+    b.beginPath();
+    b.arc(f.x, f.y, R0 * 0.75, a0, cur);
+    b.stroke();
+    b.strokeStyle = '#e0b048';
+    b.lineWidth = 1;
+    b.beginPath();
+    b.arc(f.x, f.y, R0 * 0.95, a0 + 0.2, cur);
+    b.stroke();
+    b.strokeStyle = '#8a6a3a';
+    b.lineWidth = 3;
+    b.beginPath();
+    b.moveTo(f.x + Math.cos(cur) * 4, f.y + Math.sin(cur) * 4);
+    b.lineTo(f.x + Math.cos(cur) * R0, f.y + Math.sin(cur) * R0);
+    b.stroke();
+  } else if (f.w === 'dorikkae') {
+    // 도리깨 머리가 한 바퀴 돌며 꼬리 자국
+    const R0 = f.r * 0.8,
+      cur = f.a + TAU * t;
+    b.strokeStyle = 'rgba(200,160,112,0.55)';
+    b.lineWidth = 4;
+    b.beginPath();
+    b.ellipse(f.x, f.y, R0, R0 * 0.8, 0, cur - 1.6, cur);
+    b.stroke();
+    const hx = f.x + Math.cos(cur) * R0,
+      hy = f.y + Math.sin(cur) * R0 * 0.8;
+    b.strokeStyle = '#6a5a3a';
+    b.lineWidth = 3;
+    b.beginPath();
+    b.moveTo(f.x, f.y);
+    b.lineTo(hx, hy);
+    b.stroke();
+    b.fillStyle = '#c8a070';
+    b.fillRect(R(hx) - 4, R(hy) - 4, 8, 8);
+    b.fillStyle = '#5a4a2a';
+    b.fillRect(R(hx) - 2, R(hy) - 2, 4, 4);
+  } else if (f.w === 'jangdae') {
+    // 장대가 쭉 나갔다 돌아옴 + 찌른 줄
+    const ext = f.r * (t < 0.45 ? t / 0.45 : 1 - ((t - 0.45) / 0.55) * 0.7),
+      ex = f.x + ca * ext,
+      ey = f.y + sa * ext;
+    b.strokeStyle = 'rgba(255,244,210,0.5)';
+    b.lineWidth = 6;
+    b.beginPath();
+    b.moveTo(f.x + ca * ext * 0.4, f.y + sa * ext * 0.4);
+    b.lineTo(ex, ey);
+    b.stroke();
+    b.strokeStyle = '#7a8a4a';
+    b.lineWidth = 3;
+    b.beginPath();
+    b.moveTo(f.x - ca * 6, f.y - sa * 6);
+    b.lineTo(ex, ey);
+    b.stroke();
+    b.fillStyle = '#efe6d2';
+    b.beginPath();
+    b.moveTo(ex + ca * 6, ey + sa * 6);
+    b.lineTo(ex - sa * 3, ey + ca * 3);
+    b.lineTo(ex + sa * 3, ey - ca * 3);
+    b.fill();
+  } else if (f.w === 'saechong' || f.w === 'daehwal') {
+    // 돌·화살이 날아감 + 꼬리
+    const d = f.r * Math.min(1, f.w === 'daehwal' ? t * 1.15 : t * 1.4),
+      px = f.x + ca * d,
+      py = f.y + sa * d;
+    b.strokeStyle = f.w === 'saechong' ? 'rgba(200,190,160,0.6)' : 'rgba(255,250,220,0.7)';
+    b.lineWidth = 2;
+    b.beginPath();
+    b.moveTo(f.x + ca * Math.max(0, d - 22), f.y + sa * Math.max(0, d - 22));
+    b.lineTo(px, py);
+    b.stroke();
+    if (f.w === 'saechong') {
+      b.fillStyle = '#9a9488';
+      b.fillRect(R(px) - 2, R(py) - 2, 4, 4);
+      b.fillStyle = '#d8d0c0';
+      b.fillRect(R(px) - 2, R(py) - 2, 2, 2);
+      if (t > 0.7) {
+        b.fillStyle = 'rgba(216,208,192,0.8)';
+        for (let i = 0; i < 4; i++) b.fillRect(R(px + Math.cos(i * 1.7) * (t - 0.7) * 20), R(py + Math.sin(i * 1.7) * (t - 0.7) * 16), 2, 2);
+      }
+    } else {
+      b.strokeStyle = '#8a6a3a';
+      b.lineWidth = 2;
+      b.beginPath();
+      b.moveTo(px - ca * 10, py - sa * 10);
+      b.lineTo(px, py);
+      b.stroke();
+      b.fillStyle = '#efe6d2';
+      b.beginPath();
+      b.moveTo(px + ca * 4, py + sa * 4);
+      b.lineTo(px - sa * 2.5, py + ca * 2.5);
+      b.lineTo(px + sa * 2.5, py - ca * 2.5);
+      b.fill();
+      b.fillStyle = '#c23b2a';
+      b.fillRect(R(px - ca * 10) - 1, R(py - sa * 10) - 1, 3, 3);
+    }
+  } else if (f.w === 'mulchong') {
+    // 굵은 물줄기 + 끝에서 튀는 물방울
+    const d = f.r * Math.min(1, t * 2),
+      ex = f.x + ca * d,
+      ey = f.y + sa * d;
+    b.strokeStyle = 'rgba(143,211,255,0.75)';
+    b.lineWidth = 4;
+    b.beginPath();
+    b.moveTo(f.x, f.y);
+    b.lineTo(ex, ey);
+    b.stroke();
+    b.strokeStyle = '#ffffff';
+    b.lineWidth = 1;
+    b.stroke();
+    if (t > 0.45) {
+      b.fillStyle = '#bfe6ff';
+      const u = (t - 0.45) / 0.55;
+      for (let i = 0; i < 4; i++) {
+        const q = f.a + (i - 1.5) * 0.6 + (f.sd || 0);
+        b.fillRect(R(ex + Math.cos(q) * u * 10), R(ey + Math.sin(q) * u * 8 + u * u * 6), 2, 2);
+      }
+    }
+  }
+  b.restore();
+}
 /* 그리기(펫 다음) */
 function drawAp() {
   const A = G.ap;
@@ -363,7 +512,8 @@ function drawAp() {
     return;
   }
   const bob = Math.sin(A.ph * 10) > 0 ? -1 : 0;
-  drawSpr(s, A.x, A.y + bob, (A.face || 1) < 0, A.white > 0, pk);
+  const lg = A.swing > 0 ? Math.round(2 * Math.sin((A.swing / 0.15) * Math.PI)) * (A.face || 1) : 0; // v22.2 쏠 때 앞으로 살짝 내딛음
+  drawSpr(s, A.x + lg, A.y + bob, (A.face || 1) < 0, A.white > 0, pk);
   // 머리 위 체력 막대
   const w = 12,
     x0 = R(A.x - w / 2),
@@ -385,35 +535,64 @@ function apSlotsHTML() {
     (A.p ? `<div class="slot" title="${K.n} · ${APD[A.p.id].n}">${seal(APD[A.p.id].g, APD[A.p.id].col)}<b>${A.p.lv}</b></div>` : '')
   );
 }
+/* v22.2 상태창 「견습」 탭 */
+function apStatusHTML() {
+  const A = G.ap;
+  if (!A) return '';
+  const K = AP_KIDS[A.kid],
+    W = AWD[A.w.id],
+    seal = (g, col) => `<span class="seal" style="background:${col}">${g}</span>`,
+    num = v => (v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v >= 1e4 ? Math.round(v / 1e3) + 'k' : Math.round(v)),
+    hpP = Math.max(0, Math.min(100, (A.hp / A.maxHp) * 100)),
+    state = A.hidden ? _t('덤불 뒤에 숨음 · 다음 막에 돌아옴') : A.down ? _t('기절 · 곁에서 치료 {p}%', {p: Math.round(A.rev * 100)}) : _t('함께 싸우는 중'),
+    rr = W.r * (1 + 0.1 * apLv('bangul')),
+    cd = W.cd / (1 + 0.08 * apLv('jipsin'));
+  let h = hcard(
+    _t('{n} <small>견습 · {k}</small>', {n: K.n, k: A.kid === 'boy' ? _t('근접') : _t('원거리')}),
+    _t(
+      '<div class="strow"><span class="ic"><img src="{p}" alt=""></span><div><p><b>{st}</b></p><p>체력 {hp}/{mhp}</p><div style="height:6px;margin:4px 0;background:rgba(0,0,0,.15)"><i style="display:block;height:100%;width:{hpP}%;background:#c23b2a"></i></div><p>이번 막 기절 {d} / 3 · 단련 {tr}</p></div><div></div></div>',
+      {p: big(charSpr(K.look).n, 3), st: state, hp: Math.ceil(A.hp), mhp: Math.round(A.maxHp), hpP, d: A.downs || 0, tr: A.tr || 0}
+    )
+  );
+  h += hcard(
+    _t('무기'),
+    _t(
+      '<div class="strow"><span class="ic">{ic}</span><div><p><b>{n}</b> <small>Lv {lv}/5</small></p><p>{d}</p><p><small>한 번 {dm} · 재사용 {cd}초 · 거리 {r} · 보스 한도 퇴마사의 {cap}%</small></p></div>{box}</div>',
+      {ic: seal(W.g, W.col), n: W.n, lv: A.w.lv, d: W.d, dm: num(apDmg(A.w)), cd: cd.toFixed(2), r: Math.round(rr), cap: Math.round(apBossCapF() * 100), box: stDmgBox('ap:' + A.w.id)}
+    )
+  );
+  h += hcard(
+    _t('보패'),
+    A.p
+      ? _t('<div class="strow"><span class="ic">{ic}</span><div><p><b>{n}</b> <small>Lv {lv}/5</small></p><p>{d}</p></div><div class="dm"><strong>{lv2}</strong>단계</div></div>', {
+          ic: seal(APD[A.p.id].g, APD[A.p.id].col),
+          n: APD[A.p.id].n,
+          lv: A.p.lv,
+          d: APD[A.p.id].d,
+          lv2: A.p.lv
+        })
+      : _t('<p>아직 보패가 없다. 다음 견습 레벨업 카드에서 고른다.</p>')
+  );
+  return h;
+}
 /* ---- 레벨업 카드: 견습이 있으면 두 칸 ---- */
 function apOpts(B) {
   const A = G.ap,
     l = [],
     ok = id => !B.has('ap:' + id); // 봉인 id는 'ap:'를 붙임(퇴마사 짚신·방울과 따로)
   if (!A) return l;
-  if (A.w.lv < 5 && ok(A.w.id)) l.push({k: 'apw', id: A.w.id, wt: 1.4});
-  for (const id in AWD) if (AWD[id].kid === A.kid && id !== A.w.id && ok(id)) l.push({k: 'apw', id, wt: 0.6});
-  if (!A.p) for (const id in APD) if (ok(id)) l.push({k: 'app', id, wt: 0.8});
-  if (A.p) {
-    if (A.p.lv < 5 && ok(A.p.id)) l.push({k: 'app', id: A.p.id, wt: 1.2});
-    for (const id in APD) if (id !== A.p.id && ok(id)) l.push({k: 'app', id, wt: 0.3});
-  }
-  if (A.w.lv >= 5 && (!A.p || A.p.lv >= 5)) l.push({k: 'aptr', id: 'aptr', wt: 1});
+  // v22.2 바꾸기 없음: 무기는 견습을 고를 때 정했고, 보패는 처음 하나를 고른 뒤 올리기만
+  if (A.w.lv < 5 && ok(A.w.id)) l.push({k: 'apw', id: A.w.id, wt: 1});
+  if (!A.p) for (const id in APD) if (ok(id)) l.push({k: 'app', id, wt: 1});
+  if (A.p && A.p.lv < 5 && ok(A.p.id)) l.push({k: 'app', id: A.p.id, wt: 1});
+  if (A.w.lv >= 5 && A.p && A.p.lv >= 5) l.push({k: 'aptr', id: 'aptr', wt: 1});
   return l;
 }
 function apPick2(B) {
-  const pool = apOpts(B),
-    out = [];
-  while (out.length < 2 && pool.length) {
-    const tot = pool.reduce((s, o) => s + o.wt, 0);
-    let r = rand() * tot,
-      i = 0;
-    for (; i < pool.length - 1; i++) {
-      r -= pool[i].wt;
-      if (r <= 0) break;
-    }
-    out.push(pool.splice(i, 1)[0]);
-  }
+  let pool = apOpts(B);
+  const out = [];
+  if (G.ap && !G.ap.p && pool.some(o => o.k === 'app')) pool = pool.filter(o => o.k === 'app'); // 첫 보패는 4개 가운데 둘 중 고르기
+  while (out.length < 2 && pool.length) out.push(pool.splice((rand() * pool.length) | 0, 1)[0]);
   if (out.length < 2 && !out.some(o => o.k === 'aptr')) out.push({k: 'aptr', id: 'aptr', wt: 1}); // 단련은 한 장만
   return out;
 }
@@ -478,22 +657,41 @@ ENDING.apprentice = [
     t: '「심부름이라도 하겠어요. 위험하면 숨으라는 말도 꼭 들을게요.」 퇴마사는 한 아이에게만 고개를 끄덕였다. 압록강까지의 길에 견습 하나가 함께한다.'
   }
 ];
+/* v22.2 견습을 고른 뒤 그 아이의 무기 셋 가운데 하나(그 뒤로는 바꾸지 않고 올리기만) */
+function apWeaponPick(kid, done) {
+  const K = AP_KIDS[kid];
+  openPick(
+    'APPRENTICE WEAPON',
+    _t('{n}의 무기', {n: K.n}),
+    _t('{n:이} 압록강까지 들고 갈 무기 하나를 고른다. 레벨업 때 바꾸지 않고 키운다.', {n: K.n}),
+    Object.keys(AWD)
+      .filter(id => AWD[id].kid === kid)
+      .map(id => ({
+        ic: `<span class="seal" style="background:${AWD[id].col}">${AWD[id].g}</span>`,
+        badge: _t('견습 무기'),
+        bc: 'ap',
+        name: AWD[id].n,
+        desc: AWD[id].d,
+        f: () => {
+          apStart(kid, id);
+          meta.ap.seen = true;
+          saveMeta();
+          show(null);
+          done();
+        }
+      }))
+  );
+}
 function apIntro(done) {
   const pick = () =>
-    openPick('APPRENTICE', _t('견습 고르기'), _t('압록강까지 함께 갈 견습을 고른다. 견습은 레벨업 때 무기 하나·보패 하나를 키운다.'), [
+    openPick('APPRENTICE', _t('견습 고르기'), _t('압록강까지 함께 갈 견습을 고른다. 다음 창에서 그 아이의 무기를 고르고, 레벨업 때 무기 하나·보패 하나를 키운다.'), [
       {
         ic: `<span class="seal" style="background:${AP_KIDS.boy.col}">${AP_KIDS.boy.g}</span>`,
         badge: _t('근접'),
         bc: 'ap',
         name: AP_KIDS.boy.n,
         desc: AP_KIDS.boy.d,
-        f: () => {
-          apStart('boy');
-          meta.ap.seen = true;
-          saveMeta();
-          show(null);
-          done();
-        }
+        f: () => apWeaponPick('boy', done)
       },
       {
         ic: `<span class="seal" style="background:${AP_KIDS.girl.col}">${AP_KIDS.girl.g}</span>`,
@@ -501,13 +699,7 @@ function apIntro(done) {
         bc: 'ap',
         name: AP_KIDS.girl.n,
         desc: AP_KIDS.girl.d,
-        f: () => {
-          apStart('girl');
-          meta.ap.seen = true;
-          saveMeta();
-          show(null);
-          done();
-        }
+        f: () => apWeaponPick('girl', done)
       }
     ]);
   if (!meta.ap.seen) openScene(ENDING.apprentice.map((p, i) => (i ? p : {...p, art: 'ch:' + G.cid})), pick);

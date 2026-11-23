@@ -239,6 +239,8 @@ button.adv:hover{background:#fff6e2}
 .tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .tabs button{padding:8px 18px;background:var(--panel);border:1px solid var(--line);font:16px var(--f-disp)}
 .tabs button[aria-selected="true"]{background:var(--hanji);color:var(--sumi)}
+#status .tabs{flex-wrap:nowrap}#status .tabs button{min-width:0;padding:8px 14px;white-space:nowrap}
+@media (max-width:420px){#status .tabs button{padding:8px 8px;font-size:15px}}
 .tasklist{display:flex;flex-direction:column;gap:6px}
 .tasklist div{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;background:var(--hanji);color:var(--sumi);padding:8px 12px}
 .tasklist div.done{background:#d8cfb8}
@@ -534,6 +536,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button role="tab" id="tabStW" aria-selected="true">무기·기술</button>
       <button role="tab" id="tabStP" aria-selected="false">보패·축복</button>
       <button role="tab" id="tabStS" aria-selected="false">능력치</button>
+      <button role="tab" id="tabStA" aria-selected="false" hidden>견습</button>
     </div>
     <div class="help" id="stBody"></div>
     <div class="row"><button class="btn" id="statClose">계속</button></div>

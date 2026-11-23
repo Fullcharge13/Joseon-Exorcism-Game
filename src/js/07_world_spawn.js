@@ -1981,7 +1981,11 @@ function update(dt) {
           else if (r < 0.06) dropItem('pouch', it.x + rnd(-12, 12), it.y + rnd(-10, 10));
         }
       } else if (it.k === 'tteok') {
-        heal(30 * P.tteokM);
+        // v22.2 견습과 반씩 나눔(견습이 가득·기절·숨음이면 퇴마사가 다)
+        const amt = 30 * P.tteokM,
+          share = typeof apCanEat === 'function' && apCanEat();
+        heal(share ? amt * 0.5 : amt);
+        if (share) apHeal(amt * 0.5);
         G.rs.tteok++;
         particle(P.x, P.y, '#7fe0a0', 8, 40);
         snd(660, 0.1, 'triangle');
