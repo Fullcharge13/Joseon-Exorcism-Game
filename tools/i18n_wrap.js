@@ -10,7 +10,7 @@ const parser=require('@babel/parser'),traverse=require('@babel/traverse').defaul
 const ROOT=path.resolve(__dirname,'..'),DIR=path.join(ROOT,'src','js');
 const files=fs.readdirSync(DIR).filter(f=>f.endsWith('.js')).sort();
 const HAN=/[가-힣]/;
-const TABLES=new Set(['WD','TASKS','CHARS','EN','NPCS','TALES','PD','PETS','BSK','GUIDE','JOBTASK','FUSE','CALL','ANOM','BLESS','SKY','STORY','UPG','CARDS','HYUNG','ELITE_RAGE','STAGES','PATHS','TEMPER','DUO','TAVERN','DKB','ENDING','GIFTS','BOSS','KS','SEALS','ULT','CURSES','DKC','VARIANTS','QUESTS','TALE_RULES','TIER_BONUS','HELP_TABS','AWK','DIFFS','MODES','TIER_NAME','FLOWERS','GRADES','JMON','JDAY','GAN0','JI0']);
+const TABLES=new Set(['WD','TASKS','CHARS','EN','NPCS','TALES','PD','PETS','BSK','GUIDE','JOBTASK','FUSE','CALL','ANOM','BLESS','SKY','STORY','UPG','CARDS','HYUNG','ELITE_RAGE','STAGES','PATHS','TEMPER','DUO','TAVERN','DKB','ENDING','GIFTS','BOSS','KS','SEALS','ULT','CURSES','DKC','VARIANTS','QUESTS','TALE_RULES','TIER_BONUS','HELP_TABS','AWK','DIFFS','MODES','TIER_NAME','FLOWERS','GRADES','JMON','JDAY','GAN0','JI0','AP_KIDS','AWD','APD']);
 const SKIP_CALLS=new Set(['_t','diagNote','fillT']);const FIND_METHODS=new Set(['includes','indexOf','startsWith','endsWith','split','replace','replaceAll','match','test','lastIndexOf']);
 const apply=process.argv.includes('--apply');
 let src='',ranges=[];for(const f of files){const s=fs.readFileSync(path.join(DIR,f),'utf8');ranges.push({f,start:src.length,end:src.length+s.length});src+=s;}

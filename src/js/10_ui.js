@@ -448,7 +448,8 @@ function genOptions() {
   pool.push(...growOpts(B));
   if (G.P.lvl >= 50 || !pool.length)
     for (const w of G.weapons) if (wFull(w) && !B.has(w.id)) pool.push({k: 'lb', id: w.id, wt: 0.8}); // v20.6 다 키운 뒤에만
-  const n = (G.P.luck ? 4 : 3) + G.mods.choice,
+  const apC = G.ap ? apPick2(B) : [], // v22.1 견습 카드 두 칸(퇴마사 칸은 하나 줄임)
+    n = (G.P.luck ? 4 : 3) + G.mods.choice - (apC.length ? 1 : 0),
     picks = [];
   while (picks.length < n && pool.length) {
     const tot = pool.reduce((s, o) => s + o.wt, 0);
@@ -460,8 +461,8 @@ function genOptions() {
     }
     picks.push(pool.splice(i, 1)[0]);
   }
-  if (!picks.length) return [{k: 'heal'}, {k: 'cash'}].map(decorate);
-  return picks.map(decorate);
+  if (!picks.length && !apC.length) return [{k: 'heal'}, {k: 'cash'}].map(decorate);
+  return [...picks, ...apC].map(decorate);
 }
 /* v18.6.2 가진 무기·기술의 아이콘 칸: 단계 그림이 있는 무기(방패)만 단계 그림, 직업 기술·다른 무기는 예전 iconHTML(직업 기술은 도장) */
 function wIconHTML(w) {
@@ -542,6 +543,7 @@ function evoHTML(o) {
   });
 }
 function decorate(o) {
+  if (/^ap/.test(o.k)) return apDecorate(o); // v22.1 견습 카드
   if (o.k === 'heal')
     return {
       ...o,
@@ -625,6 +627,7 @@ function decorate(o) {
   };
 }
 function applyOpt(o) {
+  if (/^ap/.test(o.k)) return apApply(o); // v22.1 견습 카드
   if (o.k === 'heal') heal(50);
   else if (o.k === 'cash') G.coins += 25;
   else if (o.k === 'wnew') addWeapon(o.id);
@@ -759,10 +762,13 @@ function pickOpt(i) {
   if (banMode) {
     if (!o.id || G.bn <= 0) return;
     G.bn--;
-    G.banned.add(o.id);
+    const isAp = /^ap/.test(o.k); // v22.1 견습 카드는 견습 카드로 바꿔 둘을 지킴 · 봉인 id는 'ap:'를 붙여 퇴마사 것과 따로
+    G.banned.add(isAp ? 'ap:' + o.id : o.id);
     snd(200, 0.2, 'sawtooth', 0.04);
-    const fresh = genOptions().filter(x => !curOpts.some(c => c.id === x.id && c.k === x.k));
-    curOpts[i] = fresh[0] || decorate({k: 'cash'});
+    const fresh = (isAp ? apOpts(G.banned).map(decorate) : genOptions().filter(x => !/^ap/.test(x.k))).filter(
+      x => !curOpts.some(c => c.id === x.id && c.k === x.k)
+    );
+    curOpts[i] = fresh[0] || decorate(isAp && !curOpts.some(c => c.k === 'aptr') ? {k: 'aptr', id: 'aptr'} : {k: 'cash'});
     banMode = false;
     renderLevel();
     return;
@@ -1266,6 +1272,7 @@ function renderTavern() {
 }
 function nextStage() {
   G.gfx = [];
+  apStage(); // v22.1 견습: 체력 가득 · 기절 0번 · 숨음 풀림
   if (G.P) G.P.clingT = 0;
   G.eclipse = 0;
   G.eclOwner = null;
@@ -1329,6 +1336,7 @@ function statHTML() {
 }
 function buildHTML() {
   return (
+    apSlotsHTML() + // v22.1 견습 칸
     (G.pet
       ? `<div class="slot pet" title="${PETS[G.pet.type].n}"><img src="${big(PSPR[G.pet.type].n, 2)}" alt="${PETS[G.pet.type].n}"><b>${G.pet.lv}</b></div>`
       : '') +

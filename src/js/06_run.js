@@ -1016,7 +1016,7 @@ function openNorth() {
             meta.stats.northEnter = (meta.stats.northEnter || 0) + 1;
             saveMeta();
             show(null);
-            openTavern();
+            apIntro(openTavern); // v22.1 견습 고르기 뒤 주막
           }
         },
         ...endlessCards()

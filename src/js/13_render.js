@@ -1490,6 +1490,7 @@ function render() {
   for (const s of G.spirits) drawSpirit(s);
   for (const m of G.movers) drawShip(m);
   drawPet();
+  drawAp(); // v22.1 견습
   drawJW();
   drawSky();
   const hk = entK();

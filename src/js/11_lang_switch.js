@@ -10,6 +10,9 @@ function detectLang() {
 }
 const L10N_TABLES = () => ({
   WD,
+  AP_KIDS, // v22.1 견습
+  AWD,
+  APD,
   TASKS,
   CHARS,
   EN,

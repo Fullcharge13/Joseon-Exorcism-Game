@@ -7,7 +7,7 @@ ok(STAGES.length===15,'막 15개 (지금 '+STAGES.length+')');
 ok(typeof openNorth==='function'&&typeof stageEnd==='function','openNorth·stageEnd 있음');
 if(typeof stageEnd==='function'&&typeof openNorth==='function'){
 meta.ending={seen:true,epi:['seonbi','mudang','jangsu','gisaeng','sangin','uiwon','baekjeong','dosa']};
-meta.north={seen:false,clear:0};
+meta.north={seen:false,clear:0};meta.ap={seen:true}; // v22.1 견습 장면은 본 것으로(고르기 창만)
 let lastCards=[];const _op=openPick;openPick=(e,t,l,c)=>{lastCards=c;return _op(e,t,l,c);};
 const cardNames=()=>lastCards.map(c=>c.name);
 const clearAt=s=>{G.stage=s;G.bossDone=true;G.clearT=undefined;openTavern();};
@@ -24,6 +24,7 @@ ok(meta.stats.clears>=1,'10막 평정은 그대로 기록');
 const names=cardNames();
 ok(/북으로/.test(names[0]),'첫 선택지 북으로 ('+names.join('/')+')');
 pickFns[0]();
+ok(modal==='pick'&&cardNames().length===2,'v22.1 북으로 뒤 견습 고르기');pickFns[0]();
 ok(G.north===true&&G.rs.north===1,'북으로 → G.north');
 ok(stageEnd()===14,'고른 뒤 stageEnd 14');
 ok(modal==='tavern','북으로 뒤 주막 (지금 '+modal+')');
@@ -33,7 +34,7 @@ show(null);nextStage();ok(G.stage===10&&curStg().sub==='제11막','11막으로 (
 newGame('seonbi','gilil',0,'normal','normal');show(null);clearAt(9);
 ok(modal==='pick','두 번째부터는 장면 없이 선택 창 (지금 '+modal+')');
 // 15막 평정 → 끝없는 밤 창
-pickFns[0]();show(null);
+pickFns[0]();if(modal==='pick')pickFns[0]();show(null);
 clearAt(14);
 let m=0;while(modal==='scene'&&m<8){armUntil=0;sceneNext();m++;}
 ok(m===3&&meta.north.ending===true,'15막 처음 평정 → 2부 결말 3쪽 (지금 '+m+')');

@@ -128,13 +128,17 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
   if (e.mark > G.time) dmg *= 1.5;
   dmg = Math.max(1, Math.round(dmg * rnd(0.9, 1.1)));
   if (e.boss && !e.prop) {
-    const cap = e.maxHp * (e.mid ? MID_CAP : BOSS_CAP);
-    if (G.time - (e.capT ?? -9) >= 1) {
-      e.capT = G.time;
-      e.capD = 0;
+    // v22.1 견습(출처 ap:)은 퇴마사와 따로 초당 상한을 가진다(퇴마사 상한 × apBossCapF)
+    const ap = !!(HSRC && HSRC.startsWith('ap:')),
+      kT = ap ? 'capApT' : 'capT',
+      kD = ap ? 'capApD' : 'capD';
+    const cap = e.maxHp * (e.mid ? MID_CAP : BOSS_CAP) * (ap ? apBossCapF() : 1);
+    if (G.time - (e[kT] ?? -9) >= 1) {
+      e[kT] = G.time;
+      e[kD] = 0;
     }
-    dmg = Math.max(0, Math.min(dmg, Math.floor(cap - e.capD)));
-    e.capD += dmg;
+    dmg = Math.max(0, Math.min(dmg, Math.floor(cap - e[kD])));
+    e[kD] += dmg;
     if (dmg <= 0) {
       e.flash = 0.04;
       return;
@@ -188,7 +192,16 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
     bolt(e.x, e.y, 14, (20 + 15 * G.stage) * P.might);
     G._dg = 0;
   }
-  if (e.hp <= 0 && !e.dead) kill(e);
+  if (e.hp <= 0 && !e.dead) {
+    // v22.1 견습이 처치하면 처치 덤 효과(맹화 등)는 견습 몫·견습 보스 상한이 아니게 HSRC를 비움(검토 지적)
+    const hs = HSRC;
+    if (hs && hs.startsWith('ap:')) HSRC = null;
+    try {
+      kill(e);
+    } finally {
+      HSRC = hs;
+    }
+  }
 }
 const ITEM_CAP = 300;
 function dropItem(k, x, y) {
@@ -1889,6 +1902,7 @@ function update(dt) {
     if (inZ && P.iframe <= 0) damageFrom(z.owner && z.owner.elite ? z.owner.kind : null, z.dmg);
   }
   act2Tick(dt); // v22.0 주염의 북돋움 풀기
+  apTick(dt); // v22.1 견습
   G.ezones = G.ezones.filter(z => z.life > 0);
   for (const w of G.warns) {
     w.t -= dt;

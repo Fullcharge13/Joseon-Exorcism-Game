@@ -70,7 +70,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .slot.fuse{border-color:#ff8a6a;box-shadow:0 0 0 1px #ff8a6a66}
 .slot.duo .si{font-size:9px;letter-spacing:-1px}
 .slot.ult{border-color:var(--gold);background:#3a1a10}
-.badge.lb{background:#9a6a10}.badge.awk{background:#7a2018}.badge.duo{background:#3a1a4a}.badge.hard{background:#7a2018}.badge.door{background:#2f6b5a}
+.badge.lb{background:#9a6a10}
+.badge.ap{background:#4a6a3a} /* v22.1 견습 */.badge.awk{background:#7a2018}.badge.duo{background:#3a1a4a}.badge.hard{background:#7a2018}.badge.door{background:#2f6b5a}
 
 #toast{position:fixed;left:50%;top:26%;transform:translateX(-50%);pointer-events:none;text-align:center;font-family:var(--f-disp);white-space:nowrap}
 #toast div{animation:tst 2.2s forwards;font-size:20px;text-shadow:0 2px 0 #000,0 0 12px rgba(0,0,0,.8)}
@@ -401,7 +402,7 @@ img.inl{width:20px;height:20px;vertical-align:-5px;image-rendering:pixelated;mar
       <button class="btn ghost" id="labBtn" hidden>조합 시험장</button>
     </div>
     <p class="coinline" id="titleCoins"></p>
-    <p class="ver" id="verTag">v22.0</p>
+    <p class="ver" id="verTag">v22.1</p>
     <p class="hint">이동 <kbd>WASD</kbd> <kbd>방향키</kbd> · 모바일은 화면을 끌어서 이동 · 공격은 자동 · 일시정지 <kbd>ESC</kbd> · 상태창 <kbd>C</kbd><br>레벨 10·20·30·40·50에 전직합니다. 성황당에 머물러 기도하면 신령이 축복을 내립니다.<br>막 사이 주막에서 엽전을 쓰고, 보스의 붉은 예고 장판을 피하세요. 위급할 때는 도사 전우치가 돕습니다.<br>처음에는 선비만 출정할 수 있습니다. 퇴마록 과업을 이루면 다른 퇴마사가 열립니다.</p>
   </section>
 
@@ -778,6 +779,7 @@ Object.assign(I18N.zh,{"상문살":"丧门煞","쓰러진 요괴 다섯에 하�
 Object.assign(I18N.zh,{"퇴마사 자리에 원한의 손이 솟는다.":"退魔师所在之处会伸出怨恨之手。","대통에서 탄 다섯 발을 부채꼴로 쏜다.":"从竹筒中呈扇形射出五发弹幕。","퇴마사 자리를 두 번 연달아 할퀸다.":"对退魔师所在之处连抓两次。","자기 둘레 땅을 크게 내리친다.":"重重拍击自身周围的地面。","여우불 여섯 개를 사방으로 날린다.":"向四面八方放出六团狐火。","퇴마사 자리에 역병 자국을 남겨 독 안개가 핀다.":"在退魔师所在之处留下疫痕，升起毒雾。","퇴마사 쪽으로 불칼을 길게 내리긋는다.":"朝退魔师方向长长劈下一道火刃。","물살 열 줄기를 사방으로 뿜는다.":"向四面八方喷出十道水流。","다시 일어난 뒤 남은 머리로 세 갈래 탄을 쏜다.":"重新站起后，用剩下的头射出三路弹幕。","퇴마사 둘레 세 곳에 불기둥이 솟는다.":"退魔师周围三处升起火柱。","{n}이(가) 성났다":"{n}发怒了","성나면: {d}":"发怒时：{d}"});   // 75_elite_rage.json
 Object.assign(I18N.zh,{"넓적칼":"宽刃刀","포정의 칼":"庖丁之刀","여섯 자루 넓적칼이 사방으로 날아가 결대로 가르고 되돌아온다.":"六把宽刃刀飞向四方，顺着纹理劈开后再飞回来。","가까운 요괴 쪽으로 넓적칼을 던진다. 칼은 꿰뚫고 되돌아온다.":"朝最近的妖怪掷出宽刃刀。刀会贯穿后飞回。","칼 +1, 피해 +25%":"刀 +1，伤害 +25%","쇠갈고리":"铁钩","천근 갈고리":"千斤铁钩","둘레의 요괴를 모두 꿰어 한꺼번에 끌어당긴다.":"钩住周围所有妖怪，一口气拉过来。","앞의 요괴를 쇠갈고리로 꿰어 퇴마사 쪽으로 끌어당긴다. 보스는 끌리지 않는다.":"用铁钩钩住前方的妖怪，拉向退魔师。头目不会被拉动。","갈고리 +1":"铁钩 +1","갈고리 +1, 피해 +25%":"铁钩 +1，伤害 +25%","버들고리 덫":"柳条筐陷阱","고리 그물":"柳筐罗网","넓은 고리 그물 셋을 펼쳐 요괴를 잠깐 묶고 꾸준히 조인다.":"张开三张宽大的柳筐罗网，暂时缚住妖怪并持续收紧。","요괴 무리 한가운데에 버들고리 덫을 놓는다. 덫 안의 요괴는 느려지고 피해를 입는다.":"在妖怪群正中设下柳条筐陷阱。陷阱中的妖怪会减速并受到伤害。","덫 +1":"陷阱 +1","범위 +, 오래감":"范围 +，持续更久","덫 +1, 피해 +25%":"陷阱 +1，伤害 +25%","저울추":"秤砣","천칭":"天秤","가장 무거운 요괴 셋 위에 큰 추가 차례로 떨어진다.":"巨大的秤砣依次砸向最重的三只妖怪。","둘레에서 체력이 가장 많은 요괴 위에 무쇠 추를 떨어뜨린다(경고 뒤 큰 피해).":"在周围体力最多的妖怪头上砸下铁秤砣（预警后造成大量伤害）。","추 +1":"秤砣 +1","피해 +25%, 빨라짐":"伤害 +25%，加快","추 +1, 피해 +25%":"秤砣 +1，伤害 +25%","결 따라 베기":"顺纹斩","쌍칼":"双刀","양옆으로 넓적칼 두 자루를 던진다. 칼은 되돌아온다.":"向两侧掷出两把宽刃刀。刀会飞回。","칼 +2":"刀 +2","칼회오리":"刀旋风","칼을 휘돌려 둘레를 벤다.":"挥转长刀斩向四周。","두 번 휘돈다":"挥转两次","황소 들이받기":"黄牛冲撞","앞으로 황소처럼 들이받아 충격이 줄지어 터진다.":"像黄牛一样向前冲撞，冲击波接连炸开。","포정해우":"庖丁解牛","가장 체력이 많은 요괴를 결대로 크게 가르고 표식을 남긴다(받는 피해 ×1.5).":"顺着纹理大斩体力最多的妖怪，并留下标记（受到的伤害 ×1.5）。","두 마리":"两只","구월산 칼바람":"九月山刀风","넓적칼 여덟 자루가 사방으로 날아가 되돌아온다.":"八把宽刃刀飞向四方后再飞回。","두 번 날린다":"掷出两轮","고리 던지기":"抛掷柳筐","요괴 무리에 고리 덫을 던져 느리게 하고 조인다.":"向妖怪群抛出柳筐陷阱，使其减速并收紧。","덫 +1, 피해 +30%":"陷阱 +1，伤害 +30%","가죽 채찍":"皮鞭","가죽 채찍을 길게 휘둘러 앞의 요괴를 친다.":"长长挥出皮鞭，抽打前方的妖怪。","몽둥이질":"棍击","몽둥이로 둘레를 크게 쳐서 밀쳐 낸다.":"用木棍大力横扫四周，把妖怪击退。","저울질":"称量","가장 무거운 요괴를 달아 치고 표식을 남긴다(받는 피해 ×1.5).":"称出最重的妖怪加以打击，并留下标记（受到的伤害 ×1.5）。","세 마리, 피해 +30%":"三只，伤害 +30%","형평의 깃발":"衡平之旗","깃발을 꽂아 둘레의 요괴를 꾸준히 치고, 깃발 곁에서는 체력이 조금씩 찬다.":"插下旗帜持续打击周围妖怪，在旗帜旁体力会慢慢恢复。","오래감, 피해 +30%":"持续更久，伤害 +30%","저울은 고르다":"秤是公平的","화면 안 요괴 모두에게 지금 체력에 비례한 피해를 준다(보스는 초당 상한).":"对画面内所有妖怪造成与其当前体力成比例的伤害（头目有每秒上限）。","비율 +":"比例 +","비율 +, 빨라짐":"比例 +，加快","칼과 갈고리":"刀与钩","5초마다 둘레의 요괴를 갈고리로 끌어모은 뒤 넓적칼 여덟 자루가 사방으로 날아간다.":"每 5 秒用铁钩把周围妖怪拉拢过来，随后八把宽刃刀飞向四方。","고리와 추":"筐与砣","5초마다 가장 무거운 요괴 셋을 고리 덫으로 묶고 그 위에 추를 떨어뜨린다.":"每 5 秒用柳筐陷阱缚住最重的三只妖怪，再在其上砸下秤砣。","고리 그물과(와) 천칭이(가) 하나로 합쳐졌다. 두 무기 피해 +20%. 5초마다 가장 무거운 요괴 셋을 고리 덫으로 묶고 그 위에 추를 떨어뜨린다.":"柳筐罗网与天秤合而为一，两件武器伤害 +20%。每 5 秒用柳筐陷阱缚住最重的三只妖怪，再在其上砸下秤砣。","저울을 든 손":"执秤之手","엘리트 요괴 20마리 퇴치":"讨伐 20 只精英妖怪","백정 해금":"解锁白丁","백정 1차 전직":"白丁一转","백정으로 1차 전직":"以白丁完成一转","저울추 해금":"解锁秤砣","포정·형평의 기수가 되다":"成为庖丁·衡平旗手","백정으로 5차 전직":"以白丁完成五转","결대로 가른 요괴":"顺纹劈开的妖怪","백정으로 요괴 3,000마리 퇴치":"以白丁讨伐 3,000 只妖怪","포정의 경지":"庖丁之境","칼의 길에서 5차 전직(포정)":"在刀之道完成五转（庖丁）","형평의 길에서 5차 전직(형평의 기수)":"在衡平之道完成五转（衡平旗手）","의적 임꺽정":"义贼 林巨正","칼의 길에서 6차 전직(의적 임꺽정)":"在刀之道完成六转（义贼 林巨正）","형평사 장지필":"衡平社 张志弼","형평의 길에서 6차 전직(형평사 장지필)":"在衡平之道完成六转（衡平社 张志弼）","첫 칼을 갈다":"磨利第一把刀","넓적칼을 포정의 칼로 진화":"把宽刃刀进化为庖丁之刀","백정의 새벽":"白丁的黎明","백정으로 제10막 평정":"以白丁平定第10幕","백정":"白丁","치명타 +8% · 최대 체력 +10":"暴击 +8% · 最大体力 +10","소를 잡고 버들고리를 엮던 이. 천대받던 손으로 요괴를 가른다. 넓적칼을 던지면 꿰뚫고 되돌아온다.":"宰牛、编柳条筐为生的人。用曾受轻贱的双手劈开妖怪。掷出的宽刃刀会贯穿后飞回。","칼의 길":"刀之道","칼잡이":"操刀人","치명타 +5%":"暴击 +5%","날 선 백정":"锋刃白丁","칼바람 사냥꾼":"刀风猎人","황소 장사":"黄牛力士","포정":"庖丁","공격력 +15% · 치명 피해 +20%":"攻击力 +15% · 暴击伤害 +20%","공격력 +25% · 치명타 +8%":"攻击力 +25% · 暴击 +8%","양주의 백정 출신. 명종 때 황해도 구월산 등지를 근거로 활동하다 1562년에 붙잡혔다고 기록된 인물.":"出身杨州白丁。据记载，明宗时以黄海道九月山一带为据点活动，于 1562 年被捕。","형평의 길":"衡平之道","고리장이":"柳筐匠","갖바치":"皮鞋匠","장정":"壮丁","형평사원":"衡平社员","형평의 기수":"衡平旗手","범위 +15% · 초당 회복 +0.5":"范围 +15% · 每秒回复 +0.5","공격력 +20% · 재사용 대기 −10%":"攻击力 +20% · 冷却时间 −10%","숫돌":"磨刀石","공격력 +5% · 치명 피해 +10%":"攻击力 +5% · 暴击伤害 +10%","쇠가죽":"牛皮","방어 +1 · 최대 체력 +8":"防御 +1 · 最大体力 +8","버들고리":"柳条筐","줍는 범위 +20% · 범위 +5%":"拾取范围 +20% · 范围 +5%","패랭이를 눌러쓰고 장터를 지나면 사람들이 길을 비켰다. 그날 밤 그를 피하지 않은 것은 요괴뿐이었다.":"压低平凉笠走过集市时，人们纷纷避开。那天夜里，唯一没有躲开他的只有妖怪。","소의 결을 아는 손은 요괴의 결도 알았다. 칼은 힘이 아니라 결을 따라 들어갔다.":"懂得牛的纹理的手，也懂得妖怪的纹理。刀不是靠蛮力，而是顺着纹理切入。","버들고리를 엮던 아낙이 말했다. 천한 손이라 불린 손들이 이 고을을 먹여 살렸다고.":"编柳条筐的妇人说，正是那些被称作贱手的手养活了这座村子。","마지막 괴이를 가른 새벽, 그는 패랭이를 벗었다. 누구도 그것을 다시 씌우지 못했다.":"劈开最后一个怪异的黎明，他摘下了平凉笠。再也没有人能让他戴回去。","그는 넓적칼을 숫돌에 마지막으로 갈아 벽에 걸었다. 요괴를 가르던 손으로 이번에는 저울을 들었다. 사람과 이야기를 똑같은 눈금으로 다는 저울이었다.":"他最后一次在磨刀石上磨好宽刃刀，挂到墙上。曾劈开妖怪的手，这一次拿起了秤——一杆用同样刻度称量人与故事的秤。","형평":"衡平","24초마다 화면 안 요괴를 저울로 달아 가장 무거운 다섯에 큰 칼자국을 내고, 체력 10%를 회복한다.":"每 24 秒用秤称量画面内的妖怪，在最重的五只身上留下巨大刀痕，并恢复 10% 体力。","포정의 칼과(와) 천근 갈고리이(가) 하나로 합쳐졌다. 두 무기 피해 +20%. 5초마다 둘레의 요괴를 갈고리로 끌어모은 뒤 넓적칼 여덟 자루가 사방으로 날아간다.":"庖丁之刀与千斤铁钩合而为一，两件武器伤害 +20%。每 5 秒用铁钩把周围妖怪拉拢过来，随后八把宽刃刀飞向四方。","퇴마사 여섯 해금":"解锁六位退魔师","일곱 퇴마사":"七位退魔师","퇴마사 일곱 모두 해금":"解锁全部七位退魔师","1923년 진주에서 백정의 신분 해방과 차별 철폐를 내건 형평사가 세워질 때 위원을 맡았고, 이후 형평 운동을 이끈 인물.":"1923 年在晋州创立以白丁身份解放、废除歧视为宗旨的衡平社时担任委员，此后领导衡平运动的人物。","앞쪽을 반원으로 크게 베고, 칼바람이 앞으로 날아간다.":"向前方大幅斩出半圆，并有刀风向前飞去。"});   // 76_baekjeong.json
 Object.assign(I18N.zh,{"북으로 가는 길":"北上之路","판의금부사의 전갈을 받고 제11막 도달":"接到判义禁府事的急报并抵达第11幕","옛 도읍에 이르다":"抵达旧都","제13막 도달":"抵达第13幕","강 밖으로":"逐出江外","제15막 압록강 평정":"平定第15幕鸭绿江","압록강의 새벽":"鸭绿江的黎明","2부 결말 보기":"观看第2部结局","긴 길의 밤":"长路之夜","제15막을 평정하고 끝없는 밤으로 들어서기":"平定第15幕后进入无尽之夜","국경을 지키다":"守护国境","제15막을 세 번 평정":"平定第15幕三次","엽전 800":"铜钱 800","산해경 도감":"山海经图鉴","요괴 95종 모두 만나기":"遇见全部95种妖怪","필방":"毕方","사람 얼굴에 다리가 하나인 새(『산해경』 해외남경 「為鳥人面一腳」). 불씨를 던지는 것은 게임 속 각색.":"人面独足之鸟（《山海经·海外南经》「为鸟人面一脚」）。投掷火种为游戏中的改编。","쟁":"狰","붉은 표범 같고 꼬리 다섯에 뿔 하나, 돌을 치는 소리를 낸다(『산해경』 서산경 「如赤豹，五尾一角，其音如擊石」).":"状如赤豹，五尾一角，其声如击石（《山海经·西山经》「如赤豹，五尾一角，其音如击石」）。","고조":"蛊雕","수리 같은데 뿔이 있고 아기 울음소리를 내며 사람을 먹는다(『산해경』 남산경 「如雕而有角，其音如嬰兒」).":"状如雕而有角，发出婴儿般的啼声，会吃人（《山海经·南山经》「如雕而有角，其音如婴儿」）。","문요어":"文鳐鱼","물고기 몸에 새 날개, 푸른 무늬에 흰 머리·붉은 부리, 밤에 난다(『산해경』 서산경 「魚身而鳥翼…以夜飛」).":"鱼身鸟翼，苍纹白首赤喙，夜间飞行（《山海经·西山经》「鱼身而鸟翼……以夜飞」）。","하라어":"何罗鱼","머리 하나에 몸이 열인 물고기, 개 짖는 소리를 낸다(『산해경』 북산경 「一首而十身，其音如吠犬」). 쪼개지는 것은 각색.":"一首十身之鱼，叫声如犬吠（《山海经·北山经》「一首而十身，其音如吠犬」）。分裂为游戏中的改编。","저여":"狙如","쥐 같고 귀와 주둥이가 희며, 나타나면 나라에 큰 싸움이 난다(『산해경』 중산경 「白耳白喙…見則其國有大兵」).":"状如鼠，白耳白喙，出现则国有大战（《山海经·中山经》「白耳白喙……见则其国有大兵」）。","흠원":"钦原","벌 같은 새로 원앙만큼 크며, 쏘인 새와 짐승은 죽고 나무는 마른다(『산해경』 서산경 「其狀如蜂，大如鴛鴦」).":"状如蜂的鸟，大如鸳鸯，被它蜇到的鸟兽会死，树木会枯（《山海经·西山经》「其状如蜂，大如鸳鸯」）。","서거":"犀渠","소 같고 몸이 푸르며 아기 울음소리를 내고 사람을 먹는다(『산해경』 중산경 「其狀如牛。蒼身，其音如嬰兒」).":"状如牛，身呈苍色，发出婴儿般的啼声，会吃人（《山海经·中山经》「其状如牛。苍身，其音如婴儿」）。","장우":"长右","원숭이 같은데 귀가 넷이다(『산해경』 남산경 「其狀如禺而四耳，其名長右」).":"状如猴而有四只耳朵（《山海经·南山经》「其状如禺而四耳，其名长右」）。","부제":"夫诸","흰 사슴 같고 뿔이 넷이며, 나타나면 그 고을에 큰물이 진다(『산해경』 중산경 「如白鹿而四角…見則其邑大水」).":"状如白鹿而有四角，出现则其城邑发大水（《山海经·中山经》「如白鹿而四角……见则其邑大水」）。","체":"彘","범 같은데 소 꼬리가 있고, 개 짖는 소리를 내며 사람을 먹는다(『산해경』 남산경 「如虎而牛尾，其音如吠犬」).":"状如虎而有牛尾，叫声如犬吠，会吃人（《山海经·南山经》「如虎而牛尾，其音如吠犬」）。","옹화":"雍和","원숭이 같고 눈과 부리가 붉고 몸은 누러며, 나타나면 나라에 큰 두려움이 인다(『산해경』 중산경 「赤目，赤喙，黃身」).":"状如猿，赤目赤喙，身体发黄，出现则国有大恐（《山海经·中山经》「赤目，赤喙，黄身」）。","마복":"马腹","사람 얼굴에 범의 몸, 아기 울음소리를 내며 사람을 먹는다(『산해경』 중산경 「人面虎身，其音如嬰兒」).":"人面虎身，发出婴儿般的啼声，会吃人（《山海经·中山经》「人面虎身，其音如婴儿」）。","명사":"鸣蛇","뱀 같은데 날개가 넷, 경쇠 소리를 내며 나타나면 고을에 큰 가뭄이 든다(『산해경』 중산경 「如蛇而四翼，其音如磬」).":"状如蛇而有四翼，声如磬，出现则城邑大旱（《山海经·中山经》「如蛇而四翼，其音如磬」）。","제건":"诸犍","표범 같은데 꼬리가 길고 사람 머리에 소 귀, 눈이 하나이며 꼬리를 물고 다닌다(『산해경』 북산경 「如豹而長尾，人首而牛耳，一目」).":"状如豹而尾长，人首牛耳，独目，行走时衔着自己的尾巴（《山海经·北山经》「如豹而长尾，人首而牛耳，一目」）。","비유":"肥遗","다리 여섯에 날개 넷인 뱀, 나타나면 온 세상이 크게 가문다(『산해경』 서산경 태화산 「六足四翼，見則天下大旱」).":"六足四翼之蛇，出现则天下大旱（《山海经·西山经》太华之山「六足四翼，见则天下大旱」）。","형천":"刑天","천제와 신의 자리를 다투다 머리가 잘렸다(『산해경』 해외서경 「形天與帝至此爭神，帝斷其首」). 방패·도끼는 전해지는 이야기를 따른 각색.":"与天帝争神位，被斩去头颅（《山海经·海外西经》「形天与帝至此争神，帝断其首」）。盾与斧依流传的故事改编。","상류":"相柳","공공의 신하로 머리가 아홉이다(『산해경』 해외북경 「共工之臣曰相柳氏，九首」). 독을 뿜는 것은 게임 속 각색.":"共工之臣，生有九首（《山海经·海外北经》「共工之臣曰相柳氏，九首」）。喷毒为游戏中的改编。","화사":"化蛇","사람 얼굴에 승냥이 몸, 새 날개로 뱀처럼 기며, 나타나면 고을에 큰물이 진다(『산해경』 중산경 「人面而豺身，鳥翼而蛇行」).":"人面豺身，生有鸟翼，如蛇般爬行，出现则城邑发大水（《山海经·中山经》「人面而豺身，鸟翼而蛇行」）。","제강":"帝江","누런 자루 같고 붉은 불빛, 다리 여섯·날개 넷에 얼굴이 없으며 노래와 춤을 안다(『산해경』 서산경 「渾敦無面目，是識歌舞」). 원문의 신(神)이라 「잠재운다」.":"状如黄囊，赤如丹火，六足四翼，浑敦无面目，懂得歌舞（《山海经·西山经》「浑敦无面目，是识歌舞」）。原文中为神，故称「使之沉睡」。","궁기":"穷奇","소 같고 고슴도치 털에 개 짖는 소리를 내며 사람을 먹는다(『산해경』 서산경 「其狀如牛，蝟毛…名曰窮奇」).":"状如牛，长着刺猬般的毛，叫声如狗嗥，会吃人（《山海经·西山经》「其状如牛，蝟毛……名曰穷奇」）。","촉음":"烛阴","종산의 신. 눈을 뜨면 낮이 되고 감으면 밤이 된다(『산해경』 해외북경 「鐘山之神，名曰燭陰，視為晝，瞑為夜」). 원문의 신(神)이라 「잠재운다」.":"钟山之神。睁眼为昼，闭眼为夜（《山海经·海外北经》「钟山之神，名曰烛阴，视为昼，瞑为夜」）。原文中为神，故称「使之沉睡」。","효":"嚣","원숭이 같은데 팔이 길고 잘 던진다(『산해경』 서산경 「其狀如禺而長臂，善投，其名曰嚻」). 바위를 던지는 것은 게임 속 각색.":"状如猴而臂长，善于投掷（《山海经·西山经》「其状如禺而长臂，善投，其名曰嚣」）。投掷岩石为游戏中的改编。","영어":"蠃鱼","물고기 몸에 새 날개, 원앙 소리를 내며 나타나면 고을에 큰물이 진다(『산해경』 서산경 「嬴魚，魚身而鳥翼，音如鴛鴦，見則其邑大水」). 지나간 자리에 물웅덩이를 남기는 것은 각색.":"鱼身鸟翼，叫声如鸳鸯，出现则城邑发大水（《山海经·西山经》「嬴鱼，鱼身而鸟翼，音如鸳鸯，见则其邑大水」）。所经之处留下水洼为改编。","비":"蜚","소 같고 머리가 희며 눈이 하나에 뱀 꼬리. 물로 가면 물이 마르고 풀로 가면 풀이 죽으며, 나타나면 천하에 큰 역병이 돈다(『산해경』 동산경 「行水則竭，行草則死，見則天下大疫」). 마른 독 땅은 각색.":"状如牛而白首，独目蛇尾。行于水则水竭，行于草则草死，出现则天下大疫（《山海经·东山经》「行水则竭，行草则死，见则天下大疫」）。枯毒之地为改编。","주염":"朱厌","원숭이 같고 머리가 희고 발이 붉으며, 나타나면 큰 싸움이 난다(『산해경』 서산경 「其狀如猿，而白首赤足，名曰朱厭，見則大兵」). 둘레 요괴를 북돋우는 것은 각색.":"状如猿，白首赤足，出现则有大战（《山海经·西山经》「其状如猿，而白首赤足，名曰朱厌，见则大兵」）。激励周围妖怪为改编。","고":"鼓","종산 신의 아들. 사람 얼굴에 용의 몸이다(『산해경』 서산경 「其子曰鼓，其狀如人面而龍身」). 퇴마사 둘레를 감아 도는 것은 각색.":"钟山之神的儿子，人面龙身（《山海经·西山经》「其子曰鼓，其状如人面而龙身」）。环绕退魔师盘旋为改编。","아홉 머리의 독":"九首之毒","큰물":"大水","혼돈의 춤":"混沌之舞","고슴도치 털":"刺猬之毛","눈을 감다":"闭目","눈을 뜨다":"睁眼","바위 셋을 한꺼번에 던진다.":"一次掷出三块岩石。","물살 여덟 줄기를 사방으로 뿜는다.":"向四面八方喷出八道水流。","자기 둘레를 크게 말려 독 땅을 만든다.":"使自身周围大片干枯，化为毒地。","외침과 함께 탄 여섯 발을 부채꼴로 쏜다.":"伴着吼叫呈扇形射出六发弹。","용의 몸을 뒤틀어 퇴마사 자리에 큰 경고를 남긴다.":"扭动龙身，在退魔师所在之处留下大范围预警。","제11막":"第11幕","홍제원 고개":"弘济院岭","제12막":"第12幕","임진나루":"临津渡","제13막":"第13幕","송악 아래 개성":"松岳山下开城","제14막":"第14幕","대동강 평양성":"大同江平壤城","제15막":"第15幕","의주 압록강":"义州鸭绿江","전갈 1/3":"急报 1/3","밤중의 역마":"夜半驿马","전갈 2/3":"急报 2/3","북쪽에서 온 장계":"来自北方的状启","「요동 땅에서 명과 청이 맞붙어 싸우는 소리가 그치지 않소. 그 어지러움에 오래 잠들어 있던 것들이 깨어났다 하오. 머리 아홉 달린 뱀, 사람 얼굴을 한 새, 날개 돋친 물고기. 옛 책 『산해경』에나 나오던 것들이 압록강을 건너왔다는 장계가 고을마다 올라오고 있소.」":"「辽东之地，明与清交战之声不绝。据说在那乱局之中，沉睡已久的东西醒了过来。九头之蛇、人面之鸟、生翼之鱼。那些只在古书《山海经》里出现的东西渡过了鸭绿江——各郡县的状启接连送来。」","전갈 3/3":"急报 3/3","압록강까지":"直到鸭绿江","「그것들이 벌써 홍제원 고개를 넘보고 있소. 의주로를 따라 임진나루, 개성, 평양을 지나 압록강 밖으로 몰아내 주시오. 조정이 갚을 길은 없으나, 이 길을 기억하는 이야기는 남을 것이오.」":"「它们已经在窥伺弘济院岭了。请沿义州路经临津渡、开城、平壤，把它们赶出鸭绿江外。朝廷无以为报，但记得这条路的故事会流传下去。」","2부 결말 1/3":"第2部结局 1/3","해가 다시 뜨다":"日出重现","압록강 얼음 위에서 촉음이 마침내 눈을 감고 잠들자, 밤과 낮이 제자리를 찾았다. 강 건너로 날개 돋친 물고기와 머리 아홉 달린 그림자가 하나둘 물러갔다.":"在鸭绿江的冰面上，烛阴终于闭眼沉睡，昼与夜各归其位。生翼之鱼与九头之影一个接一个退到了江的对岸。","2부 결말 2/3":"第2部结局 2/3","돌아오는 길":"归途","의주에서 한양까지 내려오는 길, 고을마다 사람들이 나와 길을 쓸었다. 판의금부사 대감은 장계 끝에 짧게 적었다. 「요괴는 강 밖으로 물러갔고, 길은 다시 열렸다.」":"从义州南下汉阳的路上，各村百姓纷纷出来扫路。判义禁府事大人在状启末尾简短地写道：「妖怪已退至江外，道路重新畅通。」","2부 결말 3/3":"第2部结局 3/3","퇴마록의 새 장":"退魔录的新篇","퇴마록에 낯선 이름들이 더해졌다. 필방, 상류, 제강, 촉음. 먼 옛 책에 적혀 있던 것들도 이제 이 땅의 이야기가 되었다. 밤은 여전히 길지만, 길을 아는 이가 있다.":"退魔录里添上了陌生的名字：毕方、相柳、帝江、烛阴。古书中记载的那些东西，如今也成了这片土地的故事。夜依旧漫长，但已有识路之人。","큰물이 진다":"大水来了","눈을 감다 · 밤":"闭目 · 夜","눈을 뜨다 · 낮":"睁眼 · 昼","촉음을 잠재웠다":"使烛阴沉睡了","압록강 너머로 요괴들이 물러갔습니다. 여기서 출정을 마치거나, 끝없는 밤으로 이어 갈 수 있습니다. 이어 가면 제1막부터 제15막까지 다시 돌며 요괴가 한층 강해지고 보상도 커집니다.":"妖怪已退到鸭绿江对岸。可以在此结束出征，也可以继续进入无尽之夜。继续的话，将从第1幕到第15幕再走一遍，妖怪会更强，奖励也更丰厚。","판의금부사의 전갈":"判义禁府事的急报","의금부의 판의금부사 대감이 역마를 달려 왔다. 「북쪽 고을마다 『산해경』의 요괴가 나타났다는 장계가 올라오고 있소. 한양 서쪽 고개까지 내려왔다 하니, 압록강 밖으로 몰아내 주시오.」":"义禁府的判义禁府事大人骑驿马赶来：「北方各郡县接连送来状启，说出现了《山海经》里的妖怪。据说已南下到汉阳西边的山岭，请把它们赶出鸭绿江外。」","2부 · 제11~15막":"第2部 · 第11~15幕","북으로 간다":"北上","지금의 체력·무기 그대로 한양 서쪽 홍제원 고개부터 압록강까지 다섯 막을 더 치른다.":"保持现在的体力与武器，从汉阳西边的弘济院岭到鸭绿江，再打五幕。","그슨대가 무너지고 첫닭이 울 무렵, 붉은 관복의 대감이 말을 몰아 찾아왔다. 의금부의 판의금부사라 했다. 나라를 흔드는 큰일을 맡는 관아의 으뜸 벼슬이었다.":"黑影巨人崩塌，头遍鸡鸣之时，一位身穿红色官服的大人策马赶来。据说是义禁府的判义禁府事——掌管撼动国家之大事的官署中最高的官职。","촉음을 잠재우고 압록강에서 새벽을 맞았다":"使烛阴沉睡，在鸭绿江迎来黎明"});   // 77_act2.json
+Object.assign(I18N.zh,{"복돌":"福石","장터에서 지게를 지던 아이. 가까이 붙어 휘두른다(근접).":"在集市上背背架的孩子。贴身挥打（近战）。","연이":"莲儿","나루터 주막집 딸. 곁에서 거리를 두고 쏜다(원거리).":"渡口酒馆家的女儿。在身旁保持距离射击（远程）。","목검":"木剑","가까운 요괴 쪽으로 부채꼴로 휘두른다.":"朝最近的妖怪扇形挥砍。","도리깨":"连枷","제자리에서 한 바퀴 휘둘러 둘레를 모두 친다.":"原地抡一圈，击中周围所有敌人。","장대":"长竿","한 줄로 길게 찔러 꿰뚫는다.":"向前长长一刺，可贯穿。","새총":"弹弓","가까운 요괴에게 돌을 한 발 쏜다.":"朝最近的妖怪射出一颗石子。","대나무 활":"竹弓","화살 한 발, 셋까지 꿰뚫는다.":"射出一箭，最多贯穿三个。","물총":"水枪","짧은 물줄기 세 갈래. 맞은 요괴는 1초 느려진다.":"短短三道水流。被击中的妖怪减速1秒。","공격 빠르기 +8%(Lv마다)":"攻击速度 +8%（每级）","복주머니":"福袋","최대 체력 +20% · 초당 체력 +1(Lv마다)":"最大体力 +20% · 每秒体力 +1（每级）","범위 +10%(Lv마다)":"范围 +10%（每级）","댕기":"发带","피해 +12%(Lv마다)":"伤害 +12%（每级）","견습 1/2":"学徒 1/2","길 어귀의 아이들":"路口的孩子们","북으로 떠나려는 새벽, 길 어귀에 아이 둘이 서 있었다. 장터에서 지게를 지던 복돌이와 나루터 주막집 딸 연이. 지난밤 요괴에게서 마을을 지켜 준 퇴마사를 기억하고 있었다.":"正要北上的清晨，路口站着两个孩子。在集市背背架的福石，和渡口酒馆家的女儿莲儿。他们记得昨夜从妖怪手中守护村子的退魔师。","견습 2/2":"学徒 2/2","저도 데려가 주세요":"请带上我吧","「심부름이라도 하겠어요. 위험하면 숨으라는 말도 꼭 들을게요.」 퇴마사는 한 아이에게만 고개를 끄덕였다. 압록강까지의 길에 견습 하나가 함께한다.":"「跑腿也行。危险的时候叫我躲起来，我一定听话。」退魔师只对其中一个孩子点了点头。去往鸭绿江的路上，多了一名学徒同行。","{n} 단련":"{n}的修炼","견습의 피해 +5%. 끝없이 쌓을 수 있다.":"学徒伤害 +5%。可无限叠加。","견습 · 단련 {p}":"学徒 · 修炼 {p}","{n}의 {w}":"{n}的{w}","{n}에게 {w}":"给{n}{w}","견습 · LV {a} → {b}":"学徒 · LV {a} → {b}","견습 · 바꾸기 LV {a}":"学徒 · 更换 LV {a}","{n}에게 {p}":"给{n}{p}","견습 · 새 보패":"学徒 · 新法器","견습 고르기":"选择学徒","압록강까지 함께 갈 견습을 고른다. 견습은 레벨업 때 무기 하나·보패 하나를 키운다.":"选择一同前往鸭绿江的学徒。学徒在升级时培养一件武器和一件法器。","근접":"近战","원거리":"远程","{n:이} 쓰러졌다 · 곁에서 5초":"{n}倒下了 · 到身边守5秒","{n:을} 덤불 뒤에 숨겼다 · 다음 막에":"把{n}藏在灌木丛后 · 下一幕回来","{n:이} 깨어났다":"{n}醒过来了"});   // 78_apprentice.json
 /* ======================= pixel sprite toolkit ======================= */
 const PAL = {
   k: '#1a1418',
@@ -8484,6 +8486,8 @@ function taleNorm() {
   N.seen = !!N.seen;
   N.clear = Math.max(0, N.clear | 0);
   N.ending = !!N.ending;
+  const AP = (meta.ap = plainObj(meta.ap)); // v22.1 견습 장면을 본 적
+  AP.seen = !!AP.seen;
 }
 const SAVE_KEY = 'joseon-toema-v1',
   SAVE_BAK = SAVE_KEY + '-bak',
@@ -8704,7 +8708,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v22.0',
+const GAME_VER = 'v22.1',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};
@@ -10230,7 +10234,7 @@ function openNorth() {
             meta.stats.northEnter = (meta.stats.northEnter || 0) + 1;
             saveMeta();
             show(null);
-            openTavern();
+            apIntro(openTavern); // v22.1 견습 고르기 뒤 주막
           }
         },
         ...endlessCards()
@@ -11484,13 +11488,17 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
   if (e.mark > G.time) dmg *= 1.5;
   dmg = Math.max(1, Math.round(dmg * rnd(0.9, 1.1)));
   if (e.boss && !e.prop) {
-    const cap = e.maxHp * (e.mid ? MID_CAP : BOSS_CAP);
-    if (G.time - (e.capT ?? -9) >= 1) {
-      e.capT = G.time;
-      e.capD = 0;
+    // v22.1 견습(출처 ap:)은 퇴마사와 따로 초당 상한을 가진다(퇴마사 상한 × apBossCapF)
+    const ap = !!(HSRC && HSRC.startsWith('ap:')),
+      kT = ap ? 'capApT' : 'capT',
+      kD = ap ? 'capApD' : 'capD';
+    const cap = e.maxHp * (e.mid ? MID_CAP : BOSS_CAP) * (ap ? apBossCapF() : 1);
+    if (G.time - (e[kT] ?? -9) >= 1) {
+      e[kT] = G.time;
+      e[kD] = 0;
     }
-    dmg = Math.max(0, Math.min(dmg, Math.floor(cap - e.capD)));
-    e.capD += dmg;
+    dmg = Math.max(0, Math.min(dmg, Math.floor(cap - e[kD])));
+    e[kD] += dmg;
     if (dmg <= 0) {
       e.flash = 0.04;
       return;
@@ -11544,7 +11552,16 @@ function hurt(e, dmg, kb = 0, fx = 0, fy = 0, noCrit) {
     bolt(e.x, e.y, 14, (20 + 15 * G.stage) * P.might);
     G._dg = 0;
   }
-  if (e.hp <= 0 && !e.dead) kill(e);
+  if (e.hp <= 0 && !e.dead) {
+    // v22.1 견습이 처치하면 처치 덤 효과(맹화 등)는 견습 몫·견습 보스 상한이 아니게 HSRC를 비움(검토 지적)
+    const hs = HSRC;
+    if (hs && hs.startsWith('ap:')) HSRC = null;
+    try {
+      kill(e);
+    } finally {
+      HSRC = hs;
+    }
+  }
 }
 const ITEM_CAP = 300;
 function dropItem(k, x, y) {
@@ -13245,6 +13262,7 @@ function update(dt) {
     if (inZ && P.iframe <= 0) damageFrom(z.owner && z.owner.elite ? z.owner.kind : null, z.dmg);
   }
   act2Tick(dt); // v22.0 주염의 북돋움 풀기
+  apTick(dt); // v22.1 견습
   G.ezones = G.ezones.filter(z => z.life > 0);
   for (const w of G.warns) {
     w.t -= dt;
@@ -16632,6 +16650,521 @@ TASKS.push(
   T('n_clear3', '국경을 지키다', '제15막을 세 번 평정', 'northClears', 3, {coins: 800}, '엽전 800'),
   T('dogam95', '산해경 도감', '요괴 95종 모두 만나기', 'codex', 95, {coins: 500}, '엽전 500')
 );
+/* ======================= v22.1 견습 동행 (2부 제11막부터) =======================
+   설계 docs/specs/2026-11-23-견습-동행-설계.md · 계획 docs/plans/2026-11-23-견습-동행.md
+   1부에서 지나온 마을의 아이가 퇴마를 배우는 견습으로 따라나선다(가상 인물). 쓰러짐은 기절(별)로만, 다치는 연출 없음.
+   견습은 판 안 상태(G.ap)만 가진다. 피해는 hurt(…, noCrit)로만, 출처 HSRC = 'ap:<무기 id>'. */
+
+const AP_KIDS = {
+  boy: {
+    n: '복돌',
+    g: '童',
+    col: '#7a5a3a',
+    d: '장터에서 지게를 지던 아이. 가까이 붙어 휘두른다(근접).',
+    look: lk('sugeon', '#7a6a4a', {T: '#c8a070'})
+  },
+  girl: {
+    n: '연이',
+    g: '娘',
+    col: '#a8506a',
+    d: '나루터 주막집 딸. 곁에서 거리를 두고 쏜다(원거리).',
+    look: lk('flower', '#c86a7a', {T: '#e0b048'})
+  }
+};
+/* 견습 무기: kid 갈래 · cd 재사용(초) · k 피해 몫(여럿을 맞히는 무기는 작게) · r 거리 · g 글자 도장 */
+const AWD = {
+  mokgeom: {kid: 'boy', n: '목검', g: '木', col: '#8a6a3a', cd: 0.8, k: 0.5, r: 30, d: '가까운 요괴 쪽으로 부채꼴로 휘두른다.'},
+  dorikkae: {kid: 'boy', n: '도리깨', g: '枷', col: '#6a5a3a', cd: 1.4, k: 0.4, r: 30, d: '제자리에서 한 바퀴 휘둘러 둘레를 모두 친다.'},
+  jangdae: {kid: 'boy', n: '장대', g: '竿', col: '#5a7a3a', cd: 1.0, k: 0.5, r: 58, d: '한 줄로 길게 찔러 꿰뚫는다.'},
+  saechong: {kid: 'girl', n: '새총', g: '彈', col: '#a8506a', cd: 0.6, k: 1.0, r: 150, d: '가까운 요괴에게 돌을 한 발 쏜다.'},
+  daehwal: {kid: 'girl', n: '대나무 활', g: '弓', col: '#4a7a5a', cd: 1.1, k: 0.6, r: 170, d: '화살 한 발, 셋까지 꿰뚫는다.'},
+  mulchong: {kid: 'girl', n: '물총', g: '水', col: '#3a7aa0', cd: 0.8, k: 0.35, r: 72, d: '짧은 물줄기 세 갈래. 맞은 요괴는 1초 느려진다.'}
+};
+const APD = {
+  jipsin: {n: '짚신', g: '履', col: '#b0905a', d: '공격 빠르기 +8%(Lv마다)'},
+  bokjumeoni: {n: '복주머니', g: '福', col: '#c23b2a', d: '최대 체력 +20% · 초당 체력 +1(Lv마다)'},
+  bangul: {n: '방울', g: '鈴', col: '#e0b048', d: '범위 +10%(Lv마다)'},
+  daenggi: {n: '댕기', g: '帶', col: '#a8322a', d: '피해 +12%(Lv마다)'}
+};
+const AP_HP = 160, // 내구 조정 2: 120 → 160(자동 플레이 막당 기절 복돌 3·연이 1.75)
+  AP_TAKE = 0.15, // 견습이 받는 피해 배율(사용자 결정 「거리 두기 + 받는 피해 절반」: 0.3 → 0.15. 0.3일 땐 11막 보스 곁에서 10초에 두 번 기절)
+  AP_K = 1, // 견습 피해 배율(균형 조정 대상)
+  AP_REV_R = 26,
+  AP_REV_T = 5;
+const apLv = k => (G.ap && G.ap.p && G.ap.p.id === k ? G.ap.p.lv : 0);
+/* 조정 3: 보스 초당 상한은 퇴마사가 이미 다 쓰므로, 견습은 따로 상한을 가진다 — 퇴마사 상한의 10%(Lv1) ~ 32%(Lv5·댕기5) */
+function apBossCapF() {
+  const A = G.ap;
+  if (!A) return 0;
+  return 0.1 * (1 + 0.25 * (A.w.lv - 1)) * (1 + 0.12 * apLv('daenggi')) * (1 + 0.05 * (A.tr || 0));
+}
+function apMaxHp() {
+  return Math.round(AP_HP * (1 + 0.2 * apLv('bokjumeoni')));
+}
+function apStart(kid) {
+  const P = G.P;
+  G.ap = {kid, w: {id: kid === 'boy' ? 'mokgeom' : 'saechong', lv: 1}, p: null, tr: 0, hp: 0, maxHp: AP_HP};
+  G.ap.x = P.x - 16;
+  G.ap.y = P.y + 4;
+  apStage();
+  refreshSlots();
+}
+/* 막이 바뀔 때: 체력 가득 · 기절 0번 · 숨음 풀림 */
+function apStage() {
+  const A = G.ap;
+  if (!A) return;
+  A.maxHp = apMaxHp();
+  A.hp = A.maxHp;
+  A.downs = 0;
+  A.down = false;
+  A.hidden = false;
+  A.rev = 0;
+  A.iT = 0;
+  A.cd = 0.5;
+  A.x = G.P.x - 16;
+  A.y = G.P.y + 4;
+}
+function apHit(d) {
+  const A = G.ap;
+  if (!A || A.hidden || A.down || A.iT > 0) return;
+  A.hp = Math.max(0, A.hp - d);
+  A.iT = 1.2; // 내구 조정 2: 0.6 → 1.2초
+  A.white = 0.1;
+  if (A.hp > 0) return;
+  A.downs++;
+  G.rs.apDowns = (G.rs.apDowns || 0) + 1;
+  A.rev = 0;
+  if (A.downs >= 3) {
+    A.hidden = true;
+    toast(_t('{n:을} 덤불 뒤에 숨겼다 · 다음 막에', {n: AP_KIDS[A.kid].n})); // 휴대폰 폭(검토 지적: big은 잘림)
+  } else {
+    A.down = true;
+    toast(_t('{n:이} 쓰러졌다 · 곁에서 5초', {n: AP_KIDS[A.kid].n}), 'red');
+  }
+}
+/* 견습 피해는 최근 20초의 초당 피해(보스 포함, G.rs.dmg 합의 증가)에 맞춘다 — 조정 2: 보스 제외(playerDps)로는 2부 피해 대부분인 보스전이 빠져 비중 0.3~2%. 조정 1 전에는 — 2부엔 퇴마사가 이미 다 커서 고정 수치로는 비중이 0.2%뿐이었음(조정 1).
+   한 번 피해 = 기준 초당 피해 × 재사용 × 무기 몫 k × Lv 배율(Lv1 8% → Lv5 16%) × 보패 */
+function apDmg(w) {
+  const d = AWD[w.id],
+    base = Math.max(apTotDps(), 40 * (1 + G.stage));
+  return base * d.cd * d.k * 0.08 * (1 + 0.25 * (w.lv - 1)) * (1 + 0.12 * apLv('daenggi')) * (1 + 0.05 * (G.ap.tr || 0)) * AP_K;
+}
+function apNearest(x, y, r) {
+  let best = null,
+    bd = r * r;
+  for (const e of G.enemies) {
+    if (e.dead || e.prop || e.inv) continue;
+    const d = (e.x - x) ** 2 + (e.y - y) ** 2;
+    if (d < bd) {
+      bd = d;
+      best = e;
+    }
+  }
+  return best;
+}
+/* 최근 20초 초당 피해(모든 출처, 견습 포함 — 몫 f<1이라 수렴) */
+function apTotDps() {
+  const A = G.ap;
+  return A && A.dbuf && A.dbuf.length ? A.dbuf.reduce((x, y) => x + y, 0) / A.dbuf.length : 0;
+}
+function apDpsTick(dt) {
+  const A = G.ap;
+  A.dT = (A.dT || 0) + dt;
+  if (A.dT < 1) return;
+  A.dT -= 1;
+  let tot = 0;
+  for (const k in G.rs.dmg || {}) tot += G.rs.dmg[k];
+  const b0 = A.dbuf || (A.dbuf = []);
+  if (A.dLast !== undefined) b0.push(Math.max(0, tot - A.dLast));
+  A.nbTot = (A.nbTot || 0) + ((G.dpsBuf || []).slice(-1)[0] || 0); // 보스 아닌 요괴에게 준 피해(모든 출처, 초마다)
+  A.dLast = tot;
+  if (b0.length > 20) b0.shift();
+}
+/* 무기 한 번 쓰기 — 맞히면 true */
+function apFire(A, tg) {
+  const w = A.w,
+    D = AWD[w.id],
+    area = 1 + 0.1 * apLv('bangul'),
+    dmg = apDmg(w),
+    a = Math.atan2(tg.y - A.y, tg.x - A.x);
+  HSRC = 'ap:' + w.id;
+  const hp0 = new Map();
+  for (const e of G.enemies) if (!e.boss) hp0.set(e, Math.max(0, e.hp));
+  try {
+    if (w.id === 'mokgeom') {
+      const R0 = D.r * area;
+      G.fx.push({t: 'slash', x: A.x, y: A.y - 4, a, r: R0, life: 0.16, max: 0.16, delay: 0, half: 1.0, col: '#e8d8b0'});
+      for (const e of near(A.x, A.y, R0, TMP2).slice()) {
+        let da = Math.atan2(e.y - A.y, e.x - A.x) - a;
+        da = Math.atan2(Math.sin(da), Math.cos(da));
+        if (Math.abs(da) < 1.1) hurt(e, dmg, 30, A.x, A.y, true);
+      }
+    } else if (w.id === 'dorikkae') {
+      const R0 = D.r * area;
+      G.fx.push({t: 'ring', x: A.x, y: A.y - 3, r: 4, maxR: R0, col: '#c8a070', life: 0.25, max: 0.25});
+      for (const e of near(A.x, A.y, R0, TMP2).slice()) hurt(e, dmg, 40, A.x, A.y, true);
+    } else if (w.id === 'jangdae') {
+      const L = D.r * area;
+      G.fx.push({t: 'beam', x: A.x, y: A.y - 4, a, len: L, w: 4, col: '#c8b080', life: 0.15, max: 0.15});
+      for (const e of G.enemies.slice())
+        if (!e.dead && segDist(e.x, e.y, A.x, A.y - 4, A.x + Math.cos(a) * L, A.y - 4 + Math.sin(a) * L) < e.r + 4)
+          hurt(e, dmg, 20, A.x, A.y, true);
+    } else if (w.id === 'saechong') {
+      G.fx.push({t: 'beam', x: A.x, y: A.y - 6, a, len: Math.hypot(tg.x - A.x, tg.y - A.y), w: 1, col: '#a09070', life: 0.08, max: 0.08});
+      hurt(tg, dmg, 15, A.x, A.y, true);
+    } else if (w.id === 'daehwal') {
+      const L = D.r * area,
+        ex = A.x + Math.cos(a) * L,
+        ey = A.y - 6 + Math.sin(a) * L;
+      G.fx.push({t: 'beam', x: A.x, y: A.y - 6, a, len: L, w: 1, col: '#e0d8b0', life: 0.1, max: 0.1});
+      const hit = G.enemies
+        .filter(e => !e.dead && !e.prop && segDist(e.x, e.y, A.x, A.y - 6, ex, ey) < e.r + 3)
+        .sort((p, q) => (p.x - A.x) ** 2 + (p.y - A.y) ** 2 - ((q.x - A.x) ** 2 + (q.y - A.y) ** 2))
+        .slice(0, 3);
+      if (tg.boss && !hit.includes(tg)) hit[Math.min(hit.length, 2)] = tg; // 보스를 노린 화살은 보스까지 닿음
+      for (const e of hit) hurt(e, dmg, 10, A.x, A.y, true);
+    } else if (w.id === 'mulchong') {
+      const L = D.r * area;
+      for (const da of [-0.25, 0, 0.25]) {
+        const aa = a + da,
+          ex = A.x + Math.cos(aa) * L,
+          ey = A.y - 5 + Math.sin(aa) * L;
+        G.fx.push({t: 'beam', x: A.x, y: A.y - 5, a: aa, len: L, w: 2, col: '#8fd3ff', life: 0.12, max: 0.12});
+        const e =
+          da === 0 && tg.boss
+            ? tg // 가운데 물줄기는 노린 보스에게
+            : G.enemies
+                .filter(e => !e.dead && !e.prop && segDist(e.x, e.y, A.x, A.y - 5, ex, ey) < e.r + 3)
+                .sort((p, q) => (p.x - A.x) ** 2 + (p.y - A.y) ** 2 - ((q.x - A.x) ** 2 + (q.y - A.y) ** 2))[0];
+        if (e) {
+          hurt(e, dmg, 5, A.x, A.y, true);
+          e.slow = Math.max(e.slow || 0, 1);
+        }
+      }
+    }
+  } finally {
+    HSRC = null;
+    for (const [e, h] of hp0) A.nbAp = (A.nbAp || 0) + Math.max(0, h - Math.max(0, e.hp)); // 보스 아닌 요괴에게 실제로 준 피해(비중 재기)
+  }
+  snd(AWD[w.id].kid === 'boy' ? 300 : 700, 0.03, 'triangle', 0.012);
+}
+/* 위험 피하기(사용자 결정): 보스 몸에서 떨어지고(소년 r+14 · 소녀 r+40), 곧 터질 경고 장판 밖으로 간 자리를 돌려준다 */
+function apSafe(A, tx, ty, boy) {
+  const P = G.P;
+  for (const bo of [G.boss, G.mid])
+    if (bo && !bo.dead) {
+      const keep = bo.r + (boy ? 14 : 40),
+        dx = tx - bo.x,
+        dy = ty - bo.y,
+        d = Math.hypot(dx, dy);
+      if (d < keep) {
+        const ux = d > 0.5 ? dx / d : Math.sign(P.x - bo.x) || 1,
+          uy = d > 0.5 ? dy / d : 0;
+        tx = bo.x + ux * keep;
+        ty = bo.y + uy * keep;
+      }
+    }
+  for (let it = 0; it < 2; it++)
+    for (const w of G.warns) {
+      if (w.friendly || !(w.dmg > 0) || w.kind === 'line') continue;
+      const R0 = w.r + 9,
+        dx = tx - w.x,
+        dy = ty - w.y,
+        d = Math.hypot(dx, dy);
+      if (d < R0) {
+        const ax = A.x - w.x,
+          ay = A.y - w.y,
+          ad = Math.hypot(ax, ay),
+          ux = d > 0.5 ? dx / d : ad > 0.5 ? ax / ad : 1,
+          uy = d > 0.5 ? dy / d : ad > 0.5 ? ay / ad : 0;
+        tx = w.x + ux * R0;
+        ty = w.y + uy * R0;
+      }
+    }
+  return [tx, ty];
+}
+/* 매 장면(update 안) */
+function apTick(dt) {
+  const A = G.ap;
+  if (!A) return;
+  const P = G.P;
+  A.iT = Math.max(0, (A.iT || 0) - dt);
+  A.white = Math.max(0, (A.white || 0) - dt);
+  A.ph = (A.ph || 0) + dt;
+  apDpsTick(dt);
+  if (A.hidden) {
+    A.x = P.x - 16;
+    A.y = P.y + 4;
+    return;
+  }
+  if (A.down) {
+    if ((P.x - A.x) ** 2 + (P.y - A.y) ** 2 < AP_REV_R * AP_REV_R) {
+      A.rev = Math.min(1, A.rev + dt / AP_REV_T);
+      if (A.rev >= 1) {
+        A.down = false;
+        A.rev = 0;
+        A.hp = A.maxHp * 0.5;
+        toast(_t('{n:이} 깨어났다', {n: AP_KIDS[A.kid].n}));
+        particle(A.x, A.y - 6, '#e0b048', 8, 40, 0.4);
+      }
+    }
+    return;
+  }
+  // 회복(복주머니)
+  const rg = apLv('bokjumeoni');
+  if (rg) A.hp = Math.min(A.maxHp, A.hp + rg * dt);
+  // 움직임: 소년은 퇴마사 70 안의 요괴에게 붙되 60을 넘지 않음 · 소녀는 곁에서
+  const boy = A.kid === 'boy';
+  const bo0 = [G.boss, G.mid].find(q => q && !q.dead && Math.hypot(q.x - P.x, q.y - P.y) < 90),
+    tg = (boy && bo0) || apNearest(P.x, P.y, boy ? 70 : AWD[A.w.id].r); // 소년은 보스가 가까우면 보스 곁(거리는 apSafe가 지킴)
+  let tx = P.x + (boy ? -16 : 18),
+    ty = P.y + 6;
+  if (boy && tg) {
+    const a = Math.atan2(A.y - tg.y, A.x - tg.x);
+    tx = tg.x + Math.cos(a) * 10;
+    ty = tg.y + Math.sin(a) * 10;
+    const dx = tx - P.x,
+      dy = ty - P.y,
+      d = Math.hypot(dx, dy);
+    if (d > 60) {
+      tx = P.x + (dx / d) * 60;
+      ty = P.y + (dy / d) * 60;
+    }
+  }
+  [tx, ty] = apSafe(A, tx, ty, boy);
+  const dx = tx - A.x,
+    dy = ty - A.y,
+    d = Math.hypot(dx, dy),
+    sp = Math.max(80, (P.spd || 60) * 1.2);
+  A.vx = d > 2 ? (dx / d) * sp : 0;
+  if (d > 2) {
+    const s = Math.min(d, sp * dt);
+    A.x += (dx / d) * s;
+    A.y += (dy / d) * s;
+  }
+  if (d > 160) {
+    A.x = tx;
+    A.y = ty;
+  } // 너무 떨어지면 곁으로
+  // 공격
+  A.cd -= dt * (1 + 0.08 * apLv('jipsin'));
+  if (A.cd <= 0) {
+    const rr = AWD[A.w.id].r * (1 + 0.1 * apLv('bangul')),
+      bo = [G.boss, G.mid].find(q => q && !q.dead && !q.inv && Math.hypot(q.x - A.x, q.y - A.y) < rr + q.r),
+      t2 = bo || apNearest(A.x, A.y, rr); // 보스전 조력자: 보스가 닿으면 보스부터
+    if (t2) {
+      A.face = t2.x > A.x ? 1 : -1;
+      apFire(A, t2);
+      A.cd = AWD[A.w.id].cd;
+      A.swing = 0.15;
+    } else A.cd = 0.1;
+  }
+  A.swing = Math.max(0, (A.swing || 0) - dt);
+  // 맞기: 요괴 몸·탄·장판·곧 터질 경고
+  const hitR = 5;
+  for (const e of G.enemies)
+    if (!e.dead && !e.prop && (e.x - A.x) ** 2 + (e.y - A.y) ** 2 < (e.r + hitR) ** 2) {
+      apHit(e.dmg * AP_TAKE * (boy ? 0.5 : 1)); // 내구 조정 3: 근접인 복돌은 몸 닿는 피해 절반(막당 기절 2.0 → 목표 1 안팎)
+      break;
+    }
+  for (const q of A.iT > 0 ? [] : G.ebul) // 무적 중엔 탄을 지우지 않음(검토 지적: 탄 방패가 됨)
+    if (q.life > 0 && (q.x - A.x) ** 2 + (q.y - A.y) ** 2 < ((q.r || 3) + hitR) ** 2) {
+      apHit(q.dmg * AP_TAKE);
+      q.life = 0;
+      break;
+    }
+  for (const z of G.ezones)
+    if (!z.slow && z.dmg > 0 && (z.x - A.x) ** 2 + (z.y - A.y) ** 2 < z.r * z.r) {
+      apHit(z.dmg * AP_TAKE);
+      break;
+    }
+  for (const w of G.warns)
+    if (!w.friendly && w.dmg > 0 && w.t <= dt && w.kind !== 'line' && (w.x - A.x) ** 2 + (w.y - A.y) ** 2 < (w.r + hitR) ** 2) {
+      apHit(w.dmg * AP_TAKE);
+      break;
+    }
+}
+/* 그리기(펫 다음) */
+function drawAp() {
+  const A = G.ap;
+  if (!A || A.hidden) return;
+  const pk = entK() * 0.8,
+    s = charSpr(AP_KIDS[A.kid].look);
+  shadow(A.x, A.y, 4 * pk);
+  if (A.down) {
+    b.save();
+    b.translate(R(A.x), R(A.y - 4));
+    b.rotate(Math.PI / 2);
+    drawSpr(s, 0, 0, false, false, pk);
+    b.restore();
+    for (let i = 0; i < 3; i++) {
+      const a = A.ph * 3 + (i * TAU) / 3;
+      b.fillStyle = '#ffd76a';
+      b.fillRect(R(A.x + Math.cos(a) * 6), R(A.y - 14 + Math.sin(a) * 2), 2, 2);
+    }
+    b.strokeStyle = 'rgba(224,176,72,0.35)';
+    b.lineWidth = 1;
+    b.beginPath();
+    b.arc(R(A.x), R(A.y), AP_REV_R, 0, TAU);
+    b.stroke();
+    b.strokeStyle = '#9af0b0';
+    b.lineWidth = 2;
+    b.beginPath();
+    b.arc(R(A.x), R(A.y), AP_REV_R, -Math.PI / 2, -Math.PI / 2 + TAU * A.rev);
+    b.stroke();
+    return;
+  }
+  const bob = Math.sin(A.ph * 10) > 0 ? -1 : 0;
+  drawSpr(s, A.x, A.y + bob, (A.face || 1) < 0, A.white > 0, pk);
+  // 머리 위 체력 막대
+  const w = 12,
+    x0 = R(A.x - w / 2),
+    y0 = R(A.y - 22);
+  b.fillStyle = 'rgba(0,0,0,0.6)';
+  b.fillRect(x0 - 1, y0 - 1, w + 2, 4);
+  b.fillStyle = A.hp / A.maxHp > 0.35 ? '#9af0b0' : '#ff8a6a';
+  b.fillRect(x0, y0, Math.round((w * A.hp) / A.maxHp), 2);
+}
+/* 칸 줄(왼쪽 위) 앞에 붙는 견습 칸 둘 */
+function apSlotsHTML() {
+  const A = G && G.ap;
+  if (!A) return '';
+  const K = AP_KIDS[A.kid],
+    W = AWD[A.w.id],
+    seal = (g, col) => `<span class="seal" style="background:${col}">${g}</span>`;
+  return (
+    `<div class="slot" title="${K.n} · ${W.n}">${seal(W.g, W.col)}<b>${A.w.lv}</b></div>` +
+    (A.p ? `<div class="slot" title="${K.n} · ${APD[A.p.id].n}">${seal(APD[A.p.id].g, APD[A.p.id].col)}<b>${A.p.lv}</b></div>` : '')
+  );
+}
+/* ---- 레벨업 카드: 견습이 있으면 두 칸 ---- */
+function apOpts(B) {
+  const A = G.ap,
+    l = [],
+    ok = id => !B.has('ap:' + id); // 봉인 id는 'ap:'를 붙임(퇴마사 짚신·방울과 따로)
+  if (!A) return l;
+  if (A.w.lv < 5 && ok(A.w.id)) l.push({k: 'apw', id: A.w.id, wt: 1.4});
+  for (const id in AWD) if (AWD[id].kid === A.kid && id !== A.w.id && ok(id)) l.push({k: 'apw', id, wt: 0.6});
+  if (!A.p) for (const id in APD) if (ok(id)) l.push({k: 'app', id, wt: 0.8});
+  if (A.p) {
+    if (A.p.lv < 5 && ok(A.p.id)) l.push({k: 'app', id: A.p.id, wt: 1.2});
+    for (const id in APD) if (id !== A.p.id && ok(id)) l.push({k: 'app', id, wt: 0.3});
+  }
+  if (A.w.lv >= 5 && (!A.p || A.p.lv >= 5)) l.push({k: 'aptr', id: 'aptr', wt: 1});
+  return l;
+}
+function apPick2(B) {
+  const pool = apOpts(B),
+    out = [];
+  while (out.length < 2 && pool.length) {
+    const tot = pool.reduce((s, o) => s + o.wt, 0);
+    let r = rand() * tot,
+      i = 0;
+    for (; i < pool.length - 1; i++) {
+      r -= pool[i].wt;
+      if (r <= 0) break;
+    }
+    out.push(pool.splice(i, 1)[0]);
+  }
+  if (out.length < 2 && !out.some(o => o.k === 'aptr')) out.push({k: 'aptr', id: 'aptr', wt: 1}); // 단련은 한 장만
+  return out;
+}
+function apDecorate(o) {
+  const A = G.ap,
+    K = AP_KIDS[A.kid],
+    seal = (g, col) => `<span class="seal" style="background:${col}">${g}</span>`;
+  if (o.k === 'aptr')
+    return {...o, ic: seal(K.g, K.col), name: _t('{n} 단련', {n: K.n}), desc: _t('견습의 피해 +5%. 끝없이 쌓을 수 있다.'), badge: _t('견습 · 단련 {p}', {p: (A.tr || 0) + 1}), bc: 'ap'};
+  if (o.k === 'apw') {
+    const D = AWD[o.id],
+      same = A.w.id === o.id;
+    return {
+      ...o,
+      ic: seal(D.g, D.col),
+      name: same ? _t('{n}의 {w}', {n: K.n, w: D.n}) : _t('{n}에게 {w}', {n: K.n, w: D.n}),
+      desc: D.d,
+      badge: same ? _t('견습 · LV {a} → {b}', {a: A.w.lv, b: A.w.lv + 1}) : _t('견습 · 바꾸기 LV {a}', {a: Math.max(1, A.w.lv - 1)}),
+      bc: 'ap'
+    };
+  }
+  const D = APD[o.id],
+    same = A.p && A.p.id === o.id;
+  return {
+    ...o,
+    ic: seal(D.g, D.col),
+    name: _t('{n}에게 {p}', {n: K.n, p: D.n}),
+    desc: D.d,
+    badge: same ? _t('견습 · LV {a} → {b}', {a: A.p.lv, b: A.p.lv + 1}) : A.p ? _t('견습 · 바꾸기 LV {a}', {a: Math.max(1, A.p.lv - 1)}) : _t('견습 · 새 보패'),
+    bc: 'ap'
+  };
+}
+function apApply(o) {
+  const A = G.ap;
+  if (!A) return;
+  if (o.k === 'aptr') A.tr = (A.tr || 0) + 1;
+  else if (o.k === 'apw') {
+    if (A.w.id === o.id) A.w.lv = Math.min(5, A.w.lv + 1);
+    else A.w = {id: o.id, lv: Math.max(1, A.w.lv - 1)};
+  } else if (o.k === 'app') {
+    if (A.p && A.p.id === o.id) A.p.lv = Math.min(5, A.p.lv + 1);
+    else A.p = {id: o.id, lv: A.p ? Math.max(1, A.p.lv - 1) : 1};
+    const m = apMaxHp();
+    A.hp = Math.min(m, A.hp + Math.max(0, m - A.maxHp));
+    A.maxHp = m;
+  }
+  refreshSlots();
+}
+/* ---- 등장: 북으로 간 뒤(처음엔 장면 2쪽) 고르기 ---- */
+ENDING.apprentice = [
+  // v22.1 번역 표(ENDING)에 함께 둠
+  {
+    eye: '견습 1/2',
+    title: '길 어귀의 아이들',
+    art: null, // apIntro가 그 판 퇴마사로 채움
+    t: '북으로 떠나려는 새벽, 길 어귀에 아이 둘이 서 있었다. 장터에서 지게를 지던 복돌이와 나루터 주막집 딸 연이. 지난밤 요괴에게서 마을을 지켜 준 퇴마사를 기억하고 있었다.'
+  },
+  {
+    eye: '견습 2/2',
+    title: '저도 데려가 주세요',
+    art: 'prop:scroll',
+    t: '「심부름이라도 하겠어요. 위험하면 숨으라는 말도 꼭 들을게요.」 퇴마사는 한 아이에게만 고개를 끄덕였다. 압록강까지의 길에 견습 하나가 함께한다.'
+  }
+];
+function apIntro(done) {
+  const pick = () =>
+    openPick('APPRENTICE', _t('견습 고르기'), _t('압록강까지 함께 갈 견습을 고른다. 견습은 레벨업 때 무기 하나·보패 하나를 키운다.'), [
+      {
+        ic: `<span class="seal" style="background:${AP_KIDS.boy.col}">${AP_KIDS.boy.g}</span>`,
+        badge: _t('근접'),
+        bc: 'ap',
+        name: AP_KIDS.boy.n,
+        desc: AP_KIDS.boy.d,
+        f: () => {
+          apStart('boy');
+          meta.ap.seen = true;
+          saveMeta();
+          show(null);
+          done();
+        }
+      },
+      {
+        ic: `<span class="seal" style="background:${AP_KIDS.girl.col}">${AP_KIDS.girl.g}</span>`,
+        badge: _t('원거리'),
+        bc: 'ap',
+        name: AP_KIDS.girl.n,
+        desc: AP_KIDS.girl.d,
+        f: () => {
+          apStart('girl');
+          meta.ap.seen = true;
+          saveMeta();
+          show(null);
+          done();
+        }
+      }
+    ]);
+  if (!meta.ap.seen) openScene(ENDING.apprentice.map((p, i) => (i ? p : {...p, art: 'ch:' + G.cid})), pick);
+  else pick();
+}
 /* ======================= v12: 담금질 · 도깨비 샛길 · 막 의뢰 · 연격 · 본부 · 정표 · 기록관 ======================= */
 /* ---- 피해 출처 기록 (기록관용) ---- */
 function tagNew(f0, m0, src) {
@@ -18624,7 +19157,8 @@ function genOptions() {
   pool.push(...growOpts(B));
   if (G.P.lvl >= 50 || !pool.length)
     for (const w of G.weapons) if (wFull(w) && !B.has(w.id)) pool.push({k: 'lb', id: w.id, wt: 0.8}); // v20.6 다 키운 뒤에만
-  const n = (G.P.luck ? 4 : 3) + G.mods.choice,
+  const apC = G.ap ? apPick2(B) : [], // v22.1 견습 카드 두 칸(퇴마사 칸은 하나 줄임)
+    n = (G.P.luck ? 4 : 3) + G.mods.choice - (apC.length ? 1 : 0),
     picks = [];
   while (picks.length < n && pool.length) {
     const tot = pool.reduce((s, o) => s + o.wt, 0);
@@ -18636,8 +19170,8 @@ function genOptions() {
     }
     picks.push(pool.splice(i, 1)[0]);
   }
-  if (!picks.length) return [{k: 'heal'}, {k: 'cash'}].map(decorate);
-  return picks.map(decorate);
+  if (!picks.length && !apC.length) return [{k: 'heal'}, {k: 'cash'}].map(decorate);
+  return [...picks, ...apC].map(decorate);
 }
 /* v18.6.2 가진 무기·기술의 아이콘 칸: 단계 그림이 있는 무기(방패)만 단계 그림, 직업 기술·다른 무기는 예전 iconHTML(직업 기술은 도장) */
 function wIconHTML(w) {
@@ -18718,6 +19252,7 @@ function evoHTML(o) {
   });
 }
 function decorate(o) {
+  if (/^ap/.test(o.k)) return apDecorate(o); // v22.1 견습 카드
   if (o.k === 'heal')
     return {
       ...o,
@@ -18801,6 +19336,7 @@ function decorate(o) {
   };
 }
 function applyOpt(o) {
+  if (/^ap/.test(o.k)) return apApply(o); // v22.1 견습 카드
   if (o.k === 'heal') heal(50);
   else if (o.k === 'cash') G.coins += 25;
   else if (o.k === 'wnew') addWeapon(o.id);
@@ -18935,10 +19471,13 @@ function pickOpt(i) {
   if (banMode) {
     if (!o.id || G.bn <= 0) return;
     G.bn--;
-    G.banned.add(o.id);
+    const isAp = /^ap/.test(o.k); // v22.1 견습 카드는 견습 카드로 바꿔 둘을 지킴 · 봉인 id는 'ap:'를 붙여 퇴마사 것과 따로
+    G.banned.add(isAp ? 'ap:' + o.id : o.id);
     snd(200, 0.2, 'sawtooth', 0.04);
-    const fresh = genOptions().filter(x => !curOpts.some(c => c.id === x.id && c.k === x.k));
-    curOpts[i] = fresh[0] || decorate({k: 'cash'});
+    const fresh = (isAp ? apOpts(G.banned).map(decorate) : genOptions().filter(x => !/^ap/.test(x.k))).filter(
+      x => !curOpts.some(c => c.id === x.id && c.k === x.k)
+    );
+    curOpts[i] = fresh[0] || decorate(isAp && !curOpts.some(c => c.k === 'aptr') ? {k: 'aptr', id: 'aptr'} : {k: 'cash'});
     banMode = false;
     renderLevel();
     return;
@@ -19442,6 +19981,7 @@ function renderTavern() {
 }
 function nextStage() {
   G.gfx = [];
+  apStage(); // v22.1 견습: 체력 가득 · 기절 0번 · 숨음 풀림
   if (G.P) G.P.clingT = 0;
   G.eclipse = 0;
   G.eclOwner = null;
@@ -19505,6 +20045,7 @@ function statHTML() {
 }
 function buildHTML() {
   return (
+    apSlotsHTML() + // v22.1 견습 칸
     (G.pet
       ? `<div class="slot pet" title="${PETS[G.pet.type].n}"><img src="${big(PSPR[G.pet.type].n, 2)}" alt="${PETS[G.pet.type].n}"><b>${G.pet.lv}</b></div>`
       : '') +
@@ -21662,6 +22203,9 @@ function detectLang() {
 }
 const L10N_TABLES = () => ({
   WD,
+  AP_KIDS, // v22.1 견습
+  AWD,
+  APD,
   TASKS,
   CHARS,
   EN,
@@ -24180,6 +24724,7 @@ function render() {
   for (const s of G.spirits) drawSpirit(s);
   for (const m of G.movers) drawShip(m);
   drawPet();
+  drawAp(); // v22.1 견습
   drawJW();
   drawSky();
   const hk = entK();
