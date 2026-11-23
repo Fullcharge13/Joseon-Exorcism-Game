@@ -1,7 +1,7 @@
 // v19.4~v19.5: 도감 68 · 새 엘리트 열 종 설명에 출처와 「게임 속 각색」 · 도감 화면에 실림 · 「도감 완성」 목표 68(이미 이룬 저장 그대로) · 「요괴 사냥꾼」 과업
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
 const NEW=['gaekgwi','juktong','beomnam','gomnaru','gildal','yeogwi','heukryong','keunmegi','samdugumi','hwama'];
-ok(DOGAM_IDS.length===68,'도감 68종: '+DOGAM_IDS.length);
+ok(DOGAM_IDS.length===95,'도감 95종(v22.0 2부 27종 더함): '+DOGAM_IDS.length);
 for(const id of NEW){const e=EN[id];ok(e&&DOGAM_IDS.includes(id),id+' 도감에 있음');
  ok(e&&/출처: /.test(e.d)&&/게임 속 각색/.test(e.d),id+' 설명에 출처·각색: '+(e&&e.d));
  ok(e&&e.c==='e'&&STAGES[e.st-1].elite2===id,id+' 엘리트 · 막 번호 맞음');}

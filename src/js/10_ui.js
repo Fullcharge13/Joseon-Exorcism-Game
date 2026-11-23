@@ -1176,9 +1176,14 @@ function tavPrice(it) {
 }
 function openTavern() {
   const s = curStg();
-  if (G.stage >= STAGES.length - 1) {
-    if (G.mode === 'normal' && endingPages(G.cid).length) openEnding(openEndless);
-    else openEndless();
+  if (G.stage >= stageEnd()) {
+    // v22.0: 10막(아직 북으로 안 감) → 본편 결말 → 판의금부사 전갈 / 15막 → 2부 결말 → 끝없는 밤
+    const at1 = G.stage === ACT1_END && G.mode === 'normal' && !G.loop; // 1부 끝없는 밤 2바퀴째부터는 전갈 없이(검토 지적)
+    const next = at1 ? openNorth : openEndless;
+    if (G.mode === 'normal' && at1 && endingPages(G.cid).length) openEnding(next);
+    else if (G.mode === 'normal' && !at1 && typeof northEndingPages === 'function' && northEndingPages().length)
+      openNorthEnding(next);
+    else next();
     return;
   }
   G.tavBuy = {};
@@ -1305,7 +1310,7 @@ function nextStage() {
 function statHTML() {
   const P = G.P;
   return [
-    [G.mode === 'rush' ? _t('원정') : _t('막'), G.mode === 'rush' ? `${G.stage + 1} / ${STAGES.length}` : stageLabel()],
+    [G.mode === 'rush' ? _t('원정') : _t('막'), G.mode === 'rush' ? `${G.stage + 1} / ${ACT1_END + 1}` : stageLabel()],
     [_t('버틴 시간'), fmtT(totalTime())],
     [_t('레벨'), P.lvl],
     [_t('처치'), G.kills],
@@ -1360,15 +1365,15 @@ function buildHTML() {
 }
 function totalTime() {
   if (G.mode === 'tale') return G.time - G.tale.t0;
-  return (G.loop * STAGES.length + G.stage) * STAGE_T + Math.min(G.st, STAGE_T);
+  return (G.loop * (stageEnd() + 1) + G.stage) * STAGE_T + Math.min(G.st, STAGE_T);
 }
 function endGame(win) {
   if (G.over) return;
   G.over = true;
   G.P.iframe = 0;
   if (win && G.mode === 'normal') recordClear();
-  if (win && G.mode === 'rush') meta.stats.rushBest = Math.max(meta.stats.rushBest || 0, STAGES.length);
-  const cleared = win || G.loop > 0;
+  if (win && G.mode === 'rush') meta.stats.rushBest = Math.max(meta.stats.rushBest || 0, ACT1_END + 1);
+  const cleared = win || G.loop > 0 || !!G.north; // v22.0 북으로 간 판은 10막 평정이 이미 인정됨(검토 지적)
   mergeRun();
   const earned = runEarned(cleared);
   meta.coins += earned;
@@ -1425,11 +1430,13 @@ function endGame(win) {
     setTimeout(() => show('over'), win ? 200 : 700);
     return;
   }
-  $('#overEye').textContent = win ? 'VICTORY' : G.loop ? 'ENDLESS NIGHT' : 'GAME OVER';
+  $('#overEye').textContent = win ? 'VICTORY' : G.loop ? 'ENDLESS NIGHT' : G.north ? 'NORTHERN ROAD' : 'GAME OVER';
   $('#overTitle').textContent = win
     ? G.loop
       ? _t('끝없는 밤 {p}바퀴 끝에 새벽을 맞았다', {p: G.loop + 1})
-      : _t('그슨대를 걷어 내고 새벽을 맞았다')
+      : G.north && G.stage >= ACT2_END
+        ? _t('촉음을 잠재우고 압록강에서 새벽을 맞았다')
+        : _t('그슨대를 걷어 내고 새벽을 맞았다')
     : G.loop
       ? _t('끝없는 밤 {p}바퀴 · {name}에서 쓰러졌다', {p: G.loop + 1, name: curStg().name})
       : _t('{name}에서 쓰러졌다', {name: curStg().name});
@@ -1533,7 +1540,7 @@ function renderTitle() {
   diffChips($('#titleDiffChips'), $('#titleDiffDesc'), renderTitle);
   const bst = meta.best
     ? _t(' · 최고 기록 {sub}{p}, 처치 {kills}', {
-        sub: STAGES[Math.min(meta.best.stage, 9)].sub,
+        sub: STAGES[Math.min(meta.best.stage, STAGES.length - 1)].sub,
         p: meta.best.win ? _t(' 완주') : '',
         kills: meta.best.kills
       })
@@ -1570,7 +1577,7 @@ function diffChips(box, desc, after) {
   desc.textContent = DIFFS[prep.diff].d;
 }
 const MODES = {
-  normal: {n: '출정', d: '열 개의 막을 차례로 버티며 평정한다. 제10막 뒤에는 끝없는 밤으로 이어 갈 수 있다.'},
+  normal: {n: '출정', d: '열 개의 막을 차례로 버티며 평정한다. 제10막 뒤에는 판의금부사의 전갈을 받아 압록강까지 다섯 막을 더 가거나, 끝없는 밤으로 이어 갈 수 있다.'},
   tale: {
     n: '설화 출정',
     d: '옛이야기 한 편을 세 막으로 따라간다. 퇴마사와 시작 힘이 정해져 있고, 막마다 이야기의 규칙이 붙는다. 끝내면 옷 빛깔과 결말 글을 얻고, 다시 하면 가장 빠른 완주에 도전한다.'
@@ -2373,7 +2380,7 @@ function renderHelp() {
       r(
         I.boss,
         _t(
-          '막은 모두 10개. 막마다 {p}분을 버틴다. {MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.',
+          '막은 모두 10개(2부를 고르면 15개). 막마다 {p}분을 버틴다. {MID_T}초가 되면 <b>중간 보스</b>가 나온다. 중간 보스를 토벌해야 <b>막 보스</b>가 나타난다. 시간이 다 되어도 중간 보스가 살아 있으면 막 보스는 기다린다.',
           {p: STAGE_T / 60, MID_T: MID_T}
         )
       ) +
@@ -2864,7 +2871,7 @@ function renderHelp() {
     h += hcard(
       _t('끝없는 밤'),
       _t(
-        '<p>제10막을 평정하면 출정을 마치거나 <b>끝없는 밤</b>으로 이어 갈 수 있다. 이어 가면 제1막부터 다시 돌며, 바퀴마다 요괴 체력 ×1.9·받는 피해 ×1.3·엽전 +25%가 겹쳐 쌓인다. 쓰러져도 평정은 이미 인정되고, 바퀴마다 엽전 150닢이 더해진다. 결과 화면과 퇴마록에 가장 멀리 간 바퀴가 남는다.</p>'
+        '<p>제10막을 평정하면 판의금부사의 전갈이 온다. <b>북으로</b> 가면 제11막부터 제15막 압록강까지 다섯 막을 더 치르고, 출정을 마치거나 <b>끝없는 밤</b>으로 이어 갈 수도 있다. 제15막을 평정한 뒤에도 끝없는 밤을 고를 수 있다. 이어 가면 제1막부터 다시 돌며(2부를 거친 판은 제15막까지), 바퀴마다 요괴 체력 ×1.9·받는 피해 ×1.3·엽전 +25%가 겹쳐 쌓인다. 쓰러져도 평정은 이미 인정되고, 바퀴마다 엽전 150닢이 더해진다. 결과 화면과 퇴마록에 가장 멀리 간 바퀴가 남는다.</p>'
       )
     );
     h += hcard(

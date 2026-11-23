@@ -1,6 +1,6 @@
 """배경음 파일 검사 (v21.0 · 브라우저 없이 · tools/bgm.py가 만든 audio/bgm/ 을 봄)
 사용: python3 tests/browser/bgm_tool.py
- 1) bgm.json에 s01~s10 · b01~b10 · hub 21곡, 파일이 있고 이름의 지문 = 내용 앞 6자리(sha1)
+ 1) bgm.json에 s01~s15 · b01~b15 · hub 31곡(v22.0), 파일이 있고 이름의 지문 = 내용 앞 6자리(sha1)
  2) 곡 길이 = 장단 한 바퀴의 정수배(도구가 적은 bar·bars) · 40~60초
  3) 모노 · mp3
  4) 주변 소리 차이: 막 곡·보스 판은 음악보다 15±1dB 아래(도구가 잰 값) · 본부 곡은 주변 소리 없음
@@ -20,8 +20,8 @@ ok(J.exists(), 'audio/bgm/bgm.json 있음')
 if J.exists():
     M = json.loads(J.read_text(encoding='utf-8'))
     T = M.get('tracks', {})
-    want = [f's{i:02d}' for i in range(1, 11)] + [f'b{i:02d}' for i in range(1, 11)] + ['hub']
-    ok(sorted(T) == sorted(want), f'21곡 ({len(T)}): {sorted(set(want) ^ set(T))}')
+    want = [f's{i:02d}' for i in range(1, 16)] + [f'b{i:02d}' for i in range(1, 16)] + ['hub']
+    ok(sorted(T) == sorted(want), f'31곡 ({len(T)}): {sorted(set(want) ^ set(T))}')
     for k in want:
         t = T.get(k)
         if not t:
@@ -40,9 +40,10 @@ if J.exists():
         else:
             ok(t.get('ambDiff') is not None and abs(t['ambDiff'] - 15) <= 1, f'{k}: 주변 소리 차이 {t.get("ambDiff")}dB')
         ok(t.get('seam') is not None and t['seam'] <= t['p999'], f'{k}: 이음새 {t.get("seam")} ≤ 곡 안 99.9% {t.get("p999")}')
-    s = [T[f's{i:02d}']['bpm'] for i in range(1, 11) if f's{i:02d}' in T]
-    ok(all(a <= b for a, b in zip(s, s[1:])), f'막 곡 빠르기가 줄지 않음 {s}')
-    for i in range(1, 11):
+    for lo, hi in ((1, 11), (11, 16)):  # v22.0 1부·2부 따로(2부는 새 길이라 한 번 늦췄다가 다시 빨라짐)
+        s = [T[f's{i:02d}']['bpm'] for i in range(lo, hi) if f's{i:02d}' in T]
+        ok(all(a <= b for a, b in zip(s, s[1:])), f'막 곡 빠르기가 줄지 않음 {s}')
+    for i in range(1, 16):
         a, b = T.get(f's{i:02d}'), T.get(f'b{i:02d}')
         if a and b:
             ok(abs(b['bpm'] - a['bpm'] * 1.15) < 0.5, f'{i}막 보스 판 빠르기 {b["bpm"]} = {a["bpm"]}×1.15')
@@ -73,4 +74,4 @@ if J.exists():
 
 if fails:
     print('FAIL bgm_tool\n  ' + '\n  '.join(fails)); sys.exit(1)
-print('PASS bgm_tool (21곡 · 지문 · 길이 · 모노 · 주변 소리 15dB · 이음새 · 빠르기)')
+print('PASS bgm_tool (31곡 · 지문 · 길이 · 모노 · 주변 소리 15dB · 이음새 · 빠르기)')

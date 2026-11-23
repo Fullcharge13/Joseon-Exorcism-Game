@@ -392,6 +392,11 @@ function taleNorm() {
   const E = (meta.ending = plainObj(meta.ending));
   E.seen = !!E.seen;
   E.epi = Array.isArray(E.epi) ? E.epi.filter(c => CHARS[c]) : [];
+  // v22.0 2부: 전갈을 본 적 · 15막 평정 횟수 · 2부 결말을 본 적
+  const N = (meta.north = plainObj(meta.north));
+  N.seen = !!N.seen;
+  N.clear = Math.max(0, N.clear | 0);
+  N.ending = !!N.ending;
 }
 const SAVE_KEY = 'joseon-toema-v1',
   SAVE_BAK = SAVE_KEY + '-bak',
@@ -612,7 +617,7 @@ function saveImportUndo() {
 /* ======================= 멈춤 기록 (v17.3) =======================
    휴대폰에서 「멈췄다」는 신고를 확인하려고, 멈춤 징후와 오류를 이 기기에만 적어 둔다(바깥으로 보내지 않음).
    게임 저장과 다른 칸에 최근 20건. 같은 종류·문구는 한 판에 한 번. 설정 → 오류 기록에서 복사·지우기. */
-const GAME_VER = 'v21.2.3',
+const GAME_VER = 'v22.0',
   DIAG_KEY = 'joseon-toema-diag',
   DIAG_MAX = 20;
 let DIAG = {log: [], hb: null};

@@ -136,6 +136,29 @@ function drawOb(k, x, y, r) {
         b.fillRect(x - rr, y, rr * 2, 1);
       }
       break;
+    case 'rampart': // v22.0 14막 성가퀴
+      b.fillStyle = '#4a4a54';
+      b.fillRect(x - rr, y - rr * 1.4, rr * 2, rr * 1.4);
+      b.fillStyle = '#5e5e6a';
+      for (let i = -rr; i < rr; i += 6) b.fillRect(x + i, y - rr * 1.4 - 3, 4, 3);
+      b.fillStyle = '#34343c';
+      for (let j = 4; j < rr * 1.4; j += 5) b.fillRect(x - rr, y - j, rr * 2, 1);
+      b.fillStyle = '#1a1418';
+      b.fillRect(x - 1, y - rr * 0.9, 2, 3);
+      break;
+    case 'ice': // v22.0 15막 압록강 얼음덩이
+      b.fillStyle = '#9ab4cc';
+      b.beginPath();
+      b.moveTo(x - rr, y);
+      b.lineTo(x - rr * 0.4, y - rr * 1.2);
+      b.lineTo(x + rr * 0.6, y - rr);
+      b.lineTo(x + rr, y);
+      b.fill();
+      b.fillStyle = '#d8e8f4';
+      b.fillRect(x - rr * 0.4, y - rr * 1.1, 2, rr * 0.8);
+      b.fillStyle = '#6a8aa8';
+      b.fillRect(x - rr, y, rr * 2, 1);
+      break;
     case 'reed':
       b.fillStyle = '#3a4a48';
       b.beginPath();
@@ -2075,7 +2098,7 @@ function hud() {
   $('#clock').textContent = G.boss
     ? 'BOSS'
     : G.mode === 'rush'
-      ? _t('원정 {p}/{length}', {p: G.stage + 1, length: STAGES.length})
+      ? _t('원정 {p}/{length}', {p: G.stage + 1, length: ACT1_END + 1})
       : G.mode === 'tale'
         ? taleClock()
         : G.st >= STAGE_T && G.mid

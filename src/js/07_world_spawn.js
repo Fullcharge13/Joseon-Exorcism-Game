@@ -423,8 +423,8 @@ function spawnEnemy(id, x, y, opt = {}) {
     y,
     hp: base.hp * hpm,
     maxHp: base.hp * hpm,
-    spd: (base.spd || 24) * rnd(0.9, 1.1) * (1 + s * 0.05) * G.mods.eSpd,
-    dmg: (base.dmg || 12) * (1 + s * 0.3),
+    spd: (base.spd || 24) * rnd(0.9, 1.1) * (1 + Math.min(s, ACT1_END + 1) * 0.05) * G.mods.eSpd, // v22.0 2부(11막~)는 빠르기를 더 올리지 않음
+    dmg: (base.dmg || 12) * (1 + Math.min(s, ACT1_END) * 0.3 + Math.max(0, s - ACT1_END) * 0.15), // v22.0 2부는 피해 오름폭 절반
     r: base.r || 5,
     xp: Math.ceil((base.xp || 3) * (1 + s * 0.3)),
     heavy: d.heavy,
@@ -523,7 +523,8 @@ const BORROW = [
   'shoeSteal',
   'charm'
 ];
-const bdmg = () => (14 + G.stage * 6) * G.mods.eBul;
+const act2S = (k, s = G.stage) => Math.min(s, ACT1_END) * k + Math.max(0, s - ACT1_END) * k * 0.5; // v22.0 2부(11막~)는 막마다 오름폭 절반
+const bdmg = () => (14 + act2S(6)) * G.mods.eBul;
 function ebul(x, y, a, sp, extra) {
   G.ebul.push(
     Object.assign(
@@ -535,7 +536,7 @@ function ebul(x, y, a, sp, extra) {
         vy: Math.sin(a) * sp * G.mods.eBul,
         r: 3,
         life: 5,
-        dmg: (8 + G.stage * 3.5) * G.mods.eBul
+        dmg: (8 + act2S(3.5)) * G.mods.eBul
       },
       extra || {}
     )
@@ -1614,7 +1615,7 @@ function bossDown(e) {
   G.boss = null;
   G.bossDone = true;
   $('#bossbar').hidden = true;
-  if (G.mode === 'normal' && (G.stage === 4 || G.stage === 9)) {
+  if (G.mode === 'normal' && (G.stage === 4 || G.stage === 9 || G.stage === 14)) {
     G.rs.mak = (G.rs.mak || 0) + 1;
     setTimeout(() => toast(_t('마을에서 막걸리 한 병을 보내왔다')), 900);
   }
@@ -1880,9 +1881,14 @@ function update(dt) {
   if (G.eclipse > 0) G.eclipse = Math.max(0, G.eclipse - dt); // v19.5 흑룡의 어둠(얼어도 시간은 흐름)
   for (const z of G.ezones) {
     z.life -= dt;
-    if ((P.x - z.x) ** 2 + (P.y - z.y) ** 2 < z.r * z.r && P.iframe <= 0)
-      damageFrom(z.owner && z.owner.elite ? z.owner.kind : null, z.dmg);
+    const inZ = (P.x - z.x) ** 2 + (P.y - z.y) ** 2 < z.r * z.r;
+    if (z.slow) {
+      if (inZ) P.slowT = Math.max(P.slowT || 0, 0.2); // v22.0 물웅덩이: 피해 없이 느려짐만
+      continue;
+    }
+    if (inZ && P.iframe <= 0) damageFrom(z.owner && z.owner.elite ? z.owner.kind : null, z.dmg);
   }
+  act2Tick(dt); // v22.0 주염의 북돋움 풀기
   G.ezones = G.ezones.filter(z => z.life > 0);
   for (const w of G.warns) {
     w.t -= dt;
@@ -2698,6 +2704,7 @@ function artSpr(a) {
   if (k === 'en') return ESPR[v] ? ESPR[v].n : null;
   if (k === 'ch') return CHARS[v] ? charSpr(CHARS[v].look).n : null;
   if (k === 'prop') return PROP[v] || null;
+  if (k === 'npc') return NPC_LOOK[v] ? charSpr(NPC_LOOK[v]).n : null; // v22.0 판의금부사
   return null;
 }
 /* 이야기 장면 창: openScene(쪽 배열, 다 읽은 뒤 할 일) */
@@ -2856,7 +2863,7 @@ function petJump(pt, x, y) {
   pt.hold = 0.4;
   particle(x, y - 4, PETS[pt.type].col, 6, 40, 0.35);
 }
-const petStageF = s => 1 + 0.18 * s - 0.008 * s * s;
+const petStageF = s => ((s = Math.min(s, 11)), 1 + 0.18 * s - 0.008 * s * s); // v22.0 11막 넘어 줄지 않게 묶음
 const pdmg = (pt, b) => b * (1 + 0.3 * (pt.lv - 1)) * petStageF(G.stage) * G.P.might;
 const prng = (pt, r) => r * (1 + 0.07 * (pt.lv - 1));
 const PETSK = {

@@ -87,8 +87,49 @@ const STAGE_VFX = [
     weather: 'none',
     ground: {k: 'bakseok', c: ['#3e2e32', '#2a1e22']},
     grass: null
-  }
-]; // 10 근정전 앞뜰 · 보스 뒤 새벽(박석)
+  }, // 10 근정전 앞뜰 · 보스 뒤 새벽(박석)
+  {
+    night: 0.36,
+    tint: '#1e1610',
+    lamp: 'torch',
+    weather: 'dust',
+    ground: {k: 'gravel', c: ['#403a2e', '#625a48', '#26221c']},
+    grass: ['#46482a', '#626238', '#807e48']
+  }, // 11 홍제원 고개 · 한양 서쪽 관문 · 흙바람
+  {
+    night: 0.44,
+    tint: '#0c1620',
+    lamp: 'boat',
+    weather: 'mist',
+    ground: {k: 'puddle', c: ['#0e161e', '#6a9ab0', '#18242e']},
+    grass: ['#2a3a3a', '#3e565a', '#5e7e7e']
+  }, // 12 임진나루 · 강 안개
+  {
+    night: 0.5,
+    tint: '#16121c',
+    lamp: 'seokdeung',
+    weather: 'ash',
+    ground: {k: 'crack', c: ['#1e1c24', '#3c3a46']},
+    grass: null
+  }, // 13 송악 아래 개성 · 옛 도읍 · 재
+  {
+    night: 0.52,
+    tint: '#0e121c',
+    lamp: 'torch',
+    weather: 'spray',
+    ground: {k: 'bakseok', c: ['#34343e', '#24242c']},
+    grass: null
+  }, // 14 대동강 평양성 · 성안 돌바닥 · 강 물보라
+  {
+    night: 0.5,
+    tint: '#0e1628',
+    lamp: 'snow',
+    dawn: true,
+    weather: 'snow',
+    ground: {k: 'drift', c: ['#8a96aa', '#aab4c8']},
+    grass: null
+  } // 15 의주 압록강 · 언 강 · 촉음 뒤 새벽
+];
 // v18.3 날씨(보기만): n=입자 수(켬) · c=색 · vx,vy=흐름(px/초) · sw=흔들림 · w,h=입자 크기 · a=불투명도 · fog=[색,덩어리 수,불투명도] · sky=위쪽 빛
 const VFX_WX = {
   none: {n: 0},

@@ -1,6 +1,6 @@
 /* v21.0 배경음 — 미리 만든 국악풍 곡(audio/bgm/*.mp3, tools/bgm.py)을 상황에 맞게 반복 재생
    「지금 들려야 할 곡」 bgmWanted(상태) → {id, gain} 하나로 정하고, 1초에 네 번 보아 바뀌면 2초 동안 겹쳐 넘어감.
-   곡: s01~s10 막 곡 · b01~b10 같은 막의 보스 판(빠르고 세게) · hub 판 밖(시작 화면·본부) */
+   곡: s01~s15 막 곡 · b01~b15 같은 막의 보스 판(빠르고 세게) · hub 판 밖(시작 화면·본부). s11~s15·b11~b15는 v22.0 2부 */
 
 /* 상황 → 곡과 크기(0~1). st = {G, modal, vol(설정 0~100), muted}
    - 판 밖(G 없음): hub · 판 안: 그 막(끝없는 밤은 10으로 돌림), 막 보스가 있으면 보스 판(중간 보스는 막 곡)
@@ -13,7 +13,7 @@ function bgmWanted(st) {
   if (g) {
     // 설화 출정은 화면의 막(G.tale.st)을 따름 — G.stage는 세기용(eq)이라 다른 막일 수 있음
     const sn = g.mode === 'tale' && g.tale && g.tale.st != null ? g.tale.st : g.stage,
-      n = (((Math.max(0, sn | 0) % 10) + 10) % 10) + 1,
+      n = (((Math.max(0, sn | 0) % STAGES.length) + STAGES.length) % STAGES.length) + 1,
       nn = String(n).padStart(2, '0');
     id = (g.boss ? 'b' : 's') + nn;
     if (g.over) gain = 0;
@@ -228,7 +228,7 @@ function bgmTick(nowS) {
   // 미리 받기: 막 곡이면 그 보스 판, 보스 판이면 다음 막 곡(꺼져 있을 때는 받지 않음)
   if (G && id !== 'hub' && w.gain > 0) {
     const n = +id.slice(1);
-    bgmLoad(id[0] === 's' ? 'b' + id.slice(1) : 's' + String((n % 10) + 1).padStart(2, '0'));
+    bgmLoad(id[0] === 's' ? 'b' + id.slice(1) : 's' + String((n % (stageEnd() + 1)) + 1).padStart(2, '0')); // v22.0 북으로 간 판은 10 → 11
   }
 }
 /* 시험·오류 기록용: 지금 상태 */

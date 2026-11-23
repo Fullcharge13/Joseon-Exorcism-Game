@@ -16,8 +16,9 @@ if(typeof bgmWanted==='function'){
  eq(W({G:g({stage:2,boss:{hp:100}})}),'b03',1,'3막 보스가 나와 있음');
  eq(W({G:g({stage:2,boss:null,mid:{hp:50}})}),'s03',1,'중간 보스는 막 곡 그대로');
  eq(W({G:g({stage:-1})}),'s01',1,'막 넘어가는 중(-1)은 1막');
- eq(W({G:g({stage:10,loop:1,mode:'endless'})}),'s01',1,'끝없는 밤 11막 → s01');
- eq(W({G:g({stage:13,loop:1,mode:'endless'})}),'s04',1,'끝없는 밤 14막 → s04');
+ eq(W({G:g({stage:10,north:true})}),'s11',1,'v22.0 2부 11막 → s11');
+ eq(W({G:g({stage:13,north:true,boss:{hp:9}})}),'b14',1,'v22.0 2부 14막 보스 → b14');
+ eq(W({G:g({stage:15,loop:1})}),'s01',1,'15칸 넘으면 1막으로 돌림');
  eq(W({G:g({stage:4,mode:'tale'})}),'s05',1,'설화 출정 5막');
  eq(W({G:g({stage:2,mode:'tale',tale:{st:4}})}),'s05',1,'설화 출정은 화면의 막(tale.st)을 따름 — 난이도용 stage(eq)가 아님');
  // 창 · 결과 · 끄기

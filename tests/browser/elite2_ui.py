@@ -24,7 +24,7 @@ with sync_playwright() as p:
         h = pg.evaluate("()=>document.querySelector('#codexBody').innerText")
         for id_n in ('객귀', '죽통 나그네', '범이 된 남편', '곰나루 암곰', '길달', '여귀', '흑룡', '바닷속 큰 메기', '삼두구미', '화마'):
             if id_n not in h: fails.append(f'{vname} ① 도감에 「{id_n}」 없음')
-        if '68' not in pg.evaluate("()=>document.querySelector('#codexSum').innerText"): fails.append(f'{vname} ① 도감 수 68 아님')
+        if '95' not in pg.evaluate("()=>document.querySelector('#codexSum').innerText"): fails.append(f'{vname} ① 도감 수 95 아님(v22.0 2부 27종 더함)')
         pg.screenshot(path=str(OUT / f'{vname}_codex.png'), full_page=True)
         o = pg.evaluate(OVER)
         if o: fails.append(f'{vname} ① 넘침 {o}')
@@ -46,4 +46,4 @@ with sync_playwright() as p:
     br.close()
 if errs: fails.append('화면 오류 ' + '; '.join(errs[:3]))
 if fails: print(f'FAIL elite2_ui ({len(fails)})\n  ' + '\n  '.join(fails)); sys.exit(1)
-print('PASS elite2_ui (도감 68 · 1~10막 새 엘리트 출현·행동 · 다듬기 오류 0 · PC·휴대폰 · 넘침 0 · 화면 오류 0 · 모음 그림 docs/img/elite2_all.png)')
+print('PASS elite2_ui (도감 95 · 1~10막 새 엘리트 출현·행동 · 다듬기 오류 0 · PC·휴대폰 · 넘침 0 · 화면 오류 0 · 모음 그림 docs/img/elite2_all.png)')

@@ -503,7 +503,7 @@ const PATHS = {
   temper: {s: '담금질', n: '대장간', g: '鍛', d: '다음 막을 평정하면 명장의 담금질로 무기 하나의 움직임을 바꾼다.'}
 };
 function openPath() {
-  if (G.stage + 1 >= STAGES.length - 1) {
+  if (G.stage + 1 >= stageEnd()) {
     nextStage();
     return;
   }

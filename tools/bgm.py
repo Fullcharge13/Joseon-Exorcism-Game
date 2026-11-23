@@ -124,7 +124,7 @@ def make(pg, tid):
 def main():
     global SRC, FORCE
     SRC, FORCE = src_hash(), '--force' in sys.argv
-    want = [a for a in sys.argv[1:] if not a.startswith('--')] or [f's{i:02d}' for i in range(1, 11)] + [f'b{i:02d}' for i in range(1, 11)] + ['hub']
+    want = [a for a in sys.argv[1:] if not a.startswith('--')] or [f's{i:02d}' for i in range(1, 16)] + [f'b{i:02d}' for i in range(1, 16)] + ['hub']  # v22.0 2부 11~15막
     OUT.mkdir(parents=True, exist_ok=True)
     jf = OUT / 'bgm.json'
     M = json.loads(jf.read_text(encoding='utf-8')) if jf.exists() else {}

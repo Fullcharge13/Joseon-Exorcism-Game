@@ -917,54 +917,134 @@ function recordClear() {
   meta.stats.hyungKinds = meta.hyungWon.length;
   if (G.curse >= meta.curseMax && meta.curseMax < 10) meta.curseMax = G.curse + 1;
 }
+/* v22.0 2부(제11~15막): 1부 끝 = 제10막(9), 2부 끝 = 제15막(14). 북으로 가기로 한 판(G.north)만 15막까지 */
+const ACT1_END = 9,
+  ACT2_END = 14;
+function stageEnd() {
+  return G && G.mode === 'normal' && G.north ? ACT2_END : ACT1_END;
+}
+function endlessCards() {
+  const n = G.loop + 1;
+  return [
+    {
+      ic: '<span class="seal" style="background:#1a1418">夜</span>',
+      badge: _t('{p}바퀴', {p: n + 1}),
+      bc: 'hard',
+      name: _t('끝없는 밤으로'),
+      desc: _t('요괴 체력 ×{p} · 받는 피해 ×{p2} · 엽전 +{p3}%. 체력을 모두 채우고 제1막부터.', {
+        p: (1.9 ** n).toFixed(1),
+        p2: (1.3 ** n).toFixed(1),
+        p3: n * 25
+      }),
+      f: () => {
+        if (G.north && G.stage >= ACT2_END) meta.stats.northLoop = (meta.stats.northLoop || 0) + 1; // v22.0 과업 n_loop
+        G.loop = n;
+        G.rs.bestLoop = Math.max(G.rs.bestLoop || 0, n);
+        const M = G.mods;
+        M.eHp *= 1.9;
+        M.dmgIn *= 1.3;
+        M.eSpd *= 1.04;
+        M.coin *= 1.25;
+        G.stage = -1;
+        nextStage();
+        G.P.hp = G.P.maxHp;
+        toastBig(_t('끝없는 밤'), _t('{p}바퀴째 · 제1막', {p: n + 1}));
+      }
+    },
+    {
+      ic: '<span class="seal" style="background:#e0b048;color:#1a1418">曉</span>',
+      badge: _t('출정 마침'),
+      bc: 'door',
+      name: _t('새벽을 맞는다'),
+      desc: _t('여기서 출정을 마치고 엽전을 거둔다.'),
+      f: () => {
+        show(null);
+        endGame(true);
+      }
+    }
+  ];
+}
+function recordNorthClear() {
+  if (G.northRec) return;
+  G.northRec = true;
+  G.rs.northClear = 1;
+  meta.north.clear = (meta.north.clear || 0) + 1;
+  meta.stats.northClears = (meta.stats.northClears || 0) + 1;
+}
 function openEndless() {
   recordClear();
-  const n = G.loop + 1;
+  const north = G.stage >= ACT2_END;
+  if (north) recordNorthClear();
   openPick(
     'ENDLESS NIGHT',
-    G.loop ? _t('{p}바퀴째 밤이 끝났다', {p: G.loop + 1}) : _t('그슨대를 걷어 냈다'),
-    _t(
-      '여기서 출정을 마치거나, 끝없는 밤으로 이어 갈 수 있습니다. 이어 가면 제1막부터 다시 돌며 요괴가 한층 강해지고 보상도 커집니다. 쓰러져도 이미 거둔 평정은 인정됩니다.'
-    ),
-    [
-      {
-        ic: '<span class="seal" style="background:#1a1418">夜</span>',
-        badge: _t('{p}바퀴', {p: n + 1}),
-        bc: 'hard',
-        name: _t('끝없는 밤으로'),
-        desc: _t('요괴 체력 ×{p} · 받는 피해 ×{p2} · 엽전 +{p3}%. 체력을 모두 채우고 제1막부터.', {
-          p: (1.9 ** n).toFixed(1),
-          p2: (1.3 ** n).toFixed(1),
-          p3: n * 25
-        }),
-        f: () => {
-          G.loop = n;
-          G.rs.bestLoop = Math.max(G.rs.bestLoop || 0, n);
-          const M = G.mods;
-          M.eHp *= 1.9;
-          M.dmgIn *= 1.3;
-          M.eSpd *= 1.04;
-          M.coin *= 1.25;
-          G.stage = -1;
-          nextStage();
-          G.P.hp = G.P.maxHp;
-          toastBig(_t('끝없는 밤'), _t('{p}바퀴째 · 제1막', {p: n + 1}));
-        }
-      },
-      {
-        ic: '<span class="seal" style="background:#e0b048;color:#1a1418">曉</span>',
-        badge: _t('출정 마침'),
-        bc: 'door',
-        name: _t('새벽을 맞는다'),
-        desc: _t('여기서 출정을 마치고 엽전을 거둔다.'),
-        f: () => {
-          show(null);
-          endGame(true);
-        }
-      }
-    ]
+    G.loop
+      ? _t('{p}바퀴째 밤이 끝났다', {p: G.loop + 1})
+      : north
+        ? _t('촉음을 잠재웠다')
+        : _t('그슨대를 걷어 냈다'),
+    north
+      ? _t(
+          '압록강 너머로 요괴들이 물러갔습니다. 여기서 출정을 마치거나, 끝없는 밤으로 이어 갈 수 있습니다. 이어 가면 제1막부터 제15막까지 다시 돌며 요괴가 한층 강해지고 보상도 커집니다.'
+        )
+      : _t(
+          '여기서 출정을 마치거나, 끝없는 밤으로 이어 갈 수 있습니다. 이어 가면 제1막부터 다시 돌며 요괴가 한층 강해지고 보상도 커집니다. 쓰러져도 이미 거둔 평정은 인정됩니다.'
+        ),
+    endlessCards()
   );
 }
+/* 판의금부사 전갈(10막 평정 뒤, 아직 북으로 가지 않은 판). 처음 한 번은 이야기 장면, 그 뒤로는 선택 창만 */
+function openNorth() {
+  recordClear();
+  const pick = () =>
+    openPick(
+      'URGENT DISPATCH',
+      _t('판의금부사의 전갈'),
+      _t(
+        '의금부의 판의금부사 대감이 역마를 달려 왔다. 「북쪽 고을마다 『산해경』의 요괴가 나타났다는 장계가 올라오고 있소. 한양 서쪽 고개까지 내려왔다 하니, 압록강 밖으로 몰아내 주시오.」'
+      ),
+      [
+        {
+          ic: '<span class="seal" style="background:#a8322a">北</span>',
+          badge: _t('2부 · 제11~15막'),
+          bc: 'hard',
+          name: _t('북으로 간다'),
+          desc: _t('지금의 체력·무기 그대로 한양 서쪽 홍제원 고개부터 압록강까지 다섯 막을 더 치른다.'),
+          f: () => {
+            G.north = true;
+            G.rs.north = 1;
+            meta.north.seen = true;
+            meta.stats.northEnter = (meta.stats.northEnter || 0) + 1;
+            saveMeta();
+            show(null);
+            openTavern();
+          }
+        },
+        ...endlessCards()
+      ]
+    );
+  if (!meta.north.seen) openScene(ENDING.dispatch, pick);
+  else pick();
+}
+ENDING.dispatch = [ // v22.0 번역 표(ENDING)에 함께 둠
+  {
+    eye: '전갈 1/3',
+    title: '밤중의 역마',
+    art: 'npc:pangeumbu',
+    t: '그슨대가 무너지고 첫닭이 울 무렵, 붉은 관복의 대감이 말을 몰아 찾아왔다. 의금부의 판의금부사라 했다. 나라를 흔드는 큰일을 맡는 관아의 으뜸 벼슬이었다.'
+  },
+  {
+    eye: '전갈 2/3',
+    title: '북쪽에서 온 장계',
+    art: 'prop:scroll',
+    t: '「요동 땅에서 명과 청이 맞붙어 싸우는 소리가 그치지 않소. 그 어지러움에 오래 잠들어 있던 것들이 깨어났다 하오. 머리 아홉 달린 뱀, 사람 얼굴을 한 새, 날개 돋친 물고기. 옛 책 『산해경』에나 나오던 것들이 압록강을 건너왔다는 장계가 고을마다 올라오고 있소.」'
+  },
+  {
+    eye: '전갈 3/3',
+    title: '압록강까지',
+    art: 'en:sangryu',
+    t: '「그것들이 벌써 홍제원 고개를 넘보고 있소. 의주로를 따라 임진나루, 개성, 평양을 지나 압록강 밖으로 몰아내 주시오. 조정이 갚을 길은 없으나, 이 길을 기억하는 이야기는 남을 것이오.」'
+  }
+];
 /* ---- 퇴마 원정 (보스 연전) ---- */
 const GRADES = [
   {k: 'ha', n: '하', hp: 0.8, borrow: 0, gifts: 1, col: '#2f6b5a'},
@@ -988,14 +1068,14 @@ function rushRound() {
   const r = G.stage,
     S = STAGES,
     pick = new Set([S[r].boss, S[r].mid]);
-  const extra = [S[Math.min(9, r + 1)].mid, S[Math.max(0, r - 1)].boss, S[Math.min(9, r + 1)].boss].filter(
+  const extra = [S[Math.min(ACT1_END, r + 1)].mid, S[Math.max(0, r - 1)].boss, S[Math.min(ACT1_END, r + 1)].boss].filter(
     x => !pick.has(x)
   );
   pick.add(extra[(rand() * extra.length) | 0]);
   const ids = [...pick].sort(() => rand() - 0.5),
     gr = GRADES.slice().sort(() => rand() - 0.5);
   openPick(
-    `EXPEDITION · ${r + 1} / ${STAGES.length}`,
+    `EXPEDITION · ${r + 1} / ${ACT1_END + 1}`,
     _t('{p}번째 원정', {p: r + 1}),
     _t(
       '싸울 보스 하나를 고릅니다. 등급이 높을수록 다른 보스의 기술을 빌려 쓰고 체력이 많지만, 넋의 선물을 더 받습니다.'
@@ -1092,7 +1172,7 @@ function rushReward(left) {
 }
 function rushNext() {
   G.rs.rushRounds = (G.rs.rushRounds || 0) + 1;
-  if (G.stage >= STAGES.length - 1) {
+  if (G.stage >= ACT1_END) {
     G.rs.rushClear = 1;
     endGame(true);
     return;

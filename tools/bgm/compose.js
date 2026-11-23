@@ -350,7 +350,13 @@ const STAGE_BGM = [
   {n: '7막 백두산 골짜기', bpm: 110, jd: 'j7', root: 43, wet: 0.55, rv: 3.8, place: 'mountain'},
   {n: '8막 동해 바닷가', bpm: 118, jd: 'j8', root: 46, wet: 0.5, rv: 3.2, place: 'sea'},
   {n: '9막 저승길', bpm: 124, jd: 'j9', root: 44, wet: 0.65, rv: 4.2, place: 'underworld', clash: 1},
-  {n: '10막 근정전 앞뜰', bpm: 132, jd: 'j10', root: 47, wet: 0.45, rv: 3.0, place: 'palace', clash: 1}
+  {n: '10막 근정전 앞뜰', bpm: 132, jd: 'j10', root: 47, wet: 0.45, rv: 3.0, place: 'palace', clash: 1},
+  // v22.0 2부: 새 길을 떠나는 느낌으로 한 번 늦췄다가 압록강까지 다시 빨라짐(장소 소리는 1부 것을 빌림)
+  {n: '11막 홍제원 고개', bpm: 112, jd: 'j6', root: 46, wet: 0.4, rv: 2.6, place: 'tiger'},
+  {n: '12막 임진나루', bpm: 118, jd: 'j4', root: 48, wet: 0.6, rv: 3.6, place: 'ferry'},
+  {n: '13막 송악 아래 개성', bpm: 124, jd: 'j9', root: 45, wet: 0.55, rv: 3.4, place: 'temple', clash: 1},
+  {n: '14막 대동강 평양성', bpm: 130, jd: 'j7', root: 47, wet: 0.5, rv: 3.0, place: 'palace'},
+  {n: '15막 의주 압록강', bpm: 138, jd: 'j8', root: 43, wet: 0.6, rv: 4.0, place: 'mountain', clash: 1}
 ];
 
 /* 계면조(라도레미솔 꼴): 으뜸음에서 0,3,5,7,10 반음 */
@@ -632,7 +638,8 @@ function ambience(ctx, bus, si, sec, R) {
     voice(t, d, [[0, b], [d * 0.25, b * 1.6], [d, b * 1.05]], [[0, 'a'], [d * 0.7, 'eo']], v, {fs: 1.15, vib: 0.05, vibHz: 7, br: 0.35, lp: 2400, hold: 0.55, pan: side(), att: 0.05});
   };
   const end = sec;
-  switch (si) {
+  // v22.0 2부는 1부 장소 소리를 빌림: 11 고개(범) · 12 나루(비) · 13 옛 도읍(읊조림) · 14 대동강(물결) · 15 압록강(바람)
+  switch (si < 10 ? si : [2, 3, 4, 7, 6][si - 10]) {
     case 0: // 1막: 도망가는 사람들의 비명(멀리 · 드문드문 · 가끔 겹침)
       for (let t = span(3, 5); t < end - 2; t += span(3.5, 6.5)) {
         scream(t, 0.5);

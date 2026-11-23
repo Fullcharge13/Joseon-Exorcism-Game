@@ -2,7 +2,7 @@
 const fails=[];const ok=(c,m)=>{if(!c)fails.push(m);};
 ok(typeof STAGE_VFX!=='undefined'&&Array.isArray(STAGE_VFX),'STAGE_VFX 표가 있음');
 if(typeof STAGE_VFX!=='undefined'){
- ok(STAGE_VFX.length===STAGES.length&&STAGES.length===10,'열 막 모두 표 '+STAGE_VFX.length);
+ ok(STAGE_VFX.length===STAGES.length&&STAGES.length===15,'열다섯 막 모두 표(v22.0 2부) '+STAGE_VFX.length);
  STAGE_VFX.forEach((v,i)=>{ok(v&&typeof v.night==='number'&&v.night>=0&&v.night<=1,`${i+1}막 night 0~1`);ok(v&&/^#[0-9a-f]{6}$/i.test(v.tint||''),`${i+1}막 tint 색`);ok(v&&v.lamp,`${i+1}막 빛나는 물건`);});
  for(let i=1;i<9;i++)ok(STAGE_VFX[i].night>=STAGE_VFX[i-1].night,`${i+1}막 밤이 ${i}막보다 얕아지지 않음`);
  ok(STAGE_VFX[9].dawn===true,'10막 새벽 표시');

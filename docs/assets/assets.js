@@ -1,7 +1,7 @@
 /* 도감 목록 — tools/assets.py가 만듦(손으로 고치지 마세요) */
 window.ASSETS = {
  "game": "joseon-exorcism",
- "version": "v21.2.2",
+ "version": "v22.0",
  "kinds": [
   {
    "kind": "char",
@@ -11,7 +11,7 @@ window.ASSETS = {
   {
    "kind": "enemy",
    "name": "요괴",
-   "count": 72
+   "count": 99
   },
   {
    "kind": "npc",
@@ -61,7 +61,7 @@ window.ASSETS = {
   {
    "kind": "task",
    "name": "과업 휘장",
-   "count": 135
+   "count": 142
   },
   {
    "kind": "prop",
@@ -136,7 +136,7 @@ window.ASSETS = {
   {
    "kind": "ground",
    "name": "막 바닥",
-   "count": 10
+   "count": 15
   }
  ],
  "assets": [
@@ -2344,6 +2344,358 @@ window.ASSETS = {
     "docs/img/e_hwama.png"
    ],
    "since": "v19.5"
+  },
+  {
+   "kind": "enemy",
+   "id": "bifang",
+   "name": "필방",
+   "used": "제11막",
+   "file": "img/enemy/bifang.png",
+   "w": 10,
+   "h": 8,
+   "fileR": "img/enemy/bifang@r.png",
+   "readme": [
+    "docs/img/e_bifang.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "jaeng",
+   "name": "쟁",
+   "used": "제11막",
+   "file": "img/enemy/jaeng.png",
+   "w": 12,
+   "h": 9,
+   "fileR": "img/enemy/jaeng@r.png",
+   "readme": [
+    "docs/img/e_jaeng.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "gojo",
+   "name": "고조",
+   "used": "제11막",
+   "file": "img/enemy/gojo.png",
+   "w": 10,
+   "h": 8,
+   "fileR": "img/enemy/gojo@r.png",
+   "readme": [
+    "docs/img/e_gojo.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "munyo",
+   "name": "문요어",
+   "used": "제12막",
+   "file": "img/enemy/munyo.png",
+   "w": 10,
+   "h": 8,
+   "fileR": "img/enemy/munyo@r.png",
+   "readme": [
+    "docs/img/e_munyo.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "hara",
+   "name": "하라어",
+   "used": "제12막",
+   "file": "img/enemy/hara.png",
+   "w": 10,
+   "h": 6,
+   "fileR": "img/enemy/hara@r.png",
+   "readme": [
+    "docs/img/e_hara.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "jeoyeo",
+   "name": "저여",
+   "used": "제13막",
+   "file": "img/enemy/jeoyeo.png",
+   "w": 9,
+   "h": 5,
+   "fileR": "img/enemy/jeoyeo@r.png",
+   "readme": [
+    "docs/img/e_jeoyeo.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "heumwon",
+   "name": "흠원",
+   "used": "제13막",
+   "file": "img/enemy/heumwon.png",
+   "w": 8,
+   "h": 8,
+   "fileR": "img/enemy/heumwon@r.png",
+   "readme": [
+    "docs/img/e_heumwon.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "seogeo",
+   "name": "서거",
+   "used": "제14막",
+   "file": "img/enemy/seogeo.png",
+   "w": 10,
+   "h": 8,
+   "fileR": "img/enemy/seogeo@r.png",
+   "readme": [
+    "docs/img/e_seogeo.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "jangu",
+   "name": "장우",
+   "used": "제11막",
+   "file": "img/enemy/jangu.png",
+   "w": 10,
+   "h": 10,
+   "fileR": "img/enemy/jangu@r.png",
+   "readme": [
+    "docs/img/e_jangu.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "buje",
+   "name": "부제",
+   "used": "제12막",
+   "file": "img/enemy/buje.png",
+   "w": 10,
+   "h": 9,
+   "fileR": "img/enemy/buje@r.png",
+   "readme": [
+    "docs/img/e_buje.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "che",
+   "name": "체",
+   "used": "제13막",
+   "file": "img/enemy/che.png",
+   "w": 12,
+   "h": 9,
+   "fileR": "img/enemy/che@r.png",
+   "readme": [
+    "docs/img/e_che.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "onghwa",
+   "name": "옹화",
+   "used": "제14막",
+   "file": "img/enemy/onghwa.png",
+   "w": 10,
+   "h": 10,
+   "fileR": "img/enemy/onghwa@r.png",
+   "readme": [
+    "docs/img/e_onghwa.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "mabok",
+   "name": "마복",
+   "used": "제11막",
+   "file": "img/enemy/mabok.png",
+   "w": 12,
+   "h": 9,
+   "fileR": "img/enemy/mabok@r.png",
+   "readme": [
+    "docs/img/e_mabok.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "myeongsa",
+   "name": "명사",
+   "used": "제12막",
+   "file": "img/enemy/myeongsa.png",
+   "w": 10,
+   "h": 10,
+   "fileR": "img/enemy/myeongsa@r.png",
+   "readme": [
+    "docs/img/e_myeongsa.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "jegeon",
+   "name": "제건",
+   "used": "제13막",
+   "file": "img/enemy/jegeon.png",
+   "w": 12,
+   "h": 9,
+   "fileR": "img/enemy/jegeon@r.png",
+   "readme": [
+    "docs/img/e_jegeon.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "biyu",
+   "name": "비유",
+   "used": "제14막",
+   "file": "img/enemy/biyu.png",
+   "w": 10,
+   "h": 10,
+   "fileR": "img/enemy/biyu@r.png",
+   "readme": [
+    "docs/img/e_biyu.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "hyeongcheon",
+   "name": "형천",
+   "used": "제15막",
+   "file": "img/enemy/hyeongcheon.png",
+   "w": 12,
+   "h": 11,
+   "fileR": "img/enemy/hyeongcheon@r.png",
+   "readme": [
+    "docs/img/e_hyeongcheon.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "sangryu",
+   "name": "상류",
+   "used": "제11막",
+   "file": "img/enemy/sangryu.png",
+   "w": 12,
+   "h": 12,
+   "fileR": "img/enemy/sangryu@r.png",
+   "readme": [
+    "docs/img/e_sangryu.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "hwasa",
+   "name": "화사",
+   "used": "제12막",
+   "file": "img/enemy/hwasa.png",
+   "w": 10,
+   "h": 10,
+   "fileR": "img/enemy/hwasa@r.png",
+   "readme": [
+    "docs/img/e_hwasa.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "jegang",
+   "name": "제강",
+   "used": "제13막",
+   "file": "img/enemy/jegang.png",
+   "w": 12,
+   "h": 8,
+   "fileR": "img/enemy/jegang@r.png",
+   "readme": [
+    "docs/img/e_jegang.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "gunggi",
+   "name": "궁기",
+   "used": "제14막",
+   "file": "img/enemy/gunggi.png",
+   "w": 10,
+   "h": 9,
+   "fileR": "img/enemy/gunggi@r.png",
+   "readme": [
+    "docs/img/e_gunggi.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "chokeum",
+   "name": "촉음",
+   "used": "제15막",
+   "file": "img/enemy/chokeum.png",
+   "w": 10,
+   "h": 11,
+   "fileR": "img/enemy/chokeum@r.png",
+   "readme": [
+    "docs/img/e_chokeum.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "hyo",
+   "name": "효",
+   "used": "제11막",
+   "file": "img/enemy/hyo.png",
+   "w": 12,
+   "h": 16,
+   "fileR": "img/enemy/hyo@r.png",
+   "readme": [
+    "docs/img/e_hyo.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "yeongeo",
+   "name": "영어",
+   "used": "제12막",
+   "file": "img/enemy/yeongeo.png",
+   "w": 12,
+   "h": 16,
+   "fileR": "img/enemy/yeongeo@r.png",
+   "readme": [
+    "docs/img/e_yeongeo.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "bi",
+   "name": "비",
+   "used": "제13막",
+   "file": "img/enemy/bi.png",
+   "w": 12,
+   "h": 16,
+   "fileR": "img/enemy/bi@r.png",
+   "readme": [
+    "docs/img/e_bi.png"
+   ],
+   "since": "v9 이전"
+  },
+  {
+   "kind": "enemy",
+   "id": "juyeom",
+   "name": "주염",
+   "used": "제14막",
+   "file": "img/enemy/juyeom.png",
+   "w": 12,
+   "h": 16,
+   "fileR": "img/enemy/juyeom@r.png",
+   "readme": [
+    "docs/img/e_juyeom.png"
+   ]
+  },
+  {
+   "kind": "enemy",
+   "id": "go",
+   "name": "고",
+   "used": "제15막",
+   "file": "img/enemy/go.png",
+   "w": 12,
+   "h": 16,
+   "fileR": "img/enemy/go@r.png",
+   "readme": [
+    "docs/img/e_go.png"
+   ]
   },
   {
    "kind": "npc",
@@ -6660,6 +7012,83 @@ window.ASSETS = {
    ]
   },
   {
+   "kind": "task",
+   "id": "n_enter",
+   "name": "북으로 가는 길",
+   "file": "img/task/n_enter.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_n_enter.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "n_kaesong",
+   "name": "옛 도읍에 이르다",
+   "file": "img/task/n_kaesong.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_n_kaesong.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "n_clear",
+   "name": "강 밖으로",
+   "file": "img/task/n_clear.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_n_clear.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "n_ending",
+   "name": "압록강의 새벽",
+   "file": "img/task/n_ending.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_n_ending.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "n_loop",
+   "name": "긴 길의 밤",
+   "file": "img/task/n_loop.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_n_loop.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "n_clear3",
+   "name": "국경을 지키다",
+   "file": "img/task/n_clear3.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_n_clear3.png"
+   ]
+  },
+  {
+   "kind": "task",
+   "id": "dogam95",
+   "name": "산해경 도감",
+   "file": "img/task/dogam95.png",
+   "w": 72,
+   "h": 72,
+   "readme": [
+    "docs/img/task_dogam95.png"
+   ]
+  },
+  {
    "kind": "prop",
    "id": "scroll",
    "name": "낡은 족자",
@@ -8554,6 +8983,51 @@ window.ASSETS = {
    "name": "제10막 근정전 앞뜰",
    "used": "제10막",
    "file": "img/ground/10.png",
+   "w": 256,
+   "h": 256
+  },
+  {
+   "kind": "ground",
+   "id": "11",
+   "name": "제11막 홍제원 고개",
+   "used": "제11막",
+   "file": "img/ground/11.png",
+   "w": 256,
+   "h": 256
+  },
+  {
+   "kind": "ground",
+   "id": "12",
+   "name": "제12막 임진나루",
+   "used": "제12막",
+   "file": "img/ground/12.png",
+   "w": 256,
+   "h": 256
+  },
+  {
+   "kind": "ground",
+   "id": "13",
+   "name": "제13막 송악 아래 개성",
+   "used": "제13막",
+   "file": "img/ground/13.png",
+   "w": 256,
+   "h": 256
+  },
+  {
+   "kind": "ground",
+   "id": "14",
+   "name": "제14막 대동강 평양성",
+   "used": "제14막",
+   "file": "img/ground/14.png",
+   "w": 256,
+   "h": 256
+  },
+  {
+   "kind": "ground",
+   "id": "15",
+   "name": "제15막 의주 압록강",
+   "used": "제15막",
+   "file": "img/ground/15.png",
    "w": 256,
    "h": 256
   }

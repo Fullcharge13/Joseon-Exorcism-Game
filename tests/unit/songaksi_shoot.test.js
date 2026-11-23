@@ -6,7 +6,7 @@ ok(/출처: 한국민족문화대백과사전 「손각시」/.test(EN.songaksi.
 ok(EN.songaksi.hp===30&&EN.songaksi.spd===26&&EN.songaksi.dmg===10,'체력·속도·피해 그대로');
 // 다른 막 구성 그대로: 쏘는 요괴가 있는 막
 const sh=STAGES.map((s,i)=>[...s.early,...s.late].some(id=>EN[id].ai==='shoot')?i+1:0).filter(Boolean);
-ok(JSON.stringify(sh)==='[3,4,5,6,8,10]','쏘는 요괴가 있는 막 '+JSON.stringify(sh));
+ok(JSON.stringify(sh)==='[3,4,5,6,8,10,11,15]',/* v22.0 2부 필방(11·15막) */'쏘는 요괴가 있는 막 '+JSON.stringify(sh));
 // 실제로 쏨: 5막, 퇴마사 120 떨어진 곳 손각시 하나 → 2.8초 간격
 newGame('seonbi',null,0,'normal');G.queue.length=0;show(null);G.stage=4;G.enemies.length=0;G.weapons.length=0;G.P.hp=G.P.maxHp=1e9;
 const e=spawnEnemy('songaksi',G.P.x+120,G.P.y,{novr:1});let shots=[];   /* 속도 0이면 행동도 멈추므로 자리는 매 프레임 고정 */
